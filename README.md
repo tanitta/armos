@@ -2,7 +2,7 @@ armos
 ====
 armos is a free and open source library for creative coding in D programming language.
 
-#example
+#Example
 	import std.stdio;
 	import armos.app;
 
