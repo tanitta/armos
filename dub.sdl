@@ -1,0 +1,7 @@
+name "armos"
+description "Armos is a free and open source library for creative coding in D programming language."
+copyright "Copyright © 2015, tanitta"
+authors "tanitta"
+configuration "Library"
+dependency "derelict-sdl2" version="~master"
+dependency "derelict-gl3" version="~master"

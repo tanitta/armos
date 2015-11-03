@@ -1,0 +1,8 @@
+{
+	"fileVersion": 1,
+	"versions": {
+		"derelict-sdl2": "~master",
+		"derelict-util": "2.0.4",
+		"derelict-gl3": "~master"
+	}
+}
