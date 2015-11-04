@@ -1,13 +1,13 @@
 module armos.app.baseapp;
-import armos.events.event;
+import armos.events;
 class BaseApp{
-	void setup(ref EventArg arg){
+	void setup(ref armos.events.EventArg arg){
 		setup();
 	}
-	void update(ref EventArg arg){
+	void update(ref armos.events.EventArg arg){
 		update();
 	}
-	void draw(ref EventArg arg){
+	void draw(ref armos.events.EventArg arg){
 		draw();
 	}
 	
@@ -17,10 +17,18 @@ class BaseApp{
 	
 	void draw(){};
 	
-	void keyPressed(ref KeyPressedEventArg m) {
-		keyPressed(m.str);
+	void keyPressed(ref armos.events.KeyPressedEventArg message) {
+		keyPressed(message.key);
 	}
 	
-	void keyPressed(string str) {
+	void keyPressed(int str) {
 	}
+	
+	void exit(ref armos.events.EventArg arg){
+		exit();
+	};
+	
+	void exit(){};
+	
+	int mouseX, mouseY;
 }
