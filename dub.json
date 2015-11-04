@@ -1,0 +1,11 @@
+{
+	"name": "armos",
+	"description": "Armos is a free and open source library for creative coding in D programming language.",
+	"copyright": "Copyright © 2015, tanitta",
+	"authors": ["tanitta"],
+	"version": "0.0.1",
+	"dependencies": {
+		"derelict-sdl2": ">=1.9.7", 
+		"derelict-gl3": ">=1.0.16"
+	}
+}
