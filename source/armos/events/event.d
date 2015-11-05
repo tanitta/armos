@@ -1,17 +1,6 @@
 module armos.events.event;
 import core.sync.mutex;
 import std.array;
-// class Function(ArgumentType){
-// 	private
-// 		void delegate(ArgumentType) func;
-// 	public
-// 		this(void delegate(ArgumentType) f){
-// 			func = f;
-// 		}
-// 	void run(ArgumentType arg){
-// 		func(arg);
-// 	}
-// }
 
 class Event(ArgumentType) {
 	protected
