@@ -1,31 +1,45 @@
 module armos.app.runner;
 import armos.app.basewindow;
 import armos.app.baseapp;
+import armos.utils;
+import armos.events;
 import std.stdio;
 class Loop {
 	private bool isLoop = true;
+	private armos.utils.FpsCounter fpscounter;
 	armos.app.basewindow.BaseGLWindow window;
 	
-	void createWindow(armos.app.BaseApp app){
+	this(){
+		fpscounter = new armos.utils.FpsCounter;
+	}
+	
+	
+	void createWindow(ref armos.app.BaseApp app){
 		window = new armos.app.basewindow.BaseGLWindow(app);
+		assert(window);
 	};
 	
-	void run(armos.app.BaseApp app){
+	void run(ref armos.app.BaseApp app){
 		createWindow(app);
-		//EventListeners
-		window.setup();
+		
 	};
 	
 	void loop(){
-		if(isLoop){
+		window.events().notifySetup();
+		while(isLoop){
 			loopOnce();
+			fpscounter.adjust();
+			fpscounter.newFrame();
+			isLoop = !window.shouldClose;
 		}
-		window.exit();
+		
+		window.close();
 	}
 	
 	void loopOnce(){
-		window.update();
-		window.draw();
+		window.events().notifyUpdate();
+		window.events().notifyDraw();
+		window.pollEvents();
 	}
 	
 	// keyPressed(){

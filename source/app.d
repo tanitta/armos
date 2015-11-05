@@ -1,6 +1,20 @@
 import std.stdio;
+import armos.app;
 
-void main()
-{
-	writeln("Edit source/app.d to start your project.");
+class TestApp : armos.app.BaseApp{
+	void setup(){
+		writeln("setup");
+	}
+	
+	void update(){
+		writeln("update");
+	}
+	
+	void draw(){
+		writeln("draw");
+	};
+}
+
+void main(){
+	armos.app.run(new TestApp());
 }
