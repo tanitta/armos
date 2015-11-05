@@ -57,7 +57,7 @@ We can use C/C++/Objective-C via D binding.
 - Easiness to learn
 It isn't so much complex than C++!
 
-Other point is [here](http://dlang.org/index.html)
+- Other point is [here](http://dlang.org/index.html)
 
 #Contribution
 1. Fork it

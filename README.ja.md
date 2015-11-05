@@ -2,7 +2,7 @@
 
 armos
 ====
-D言語によるクリエイティブコーディングのためのオープンソースライブラリ
+D言語によるクリエイティブコーディングのためのオープンソースライブラリです．
 
 #Description
 D言語は非常に手軽でパワフルです．しかし，[p5](https://processing.org/)や[oF](http://openframeworks.jp/)のように, 簡単に扱えるライブラリが見当たらなかったので, 試しに書き始めてみました．
@@ -68,7 +68,7 @@ DのバインディングによりC/C++/Objective-Cのコードを利用する�
 - 学習が簡単
 C++ほど複雑ではありません！
 
-[その他のDの特徴](http://www.kmonos.net/alang/d/overview.html)
+- [その他のDの特徴](http://www.kmonos.net/alang/d/overview.html)
 
 #Contribution
 1. このリポジトリをFork
