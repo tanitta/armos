@@ -39,22 +39,28 @@ I think that first mileStone is probably summoning D-man into display for the ti
 
 #Install
 1. Clone this repository.
+
 	$git clone https://github.com/tanitta/armos.git
 	
 2. Add to dub package.
+
 	$dub add-local /local/repository/path/
 
 #Why use D?
 - Processing Speed
+
 D is as fast as C++ programs.
 
 - Build Speed
+
 The compilation is more faster than a speed of C++. Because of that, we can repeat trial and error.
 
 - Extensibility
+
 We can use C/C++/Objective-C via D binding.
 
 - Easiness to learn
+
 It isn't so much complex than C++!
 
 - Other point is [here](http://dlang.org/index.html)

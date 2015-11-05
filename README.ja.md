@@ -39,12 +39,15 @@ D言語は非常に手軽でパワフルです．しかし，[p5](https://proces
 
 #Install
 1. このリポジトリをcloneしましょう
+
 	$git clone https://github.com/tanitta/armos.git
 	
 2. 次にcloneしたリポジトリをdubのpackageに追加します
+
 	$dub add-local /local/repository/path/
 
 3. dubのプロジェクトのdub.jsonにpackageを追加します
+
 	{
 	...
 		"dependencies": {
@@ -53,19 +56,24 @@ D言語は非常に手軽でパワフルです．しかし，[p5](https://proces
 	}
 	
 4. 仕上げにビルドします
+
 	$dub build
 	
 #Why use D?
 - 処理速度
+
 D言語はC++と同程度の速度で動作します．
 
 - ビルド速度
+
 コンパイルはC++よりもずっと高速です．そのため，開発者はより多くの試行錯誤を繰り返すことができます．
 
 - 拡張性
+
 DのバインディングによりC/C++/Objective-Cのコードを利用することができます．
 
 - 学習が簡単
+
 C++ほど複雑ではありません！
 
 - [その他のDの特徴](http://www.kmonos.net/alang/d/overview.html)
