@@ -7,12 +7,15 @@ class TestApp : armos.app.BaseApp{
 	}
 	
 	void update(){
-		writeln("update");
+		// writeln("update");
 	}
 	
 	void draw(){
-		writeln("draw");
+		// writeln("draw");
 	};
+	void keyPressed(int key){
+		writeln("keydown : ", key, cast(char)key);
+	}
 }
 
 void main(){

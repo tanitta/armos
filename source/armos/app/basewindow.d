@@ -41,8 +41,15 @@ class BaseWindow{
 		{
 			switch (event.type)
 			{
-				case SDL_KEYDOWN,SDL_QUIT:
+				case SDL_QUIT:
 					shouldClose = true;
+					break;
+					
+				case SDL_KEYDOWN:
+					events.notifyKeyPressed(event.key.keysym.sym );
+					break;
+				case SDL_KEYUP:
+					events.notifyKeyReleased(event.key.keysym.sym );
 					break;
 					
 				default:
