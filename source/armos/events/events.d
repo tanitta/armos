@@ -1,5 +1,6 @@
 module armos.events.events;
 import armos.events.events;
+import armos.utils;
 
 class KeyPressedEventArg : armos.events.EventArg{
 	int key;
@@ -188,7 +189,6 @@ class CoreEvents {
 		auto obj = new WindowResizeEventArg(w, h);
 		armos.events.notifyEvent(windowResize, obj);
 	}
-	
 }
 
 unittest{
