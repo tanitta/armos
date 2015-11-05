@@ -1,6 +1,5 @@
 module armos.events.events;
-import armos.events;
-import std.stdio;
+import armos.events.events;
 
 class KeyPressedEventArg : armos.events.EventArg{
 	int key;
@@ -12,7 +11,7 @@ class KeyReleasedEventArg : armos.events.EventArg{
 
 @disable class messageReceivedEventArg :armos.events.EventArg {}
 
-template mouseEvent(){
+mixin template mouseEvent(){
 	int x, y, button;
 }
 
@@ -24,7 +23,7 @@ class mousePressedEventArg :armos.events.EventArg {mixin mouseEvent;}
 class mouseReleasedEventArg :armos.events.EventArg {mixin mouseEvent;}
 class mouseScrolledEventArg :armos.events.EventArg {mixin mouseEvent;}
 
-template touchEvent(){
+mixin template touchEvent(){
 	int x, y, id;
 }
 
@@ -58,12 +57,10 @@ class CoreEvents {
 
 	void notifyUpdate(){};
 	void notifyDraw(){};
-	void notifyKeyPressed(){
-		writeln("notifyKeyPressed");
+	void notifyKeyPressed(int key){
 		auto obj = new KeyPressedEventArg;
-		// obj.a = 2;
+		obj.key = key;
 		armos.events.notifyEvent(keyPressed, obj);
-
 	}
 }
 
@@ -73,25 +70,30 @@ unittest{
 	
 	auto core_events = new CoreEvents;
 
-	class Hoge : armos.app.BaseApp {
+	class TestApp: armos.app.BaseApp {
 		//i want to write like c++. the following is verbose...
+		//should i use template mixin instead alias?
 		alias armos.app.BaseApp.setup setup;
 		alias armos.app.BaseApp.update update;
 		alias armos.app.BaseApp.draw draw;
 		alias armos.app.BaseApp.keyPressed keyPressed;
 		
-		void setup(){}
+		void setup(){
+			writeln("setup");
+		}
 		void update(){}
 		void draw(){}
 
-		void keyPressed(string str) {
-			writeln(str);
+		void keyPressed(int key) {
+			char str_key = cast(char)key;
+			writeln("keyPressed : ", str_key);
 		}
 		
 	}
 	
-	auto hoge = new Hoge;
-	armos.events.addListener(core_events.setup, hoge, &hoge.setup);
-	armos.events.addListener(core_events.keyPressed, hoge, &hoge.keyPressed);
-	core_events.notifyKeyPressed();
+	auto app = new TestApp;
+	armos.events.addListener(core_events.setup, app, &app.setup);
+	armos.events.addListener(core_events.keyPressed, app, &app.keyPressed);
+	core_events.notifySetup();
+	core_events.notifyKeyPressed('a');
 }
