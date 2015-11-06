@@ -51,7 +51,6 @@ class Matrix(T, int RowSize, int ColSize){
 	}
 
 	const bool opEquals(Object mat){
-		Object mat_tmp = mat;
 		// if(this.rowSize != (cast(MatrixType)mat_tmp).rowSize){return false;}
 		// if(this.colSize != (cast(MatrixType)mat_tmp).colSize){return false;}
 		foreach (int index, VectorType vec; (cast(MatrixType)mat).array) {
@@ -208,6 +207,34 @@ class Matrix(T, int RowSize, int ColSize){
 		
 		assert(matrix3 == matrix_answer);
 	}
+	
+	// const VectorType opMul(in VectorType vec_r){
+	// 	auto mat_r
+	// 	return result;
+	// }
+	
+	const VectorType opMul(in VectorType vec_r){
+		auto result = new VectorType;
+		for (int targetRow = 0; targetRow < array.length; targetRow++) {
+			T sum = cast(T)0;
+			for (int dim = 0; dim < rowSize; dim++) {
+				sum += this[targetRow][dim] * vec_r[dim];
+			}
+			result[targetRow] = sum;
+		}
+		return result;
+	}
+	unittest{
+		auto matrix1 = new Matrix2f(
+				[2.0, 0.0],
+				[1.0, 1.0]
+				);
+		auto vector1 = new armos.math.Vector2f(1.0, 0.0);
+		auto vector_answer = new armos.math.Vector2f(2.0, 1.0);
+		auto vector2 = matrix1 * vector1;
+		assert(vector2 == vector_answer);
+	}
+	
 }
 
 alias Matrix!(float, 2, 2) Matrix2f;
