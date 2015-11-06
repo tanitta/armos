@@ -6,7 +6,7 @@ armos is a free and open source library for creative coding in D programming lan
 
 #Description
 D is very powerfull and easily programming language. But, I couldn't find anything that is able to write easily such as [p5](https://processing.org/) and [oF](http://www.openframeworks.cc/). Thereupon, I began to create this project.
-I think that first mileStone is probably summoning [D-man](http://www.kmonos.net/alang/d/images/d3.gif) into display for the time being.
+I think that first mileStone will probably be summoning [D-man](http://www.kmonos.net/alang/d/images/d3.gif) into display for the time being.
 
 #Demo
 	import std.stdio;
