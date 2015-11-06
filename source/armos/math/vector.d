@@ -66,7 +66,7 @@ class Vector(T, int Dimention){
 	}
 
 	const Type opAdd(in Type r){
-		auto result = new Type;
+	auto result = new Type;
 		foreach (int index, T var; r.array) {
 			result[index] = this[index] + var;
 		}
@@ -156,7 +156,7 @@ class Vector(T, int Dimention){
 		assert(result.norm() == ( 3.0^^2.0+2.0^^2.0+1.0^^2.0 )^^0.5);
 	}
 
-	const T dot(const Type v){
+	const T dotProduct(const Type v){
 		T sum = cast(T)0;
 		for (int i = 0; i < Dimention; i++) {
 			sum += this[i]*v[i];
@@ -166,7 +166,24 @@ class Vector(T, int Dimention){
 	unittest{
 		auto vec1 = new Vector3d(3.0, 2.0, 1.0);
 		auto vec2 = new Vector3d(2.0, 1.0, 0.0);
-		assert(vec1.dot(vec2) == 8.0);
+		assert(vec1.dotProduct(vec2) == 8.0);
+	}
+	
+	const Type normalized(){
+		return this/this.norm();
+	}
+	unittest{
+		auto vec1 = new Vector3d(3.0, 2.0, 1.0);
+		assert(vec1.normalized().norm() == 1.0);
+	}
+	
+	void normalize(){
+		this.array = this.normalized().array;
+	}
+	unittest{
+		auto vec1 = new Vector3d(3.0, 2.0, 1.0);
+		vec1.normalize();
+		assert(vec1.norm() == 1.0);
 	}
 }
 
