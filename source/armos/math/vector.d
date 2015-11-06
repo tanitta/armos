@@ -1,13 +1,16 @@
 module armos.math.vector;
+import armos.math;
 import core.vararg;
 import std.math;
+
 class Vector(T, int Dimention){
-	alias Vector!(T, Dimention) Type;
+	alias Vector!(T, Dimention) VectorType;
 
 	T[Dimention] array;
 	this(T[] arr ...){
 		if(arr.length == 0){
-			foreach (var; array) {
+			foreach (ref var; array) {
+				var = cast(T)0;
 			}
 			return;
 		}
@@ -33,7 +36,7 @@ class Vector(T, int Dimention){
 	}
 
 	pure const bool opEquals(Object vec){
-		foreach (int index, T v; (cast(Type)vec).array) {
+		foreach (int index, T v; (cast(VectorType)vec).array) {
 			if(v != this.array[index]){
 				return false;
 			}
@@ -51,7 +54,7 @@ class Vector(T, int Dimention){
 		assert(vec1 != vec2);
 	}
 
-	Type opNeg(){
+	VectorType opNeg(){
 		auto result = this;
 		foreach (ref var; result.array) {
 			var = -var;
@@ -65,9 +68,9 @@ class Vector(T, int Dimention){
 		assert((-vec1)[0] == -1.5);
 	}
 
-	const Type opAdd(in Type r){
-	auto result = new Type;
-		foreach (int index, T var; r.array) {
+	const VectorType opAdd(in VectorType r){
+		auto result = new VectorType;
+		foreach (int index, const T var; r.array) {
 			result[index] = this[index] + var;
 		}
 		return result;
@@ -82,9 +85,9 @@ class Vector(T, int Dimention){
 		assert((vec1+vec2)[0] == 1.7);
 	}
 
-	const Type opSub(in Type r){
-		auto result = new Type;
-		foreach (int index, T var; r.array) {
+	const VectorType opSub(in VectorType r){
+		auto result = new VectorType;
+		foreach (int index, const T var; r.array) {
 			result[index] = this[index] - var;
 		}
 		return result;
@@ -94,9 +97,9 @@ class Vector(T, int Dimention){
 		assert(result == new Vector3d(2, 0, -2));
 	}
 
-	const Type opAdd(in T v){
-		auto result = new Type;
-		foreach (int index, T var; array) {
+	const VectorType opAdd(in T v){
+		auto result = new VectorType;
+		foreach (int index, const T var; array) {
 			result[index] = this[index]+v;
 		}
 		return result;
@@ -107,9 +110,9 @@ class Vector(T, int Dimention){
 		assert(2.0+result == new Vector3d(5.0, 4.0, 3.0));
 	}
 
-	const Type opSub(in T v){
-		auto result = new Type;
-		foreach (int index, T var; array) {
+	const VectorType opSub(in T v){
+		auto result = new VectorType;
+		foreach (int index, const T var; array) {
 			result[index] = this[index]-v;
 		}
 		return result;
@@ -119,9 +122,9 @@ class Vector(T, int Dimention){
 		assert(result-2.0 == new Vector3d(1.0, 0.0, -1.0));
 	}
 
-	const Type opMul(in T v){
-		auto result = new Type;
-		foreach (int index, T var; array) {
+	const VectorType opMul(in T v){
+		auto result = new VectorType;
+		foreach (int index, const T var; array) {
 			result[index] = this[index]*v;
 		}
 		return result;
@@ -132,9 +135,9 @@ class Vector(T, int Dimention){
 		assert(2.0*result == new Vector3d(6.0, 4.0, 2.0));
 	}
 
-	const Type opDiv(in T v){
-		auto result = new Type;
-		foreach (int index, T var; array) {
+	const VectorType opDiv(in T v){
+		auto result = new VectorType;
+		foreach (int index, const T var; array) {
 			result[index] = this[index]/v;
 		}
 		return result;
@@ -156,7 +159,7 @@ class Vector(T, int Dimention){
 		assert(result.norm() == ( 3.0^^2.0+2.0^^2.0+1.0^^2.0 )^^0.5);
 	}
 
-	const T dotProduct(const Type v){
+	const T dotProduct(const VectorType v){
 		T sum = cast(T)0;
 		for (int i = 0; i < Dimention; i++) {
 			sum += this[i]*v[i];
@@ -168,15 +171,15 @@ class Vector(T, int Dimention){
 		auto vec2 = new Vector3d(2.0, 1.0, 0.0);
 		assert(vec1.dotProduct(vec2) == 8.0);
 	}
-	
-	const Type normalized(){
+
+	const VectorType normalized(){
 		return this/this.norm();
 	}
 	unittest{
 		auto vec1 = new Vector3d(3.0, 2.0, 1.0);
 		assert(vec1.normalized().norm() == 1.0);
 	}
-	
+
 	void normalize(){
 		this.array = this.normalized().array;
 	}
@@ -185,6 +188,8 @@ class Vector(T, int Dimention){
 		vec1.normalize();
 		assert(vec1.norm() == 1.0);
 	}
+	
+	// opCast(armos.math.Matrix!())
 }
 
 alias Vector!(float, 2) Vector2f;

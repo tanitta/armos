@@ -3,7 +3,6 @@ import derelict.sdl2.sdl;
 import derelict.opengl3.gl3;
 import armos.events;
 import armos.app;
-import std.stdio;
 class BaseWindow{
 	private SDL_Window* window;
 	private string name;

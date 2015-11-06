@@ -192,11 +192,11 @@ class CoreEvents {
 }
 
 unittest{
-	import std.stdio;
 	import armos.app;
 	
 	auto core_events = new CoreEvents;
-
+	bool executedSetup = false;
+	int pressedKey = false;
 	class TestApp: armos.app.BaseApp {
 		//i want to write like c++. the following is verbose...
 		//should i use template mixin instead alias?
@@ -206,14 +206,14 @@ unittest{
 		alias armos.app.BaseApp.keyPressed keyPressed;
 		
 		void setup(){
-			writeln("setup");
+			executedSetup = true;
 		}
 		void update(){}
 		void draw(){}
 
 		void keyPressed(int key) {
 			char str_key = cast(char)key;
-			writeln("keyPressed : ", str_key);
+			pressedKey = key;
 		}
 		
 	}
@@ -223,4 +223,6 @@ unittest{
 	armos.events.addListener(core_events.keyPressed, app, &app.keyPressed);
 	core_events.notifySetup();
 	core_events.notifyKeyPressed('a');
+	assert(executedSetup);
+	assert(pressedKey == 'a');
 }

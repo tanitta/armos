@@ -3,7 +3,6 @@ import armos.app.basewindow;
 import armos.app.baseapp;
 import armos.utils;
 import armos.events;
-import std.stdio;
 class Loop {
 	private bool isLoop = true;
 	private armos.utils.FpsCounter fpscounter;

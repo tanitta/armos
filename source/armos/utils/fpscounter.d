@@ -40,23 +40,4 @@ class FpsCounter {
 	}
 
 }
-unittest{
-	import std.stdio;
-	auto fps = new FpsCounter(30);
-	MonoTime before = MonoTime.currTime;
-	
-	// Thread.sleep( dur!("hnsecs")(110000000) );
-	// for (int i = 0; i < 10; i++) {
-	// 	writeln(fps.getCurrentFps());
-	//	
-	// 	fps.adjust();
-	// 	fps.newFrame();
-	// 	writeln(i);
-	// }
-	
-	MonoTime after = MonoTime.currTime;
-	Duration timeElapsed = after - before;
-	writeln("time");
-	writeln(timeElapsed.fracSec.hnsecs );
-}
 

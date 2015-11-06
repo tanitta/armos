@@ -46,6 +46,5 @@ class FloatColor : BaseColor!(float){
 };
 
 unittest{
-	import std.stdio;
 	auto color = new Color;
 }
