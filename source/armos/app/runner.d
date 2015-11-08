@@ -42,6 +42,7 @@ class Loop {
 	void loopOnce(){
 		window.events().notifyUpdate();
 		window.events().notifyDraw();
+		window.update();
 		window.pollEvents();
 	}
 	
@@ -70,13 +71,6 @@ Loop* mainLoop(){
 	return &mainLoop_;
 }
 
-armos.graphics.Renderer* getCurrentRenderer(){
-	return &mainLoop.renderer;
-}
-
-armos.app.BaseGLWindow* getCurrentWindow(){
-	return &mainLoop.window;
-}
 
 
 

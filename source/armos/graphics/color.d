@@ -12,10 +12,10 @@ class BaseColor(PixelType) {
 	}
 	
 	this(float red, float green, float blue, float alpha = limit){
-		r = armos.math.clamp(cast(PixelType)red, PixelType.init, limit);
-		g = armos.math.clamp(cast(PixelType)green, PixelType.init, limit);
-		b = armos.math.clamp(cast(PixelType)blue, PixelType.init, limit);
-		a = armos.math.clamp(cast(PixelType)alpha, PixelType.init, limit);
+		r = armos.math.clamp(cast(PixelType)red, cast(PixelType)0, limit);
+		g = armos.math.clamp(cast(PixelType)green, cast(PixelType)0, limit);
+		b = armos.math.clamp(cast(PixelType)blue, cast(PixelType)0, limit);
+		a = armos.math.clamp(cast(PixelType)alpha, cast(PixelType)0, limit);
 	}
 	
 	BaseColor!(PixelType) opAdd(BaseColor!(PixelType) color){
@@ -39,6 +39,9 @@ class BaseColor(PixelType) {
 
 class Color : BaseColor!(char){
 	char limit = 255;
+	this(float red, float green, float blue, float alpha = limit){
+		super(red, green, blue, alpha);
+	}
 };
 
 class FloatColor : BaseColor!(float){

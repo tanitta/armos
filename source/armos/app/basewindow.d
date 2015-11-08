@@ -1,6 +1,6 @@
 module armos.app.basewindow;
 import derelict.sdl2.sdl;
-import derelict.opengl3.gl3;
+import derelict.opengl3.gl;
 import armos.events;
 import armos.app;
 class BaseWindow{
@@ -71,7 +71,7 @@ class BaseGLWindow : BaseWindow{
 	
 	this(ref armos.app.BaseApp apprication){
 		DerelictSDL2.load();
-		DerelictGL3.load();
+		DerelictGL.load();
 		SDL_Init(SDL_INIT_VIDEO);
 		window = SDL_CreateWindow(
 				cast(char*)name,
@@ -79,9 +79,11 @@ class BaseGLWindow : BaseWindow{
 				800, 600,
 				SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
 				);
+		
 		glcontext = SDL_GL_CreateContext(window);
 		glClearColor(32.0/255.0, 32.0/255.0, 32.0/255.0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
+		
 		SDL_GL_SwapWindow(window);
 		super(apprication);
 	}
@@ -89,4 +91,11 @@ class BaseGLWindow : BaseWindow{
 		SDL_GL_DeleteContext(glcontext); 
 		closeWindow();
 	}
+	void update(){
+		SDL_GL_SwapWindow(window);
+	}
+}
+
+armos.app.BaseGLWindow* getCurrentWindow(){
+	return &armos.app.mainLoop.window;
 }

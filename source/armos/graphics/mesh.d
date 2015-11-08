@@ -41,7 +41,9 @@ class Mesh{
 		assert(mesh.isFaceDirty);
 	}
 	
-	void draw(armos.graphics.PolyRenderMode mode){};
+	void draw(armos.graphics.PolyRenderMode renderMode){
+		armos.graphics.getCurrentRenderer.draw(this, renderMode);
+	};
 	
 	void drawWireFrame(){
 		draw(armos.graphics.PolyRenderMode.WireFrame);
