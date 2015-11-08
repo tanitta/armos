@@ -73,7 +73,7 @@ class Mesh{
 	}
 	
 	void draw(armos.graphics.PolyRenderMode renderMode){
-		armos.graphics.currentRenderer.draw(this, renderMode);
+		armos.graphics.currentRenderer.draw(this, renderMode, false, false, false);
 	};
 	
 	void drawWireFrame(){

@@ -84,6 +84,47 @@ class Renderer {
 	void setBackground(const armos.graphics.Color color){
 		glClearColor(cast(float)color.r/255.0, color.g/255., color.b/255., color.a/255. );
 	}
+	
+	
+	void draw(
+		in armos.graphics.Mesh mesh,
+		armos.graphics.PolyRenderMode renderMode,
+		bool useColors,
+		bool useTextures,
+		bool useNormals
+	){
+		
+		glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
+		//add vertices to GL
+		if(mesh.numVertices){
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glVertexPointer(3, GL_FLOAT, 0, mesh.vertices.ptr);
+		}
+		
+		//add normals to GL
+		
+		//add colors to GL
+		
+		//add texChoords to GL
+		
+		//add indicees to GL
+		
+		
+		if(mesh.numIndices()){
+			glDrawElements(
+				armos.graphics.getGLPrimitiveMode(mesh.primitiveMode),
+				cast(int)mesh.numIndices(),
+				GL_UNSIGNED_INT,
+				mesh.indices.ptr
+			);
+		}
+		
+		glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
+		
+		if(mesh.numVertices){
+			glDisableClientState(GL_VERTEX_ARRAY);
+		}
+	}
 }
 
 armos.graphics.Renderer* currentRenderer(){
@@ -98,4 +139,5 @@ void setBackground(const armos.graphics.Color color){
 	currentRenderer.setBackground(color);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
+
 
