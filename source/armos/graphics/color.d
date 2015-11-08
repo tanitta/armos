@@ -42,6 +42,9 @@ class Color : BaseColor!(char){
 	this(float red, float green, float blue, float alpha = limit){
 		super(red, green, blue, alpha);
 	}
+	this(){
+		super();
+	}
 };
 
 class FloatColor : BaseColor!(float){

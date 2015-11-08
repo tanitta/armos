@@ -2,6 +2,7 @@ module armos.graphics.renderer;
 import armos.app;
 import armos.graphics;
 import derelict.opengl3.gl;
+
 enum PolyRenderMode {
 	Points,
 	WireFrame,

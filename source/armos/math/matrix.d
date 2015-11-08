@@ -235,6 +235,38 @@ class Matrix(T, int RowSize, int ColSize){
 		assert(vector2 == vector_answer);
 	}
 	
+	void setColumnVector(in int column, in VectorType vec){
+		foreach (int i , ref VectorType v; array) {
+			v[column] = vec[i];
+		}
+	}
+	unittest{
+		auto matrix = new Matrix2f;
+		auto vec0 = new armos.math.Vector2f(1, 2);
+		auto vec1 = new armos.math.Vector2f(3, 4);
+		matrix.setColumnVector(0, vec0);
+		matrix.setColumnVector(1, vec1);
+		assert(matrix == new Matrix2f(
+					[1, 3], 
+					[2, 4]
+					));
+		
+	}
+	
+	void setRowVector(in int row, in VectorType vec){
+		this[row] = cast(VectorType)vec;
+	}
+	unittest{
+		auto matrix = new Matrix2f;
+		auto vec0 = new armos.math.Vector2f(1, 2);
+		auto vec1 = new armos.math.Vector2f(3, 4);
+		matrix.setRowVector(0, vec0);
+		matrix.setRowVector(1, vec1);
+		assert(matrix == new Matrix2f(
+					[1, 2], 
+					[3, 4]
+					));
+	}
 }
 
 alias Matrix!(float, 2, 2) Matrix2f;
