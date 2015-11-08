@@ -2,17 +2,48 @@ module armos.graphics.mesh;
 import armos.graphics;
 import armos.math;
 
+struct Vertex{
+	float x, y, z;
+}
 class Mesh{
 	alias int IndexType;
+	
+	private armos.graphics.PrimitiveMode primitiveMode_;
 	bool isVertsChanged = false;
 	bool isFaceDirty= false;
 	bool isIndicesChanged = false;
 	
-	armos.math.Vector3f[] vertices;
+	// armos.math.Vector3f[] vertices;
+	Vertex[] vertices;
 	IndexType[] indices;
 
+	
+	const ulong numVertices(){
+		return vertices.length;
+	}
+	
+	const ulong numIndices(){
+		return indices.length;
+	}
+	
+	@property{
+		const armos.graphics.PrimitiveMode primitiveMode(){
+			return primitiveMode_;
+		}
+		void primitiveMode(armos.graphics.PrimitiveMode mode){
+			primitiveMode_ = mode;
+		}
+	}
+	
+
+	
 	void addVertex(const armos.math.Vector3f vec){
-		vertices ~= [cast(armos.math.Vector3f)vec];
+		// vertices ~= [cast(armos.math.Vector3f)vec];
+		auto vertex = new Vertex;
+		vertex.x = vec[0];
+		vertex.y = vec[1];
+		vertex.z = vec[2];
+		vertices ~= *vertex;
 		isVertsChanged = true;
 		isFaceDirty = true;
 	};
@@ -42,7 +73,7 @@ class Mesh{
 	}
 	
 	void draw(armos.graphics.PolyRenderMode renderMode){
-		armos.graphics.getCurrentRenderer.draw(this, renderMode);
+		armos.graphics.currentRenderer.draw(this, renderMode);
 	};
 	
 	void drawWireFrame(){
