@@ -267,6 +267,40 @@ class Matrix(T, int RowSize, int ColSize){
 					[3, 4]
 					));
 	}
+	
+	const T determinant(){
+		T sum = cast(T)0;
+		for (int i = 0; i < RowSize; i++) {
+			T vp = cast(T)1;
+			T v = cast(T)1;
+			for (int j = 0; j < RowSize; j++) {
+				if (i+j>=RowSize) {
+					v *= this[i+j-RowSize][j];
+				}else{
+					v *= this[i+j][j];
+				}
+			}
+			sum +=v;
+			v = cast(T)1;
+			for (int j = 0; j < RowSize; j++) {
+				if (i-j<0) {
+					v *= this[i-j+RowSize][j];
+				}else{
+					v *= this[i-j][j];
+				}
+			}
+			sum -=v;
+		}
+		return sum;
+	}
+	unittest{
+		auto matrix = new Matrix3f(
+				[1, 2, 0], 
+				[3, 2, 2], 
+				[1, 4, 3]
+				);
+		assert(matrix.determinant == 6+4+0 - (8+18+0) );
+	}
 }
 
 alias Matrix!(float, 2, 2) Matrix2f;
