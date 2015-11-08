@@ -172,6 +172,33 @@ class Vector(T, int Dimention){
 		assert(vec1.dotProduct(vec2) == 8.0);
 	}
 
+	static if (Dimention >= 3)
+	const VectorType vectorProduct(VectorType[] arg ...){
+		if(arg.length != Dimention-2){
+			assert(0);
+		}
+		auto return_vector = new VectorType;
+		foreach (int i, ref T v; return_vector.array) {
+			auto matrix = new armos.math.Matrix!(T, Dimention, Dimention);
+			auto element_vector = new VectorType;
+			element_vector[i] = cast(T)1;
+			matrix.setRowVector(0, element_vector);
+			matrix.setRowVector(1, this);
+			for (int j = 2; j < Dimention; j++) {
+				matrix.setRowVector(j, arg[j-2]);
+			}
+			// matrix.setColumnVector(i+1, this);
+			v = matrix.determinant;
+		}
+		return return_vector;
+	}
+	unittest{
+		auto vector0 = new Vector3f(1, 2, 3);
+		auto vector1 = new Vector3f(4, 5, 6);
+		auto anser = new Vector3f(-3, 6, -3);
+		assert(vector0.vectorProduct(vector1) == anser);
+	}
+
 	const VectorType normalized(){
 		return this/this.norm();
 	}
