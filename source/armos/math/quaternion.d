@@ -54,6 +54,14 @@ class Quaternion(T){
 		return return_quaternion;
 	}
 	
+	const ThisType opNeg(){
+		return new ThisType(-this[0], -this[1], -this[2], -this[3]);
+	}
+		
+	const ThisType opAdd(in ThisType q){
+		return cast(ThisType)vec + q;
+	}
+	
 	const ThisType opMul(in T r){
 		return cast(ThisType)vec*r;
 	}
@@ -83,6 +91,30 @@ class Quaternion(T){
 			auto return_vector = new armos.math.Vector!(T, 3)(return_quat[0], return_quat[1], return_quat[2]);
 			return return_vector;
 		}
+	}
+	
+	void slerp( float t, in ThisType from, in ThisType to){
+		double omega, cos_omega, sin_omega, scale_from, scale_to;
+		
+		ThisType quatTo = cast(ThisType)to;
+		cos_omega = from.vec.dotProduct(to.vec);
+		
+		if (cos_omega < cast(T)0.0) {
+			cos_omega = -cos_omega;
+			quatTo = -to;
+		}
+		
+		if( (cast(T)1.0 - cos_omega) > T.epsilon ){
+			omega = acos(cos_omega);
+			sin_omega = sin(omega);
+			scale_from = sin(( cast(T)1.0 - t ) * omega) / sin_omega;
+			scale_to = sin(t * omega) / sin_omega;
+		}else{
+			scale_from = cast(T)1.0 - t;
+			scale_to = t;
+		}
+		
+		this = ( from * scale_from ) + ( quatTo * scale_to  );
 	}
 }
 
