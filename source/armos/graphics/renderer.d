@@ -69,14 +69,20 @@ GLuint getGLPolyRenderMode(PolyRenderMode mode){
 
 
 class Renderer {
+	armos.graphics.Style[] styleStack;
 	auto currentStyle_ = new armos.graphics.Style;
+	
+	armos.math.Matrix4f[] matrixStack;
+	auto currentMatrix_= new armos.math.Matrix4f;
+	
 	this(){}
-	void draw(ref armos.graphics.Mesh mesh, armos.graphics.PolyRenderMode renderMode){
+	
+	// void draw(ref armos.graphics.Mesh mesh, armos.graphics.PolyRenderMode renderMode){
 		// if(mesh.vertices != 0){
 			// glEnableClientState(GL_VERTEX_ARRAY);
 			// glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
 		// }
-	};
+	// };
 	
 	armos.graphics.Style* currentStyle(){
 		return &currentStyle_;
@@ -86,6 +92,37 @@ class Renderer {
 		glClearColor(cast(float)color.r/255.0, color.g/255., color.b/255., color.a/255. );
 	}
 	
+	void pushMatrix(){
+		glPushMatrix();
+	};
+	
+	void popMatrix(){
+		glPopMatrix();
+	};
+	
+	void translate(float x, float y, float z){
+		glTranslatef(x, y, z);
+	}
+
+	void translate(armos.math.Vector3f vec){
+		glTranslatef(vec[0], vec[1], vec[2]);
+	};
+	
+	void scale(float x, float y, float z){
+		glScalef(x, y, z);
+	}
+	
+	void scale(armos.math.Vector3f vec){
+		glScalef(vec[0], vec[1], vec[2]);
+	}
+	
+	void rotate(float degrees, float vecX, float vecY, float vecZ){
+		glRotatef(degrees, vecX, vecY, vecZ);
+	}
+	
+	// void rotate(armos.math.Quaternionf q){
+	// 	glRotatef(q[3], q[0], q[1], q[2]);
+	// }
 	
 	void draw(
 		in armos.graphics.Mesh mesh,
@@ -141,4 +178,31 @@ void setBackground(const armos.graphics.Color color){
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void popMatrix(){
+	currentRenderer.popMatrix();
+}
 
+void pushMatrix(){
+	currentRenderer.pushMatrix();
+}
+
+
+void translate(float x, float y, float z){
+	currentRenderer.translate(x, y, z);
+}
+
+void translate(armos.math.Vector3f vec){
+	currentRenderer.translate(vec);
+}
+
+void scale(float x, float y, float z){
+	currentRenderer.scale(x, y, z);
+}
+
+void scale(armos.math.Vector3f vec){
+	currentRenderer.scale(vec);
+}
+
+void rotate(float degrees, float vec_x, float vec_y, float vec_z){
+	currentRenderer.rotate(degrees, vec_x, vec_y, vec_z);
+}

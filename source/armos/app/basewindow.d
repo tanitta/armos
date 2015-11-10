@@ -2,12 +2,16 @@ module armos.app.basewindow;
 import derelict.sdl2.sdl;
 import derelict.opengl3.gl;
 import armos.events;
+import armos.math;
 import armos.app;
 class BaseWindow{
 	private SDL_Window* window;
 	private string name;
 	private armos.app.baseapp.BaseApp* app;
 	private armos.events.CoreEvents core_events;
+	protected armos.math.Vector2f windowSize_;
+	protected armos.math.Vector2f screenSize_;
+	
 	bool shouldClose = false;
 	this(ref armos.app.baseapp.BaseApp app){
 		this.app = &app;
@@ -19,6 +23,7 @@ class BaseWindow{
 		armos.events.addListener(core_events.draw, app, &app.draw);
 		armos.events.addListener(core_events.keyPressed, app, &app.keyPressed);
 	}
+	
 	armos.events.CoreEvents* events(){
 		assert(core_events);
 		return &core_events;
@@ -57,6 +62,14 @@ class BaseWindow{
 			}
 		}
 	}
+	
+	armos.math.Vector2f windowSize(){
+		return windowSize_;
+	};
+	
+	armos.math.Vector2f screenSize(){
+		return screenSize_;
+	}
 }
 
 class WindowSettings{
@@ -94,8 +107,25 @@ class BaseGLWindow : BaseWindow{
 	void update(){
 		SDL_GL_SwapWindow(window);
 	}
+	
+	armos.math.Vector2f windowSize(){
+		int w, h;
+		SDL_GetWindowSize(window, &w, &h);
+		windowSize_ = new armos.math.Vector2f(w, h);
+		return windowSize_;
+	}
 }
 
-armos.app.BaseGLWindow* getCurrentWindow(){
+armos.app.BaseGLWindow* currentWindow(){
 	return &armos.app.mainLoop.window;
 }
+
+
+armos.math.Vector2f windowSize(){
+	return currentWindow.windowSize;
+}
+
+// armos.math.Vector2f screenSize(){
+// 	return currentWindow.screenSize;
+// }
+
