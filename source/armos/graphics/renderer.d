@@ -89,7 +89,14 @@ class Renderer {
 	};
 	
 	void setBackground(const armos.graphics.Color color){
-		glClearColor(cast(float)color.r/255.0, color.g/255., color.b/255., color.a/255. );
+		currentStyle.backgroundColor = cast(armos.graphics.Color)color;
+		glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+	
+	void setColor(const armos.graphics.Color color){
+		currentStyle.color = cast(armos.graphics.Color)color; 
+		glColor4f(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
 	}
 	
 	void pushMatrix(){
@@ -175,7 +182,17 @@ armos.graphics.Style* currentStyle(){
 
 void setBackground(const armos.graphics.Color color){
 	currentRenderer.setBackground(color);
-	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void setBackground(const float l){
+	currentRenderer.setBackground(new armos.graphics.Color(l, l, l, 255));
+}
+
+void setColor(const armos.graphics.Color color){
+	currentRenderer.setColor(color);
+}
+void setColor(const float l){
+	currentRenderer.setColor(new armos.graphics.Color(l, l, l, 255));
 }
 
 void popMatrix(){
