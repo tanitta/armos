@@ -72,10 +72,17 @@ class Renderer {
 	armos.graphics.Style[] styleStack;
 	auto currentStyle_ = new armos.graphics.Style;
 	
-	armos.math.Matrix4f[] matrixStack;
-	auto currentMatrix_= new armos.math.Matrix4f;
+	// armos.math.Matrix4f[] matrixStack;
 	
-	this(){}
+	// auto currentMatrix_= new armos.math.Matrix4f;
+	
+	armos.graphics.MatrixStack matrixStack;
+	
+	bool isBackgroundAuto = true;
+	
+	this(){
+		matrixStack = new armos.graphics.MatrixStack(cast(armos.app.BaseGLWindow*)armos.app.currentWindow);
+	}
 	
 	// void draw(ref armos.graphics.Mesh mesh, armos.graphics.PolyRenderMode renderMode){
 		// if(mesh.vertices != 0){
@@ -84,18 +91,22 @@ class Renderer {
 		// }
 	// };
 	
+	// void viewport(float x, float y, float width, float height, bool vflip){
+	// 	glViewport(nativeViewport.x,nativeViewport.y,nativeViewport.width,nativeViewport.height);
+	// };
+	
 	armos.graphics.Style* currentStyle(){
 		return &currentStyle_;
 	};
 	
-	void setBackground(const armos.graphics.Color color){
-		currentStyle.backgroundColor = cast(armos.graphics.Color)color;
+	void setBackground(const armos.types.Color color){
+		currentStyle.backgroundColor = cast(armos.types.Color)color;
 		glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 	
-	void setColor(const armos.graphics.Color color){
-		currentStyle.color = cast(armos.graphics.Color)color; 
+	void setColor(const armos.types.Color color){
+		currentStyle.color = cast(armos.types.Color)color; 
 		glColor4f(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
 	}
 	
@@ -127,9 +138,33 @@ class Renderer {
 		glRotatef(degrees, vecX, vecY, vecZ);
 	}
 	
+	void setLineWidth(float width){
+		currentStyle.lineWidth = width;
+		glLineWidth(width);
+	}
+	
+	void setLineSmoothing(bool smooth){
+		currentStyle.isSmoothing = smooth;
+	}
+	
+
 	// void rotate(armos.math.Quaternionf q){
 	// 	glRotatef(q[3], q[0], q[1], q[2]);
 	// }
+	void setup(){
+		// viewport();
+		// setupScreenPerspective();
+	};
+	
+	void viewport(float x, float y, float width, float height, bool vflip){
+		matrixStack.viewport(x, y, width, height, vflip);
+		auto nativeViewport = matrixStack.getNativeViewport();
+		glViewport(cast(int)nativeViewport.x,cast(int)nativeViewport.y,cast(int)nativeViewport.width,cast(int)nativeViewport.height);
+	}
+	
+	void setupScreenPerspective(){
+		
+	}
 	
 	void draw(
 		in armos.graphics.Mesh mesh,
@@ -180,20 +215,22 @@ armos.graphics.Style* currentStyle(){
 	return armos.graphics.currentRenderer.currentStyle;
 }
 
-void setBackground(const armos.graphics.Color color){
+void setBackground(const armos.types.Color color){
 	currentRenderer.setBackground(color);
 }
 
-void setBackground(const float l){
-	currentRenderer.setBackground(new armos.graphics.Color(l, l, l, 255));
+void setBackground(const float gray){
+	currentRenderer.setBackground(new armos.types.Color(gray, gray, gray, 255));
 }
 
-void setColor(const armos.graphics.Color color){
+void setColor(const armos.types.Color color){
 	currentRenderer.setColor(color);
 }
-void setColor(const float l){
-	currentRenderer.setColor(new armos.graphics.Color(l, l, l, 255));
+
+void setColor(const float gray){
+	currentRenderer.setColor(new armos.types.Color(gray, gray, gray, 255));
 }
+
 
 void popMatrix(){
 	currentRenderer.popMatrix();
@@ -202,7 +239,6 @@ void popMatrix(){
 void pushMatrix(){
 	currentRenderer.pushMatrix();
 }
-
 
 void translate(float x, float y, float z){
 	currentRenderer.translate(x, y, z);

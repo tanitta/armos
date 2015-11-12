@@ -6,7 +6,7 @@ import std.math;
 class Vector(T, int Dimention){
 	alias Vector!(T, Dimention) VectorType;
 
-	T[Dimention] array;
+	T[Dimention] array = cast(T)0;
 	this(T[] arr ...){
 		if(arr.length == 0){
 			foreach (ref var; array) {
