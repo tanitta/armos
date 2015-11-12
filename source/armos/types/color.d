@@ -1,4 +1,4 @@
-module armos.graphics.color;
+module armos.types.color;
 import armos.math;
 
 class BaseColor(PixelType) {
