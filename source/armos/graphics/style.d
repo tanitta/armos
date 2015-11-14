@@ -12,7 +12,7 @@ class Style {
 	// lineWidth;
 	
 	this(){
-		color = new armos.types.Color(255, 255, 255, 255);
-		backgroundColor = new armos.types.Color(30, 30, 30, 255);
+		color = armos.types.Color(255, 255, 255, 255);
+		backgroundColor = armos.types.Color(30, 30, 30, 255);
 	}
 }

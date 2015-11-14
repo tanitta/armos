@@ -1,15 +1,18 @@
 module armos.types.color;
 import armos.math;
 
-class BaseColor(PixelType) {
-	PixelType r, g, b, a;
-	PixelType limit = 255;
-	this(){
-		r = PixelType.max;
-		g = PixelType.max;
-		b = PixelType.max;
-		a = PixelType.max;
-	}
+mixin template BaseColor(ColorType, PixelType) {
+	static const PixelType limit = 255;
+	PixelType r=limit;
+	PixelType g=limit;
+	PixelType b=limit; 
+	PixelType a=limit;
+	// this(){
+	// 	r = PixelType.max;
+	// 	g = PixelType.max;
+	// 	b = PixelType.max;
+	// 	a = PixelType.max;
+	// }
 	
 	this(float red, float green, float blue, float alpha = limit){
 		r = armos.math.clamp(cast(PixelType)red, cast(PixelType)0, limit);
@@ -18,8 +21,8 @@ class BaseColor(PixelType) {
 		a = armos.math.clamp(cast(PixelType)alpha, cast(PixelType)0, limit);
 	}
 	
-	BaseColor!(PixelType) opAdd(BaseColor!(PixelType) color){
-		BaseColor!(PixelType) result = new BaseColor!(PixelType);
+	ColorType opAdd(ColorType color){
+		ColorType result = ColorType();
 		result.r = cast(PixelType)( this.r * this.a + color.r * color.a );
 		result.g = cast(PixelType)( this.g * this.a + color.g * color.a );
 		result.b = cast(PixelType)( this.b * this.a + color.b * color.a );
@@ -27,8 +30,8 @@ class BaseColor(PixelType) {
 		return result;
 	}
 	
-	BaseColor!(PixelType) opSub(BaseColor!(PixelType) color){
-		BaseColor!(PixelType) result = new BaseColor!(PixelType);
+	ColorType opSub(ColorType color){
+		ColorType result = ColorType();
 		result.r = cast(PixelType)( this.r * this.a - color.r * color.a );
 		result.g = cast(PixelType)( this.g * this.a - color.g * color.a );
 		result.b = cast(PixelType)( this.b * this.a - color.b * color.a );
@@ -37,20 +40,19 @@ class BaseColor(PixelType) {
 	}
 }
 
-class Color : BaseColor!(char){
-	char limit = 255;
-	this(float red, float green, float blue, float alpha = limit){
-		super(red, green, blue, alpha);
-	}
-	this(){
-		super();
-	}
+struct Color{
+	mixin BaseColor!(Color, char);
+	static const char limit = 255;
+	// this(float red, float green, float blue, float alpha = limit){
+		// this(red, green, blue, alpha);
+	// }
 };
 
-class FloatColor : BaseColor!(float){
-	float limit = 1.0;
+struct FloatColor{
+	mixin BaseColor!(FloatColor, float);
+	static const float limit = 1.0;
 };
 
 unittest{
-	auto color = new Color;
+	auto color = Color();
 }

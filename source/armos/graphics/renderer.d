@@ -355,7 +355,7 @@ void setBackground(const armos.types.Color color){
 }
 
 void setBackground(const float gray){
-	currentRenderer.setBackground(new armos.types.Color(gray, gray, gray, 255));
+	currentRenderer.setBackground(armos.types.Color(gray, gray, gray, 255));
 }
 
 void setColor(const armos.types.Color color){
@@ -363,7 +363,7 @@ void setColor(const armos.types.Color color){
 }
 
 void setColor(const float gray){
-	currentRenderer.setColor(new armos.types.Color(gray, gray, gray, 255));
+	currentRenderer.setColor(armos.types.Color(gray, gray, gray, 255));
 }
 
 
