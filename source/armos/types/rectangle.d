@@ -1,13 +1,13 @@
 module armos.types.rectangle;
 import armos.math;
-class Rectangle {
+struct Rectangle {
 	armos.math.Vector2f position;
 	armos.math.Vector2f size;
 	
-	this(){
-		// auto position = new armos.math.Vector2f;
-		// auto size = new armos.math.Vector2f;
-	};
+	// this(){
+	// 	// auto position = new armos.math.Vector2f;
+	// 	// auto size = new armos.math.Vector2f;
+	// };
 	
 	this(armos.math.Vector2f p, armos.math.Vector2f s){
 		position = p;

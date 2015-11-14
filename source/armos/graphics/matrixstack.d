@@ -11,7 +11,7 @@ class MatrixStack {
 	armos.math.Matrix4f[] projectionMatrixStack;
 	armos.math.Matrix4f[] textureMatrixStack;
 	
-	armos.types.Rectangle currentViewport_ = new armos.types.Rectangle;
+	armos.types.Rectangle currentViewport_ = armos.types.Rectangle();
 	armos.math.Matrix4f currentViewportMatrix_ = armos.math.Matrix4f();
 	armos.math.Matrix4f currentModelViewMatrix_ = armos.math.Matrix4f();
 	armos.math.Matrix4f currentProjectionMatrix_ = armos.math.Matrix4f();
