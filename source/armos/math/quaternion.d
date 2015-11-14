@@ -1,9 +1,9 @@
 module armos.math.quaternion;
 import armos.math;
 import std.math;
-class Quaternion(T){
+struct Quaternion(T){
 	alias Quaternion!(T) ThisType;
-	armos.math.Vector!(T, 4) vec;
+	armos.math.Vector!(T, 4) vec = armos.math.Vector!(T, 4)();
 	
 	this(T x, T y, T z, T w){
 		vec = armos.math.Vector!(T, 4)();
@@ -11,9 +11,6 @@ class Quaternion(T){
 		this[1] = y;
 		this[2] = z;
 		this[3] = w;
-	}
-	this(){
-		vec = armos.math.Vector!(T, 4)();
 	}
 	
 	this(armos.math.Vector!(T, 3) axis, T angle){
@@ -46,7 +43,7 @@ class Quaternion(T){
 		T s_r = r_quat[3];
 		
 		auto return_vec = s_l*v_r + s_r*v_r + v_l.vectorProduct(v_r) ;
-		auto return_quaternion = new ThisType;
+		auto return_quaternion = ThisType();
 		return_quaternion[0] = return_vec[0];
 		return_quaternion[1] = return_vec[1];
 		return_quaternion[2] = return_vec[2];
@@ -55,23 +52,23 @@ class Quaternion(T){
 	}
 	
 	const ThisType opNeg(){
-		return new ThisType(-this[0], -this[1], -this[2], -this[3]);
+		return ThisType(-this[0], -this[1], -this[2], -this[3]);
 	}
 		
 	const ThisType opAdd(in ThisType q){
-		auto return_quat = new ThisType();
+		auto return_quat = ThisType();
 		return_quat.vec = vec + q.vec;
 		return return_quat;
 	}
 	
 	const ThisType opMul(in T r){
-		auto return_quat = new ThisType();
+		auto return_quat = ThisType();
 		return_quat.vec = vec * r;
 		return return_quat;
 	}
 	
 	const ThisType opDiv(in T r){
-		auto return_quat = new ThisType();
+		auto return_quat = ThisType();
 		return_quat.vec = vec / r;
 		return return_quat;
 	}
@@ -81,7 +78,7 @@ class Quaternion(T){
 	}
 	
 	const ThisType conjugate(){
-		return new ThisType(-this[0], -this[1], -this[2], this[3]);
+		return ThisType(-this[0], -this[1], -this[2], this[3]);
 	}
 	
 	const ThisType inverse(){
@@ -92,7 +89,7 @@ class Quaternion(T){
 		if( norm^^2.0 < T.epsilon){
 			return vec;
 		}else{
-			auto temp_quat = new ThisType(vec[0], vec[1], vec[2], 0);
+			auto temp_quat = ThisType(vec[0], vec[1], vec[2], 0);
 			auto return_quat= this*temp_quat*this.inverse;
 			auto return_vector = armos.math.Vector!(T, 3)(return_quat[0], return_quat[1], return_quat[2]);
 			return return_vector;
