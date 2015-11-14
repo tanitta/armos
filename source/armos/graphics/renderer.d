@@ -103,7 +103,7 @@ armos.math.Matrix4f frustumMatrix(double left, double right, double bottom, doub
     double C = -(zFar+zNear)/(zFar-zNear);
     double D = -2.0*zFar*zNear/(zFar-zNear);
 	
-	return new armos.math.Matrix4f(
+	return armos.math.Matrix4f(
 		[2.0*zNear/(right-left), 0.0,                    0.0, 0.0  ],
 		[0.0,                    2.0*zNear/(top-bottom), 0.0, 0.0  ],
 		[A,                      B,                      C,   -1.0 ],
@@ -116,7 +116,7 @@ armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.V
 	armos.math.Vector3f xaxis = up.vectorProduct(zaxis).normalized;
 	armos.math.Vector3f yaxis = zaxis.vectorProduct(xaxis);
 	
-	return new armos.math.Matrix4f(
+	return armos.math.Matrix4f(
 			[xaxis[0], yaxis[0], zaxis[0], 0],
 			[xaxis[1], yaxis[1], zaxis[1], 0],
 			[xaxis[2], yaxis[2], zaxis[2], 0],

@@ -1,12 +1,12 @@
 module armos.math.matrix;
 import armos.math;
 
-class Matrix(T, int RowSize, int ColSize){
+struct Matrix(T, int RowSize, int ColSize){
 	alias Matrix!(T, RowSize, ColSize) MatrixType;
 	alias armos.math.Vector!(T, ColSize) VectorType;
 	
-	const int rowSize = RowSize;
-	const int colSize = ColSize;
+	static const int rowSize = RowSize;
+	static const int colSize = ColSize;
 
 	VectorType[RowSize] array;
 
@@ -30,11 +30,11 @@ class Matrix(T, int RowSize, int ColSize){
 		return cast(VectorType)array[index];
 	}
 	unittest{
-		auto matrix = new Matrix2d;
+		auto matrix = Matrix2d();
 		assert(matrix[0][0] == 0);
 	}
 	unittest{
-		auto matrix = new Matrix2d(
+		auto matrix = Matrix2d(
 				[1.0, 0.0],
 				[0.0, 1.0]
 				);
@@ -45,39 +45,39 @@ class Matrix(T, int RowSize, int ColSize){
 		return cast(VectorType)array[index];
 	}
 	unittest{
-		auto matrix = new Matrix2d;
+		auto matrix = Matrix2d();
 		matrix[1][0] = 1.0;
 		assert(matrix[1][0] == 1.0);
 	}
 
-	const bool opEquals(Object mat){
-		// if(this.rowSize != (cast(MatrixType)mat_tmp).rowSize){return false;}
-		// if(this.colSize != (cast(MatrixType)mat_tmp).colSize){return false;}
-		foreach (int index, VectorType vec; (cast(MatrixType)mat).array) {
-			if(vec != this.array[index]){
-				return false;
-			}
-		}
-		return true;
-	}
+	// const bool opEquals(Object mat){
+	// 	// if(this.rowSize != (cast(MatrixType)mat_tmp).rowSize){return false;}
+	// 	// if(this.colSize != (cast(MatrixType)mat_tmp).colSize){return false;}
+	// 	foreach (int index, VectorType vec; (cast(MatrixType)mat).array) {
+	// 		if(vec != this.array[index]){
+	// 			return false;
+	// 		}
+	// 	}
+	// 	return true;
+	// }
 	unittest{
-		auto matrix1 = new Matrix2d(
+		auto matrix1 = Matrix2d(
 				[2.0, 1.0],
 				[1.0, 2.0]
 				);
 		
-		auto matrix2 = new Matrix2d(
+		auto matrix2 = Matrix2d(
 				[2.0, 1.0],
 				[1.0, 2.0]
 				);
 		assert(matrix1 == matrix2);
 	}
 	unittest{
-		auto matrix1 = new Matrix2d;
+		auto matrix1 = Matrix2d();
 		matrix1[1][0] = 1.0;
-		auto matrix2 = new Matrix2d;
+		auto matrix2 = Matrix2d();
 		matrix2[1][0] = 1.0;
-		auto matrix3 = new Matrix2d;
+		auto matrix3 = Matrix2d();
 		matrix3[1][0] = 2.0;
 		assert(matrix1 == matrix2);
 		assert(matrix1 != matrix3);
@@ -103,22 +103,22 @@ class Matrix(T, int RowSize, int ColSize){
 		return result;
 	}
 	unittest{
-		auto matrix = new Matrix2d;
+		auto matrix = Matrix2d();
 		matrix[0][0] = 1.0;
 		assert((-matrix)[0][0] == -1.0);
 	}		
 
 	const MatrixType opAdd(in MatrixType r){
-		auto result = new MatrixType;
+		auto result = MatrixType();
 		foreach (int index, const VectorType var; r.array) {
 			result[index] = this[index] + var;
 		}
 		return result;
 	}
 	unittest{
-		auto matrix1 = new Matrix2d;
+		auto matrix1 = Matrix2d();
 		matrix1[0][0] = 1.0;
-		auto matrix2 = new Matrix2d;
+		auto matrix2 = Matrix2d();
 		matrix2[0][0] = 2.0;
 		matrix2[0][1] = 1.0;
 		auto matrix3 = matrix1 + matrix2;
@@ -127,16 +127,16 @@ class Matrix(T, int RowSize, int ColSize){
 	}		
 
 	const MatrixType opSub(in MatrixType r){
-		auto result = new MatrixType;
+		auto result = MatrixType();
 		foreach (int index, const VectorType var; r.array) {
 			result[index] = this[index] - var;
 		}
 		return result;
 	}
 	unittest{
-		auto matrix1 = new Matrix2d;
+		auto matrix1 = Matrix2d();
 		matrix1[0][0] = 1.0;
-		auto matrix2 = new Matrix2d;
+		auto matrix2 = Matrix2d();
 		matrix2[0][0] = 2.0;
 		matrix2[0][1] = 1.0;
 		auto matrix3 = matrix1 - matrix2;
@@ -146,14 +146,14 @@ class Matrix(T, int RowSize, int ColSize){
 
 
 	const MatrixType opAdd(in T v){
-		auto result = new MatrixType;
+		auto result = MatrixType();
 		foreach (int index, const VectorType var; array) {
 			result[index] = this[index]+v;
 		}
 		return result;
 	}
 	unittest{
-		auto matrix1 = new Matrix2d();
+		auto matrix1 = Matrix2d();
 		auto matrix2 = matrix1 + 5.0;
 		auto matrix3 = 3.0 + matrix1;
 		assert(matrix2[1][0] == 5.0);
@@ -161,20 +161,20 @@ class Matrix(T, int RowSize, int ColSize){
 	}
 
 	const MatrixType opSub(in T v){
-		auto result = new MatrixType;
+		auto result = MatrixType();
 		foreach (int index, const VectorType var; array) {
 			result[index] = this[index]-v;
 		}
 		return result;
 	}
 	unittest{
-		auto matrix1 = new Matrix2d();
+		auto matrix1 = Matrix2d();
 		auto matrix2 = matrix1 - 3.0;
 		assert(matrix2[1][0] == -3.0);
 	}
 	
 	const MatrixType opMul(in MatrixType mat_r){
-		auto result = new MatrixType;
+		auto result = MatrixType();
 		for (int targetRow = 0; targetRow < array.length; targetRow++) {
 			for (int targetCol = 0; targetCol < array[0].array.length; targetCol++) {
 				T sum = cast(T)0;
@@ -188,19 +188,19 @@ class Matrix(T, int RowSize, int ColSize){
 		return result;
 	}
 	unittest{
-		auto matrix1 = new Matrix2f(
+		auto matrix1 = Matrix2f(
 				[2.0, 0.0],
 				[1.0, 1.0]
 				);
 		
-		auto matrix2 = new Matrix2f(
+		auto matrix2 = Matrix2f(
 				[1.0, 1.0],
 				[0.0, 1.0]
 				);
 		
 		auto matrix3 = matrix1 * matrix2;
 		
-		auto matrix_answer = new Matrix2f(
+		auto matrix_answer = Matrix2f(
 				[2.0, 2.0],
 				[1.0, 2.0]
 				);
@@ -225,7 +225,7 @@ class Matrix(T, int RowSize, int ColSize){
 		return result;
 	}
 	unittest{
-		auto matrix1 = new Matrix2f(
+		auto matrix1 = Matrix2f(
 				[2.0, 0.0],
 				[1.0, 1.0]
 				);
@@ -241,12 +241,12 @@ class Matrix(T, int RowSize, int ColSize){
 		}
 	}
 	unittest{
-		auto matrix = new Matrix2f;
+		auto matrix = Matrix2f();
 		auto vec0 = armos.math.Vector2f(1, 2);
 		auto vec1 = armos.math.Vector2f(3, 4);
 		matrix.setColumnVector(0, vec0);
 		matrix.setColumnVector(1, vec1);
-		assert(matrix == new Matrix2f(
+		assert(matrix == Matrix2f(
 					[1, 3], 
 					[2, 4]
 					));
@@ -257,12 +257,12 @@ class Matrix(T, int RowSize, int ColSize){
 		this[row] = cast(VectorType)vec;
 	}
 	unittest{
-		auto matrix = new Matrix2f;
+		auto matrix = Matrix2f();
 		auto vec0 = armos.math.Vector2f(1, 2);
 		auto vec1 = armos.math.Vector2f(3, 4);
 		matrix.setRowVector(0, vec0);
 		matrix.setRowVector(1, vec1);
-		assert(matrix == new Matrix2f(
+		assert(matrix == Matrix2f(
 					[1, 2], 
 					[3, 4]
 					));
@@ -294,7 +294,7 @@ class Matrix(T, int RowSize, int ColSize){
 		return sum;
 	}
 	unittest{
-		auto matrix = new Matrix3f(
+		auto matrix = Matrix3f(
 				[1, 2, 0], 
 				[3, 2, 2], 
 				[1, 4, 3]

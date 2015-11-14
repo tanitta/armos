@@ -12,10 +12,10 @@ class MatrixStack {
 	armos.math.Matrix4f[] textureMatrixStack;
 	
 	armos.types.Rectangle currentViewport_ = new armos.types.Rectangle;
-	armos.math.Matrix4f currentViewportMatrix_= new armos.math.Matrix4f;
-	armos.math.Matrix4f currentModelViewMatrix_ = new armos.math.Matrix4f;
-	armos.math.Matrix4f currentProjectionMatrix_ = new armos.math.Matrix4f;
-	armos.math.Matrix4f currentTextureMatrix_ = new armos.math.Matrix4f;
+	armos.math.Matrix4f currentViewportMatrix_ = armos.math.Matrix4f();
+	armos.math.Matrix4f currentModelViewMatrix_ = armos.math.Matrix4f();
+	armos.math.Matrix4f currentProjectionMatrix_ = armos.math.Matrix4f();
+	armos.math.Matrix4f currentTextureMatrix_ = armos.math.Matrix4f();
 	}
 	
 	armos.app.BaseGLWindow*  currentWindow_;
