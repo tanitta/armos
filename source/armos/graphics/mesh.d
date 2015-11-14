@@ -49,9 +49,9 @@ class Mesh{
 	};
 	unittest{
 		auto mesh = new Mesh;
-		mesh.addVertex(new armos.math.Vector3f(0, 1, 2));
-		mesh.addVertex(new armos.math.Vector3f(3, 4, 5));
-		mesh.addVertex(new armos.math.Vector3f(6, 7, 8));
+		mesh.addVertex(armos.math.Vector3f(0, 1, 2));
+		mesh.addVertex(armos.math.Vector3f(3, 4, 5));
+		mesh.addVertex(armos.math.Vector3f(6, 7, 8));
 		assert(mesh.vertices[1].y == 4.0);
 		assert(mesh.isFaceDirty);
 		assert(mesh.isVertsChanged);

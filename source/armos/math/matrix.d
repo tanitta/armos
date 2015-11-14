@@ -13,13 +13,13 @@ class Matrix(T, int RowSize, int ColSize){
 	this(T[][] arr ...){
 		if(arr.length == 0){
 			foreach (ref var; array) {
-				var = new VectorType;
+				var = VectorType();
 			}
 			return;
 		}
 		if(arr.length == RowSize){
 			foreach (int index, ref VectorType vector; array) {
-				vector = new VectorType(arr[index]);
+				vector = VectorType(arr[index]);
 			}
 		}else{
 			assert(0);
@@ -214,7 +214,7 @@ class Matrix(T, int RowSize, int ColSize){
 	// }
 	
 	const VectorType opMul(in VectorType vec_r){
-		auto result = new VectorType;
+		auto result = VectorType();
 		for (int targetRow = 0; targetRow < array.length; targetRow++) {
 			T sum = cast(T)0;
 			for (int dim = 0; dim < rowSize; dim++) {
@@ -229,8 +229,8 @@ class Matrix(T, int RowSize, int ColSize){
 				[2.0, 0.0],
 				[1.0, 1.0]
 				);
-		auto vector1 = new armos.math.Vector2f(1.0, 0.0);
-		auto vector_answer = new armos.math.Vector2f(2.0, 1.0);
+		auto vector1 = armos.math.Vector2f(1.0, 0.0);
+		auto vector_answer = armos.math.Vector2f(2.0, 1.0);
 		auto vector2 = matrix1 * vector1;
 		assert(vector2 == vector_answer);
 	}
@@ -242,8 +242,8 @@ class Matrix(T, int RowSize, int ColSize){
 	}
 	unittest{
 		auto matrix = new Matrix2f;
-		auto vec0 = new armos.math.Vector2f(1, 2);
-		auto vec1 = new armos.math.Vector2f(3, 4);
+		auto vec0 = armos.math.Vector2f(1, 2);
+		auto vec1 = armos.math.Vector2f(3, 4);
 		matrix.setColumnVector(0, vec0);
 		matrix.setColumnVector(1, vec1);
 		assert(matrix == new Matrix2f(
@@ -258,8 +258,8 @@ class Matrix(T, int RowSize, int ColSize){
 	}
 	unittest{
 		auto matrix = new Matrix2f;
-		auto vec0 = new armos.math.Vector2f(1, 2);
-		auto vec1 = new armos.math.Vector2f(3, 4);
+		auto vec0 = armos.math.Vector2f(1, 2);
+		auto vec1 = armos.math.Vector2f(3, 4);
 		matrix.setRowVector(0, vec0);
 		matrix.setRowVector(1, vec1);
 		assert(matrix == new Matrix2f(
@@ -305,7 +305,7 @@ class Matrix(T, int RowSize, int ColSize){
 
 alias Matrix!(float, 2, 2) Matrix2f;
 alias Matrix!(float, 3, 3) Matrix3f;
-alias Matrix!(float, 3, 3) Matrix4f;
+alias Matrix!(float, 4, 4) Matrix4f;
 alias Matrix!(double, 2, 2) Matrix2d;
 alias Matrix!(double, 3, 3) Matrix3d;
 alias Matrix!(double, 4, 4) Matrix4d;

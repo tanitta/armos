@@ -111,7 +111,7 @@ class BaseGLWindow : BaseWindow{
 	armos.math.Vector2f windowSize(){
 		int w, h;
 		SDL_GetWindowSize(window, &w, &h);
-		windowSize_ = new armos.math.Vector2f(w, h);
+		windowSize_ = armos.math.Vector2f(w, h);
 		return windowSize_;
 	}
 }

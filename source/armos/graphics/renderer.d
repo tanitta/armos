@@ -2,6 +2,7 @@ module armos.graphics.renderer;
 import armos.app;
 import armos.graphics;
 import derelict.opengl3.gl;
+import std.math;
 
 enum PolyRenderMode {
 	Points,
@@ -17,6 +18,12 @@ enum PrimitiveMode{
 	LineStrip,
 	LineLoop,
 	Points,
+}
+
+enum MatrixMode{
+	ModelView,
+	Projection,
+	Texture
 }
 
 GLuint getGLPrimitiveMode(PrimitiveMode mode){
@@ -63,10 +70,59 @@ GLuint getGLPolyRenderMode(PolyRenderMode mode){
 	return return_mode;
 }
 
-// getGLPolyRenderMode(PolyRenderMode){
-//
-// }
+GLuint getGLMatrixMode(MatrixMode mode){
+	GLuint return_mode;
+	switch (mode) {
+		case MatrixMode.ModelView:
+				 return_mode = GL_MODELVIEW;
+					 break;
+		case MatrixMode.Projection:
+				 return_mode = GL_PROJECTION;
+					 break;
+		case MatrixMode.Texture:
+				 return_mode = GL_TEXTURE;
+					 break;
+		default : assert(0);
+	}
+	return return_mode;
+}
 
+armos.math.Matrix4f perspectiveMatrix(float fov, float aspect, float nearDist, float farDist){
+    double tan_fovy = tan(fov*0.5*180.0/PI);
+    double right  =  tan_fovy * aspect* nearDist;
+    double left   = -right;
+    double top    =  tan_fovy * nearDist;
+    double bottom =  -top;
+	
+	return frustumMatrix(left,right,bottom,top,nearDist,farDist);
+}
+
+armos.math.Matrix4f frustumMatrix(double left, double right, double bottom, double top, double zNear, double zFar){
+    double A = (right+left)/(right-left);
+    double B = (top+bottom)/(top-bottom);
+    double C = -(zFar+zNear)/(zFar-zNear);
+    double D = -2.0*zFar*zNear/(zFar-zNear);
+	
+	return new armos.math.Matrix4f(
+		[2.0*zNear/(right-left), 0.0,                    0.0, 0.0  ],
+		[0.0,                    2.0*zNear/(top-bottom), 0.0, 0.0  ],
+		[A,                      B,                      C,   -1.0 ],
+		[0.0,                    0.0,                    D,   0.0  ]
+	);
+}
+	
+armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.Vector3f center, in armos.math.Vector3f up){
+	armos.math.Vector3f zaxis = (eye-center).normalized;
+	armos.math.Vector3f xaxis = up.vectorProduct(zaxis).normalized;
+	armos.math.Vector3f yaxis = zaxis.vectorProduct(xaxis);
+	
+	return new armos.math.Matrix4f(
+			[xaxis[0], yaxis[0], zaxis[0], 0],
+			[xaxis[1], yaxis[1], zaxis[1], 0],
+			[xaxis[2], yaxis[2], zaxis[2], 0],
+			[-xaxis.dotProduct(eye), -yaxis.dotProduct(eye), -zaxis.dotProduct(eye), 1]
+	);
+};
 
 class Renderer {
 	armos.graphics.Style[] styleStack;
@@ -84,6 +140,9 @@ class Renderer {
 		matrixStack = new armos.graphics.MatrixStack(cast(armos.app.BaseGLWindow*)armos.app.currentWindow);
 	}
 	
+	void matrixMode(MatrixMode mode){
+		glMatrixMode(getGLMatrixMode(mode));
+	}
 	// void draw(ref armos.graphics.Mesh mesh, armos.graphics.PolyRenderMode renderMode){
 		// if(mesh.vertices != 0){
 			// glEnableClientState(GL_VERTEX_ARRAY);
@@ -154,16 +213,92 @@ class Renderer {
 	void setup(){
 		// viewport();
 		// setupScreenPerspective();
+		auto position = armos.math.Vector2f(0, 0);
+		auto size = armos.app.currentWindow.windowSize();
+		
+		// position[1] = size[1] - (position[1] + size[1]);
+		// position[1] = renderSurfaceSize[1] - (y + height);
+		glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
 	};
 	
-	void viewport(float x, float y, float width, float height, bool vflip){
+	void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
 		matrixStack.viewport(x, y, width, height, vflip);
-		auto nativeViewport = matrixStack.getNativeViewport();
+		auto nativeViewport = matrixStack.nativeViewport();
 		glViewport(cast(int)nativeViewport.x,cast(int)nativeViewport.y,cast(int)nativeViewport.width,cast(int)nativeViewport.height);
 	}
 	
-	void setupScreenPerspective(){
+	armos.types.Rectangle currentViewport(){
+		// nativeViewport();
+		return matrixStack.currentViewport;
+	}
+	
+	// armos.type.Rectangle nativeViewport(){
+	// 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
+	// 	glGetIntegerv(GL_VIEWPORT, viewport);
+	//
+	// 	ofGLRenderer* mutRenderer = const_cast<ofGLRenderer*>(this);
+	// 	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+	// 	mutRenderer->matrixStack.nativeViewport(nativeViewport);
+		// return nativeViewport;
+	// }
+	
+	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
+		float viewW, viewH;
+		if(width<0 || height<0){
+			viewW = currentViewport.width;
+			viewH = currentViewport.width;
+		}else{
+			viewW = width;
+			viewH = height;
+		}
 		
+		float eyeX = viewW / 2.0;
+		float eyeY = viewH / 2.0;
+		float halfFov = PI * fov / 360;
+		float theTan = tan(halfFov);
+		float dist = eyeY / theTan;
+		float aspect = viewW / viewH;
+		//
+		if(nearDist == 0) nearDist = dist / 10.0f;
+		if(farDist == 0) farDist = dist * 10.0f;
+		
+		
+		matrixMode(MatrixMode.Projection);
+		armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, nearDist, farDist);
+		loadMatrix( persp );
+		//
+		matrixMode(MatrixMode.ModelView);
+		armos.math.Matrix4f lookAt = lookAtViewMatrix(armos.math.Vector3f(eyeX, eyeY, dist),  armos.math.Vector3f(eyeX, eyeY, 0), armos.math.Vector3f(0, 1, 0) );
+		loadViewMatrix(lookAt);
+
+	}
+	
+	void loadMatrix(armos.math.Matrix4f matrix){
+		float[16] array;
+		for (int i = 0; i < 4 ; i++) {
+			for (int j = 0; j < 4 ; j++) {
+				// writeln(i, "\t", j);
+				array[i+j*4] = matrix[i][j];
+			}
+		}
+		glLoadMatrixf(array.ptr);
+	}
+	
+	void loadViewMatrix(armos.math.Matrix4f matrix){
+		int mode;
+		glGetIntegerv(GL_MATRIX_MODE,&mode);
+		// matrixStack.loadViewMatrix(matrix);
+		glMatrixMode(GL_MODELVIEW);
+		float[16] array;
+		for (int i = 0; i < 4 ; i++) {
+			for (int j = 0; j < 4 ; j++) {
+				// writeln(i, "\t", j);
+				array[i+j*4] = matrix[i][j];
+			}
+		}
+		glLoadMatrixf(array.ptr);
+		
+		glMatrixMode(mode);
 	}
 	
 	void draw(
@@ -258,4 +393,8 @@ void scale(armos.math.Vector3f vec){
 
 void rotate(float degrees, float vec_x, float vec_y, float vec_z){
 	currentRenderer.rotate(degrees, vec_x, vec_y, vec_z);
+}
+
+void setLineWidth(float width){
+	currentRenderer.setLineWidth(width);
 }

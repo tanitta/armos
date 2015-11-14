@@ -3,7 +3,7 @@ import armos.math;
 import core.vararg;
 import std.math;
 
-class Vector(T, int Dimention){
+struct Vector(T, int Dimention){
 	alias Vector!(T, Dimention) VectorType;
 
 	T[Dimention] array = cast(T)0;
@@ -29,28 +29,28 @@ class Vector(T, int Dimention){
 		return array[index];
 	}
 	unittest{
-		auto vec = new Vector3d(1, 2, 3);
+		auto vec = Vector3d(1, 2, 3);
 		assert(vec[0] == 1.0);
 		assert(vec[1] == 2.0);
 		assert(vec[2] == 3.0);
 	}
 
-	pure const bool opEquals(Object vec){
-		foreach (int index, T v; (cast(VectorType)vec).array) {
-			if(v != this.array[index]){
-				return false;
-			}
-		}
-		return true;
-	}
+	// pure const bool opEquals(Object vec){
+	// 	foreach (int index, T v; (cast(VectorType)vec).array) {
+	// 		if(v != this.array[index]){
+	// 			return false;
+	// 		}
+	// 	}
+	// 	return true;
+	// }
 	unittest{
-		auto vec1 = new Vector3d(1, 2, 3);
-		auto vec2 = new Vector3d(1, 2, 3);
+		auto vec1 = Vector3d(1, 2, 3);
+		auto vec2 = Vector3d(1, 2, 3);
 		assert(vec1 == vec2);
 	}	
 	unittest{
-		auto vec1 = new Vector3d(1, 2, 3);
-		auto vec2 = new Vector3d(2, 2, 1);
+		auto vec1 = Vector3d(1, 2, 3);
+		auto vec2 = Vector3d(2, 2, 1);
 		assert(vec1 != vec2);
 	}
 
@@ -62,89 +62,89 @@ class Vector(T, int Dimention){
 		return result;
 	};
 	unittest{
-		auto vec1 = new Vector3d;
+		auto vec1 = Vector3d();
 		vec1[0] = 1.5;
 		assert(vec1[0] == 1.5);
 		assert((-vec1)[0] == -1.5);
 	}
 
 	const VectorType opAdd(in VectorType r){
-		auto result = new VectorType;
+		auto result = VectorType();
 		foreach (int index, const T var; r.array) {
 			result[index] = this[index] + var;
 		}
 		return result;
 	}
 	unittest{	
-		auto vec1 = new Vector3d;
+		auto vec1 = Vector3d();
 		vec1[0] = 1.5;
 
-		auto vec2 = new Vector3d;
+		auto vec2 = Vector3d();
 		vec2[1] = 0.2;
 		vec2[0] = 0.2;
 		assert((vec1+vec2)[0] == 1.7);
 	}
 
 	const VectorType opSub(in VectorType r){
-		auto result = new VectorType;
+		auto result = VectorType();
 		foreach (int index, const T var; r.array) {
 			result[index] = this[index] - var;
 		}
 		return result;
 	}
 	unittest{
-		auto result = new Vector3d(3, 2, 1) - new Vector3d(1, 2, 3);
-		assert(result == new Vector3d(2, 0, -2));
+		auto result = Vector3d(3, 2, 1) - Vector3d(1, 2, 3);
+		assert(result == Vector3d(2, 0, -2));
 	}
 
 	const VectorType opAdd(in T v){
-		auto result = new VectorType;
+		auto result = VectorType();
 		foreach (int index, const T var; array) {
 			result[index] = this[index]+v;
 		}
 		return result;
 	}
 	unittest{
-		auto result = new Vector3d(3.0, 2.0, 1.0);
-		assert(result+2.0 == new Vector3d(5.0, 4.0, 3.0));
-		assert(2.0+result == new Vector3d(5.0, 4.0, 3.0));
+		auto result = Vector3d(3.0, 2.0, 1.0);
+		assert(result+2.0 == Vector3d(5.0, 4.0, 3.0));
+		assert(2.0+result == Vector3d(5.0, 4.0, 3.0));
 	}
 
 	const VectorType opSub(in T v){
-		auto result = new VectorType;
+		auto result = VectorType();
 		foreach (int index, const T var; array) {
 			result[index] = this[index]-v;
 		}
 		return result;
 	}
 	unittest{
-		auto result = new Vector3d(3.0, 2.0, 1.0);
-		assert(result-2.0 == new Vector3d(1.0, 0.0, -1.0));
+		auto result = Vector3d(3.0, 2.0, 1.0);
+		assert(result-2.0 == Vector3d(1.0, 0.0, -1.0));
 	}
 
 	const VectorType opMul(in T v){
-		auto result = new VectorType;
+		auto result = VectorType();
 		foreach (int index, const T var; array) {
 			result[index] = this[index]*v;
 		}
 		return result;
 	}
 	unittest{
-		auto result = new Vector3d(3.0, 2.0, 1.0);
-		assert(result*2.0 == new Vector3d(6.0, 4.0, 2.0));
-		assert(2.0*result == new Vector3d(6.0, 4.0, 2.0));
+		auto result = Vector3d(3.0, 2.0, 1.0);
+		assert(result*2.0 == Vector3d(6.0, 4.0, 2.0));
+		assert(2.0*result == Vector3d(6.0, 4.0, 2.0));
 	}
 
 	const VectorType opDiv(in T v){
-		auto result = new VectorType;
+		auto result = VectorType();
 		foreach (int index, const T var; array) {
 			result[index] = this[index]/v;
 		}
 		return result;
 	}
 	unittest{
-		auto result = new Vector3d(3.0, 2.0, 1.0);
-		assert(result/2.0 == new Vector3d(1.5, 1.0, 0.5));
+		auto result = Vector3d(3.0, 2.0, 1.0);
+		assert(result/2.0 == Vector3d(1.5, 1.0, 0.5));
 	}
 
 	const T norm(){
@@ -155,7 +155,7 @@ class Vector(T, int Dimention){
 		return sqrt( sum_of_squar );
 	}
 	unittest{
-		auto result = new Vector3d(3.0, 2.0, 1.0);
+		auto result = Vector3d(3.0, 2.0, 1.0);
 		assert(result.norm() == ( 3.0^^2.0+2.0^^2.0+1.0^^2.0 )^^0.5);
 	}
 
@@ -167,8 +167,8 @@ class Vector(T, int Dimention){
 		return sum;
 	}
 	unittest{
-		auto vec1 = new Vector3d(3.0, 2.0, 1.0);
-		auto vec2 = new Vector3d(2.0, 1.0, 0.0);
+		auto vec1 = Vector3d(3.0, 2.0, 1.0);
+		auto vec2 = Vector3d(2.0, 1.0, 0.0);
 		assert(vec1.dotProduct(vec2) == 8.0);
 	}
 
@@ -177,10 +177,10 @@ class Vector(T, int Dimention){
 		if(arg.length != Dimention-2){
 			assert(0);
 		}
-		auto return_vector = new VectorType;
+		auto return_vector = VectorType();
 		foreach (int i, ref T v; return_vector.array) {
 			auto matrix = new armos.math.Matrix!(T, Dimention, Dimention);
-			auto element_vector = new VectorType;
+			auto element_vector = VectorType();
 			element_vector[i] = cast(T)1;
 			matrix.setRowVector(0, element_vector);
 			matrix.setRowVector(1, this);
@@ -193,9 +193,9 @@ class Vector(T, int Dimention){
 		return return_vector;
 	}
 	unittest{
-		auto vector0 = new Vector3f(1, 2, 3);
-		auto vector1 = new Vector3f(4, 5, 6);
-		auto anser = new Vector3f(-3, 6, -3);
+		auto vector0 = Vector3f(1, 2, 3);
+		auto vector1 = Vector3f(4, 5, 6);
+		auto anser = Vector3f(-3, 6, -3);
 		assert(vector0.vectorProduct(vector1) == anser);
 	}
 
@@ -203,7 +203,7 @@ class Vector(T, int Dimention){
 		return this/this.norm();
 	}
 	unittest{
-		auto vec1 = new Vector3d(3.0, 2.0, 1.0);
+		auto vec1 = Vector3d(3.0, 2.0, 1.0);
 		assert(vec1.normalized().norm() == 1.0);
 	}
 
@@ -211,7 +211,7 @@ class Vector(T, int Dimention){
 		this.array = this.normalized().array;
 	}
 	unittest{
-		auto vec1 = new Vector3d(3.0, 2.0, 1.0);
+		auto vec1 = Vector3d(3.0, 2.0, 1.0);
 		vec1.normalize();
 		assert(vec1.norm() == 1.0);
 	}

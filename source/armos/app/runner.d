@@ -20,6 +20,7 @@ class Loop {
 		renderer = new armos.graphics.Renderer;
 		application = &app;
 		assert(window);
+		renderer.setup();
 	};
 	
 	void run(ref armos.app.BaseApp app){

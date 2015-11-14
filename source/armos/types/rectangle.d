@@ -14,9 +14,14 @@ class Rectangle {
 		size = s;
 	}
 	
-	void set(armos.math.Vector2f p, armos.math.Vector2f s){
-		position = p;
-		size = s;
+	void set(in float x, in float y, in float width, in float height){
+		position = armos.math.Vector2f(x, y);
+		size = armos.math.Vector2f(width, height);
+	}
+	
+	void set(in armos.math.Vector2f p, in armos.math.Vector2f s){
+		position = cast( armos.math.Vector2f )p;
+		size = cast( armos.math.Vector2f )s;
 	}
 	
 	float x(){return position[0];}
