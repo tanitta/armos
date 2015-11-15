@@ -211,20 +211,28 @@ class Renderer {
 	// 	glRotatef(q[3], q[0], q[1], q[2]);
 	// }
 	void setup(){
-		// viewport();
-		// setupScreenPerspective();
-		auto position = armos.math.Vector2f(0, 0);
-		auto size = armos.app.currentWindow.windowSize();
+		viewport();
+		setupScreenPerspective();
+		// auto position = armos.math.Vector2f(0, 0);
+		// auto size = armos.app.currentWindow.windowSize();
 		
 		// position[1] = size[1] - (position[1] + size[1]);
 		// position[1] = renderSurfaceSize[1] - (y + height);
-		glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
+		// glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
+		
+		
 	};
 	
 	void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
-		matrixStack.viewport(x, y, width, height, vflip);
-		auto nativeViewport = matrixStack.nativeViewport();
-		glViewport(cast(int)nativeViewport.x,cast(int)nativeViewport.y,cast(int)nativeViewport.width,cast(int)nativeViewport.height);
+		// matrixStack.viewport(x, y, width, height, vflip);
+		// auto nativeViewport = matrixStack.nativeViewport();
+		// glViewport(cast(int)nativeViewport.x,cast(int)nativeViewport.y,cast(int)nativeViewport.width,cast(int)nativeViewport.height);
+		
+		auto position = armos.math.Vector2f(0, 0);
+		auto size = armos.app.currentWindow.windowSize();
+		position[1] = size[1] - (position[1] + size[1]);
+		// position[1] = renderSurfaceSize[1] - (y + height);
+		glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
 	}
 	
 	armos.types.Rectangle currentViewport(){
@@ -263,15 +271,30 @@ class Renderer {
 		if(farDist == 0) farDist = dist * 10.0f;
 		
 		
-		matrixMode(MatrixMode.Projection);
 		armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, nearDist, farDist);
-		loadMatrix( persp );
-		//
-		matrixMode(MatrixMode.ModelView);
+		matrixStack.loadProjectionMatrix( persp );
+		// loadMatrix(persp);
+		
 		armos.math.Matrix4f lookAt = lookAtViewMatrix(armos.math.Vector3f(eyeX, eyeY, dist),  armos.math.Vector3f(eyeX, eyeY, 0), armos.math.Vector3f(0, 1, 0) );
-		loadViewMatrix(lookAt);
+		matrixStack.loadModelViewMatrix(lookAt);
+		// loadViewMatrix(lookAt);
 
 	}
+	
+	void startRender(){
+		viewport();
+		// auto position = armos.math.Vector2f(0, 0);
+		// auto size = armos.app.currentWindow.windowSize();
+		//
+		// // position[1] = size[1] - (position[1] + size[1]);
+		// // position[1] = renderSurfaceSize[1] - (y + height);
+		// glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
+		
+		setBackground(currentStyle.backgroundColor );
+	};
+	void finishRender(){
+	
+	};
 	
 	void loadMatrix(armos.math.Matrix4f matrix){
 		float[16] array;

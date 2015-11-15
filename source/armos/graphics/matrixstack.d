@@ -16,6 +16,8 @@ class MatrixStack {
 	armos.math.Matrix4f currentModelViewMatrix_ = armos.math.Matrix4f();
 	armos.math.Matrix4f currentProjectionMatrix_ = armos.math.Matrix4f();
 	armos.math.Matrix4f currentTextureMatrix_ = armos.math.Matrix4f();
+	
+	armos.math.Matrix4f modelViewProjectionMatrix = armos.math.Matrix4f();
 	}
 	
 	armos.app.BaseGLWindow*  currentWindow_;
@@ -56,7 +58,8 @@ class MatrixStack {
 	
 	void loadModelViewMatrix(armos.math.Matrix4f matrix){
 		currentModelViewMatrix_ = matrix;
-		updatedRelatedMatrices();
+		
+		// modelViewProjectionMatrix = modelViewMatrix * orientedProjectionMatrix;
 	}
 	
 	void loadProjectionMatrix(armos.math.Matrix4f matrix){

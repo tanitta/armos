@@ -8,17 +8,17 @@ struct Matrix(T, int RowSize, int ColSize){
 	static const int rowSize = RowSize;
 	static const int colSize = ColSize;
 
-	VectorType[RowSize] array;
+	VectorType[RowSize] data;
 
 	this(T[][] arr ...){
 		if(arr.length == 0){
-			foreach (ref var; array) {
+			foreach (ref var; data) {
 				var = VectorType();
 			}
 			return;
 		}
 		if(arr.length == RowSize){
-			foreach (int index, ref VectorType vector; array) {
+			foreach (int index, ref VectorType vector; data) {
 				vector = VectorType(arr[index]);
 			}
 		}else{
@@ -27,7 +27,7 @@ struct Matrix(T, int RowSize, int ColSize){
 	}
 
 	pure const VectorType opIndex(in int index){
-		return cast(VectorType)array[index];
+		return cast(VectorType)data[index];
 	}
 	unittest{
 		auto matrix = Matrix2d();
@@ -42,7 +42,7 @@ struct Matrix(T, int RowSize, int ColSize){
 	}
 
 	ref VectorType opIndex(in int index){
-		return cast(VectorType)array[index];
+		return cast(VectorType)data[index];
 	}
 	unittest{
 		auto matrix = Matrix2d();
@@ -53,8 +53,8 @@ struct Matrix(T, int RowSize, int ColSize){
 	// const bool opEquals(Object mat){
 	// 	// if(this.rowSize != (cast(MatrixType)mat_tmp).rowSize){return false;}
 	// 	// if(this.colSize != (cast(MatrixType)mat_tmp).colSize){return false;}
-	// 	foreach (int index, VectorType vec; (cast(MatrixType)mat).array) {
-	// 		if(vec != this.array[index]){
+	// 	foreach (int index, VectorType vec; (cast(MatrixType)mat).data) {
+	// 		if(vec != this.data[index]){
 	// 			return false;
 	// 		}
 	// 	}
@@ -97,7 +97,7 @@ struct Matrix(T, int RowSize, int ColSize){
 
 	MatrixType opNeg(){
 		auto result = this;
-		foreach (ref var; result.array) {
+		foreach (ref var; result.data) {
 			var = -var;
 		}
 		return result;
@@ -110,7 +110,7 @@ struct Matrix(T, int RowSize, int ColSize){
 
 	const MatrixType opAdd(in MatrixType r){
 		auto result = MatrixType();
-		foreach (int index, const VectorType var; r.array) {
+		foreach (int index, const VectorType var; r.data) {
 			result[index] = this[index] + var;
 		}
 		return result;
@@ -128,7 +128,7 @@ struct Matrix(T, int RowSize, int ColSize){
 
 	const MatrixType opSub(in MatrixType r){
 		auto result = MatrixType();
-		foreach (int index, const VectorType var; r.array) {
+		foreach (int index, const VectorType var; r.data) {
 			result[index] = this[index] - var;
 		}
 		return result;
@@ -147,7 +147,7 @@ struct Matrix(T, int RowSize, int ColSize){
 
 	const MatrixType opAdd(in T v){
 		auto result = MatrixType();
-		foreach (int index, const VectorType var; array) {
+		foreach (int index, const VectorType var; data) {
 			result[index] = this[index]+v;
 		}
 		return result;
@@ -162,7 +162,7 @@ struct Matrix(T, int RowSize, int ColSize){
 
 	const MatrixType opSub(in T v){
 		auto result = MatrixType();
-		foreach (int index, const VectorType var; array) {
+		foreach (int index, const VectorType var; data) {
 			result[index] = this[index]-v;
 		}
 		return result;
@@ -175,10 +175,10 @@ struct Matrix(T, int RowSize, int ColSize){
 	
 	const MatrixType opMul(in MatrixType mat_r){
 		auto result = MatrixType();
-		for (int targetRow = 0; targetRow < array.length; targetRow++) {
-			for (int targetCol = 0; targetCol < array[0].array.length; targetCol++) {
+		for (int targetRow = 0; targetRow < data.length; targetRow++) {
+			for (int targetCol = 0; targetCol < data[0].data.length; targetCol++) {
 				T sum = cast(T)0;
-				for (int dim = 0; dim < mat_r.array.length; dim++) {
+				for (int dim = 0; dim < mat_r.data.length; dim++) {
 					sum += this[targetRow][dim] * mat_r[dim][targetCol];
 				}
 				result[targetRow][targetCol] = sum;
@@ -215,7 +215,7 @@ struct Matrix(T, int RowSize, int ColSize){
 	
 	const VectorType opMul(in VectorType vec_r){
 		auto result = VectorType();
-		for (int targetRow = 0; targetRow < array.length; targetRow++) {
+		for (int targetRow = 0; targetRow < data.length; targetRow++) {
 			T sum = cast(T)0;
 			for (int dim = 0; dim < rowSize; dim++) {
 				sum += this[targetRow][dim] * vec_r[dim];
@@ -236,7 +236,7 @@ struct Matrix(T, int RowSize, int ColSize){
 	}
 	
 	void setColumnVector(in int column, in VectorType vec){
-		foreach (int i , ref VectorType v; array) {
+		foreach (int i , ref VectorType v; data) {
 			v[column] = vec[i];
 		}
 	}
@@ -301,6 +301,25 @@ struct Matrix(T, int RowSize, int ColSize){
 				);
 		assert(matrix.determinant == 6+4+0 - (8+18+0) );
 	}
+	
+	const T[RowSize*ColSize] array(){
+		T[RowSize*ColSize] tmp;
+		for (int i = 0; i < RowSize ; i++) {
+			for (int j = 0; j < ColSize ; j++) {
+				tmp[i+j*RowSize] = data[i][j];
+			}
+		}
+		return tmp;
+	}
+	unittest{
+		auto matrix = Matrix3f(
+				[1, 4, 7], 
+				[2, 5, 8], 
+				[3, 6, 9]
+				);
+		assert(matrix.array == [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+	}
+	
 }
 
 alias Matrix!(float, 2, 2) Matrix2f;

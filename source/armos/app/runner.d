@@ -42,7 +42,9 @@ class Loop {
 	
 	void loopOnce(){
 		window.events().notifyUpdate();
+		renderer.startRender();
 		window.events().notifyDraw();
+		renderer.finishRender();
 		window.update();
 		window.pollEvents();
 	}

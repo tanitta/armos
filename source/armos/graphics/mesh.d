@@ -5,6 +5,7 @@ import armos.math;
 struct Vertex{
 	float x, y, z;
 }
+
 class Mesh{
 	alias int IndexType;
 	
@@ -26,13 +27,11 @@ class Mesh{
 		return indices.length;
 	}
 	
-	@property{
-		const armos.graphics.PrimitiveMode primitiveMode(){
-			return primitiveMode_;
-		}
-		void primitiveMode(armos.graphics.PrimitiveMode mode){
-			primitiveMode_ = mode;
-		}
+	const armos.graphics.PrimitiveMode primitiveMode(){
+		return primitiveMode_;
+	}
+	void primitiveMode(armos.graphics.PrimitiveMode mode){
+		primitiveMode_ = mode;
 	}
 	
 
