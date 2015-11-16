@@ -228,6 +228,13 @@ struct Vector(T, int Dimention){
 		assert(array == [4, 2, 3]);
 		assert(vector == Vector3f(1, 2, 3));
 	}
+	const print(){
+		import std.stdio;
+		for (int i = 0; i < Dimention ; i++) {
+				writef("%f\t", data[i]);
+		}
+		writef("\n");
+	}
 }
 
 alias Vector!(float, 2) Vector2f;

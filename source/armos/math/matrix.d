@@ -320,6 +320,23 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix.array == [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 	}
 	
+	const print(){
+		import std.stdio;
+		for (int i = 0; i < RowSize ; i++) {
+			for (int j = 0; j < ColSize ; j++) {
+				writef("%f\t", data[i][j]);
+			}
+			writef("\n");
+		}
+	}
+	unittest{
+		// auto matrix = Matrix3f(
+		// 		[1, 4, 7], 
+		// 		[2, 5, 8], 
+		// 		[3, 6, 9]
+		// 		);
+		// matrix.print;
+	}
 }
 
 alias Matrix!(float, 2, 2) Matrix2f;

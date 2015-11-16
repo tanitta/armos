@@ -88,7 +88,7 @@ GLuint getGLMatrixMode(MatrixMode mode){
 }
 
 armos.math.Matrix4f perspectiveMatrix(float fov, float aspect, float nearDist, float farDist){
-    double tan_fovy = tan(fov*0.5*180.0/PI);
+    double tan_fovy = tan(fov*0.5*PI/180.0);
     double right  =  tan_fovy * aspect* nearDist;
     double left   = -right;
     double top    =  tan_fovy * nearDist;
@@ -104,23 +104,35 @@ armos.math.Matrix4f frustumMatrix(double left, double right, double bottom, doub
     double D = -2.0*zFar*zNear/(zFar-zNear);
 	
 	return armos.math.Matrix4f(
-		[2.0*zNear/(right-left), 0.0,                    0.0, 0.0  ],
-		[0.0,                    2.0*zNear/(top-bottom), 0.0, 0.0  ],
-		[A,                      B,                      C,   -1.0 ],
-		[0.0,                    0.0,                    D,   0.0  ]
+		[2.0*zNear/(right-left), 0.0,                    A,    0.0 ],
+		[0.0,                    2.0*zNear/(top-bottom), B,    0.0 ],
+		[0.0,                    0.0,                    C,    D   ],
+		[0.0,                    0.0,                    -1.0, 0.0 ]
 	);
 }
 	
 armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.Vector3f center, in armos.math.Vector3f up){
-	armos.math.Vector3f zaxis = (eye-center).normalized;
-	armos.math.Vector3f xaxis = up.vectorProduct(zaxis).normalized;
+	armos.math.Vector3f zaxis;
+	if((eye-center).norm>0){
+		zaxis = (eye-center).normalized;
+	}else{
+		zaxis = armos.math.Vector3f();
+	}
+	
+	armos.math.Vector3f xaxis;
+	if(up.vectorProduct(zaxis).norm>0){
+		xaxis = up.vectorProduct(zaxis).normalized;
+	}else{
+		xaxis = armos.math.Vector3f();
+	}
+	
 	armos.math.Vector3f yaxis = zaxis.vectorProduct(xaxis);
 	
 	return armos.math.Matrix4f(
-			[xaxis[0], yaxis[0], zaxis[0], 0],
-			[xaxis[1], yaxis[1], zaxis[1], 0],
-			[xaxis[2], yaxis[2], zaxis[2], 0],
-			[-xaxis.dotProduct(eye), -yaxis.dotProduct(eye), -zaxis.dotProduct(eye), 1]
+			[xaxis[0], xaxis[1], xaxis[2], -xaxis.dotProduct(eye)],
+			[yaxis[0], yaxis[1], yaxis[2], -yaxis.dotProduct(eye)],
+			[zaxis[0], zaxis[1], zaxis[2], -zaxis.dotProduct(eye)],
+			[0,        0,        0,                             1]
 	);
 };
 
@@ -253,8 +265,8 @@ class Renderer {
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
 		float viewW, viewH;
 		if(width<0 || height<0){
-			viewW = currentViewport.width;
-			viewH = currentViewport.width;
+			viewW = armos.app.currentWindow.windowSize()[0];
+			viewH = armos.app.currentWindow.windowSize()[1];
 		}else{
 			viewW = width;
 			viewH = height;
@@ -272,28 +284,44 @@ class Renderer {
 		
 		
 		armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, nearDist, farDist);
-		matrixStack.loadProjectionMatrix( persp );
+		
+		// matrixStack.loadProjectionMatrix( persp );
 		// loadMatrix(persp);
 		
-		armos.math.Matrix4f lookAt = lookAtViewMatrix(armos.math.Vector3f(eyeX, eyeY, dist),  armos.math.Vector3f(eyeX, eyeY, 0), armos.math.Vector3f(0, 1, 0) );
-		matrixStack.loadModelViewMatrix(lookAt);
-		// loadViewMatrix(lookAt);
-
+		armos.math.Matrix4f lookAt = lookAtViewMatrix(
+			armos.math.Vector3f(eyeX, eyeY, dist),
+			armos.math.Vector3f(eyeX, eyeY, 0),
+			armos.math.Vector3f(0, 1, 0)
+		);
+		
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		
+		import std.stdio;
+		writeln("persp:");
+		persp.print();
+		
+		writeln("lookAt:");
+		lookAt.print();
+		
+		writeln("persp*lookAt:");
+		( persp*lookAt ).print();
+		
+		glLoadMatrixf((persp*lookAt).array.ptr);
+		glScalef(1, -1, 1);
+		glTranslatef(0, -viewH, 0);
+		
+		glMatrixMode(GL_MODELVIEW);
+		// glLoadIdentity();
 	}
 	
 	void startRender(){
 		viewport();
-		// auto position = armos.math.Vector2f(0, 0);
-		// auto size = armos.app.currentWindow.windowSize();
-		//
-		// // position[1] = size[1] - (position[1] + size[1]);
-		// // position[1] = renderSurfaceSize[1] - (y + height);
-		// glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
-		
+		setupScreenPerspective();
 		setBackground(currentStyle.backgroundColor );
 	};
 	void finishRender(){
-	
+		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	};
 	
 	void loadMatrix(armos.math.Matrix4f matrix){
@@ -304,7 +332,8 @@ class Renderer {
 				array[i+j*4] = matrix[i][j];
 			}
 		}
-		glLoadMatrixf(array.ptr);
+		// glLoadMatrixf(array.ptr);
+		// glMultMatrixf(array.ptr);
 	}
 	
 	void loadViewMatrix(armos.math.Matrix4f matrix){
@@ -319,7 +348,8 @@ class Renderer {
 				array[i+j*4] = matrix[i][j];
 			}
 		}
-		glLoadMatrixf(array.ptr);
+		// glLoadMatrixf(array.ptr);
+		// glMultMatrixf(array.ptr);
 		
 		glMatrixMode(mode);
 	}
