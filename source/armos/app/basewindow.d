@@ -108,11 +108,20 @@ class BaseGLWindow : BaseWindow{
 		SDL_GL_SwapWindow(window);
 	}
 	
-	armos.math.Vector2f windowSize(){
+	armos.math.Vector2f size(){
 		int w, h;
 		SDL_GetWindowSize(window, &w, &h);
 		windowSize_ = armos.math.Vector2f(w, h);
 		return windowSize_;
+	}
+	
+	float aspect(){
+		if(size[1]==0){
+			return 0;
+		}else{
+			return cast(float)size[0]/cast(float)size[1];
+		}
+		
 	}
 }
 
@@ -122,7 +131,11 @@ armos.app.BaseGLWindow* currentWindow(){
 
 
 armos.math.Vector2f windowSize(){
-	return currentWindow.windowSize;
+	return currentWindow.size;
+}
+
+float windowAspect(){
+	return currentWindow.aspect;
 }
 
 // armos.math.Vector2f screenSize(){
