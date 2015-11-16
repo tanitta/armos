@@ -56,6 +56,10 @@ class Mesh{
 		assert(mesh.isVertsChanged);
 	}
 	
+	void addVertex(in float x, in float y, in float z){
+		addVertex(armos.math.Vector3f(x, y, z));
+	}
+	
 	void addIndex(IndexType index){
 		indices ~= index;
 		isIndicesChanged = true;
