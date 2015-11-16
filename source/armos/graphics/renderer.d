@@ -140,11 +140,9 @@ class Renderer {
 	armos.graphics.Style[] styleStack;
 	auto currentStyle_ = new armos.graphics.Style;
 	
-	// armos.math.Matrix4f[] matrixStack;
-	
-	// auto currentMatrix_= new armos.math.Matrix4f;
-	
 	armos.graphics.MatrixStack matrixStack;
+	
+	armos.math.Matrix4f projectionMatrix;
 	
 	bool isBackgroundAuto = true;
 	
@@ -169,6 +167,16 @@ class Renderer {
 	armos.graphics.Style* currentStyle(){
 		return &currentStyle_;
 	};
+	
+	void bind(armos.math.Matrix4f projectionMatrix){
+		glMatrixMode(GL_PROJECTION);
+		pushMatrix();
+		glLoadMatrixf(projectionMatrix.array.ptr);
+	}
+	void unbind(){
+		glMatrixMode(GL_PROJECTION);
+		popMatrix();
+	}
 	
 	void setBackground(const armos.types.Color color){
 		currentStyle.backgroundColor = cast(armos.types.Color)color;
@@ -265,8 +273,8 @@ class Renderer {
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
 		float viewW, viewH;
 		if(width<0 || height<0){
-			viewW = armos.app.currentWindow.windowSize()[0];
-			viewH = armos.app.currentWindow.windowSize()[1];
+			viewW = armos.app.windowSize[0];
+			viewH = armos.app.windowSize[1];
 		}else{
 			viewW = width;
 			viewH = height;
@@ -297,15 +305,15 @@ class Renderer {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		
-		import std.stdio;
-		writeln("persp:");
-		persp.print();
-		
-		writeln("lookAt:");
-		lookAt.print();
-		
-		writeln("persp*lookAt:");
-		( persp*lookAt ).print();
+		// import std.stdio;
+		// writeln("persp:");
+		// persp.print();
+		//
+		// writeln("lookAt:");
+		// lookAt.print();
+		//
+		// writeln("persp*lookAt:");
+		// ( persp*lookAt ).print();
 		
 		glLoadMatrixf((persp*lookAt).array.ptr);
 		glScalef(1, -1, 1);
@@ -318,7 +326,9 @@ class Renderer {
 	void startRender(){
 		viewport();
 		setupScreenPerspective();
-		setBackground(currentStyle.backgroundColor );
+		if( isBackgroundAuto ){
+			setBackground(currentStyle.backgroundColor );
+		}
 	};
 	void finishRender(){
 		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -409,6 +419,10 @@ void setBackground(const armos.types.Color color){
 
 void setBackground(const float gray){
 	currentRenderer.setBackground(armos.types.Color(gray, gray, gray, 255));
+}
+
+void setBackgroundAuto(const bool isAuto){
+	currentRenderer.isBackgroundAuto = isAuto;
 }
 
 void setColor(const armos.types.Color color){
