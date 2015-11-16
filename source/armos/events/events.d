@@ -1,5 +1,5 @@
 module armos.events.events;
-import armos.events.events;
+import armos.events;
 import armos.utils;
 
 class KeyPressedEventArg : armos.events.EventArg{
