@@ -213,6 +213,9 @@ class Renderer {
 		glScalef(vec[0], vec[1], vec[2]);
 	}
 	
+	void rotate(float degrees, armos.math.Vector3f vec){
+		rotate(degrees, vec[0], vec[1], vec[2]);
+	}
 	void rotate(float degrees, float vecX, float vecY, float vecZ){
 		glRotatef(degrees, vecX, vecY, vecZ);
 	}
@@ -318,7 +321,6 @@ class Renderer {
 		glLoadMatrixf((persp*lookAt).array.ptr);
 		glScalef(1, -1, 1);
 		glTranslatef(0, -viewH, 0);
-		
 		glMatrixMode(GL_MODELVIEW);
 		// glLoadIdentity();
 	}
@@ -333,36 +335,6 @@ class Renderer {
 	void finishRender(){
 		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	};
-	
-	void loadMatrix(armos.math.Matrix4f matrix){
-		float[16] array;
-		for (int i = 0; i < 4 ; i++) {
-			for (int j = 0; j < 4 ; j++) {
-				// writeln(i, "\t", j);
-				array[i+j*4] = matrix[i][j];
-			}
-		}
-		// glLoadMatrixf(array.ptr);
-		// glMultMatrixf(array.ptr);
-	}
-	
-	void loadViewMatrix(armos.math.Matrix4f matrix){
-		int mode;
-		glGetIntegerv(GL_MATRIX_MODE,&mode);
-		// matrixStack.loadViewMatrix(matrix);
-		glMatrixMode(GL_MODELVIEW);
-		float[16] array;
-		for (int i = 0; i < 4 ; i++) {
-			for (int j = 0; j < 4 ; j++) {
-				// writeln(i, "\t", j);
-				array[i+j*4] = matrix[i][j];
-			}
-		}
-		// glLoadMatrixf(array.ptr);
-		// glMultMatrixf(array.ptr);
-		
-		glMatrixMode(mode);
-	}
 	
 	void draw(
 		in armos.graphics.Mesh mesh,
@@ -460,6 +432,10 @@ void scale(armos.math.Vector3f vec){
 
 void rotate(float degrees, float vec_x, float vec_y, float vec_z){
 	currentRenderer.rotate(degrees, vec_x, vec_y, vec_z);
+}
+
+void rotate(float degrees, armos.math.Vector3f vec){
+	currentRenderer.rotate(degrees, vec);
 }
 
 void setLineWidth(float width){
