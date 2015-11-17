@@ -9,7 +9,7 @@ class Camera{
 	armos.math.Vector3f target;
 	armos.math.Vector3f up = armos.math.Vector3f(0, 1, 0);
 	double fov = 60;
-	double nearDist = 0;
+	double nearDist = 1;
 	double farDist = 1000;
 	
 	void start(){
@@ -26,14 +26,14 @@ class Camera{
 			farDist
 		);
 		
-		armos.math.Matrix4f vFlip = armos.math.Matrix4f(
-			[1, 0, 0, 0],
-			[0, -1, 0, armos.app.windowSize[1]],
-			[0, 0, 1, 0],
-			[0, 0, 0, 1],
-		);
+		// armos.math.Matrix4f vFlip = armos.math.Matrix4f(
+		// 	[1,  0, 0, 0                       ],
+		// 	[0, -1, 0, armos.app.windowSize[1] ],
+		// 	[0, 0,  1, 0                       ],
+		// 	[0, 0,  0, 1                       ],
+		// );
 		
-		projectionMatrix = vFlip*persp*lookAt;
+		projectionMatrix = persp*lookAt;
 		armos.graphics.currentRenderer.bind(projectionMatrix);
 	}
 	void end(){
