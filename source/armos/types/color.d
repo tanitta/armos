@@ -14,6 +14,13 @@ mixin template BaseColor(ColorType, PixelType) {
 	// 	a = PixelType.max;
 	// }
 	
+	 this(int hexColor, float alpha = limit){
+		r = (hexColor >> 16) & 0xff;
+		g = (hexColor >> 8) & 0xff;
+		b = (hexColor >> 0) & 0xff;
+		a = cast(PixelType)alpha;
+	}
+	
 	this(float red, float green, float blue, float alpha = limit){
 		r = armos.math.clamp(cast(PixelType)red, cast(PixelType)0, limit);
 		g = armos.math.clamp(cast(PixelType)green, cast(PixelType)0, limit);
