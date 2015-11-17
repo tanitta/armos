@@ -86,4 +86,8 @@ class Mesh{
 	void drawVertices(){
 		draw(armos.graphics.PolyRenderMode.Points);
 	};
+	
+	void drawFill(){
+		draw(armos.graphics.PolyRenderMode.Fill);
+	};
 }
