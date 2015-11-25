@@ -54,10 +54,10 @@ struct Vector(T, int Dimention){
 		assert(vec1 != vec2);
 	}
 
-	VectorType opNeg(){
-		auto result = this;
-		foreach (ref var; result.data) {
-			var = -var;
+	const VectorType opNeg(){
+		auto result = VectorType();
+		foreach (int index, ref var; result.data) {
+			var = -this[index];
 		}
 		return result;
 	};
@@ -146,13 +146,17 @@ struct Vector(T, int Dimention){
 		auto result = Vector3d(3.0, 2.0, 1.0);
 		assert(result/2.0 == Vector3d(1.5, 1.0, 0.5));
 	}
-
+	
 	const T norm(){
 		T sum_of_squar = cast(T)0;
 		foreach (var; this.data) {
 			sum_of_squar += var*var;
 		}
-		return sqrt( sum_of_squar );
+		
+		static if( is(T == int ) )
+			return cast(int)sqrt( cast(float)sum_of_squar );
+		else
+			return sqrt( sum_of_squar );
 	}
 	unittest{
 		auto result = Vector3d(3.0, 2.0, 1.0);
@@ -231,12 +235,18 @@ struct Vector(T, int Dimention){
 	const print(){
 		import std.stdio;
 		for (int i = 0; i < Dimention ; i++) {
+			static if( is(T == int ) )
+				writef("%d\t", data[i]);
+			else
 				writef("%f\t", data[i]);
 		}
 		writef("\n");
 	}
 }
 
+alias Vector!(int, 2) Vector2i;
+alias Vector!(int, 3) Vector3i;
+alias Vector!(int, 4) Vector4i;
 alias Vector!(float, 2) Vector2f;
 alias Vector!(float, 3) Vector3f;
 alias Vector!(float, 4) Vector4f;
