@@ -242,6 +242,26 @@ struct Vector(T, int Dimention){
 		}
 		writef("\n");
 	}
+	
+	const CastType opCast(CastType)(){
+		auto vec = CastType();
+		if (vec.data.length != data.length) {
+			assert(0);
+		}else{
+			foreach (int index, const T var; data) {
+				vec.data[index] = cast( typeof( vec.data[0] ) )data[index];
+			}
+			return vec;
+		}
+	}
+	unittest{
+		auto vec_f = Vector3f(2.5, 0, 0);
+		auto vec_i = Vector3i(0, 0, 0);
+		
+		vec_i = cast(Vector3i)vec_f;
+		
+		assert(vec_i[0] == 2);
+	}
 }
 
 alias Vector!(int, 2) Vector2i;
@@ -253,4 +273,3 @@ alias Vector!(float, 4) Vector4f;
 alias Vector!(double, 2) Vector2d;
 alias Vector!(double, 3) Vector3d;
 alias Vector!(double, 4) Vector4d;
-
