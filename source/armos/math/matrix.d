@@ -339,6 +339,9 @@ struct Matrix(T, int RowSize, int ColSize){
 	}
 }
 
+alias Matrix!(int, 2, 2) Matrix2i;
+alias Matrix!(int, 3, 3) Matrix3i;
+alias Matrix!(int, 4, 4) Matrix4i;
 alias Matrix!(float, 2, 2) Matrix2f;
 alias Matrix!(float, 3, 3) Matrix3f;
 alias Matrix!(float, 4, 4) Matrix4f;
