@@ -1,4 +1,4 @@
 module armos.events;
-import armos.events.event;
-import armos.events.events;
+public import armos.events.event;
+public import armos.events.events;
 

@@ -1,3 +1,3 @@
 module armos.types;
-import armos.types.color;
-import armos.types.rectangle;
+public import armos.types.color;
+public import armos.types.rectangle;

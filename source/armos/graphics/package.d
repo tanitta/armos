@@ -1,8 +1,8 @@
 module armos.graphics;
-import armos.graphics.mesh;
-import armos.graphics.renderer;
-import armos.graphics.node;
-import armos.graphics.style;
-import armos.graphics.matrixstack;
-import armos.graphics.primitives;
-import armos.graphics.camera;
+public import armos.graphics.mesh;
+public import armos.graphics.renderer;
+public import armos.graphics.node;
+public import armos.graphics.style;
+public import armos.graphics.matrixstack;
+public import armos.graphics.primitives;
+public import armos.graphics.camera;

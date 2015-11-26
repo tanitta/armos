@@ -1,5 +1,5 @@
 module armos.app;
-import armos.app.baseapp;
-import armos.app.basewindow;
-import armos.app.runner;
+public import armos.app.baseapp;
+public import armos.app.basewindow;
+public import armos.app.runner;
 
