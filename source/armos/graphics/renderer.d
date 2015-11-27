@@ -41,6 +41,9 @@ GLuint getGLPrimitiveMode(PrimitiveMode mode){
 		case PrimitiveMode.Lines:
 				 return_mode =  GL_LINES;
 					 break;
+		case PrimitiveMode.LineStrip:
+				 return_mode =  GL_LINE_STRIP;
+					 break;
 		case PrimitiveMode.LineLoop:
 				 return_mode =  GL_LINE_LOOP;
 					 break;

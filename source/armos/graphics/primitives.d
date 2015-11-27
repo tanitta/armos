@@ -70,8 +70,16 @@ armos.graphics.Mesh boxPrimitive(in armos.math.Vector3f position, in armos.math.
 	return mesh;
 }
 
-armos.graphics.Mesh spherePrimitive(){
+armos.graphics.Mesh linePrimitive(armos.math.Vector3f[] arr ...){
+	if (arr.length < 2) {
+		assert(0);
+	}
 	auto mesh = new armos.graphics.Mesh;
+	mesh.primitiveMode = armos.graphics.PrimitiveMode.LineStrip ;
+	foreach (int index, vec; arr) {
+		mesh.addVertex(vec);
+		mesh.addIndex(index);
+	}
 	return mesh;
 }
 
