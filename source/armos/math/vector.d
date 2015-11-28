@@ -21,7 +21,7 @@ struct Vector(T, int Dimention){
 		}
 	}
 
-	pure const T opIndex(in int index){
+	pure T opIndex(in int index)const{
 		return data[index];
 	}
 
@@ -54,7 +54,7 @@ struct Vector(T, int Dimention){
 		assert(vec1 != vec2);
 	}
 
-	const VectorType opNeg(){
+	VectorType opNeg()const{
 		auto result = VectorType();
 		foreach (int index, ref var; result.data) {
 			var = -this[index];
@@ -68,7 +68,7 @@ struct Vector(T, int Dimention){
 		assert((-vec1)[0] == -1.5);
 	}
 
-	const VectorType opAdd(in VectorType r){
+	VectorType opAdd(in VectorType r)const{
 		auto result = VectorType();
 		foreach (int index, const T var; r.data) {
 			result[index] = this[index] + var;
@@ -85,7 +85,7 @@ struct Vector(T, int Dimention){
 		assert((vec1+vec2)[0] == 1.7);
 	}
 
-	const VectorType opSub(in VectorType r){
+	VectorType opSub(in VectorType r)const{
 		auto result = VectorType();
 		foreach (int index, const T var; r.data) {
 			result[index] = this[index] - var;
@@ -97,7 +97,7 @@ struct Vector(T, int Dimention){
 		assert(result == Vector3d(2, 0, -2));
 	}
 
-	const VectorType opAdd(in T v){
+	VectorType opAdd(in T v)const{
 		auto result = VectorType();
 		foreach (int index, const T var; data) {
 			result[index] = this[index]+v;
@@ -110,7 +110,7 @@ struct Vector(T, int Dimention){
 		assert(2.0+result == Vector3d(5.0, 4.0, 3.0));
 	}
 
-	const VectorType opSub(in T v){
+	VectorType opSub(in T v)const{
 		auto result = VectorType();
 		foreach (int index, const T var; data) {
 			result[index] = this[index]-v;
@@ -122,7 +122,7 @@ struct Vector(T, int Dimention){
 		assert(result-2.0 == Vector3d(1.0, 0.0, -1.0));
 	}
 
-	const VectorType opMul(in T v){
+	VectorType opMul(in T v)const{
 		auto result = VectorType();
 		foreach (int index, const T var; data) {
 			result[index] = this[index]*v;
@@ -135,7 +135,7 @@ struct Vector(T, int Dimention){
 		assert(2.0*result == Vector3d(6.0, 4.0, 2.0));
 	}
 
-	const VectorType opDiv(in T v){
+	VectorType opDiv(in T v)const{
 		auto result = VectorType();
 		foreach (int index, const T var; data) {
 			result[index] = this[index]/v;
@@ -147,7 +147,7 @@ struct Vector(T, int Dimention){
 		assert(result/2.0 == Vector3d(1.5, 1.0, 0.5));
 	}
 	
-	const T norm(){
+	T norm()const{
 		T sum_of_squar = cast(T)0;
 		foreach (var; this.data) {
 			sum_of_squar += var*var;
@@ -163,7 +163,7 @@ struct Vector(T, int Dimention){
 		assert(result.norm() == ( 3.0^^2.0+2.0^^2.0+1.0^^2.0 )^^0.5);
 	}
 
-	const T dotProduct(const VectorType v){
+	T dotProduct(const VectorType v)const{
 		T sum = cast(T)0;
 		for (int i = 0; i < Dimention; i++) {
 			sum += this[i]*v[i];
@@ -177,7 +177,7 @@ struct Vector(T, int Dimention){
 	}
 
 	static if (Dimention >= 3)
-	const VectorType vectorProduct(VectorType[] arg ...){
+	VectorType vectorProduct(VectorType[] arg ...)const{
 		if(arg.length != Dimention-2){
 			assert(0);
 		}
@@ -203,7 +203,7 @@ struct Vector(T, int Dimention){
 		assert(vector0.vectorProduct(vector1) == anser);
 	}
 
-	const VectorType normalized(){
+	VectorType normalized()const{
 		return this/this.norm();
 	}
 	unittest{
@@ -221,7 +221,7 @@ struct Vector(T, int Dimention){
 	}
 	
 	// opCast(armos.math.Matrix!())
-	const T[Dimention] array(){
+	T[Dimention] array()const{
 		return data;
 	}
 	unittest{
@@ -232,7 +232,7 @@ struct Vector(T, int Dimention){
 		assert(array == [4, 2, 3]);
 		assert(vector == Vector3f(1, 2, 3));
 	}
-	const print(){
+	void print(){
 		import std.stdio;
 		for (int i = 0; i < Dimention ; i++) {
 			static if( is(T == int ) )
@@ -243,7 +243,7 @@ struct Vector(T, int Dimention){
 		writef("\n");
 	}
 	
-	const CastType opCast(CastType)(){
+	CastType opCast(CastType)()const{
 		auto vec = CastType();
 		if (vec.data.length != data.length) {
 			assert(0);
