@@ -52,6 +52,9 @@ class Loop {
 	double fpsUseRate(){
 		return fpscounter.fpsUseRate;
 	}
+	void targetFps(double fps){
+		fpscounter.targetFps = fps;
+	}
 	// keyPressed(){
 	// 	ESC
 	// }
@@ -80,6 +83,10 @@ Loop* mainLoop(){
 
 double fpsUseRate(){
 	return mainLoop.fpsUseRate;
+}
+
+void targetFps(double fps){
+	mainLoop.targetFps(fps);
 }
 
 
