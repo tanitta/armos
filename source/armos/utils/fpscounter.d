@@ -2,21 +2,26 @@ module armos.utils.fpscounter;
 import core.time;
 import core.thread;
 class FpsCounter {
-	private double targetFps = 60.0;
+	private double targetFps_ = 60.0;
 	private double currentFps = 60.0;
 	private ulong  nFrameCount = 0;
 	private int targetTime = 0;
 	private MonoTime timer;
 	double fpsUseRate = 0;
-	this(double targetFps = 60){
+	this(double targetFps_ = 60){
 		timer = MonoTime.currTime;
-		this.targetFps = targetFps;
-		this.currentFps= targetFps;
-		targetTime = cast(int)(1.0/targetFps*10000000);
+		this.targetFps_ = targetFps_;
+		this.currentFps= targetFps_;
+		targetTime = cast(int)(1.0/targetFps_*10000000);
+	}
+	
+	void targetFps(double fps){
+		targetFps_ = fps;
+		targetTime = cast(int)(1.0/targetFps_*10000000);
 	}
 
 	double getTargetFps(){
-		return targetFps;
+		return targetFps_;
 	}
 	double getCurrentFps(){
 		return currentFps;
