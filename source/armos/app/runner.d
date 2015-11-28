@@ -49,6 +49,9 @@ class Loop {
 		window.pollEvents();
 	}
 	
+	double fpsUseRate(){
+		return fpscounter.fpsUseRate;
+	}
 	// keyPressed(){
 	// 	ESC
 	// }
@@ -75,5 +78,8 @@ Loop* mainLoop(){
 }
 
 
+double fpsUseRate(){
+	return mainLoop.fpsUseRate;
+}
 
 

@@ -7,6 +7,7 @@ class FpsCounter {
 	private ulong  nFrameCount = 0;
 	private int targetTime = 0;
 	private MonoTime timer;
+	double fpsUseRate = 0;
 	this(double targetFps = 60){
 		timer = MonoTime.currTime;
 		this.targetFps = targetFps;
@@ -30,14 +31,14 @@ class FpsCounter {
 
 	void adjust(){
 		MonoTime after = MonoTime.currTime;
-		auto def = after - timer;
+		auto def = ( after - timer );
 		if( def.fracSec.hnsecs < targetTime){
 			Thread.sleep( dur!("hnsecs")( targetTime - def.fracSec.hnsecs ) );
 		}
 		MonoTime after2 = MonoTime.currTime;
 		auto def2 = after2 - timer;
 		currentFps = 1.0/cast(double)(def2.fracSec.hnsecs)*10000000;
+		fpsUseRate = cast(double)def.fracSec.hnsecs/cast(double)targetTime;
 	}
-
 }
 
