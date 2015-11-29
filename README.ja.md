@@ -9,31 +9,30 @@ D言語によるクリエイティブコーディングのためのオープン�
 とりあえずは[D言語くん](http://www.kmonos.net/alang/d/images/d3.gif)を画面に召喚するあたりを最初のマイルストーンとして考えています．
 
 #Demo
-	import std.stdio;
-	import armos.app;
-
-	class TestApp : armos.app.BaseApp{
+	import armos;
+	class TestApp : ar.BaseApp{
+		ar.Mesh line = new ar.Mesh;
+		
 		void setup(){
-			writeln("setup");
+			ar.setLineWidth(2);
+			line.primitiveMode = ar.PrimitiveMode.LineStrip;
 		}
-		void update(){
-			writeln("update");
-		}
+		
 		void draw(){
-			writeln("draw");
+			line.drawWireFrame;
 		}
-		void keyPressed(int key){
-			writeln("keyPressed: ", key);
+		
+		void mouseMoved(int x, int y, int button){
+			line.addVertex(x, y, 0);
+			line.addIndex(cast(int)line.numVertices-1);
 		}
-		void keyReleased(int key){
-			writeln("keyReleased: ", key);
-		}
-	}
-
-	void main(){
-		armos.app.run(new TestApp());
 	}
 	
+	void main(){ar.run(new TestApp);}
+
+#Examples
+[armos_examples](https://github.com/tanitta/armos_examples)
+
 #Require
 - [dub](http://code.dlang.org/)
 

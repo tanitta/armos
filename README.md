@@ -9,30 +9,29 @@ D is very powerfull and easily programming language. But, I couldn't find anythi
 I think that first mileStone will probably be summoning [D-man](http://www.kmonos.net/alang/d/images/d3.gif) into display for the time being.
 
 #Demo
-	import std.stdio;
-	import armos.app;
-
-	class TestApp : armos.app.BaseApp{
+	import armos;
+	class TestApp : ar.BaseApp{
+		ar.Mesh line = new ar.Mesh;
+		
 		void setup(){
-			writeln("setup");
+			ar.setLineWidth(2);
+			line.primitiveMode = ar.PrimitiveMode.LineStrip;
 		}
-		void update(){
-			writeln("update");
-		}
+		
 		void draw(){
-			writeln("draw");
+			line.drawWireFrame;
 		}
-		void keyPressed(int key){
-			writeln("keyPressed: ", key);
-		}
-		void keyReleased(int key){
-			writeln("keyReleased: ", key);
+		
+		void mouseMoved(int x, int y, int button){
+			line.addVertex(x, y, 0);
+			line.addIndex(cast(int)line.numVertices-1);
 		}
 	}
+	
+	void main(){ar.run(new TestApp);}
 
-	void main(){
-		armos.app.run(new TestApp());
-	}
+#Examples
+[armos_examples](https://github.com/tanitta/armos_examples)
 	
 #Require
 - [dub](http://code.dlang.org/)
