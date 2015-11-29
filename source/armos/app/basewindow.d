@@ -4,6 +4,7 @@ import derelict.opengl3.gl;
 import armos.events;
 import armos.math;
 import armos.app;
+import std.math;
 class BaseWindow{
 	private SDL_Window* window;
 	private string name;
@@ -22,6 +23,10 @@ class BaseWindow{
 		armos.events.addListener(core_events.update, app, &app.update);
 		armos.events.addListener(core_events.draw, app, &app.draw);
 		armos.events.addListener(core_events.keyPressed, app, &app.keyPressed);
+		armos.events.addListener(core_events.mouseMoved, app, &app.mouseMoved);
+		armos.events.addListener(core_events.mouseDragged, app, &app.mouseDragged);
+		armos.events.addListener(core_events.mouseReleased, app, &app.mouseReleased);
+		armos.events.addListener(core_events.mousePressed, app, &app.mousePressed);
 	}
 	
 	armos.events.CoreEvents* events(){
@@ -54,6 +59,16 @@ class BaseWindow{
 					break;
 				case SDL_KEYUP:
 					events.notifyKeyReleased(event.key.keysym.sym );
+					break;
+				case SDL_MOUSEMOTION:
+					int button = cast(int)fmax(0, log2( cast(float)event.motion.state*2));
+					events.notifyMouseMoved(event.motion.x, event.motion.y, button);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					events.notifyMousePressed(event.button.x, event.button.y, event.button.button);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					events.notifyMouseReleased(event.button.x, event.button.y, event.button.button);
 					break;
 					
 				default:
