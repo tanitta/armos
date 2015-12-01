@@ -91,3 +91,28 @@ class Mesh{
 		draw(armos.graphics.PolyRenderMode.Fill);
 	};
 }
+
+import derelict.assimp3.assimp;
+import std.stdio;
+armos.graphics.Mesh loadedMesh(in string fileName){
+	DerelictASSIMP3.load();
+	
+	char[] str;
+	auto f = File(fileName, "r");
+	while (f.readln(str))
+        write(str);
+	aiPropertyStore store;
+	uint flags = 0;
+	aiScene* ais = cast(aiScene*)aiImportFileExWithProperties(str.ptr , flags, null, &store);
+	
+	// auto mesh = meshFromAiMesh(aim);
+	auto mesh = new armos.graphics.Mesh;
+	//...
+	return mesh;
+};
+
+private armos.graphics.Mesh meshFromAiMesh(in aiMesh aim){
+	auto mesh = new armos.graphics.Mesh;
+	//...
+	return mesh;
+}
