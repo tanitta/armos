@@ -1,5 +1,9 @@
 .dub
+dub.selections.json
 docs.json
+docs
 __dummy.html
 *.o
+*.a
 *.obj
+TODO.md
