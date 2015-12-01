@@ -7,6 +7,7 @@
 	"dependencies": {
 		"derelict-sdl2": ">=1.9.7", 
 		"derelict-gl3": ">=1.0.16", 
-		"derelict-assimp3": ">=1.0.1"
+		"derelict-assimp3": ">=1.0.1", 
+		"derelict-glfw3": ">=1.1.0"
 	}
 }
