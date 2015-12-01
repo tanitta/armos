@@ -15,6 +15,7 @@ interface Window{
 	bool shouldClose();
 	float aspect();
 	string name();
+	void name(string str);
 }
 
 class WindowSettings{
@@ -25,13 +26,17 @@ class WindowSettings{
 }
 
 mixin template BaseWindow(){
-	private string name_;
+	protected bool shouldClose_ = false;
+	bool shouldClose(){return shouldClose_;}
+	
+	protected string name_;
+	string name(){return name_;}
+	void name(string str){name_ = str;}
+	
 	private armos.app.baseapp.BaseApp app;
 	private armos.events.CoreEvents core_events;
 	protected armos.math.Vector2f windowSize_;
 	
-	protected bool shouldClose_ = false;
-	bool shouldClose(){return shouldClose_;}
 	void initEvents(armos.app.baseapp.BaseApp app){
 		this.app = app;
 		core_events = new armos.events.CoreEvents;
@@ -52,10 +57,6 @@ mixin template BaseWindow(){
 		return core_events;
 	}
 	
-	void close(){
-		core_events.notifyExit();
-	};
-	
 	float aspect(){
 		if(size[1]==0){
 			return 0;
@@ -68,23 +69,21 @@ mixin template BaseWindow(){
 
 class BaseSDLWindow : Window{
 	mixin BaseWindow;
-	bool shouldClose(){return shouldClose_;}
 	
 	private SDL_Window* window;
-	SDL_GLContext glcontext;
-	
-	string name(){return name_;}
+	private SDL_GLContext glcontext;
 	
 	this(ref armos.app.BaseApp apprication){
 		DerelictSDL2.load();
 		DerelictGL.load();
+		
 		SDL_Init(SDL_INIT_VIDEO);
 		window = SDL_CreateWindow(
-				cast(char*)name_,
-				SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-				800, 600,
-				SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
-				);
+			cast(char*)name_,
+			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+			800, 600,
+			SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
+		);
 		
 		glcontext = SDL_GL_CreateContext(window);
 		glClearColor(32.0/255.0, 32.0/255.0, 32.0/255.0, 1);
@@ -148,7 +147,6 @@ class BaseSDLWindow : Window{
 		windowSize_ = armos.math.Vector2f(w, h);
 		return windowSize_;
 	}
-	
 }
 
 armos.app.Window currentWindow(){
