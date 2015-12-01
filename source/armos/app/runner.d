@@ -6,7 +6,7 @@ import armos.graphics;
 class Loop {
 	private bool isLoop = true;
 	private armos.utils.FpsCounter fpscounter;
-	armos.app.basewindow.BaseGLWindow window;
+	armos.app.basewindow.Window window;
 	armos.graphics.Renderer renderer;
 	armos.app.BaseApp* application;
 	
@@ -16,7 +16,7 @@ class Loop {
 	
 	
 	void createWindow(ref armos.app.BaseApp app){
-		window = new armos.app.basewindow.BaseGLWindow(app);
+		window = new armos.app.basewindow.BaseSDLWindow(app);
 		renderer = new armos.graphics.Renderer;
 		application = &app;
 		assert(window);
@@ -29,7 +29,7 @@ class Loop {
 	};
 	
 	void loop(){
-		window.events().notifySetup();
+		window.events.notifySetup();
 		while(isLoop){
 			loopOnce();
 			fpscounter.adjust();
@@ -88,5 +88,4 @@ double fpsUseRate(){
 void targetFps(double fps){
 	mainLoop.targetFps(fps);
 }
-
 

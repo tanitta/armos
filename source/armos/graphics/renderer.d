@@ -150,7 +150,7 @@ class Renderer {
 	bool isBackgroundAuto = true;
 	
 	this(){
-		matrixStack = new armos.graphics.MatrixStack(cast(armos.app.BaseGLWindow*)armos.app.currentWindow);
+		matrixStack = new armos.graphics.MatrixStack(armos.app.currentWindow);
 	}
 	
 	void matrixMode(MatrixMode mode){
@@ -256,7 +256,7 @@ class Renderer {
 		// glViewport(cast(int)nativeViewport.x,cast(int)nativeViewport.y,cast(int)nativeViewport.width,cast(int)nativeViewport.height);
 		
 		auto position = armos.math.Vector2f(0, 0);
-		auto size = armos.app.currentWindow.windowSize();
+		auto size = armos.app.currentWindow.size();
 		position[1] = size[1] - (position[1] + size[1]);
 		// position[1] = renderSurfaceSize[1] - (y + height);
 		glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);

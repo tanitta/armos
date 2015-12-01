@@ -20,9 +20,9 @@ class MatrixStack {
 	armos.math.Matrix4f modelViewProjectionMatrix = armos.math.Matrix4f();
 	}
 	
-	armos.app.BaseGLWindow*  currentWindow_;
+	armos.app.Window  currentWindow_;
 	
-	this(armos.app.BaseGLWindow* window){
+	this(armos.app.Window window){
 		currentWindow_ = window;
 	}
 	
@@ -74,7 +74,7 @@ class MatrixStack {
 	void updatedRelatedMatrices(){}
 	
 	armos.math.Vector2f renderSurfaceSize(){
-		return currentWindow_.windowSize();
+		return currentWindow_.size();
 	}
 	
 	void viewport(float x, float y, float width, float height, bool vflip){

@@ -5,17 +5,35 @@ import armos.events;
 import armos.math;
 import armos.app;
 import std.math;
-class BaseWindow{
-	private SDL_Window* window;
-	private string name;
-	private armos.app.baseapp.BaseApp* app;
+
+interface Window{
+	armos.events.CoreEvents events();
+	armos.math.Vector2f size();
+	void pollEvents();
+	void update();
+	void close();
+	bool shouldClose();
+	float aspect();
+	string name();
+}
+
+class WindowSettings{
+	int width;
+	int height;
+	// position
+	bool isPositionSet;
+}
+
+mixin template BaseWindow(){
+	private string name_;
+	private armos.app.baseapp.BaseApp app;
 	private armos.events.CoreEvents core_events;
 	protected armos.math.Vector2f windowSize_;
-	protected armos.math.Vector2f screenSize_;
 	
-	bool shouldClose = false;
-	this(ref armos.app.baseapp.BaseApp app){
-		this.app = &app;
+	protected bool shouldClose_ = false;
+	bool shouldClose(){return shouldClose_;}
+	void initEvents(armos.app.baseapp.BaseApp app){
+		this.app = app;
 		core_events = new armos.events.CoreEvents;
 		assert(core_events);
 		
@@ -29,20 +47,52 @@ class BaseWindow{
 		armos.events.addListener(core_events.mousePressed, app, &app.mousePressed);
 	}
 	
-	armos.events.CoreEvents* events(){
+	armos.events.CoreEvents events(){
 		assert(core_events);
-		return &core_events;
+		return core_events;
 	}
 	
 	void close(){
-		closeWindow();
-		events.notifyExit();
+		core_events.notifyExit();
 	};
 	
-	void closeWindow(){
-		SDL_DestroyWindow(window);
-		SDL_Quit();
-	};	
+	float aspect(){
+		if(size[1]==0){
+			return 0;
+		}else{
+			return cast(float)size[0]/cast(float)size[1];
+		}
+		
+	}
+}
+
+class BaseSDLWindow : Window{
+	mixin BaseWindow;
+	bool shouldClose(){return shouldClose_;}
+	
+	private SDL_Window* window;
+	SDL_GLContext glcontext;
+	
+	string name(){return name_;}
+	
+	this(ref armos.app.BaseApp apprication){
+		DerelictSDL2.load();
+		DerelictGL.load();
+		SDL_Init(SDL_INIT_VIDEO);
+		window = SDL_CreateWindow(
+				cast(char*)name_,
+				SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+				800, 600,
+				SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
+				);
+		
+		glcontext = SDL_GL_CreateContext(window);
+		glClearColor(32.0/255.0, 32.0/255.0, 32.0/255.0, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		SDL_GL_SwapWindow(window);
+		initEvents(apprication);
+	}
 	
 	void pollEvents(){
 		SDL_Event event;
@@ -51,7 +101,7 @@ class BaseWindow{
 			switch (event.type)
 			{
 				case SDL_QUIT:
-					shouldClose = true;
+					shouldClose_ = true;
 					break;
 					
 				case SDL_KEYDOWN:
@@ -78,47 +128,16 @@ class BaseWindow{
 		}
 	}
 	
-	armos.math.Vector2f windowSize(){
-		return windowSize_;
-	};
-	
-	armos.math.Vector2f screenSize(){
-		return screenSize_;
-	}
-}
-
-class WindowSettings{
-	int width;
-	int height;
-	// position
-	bool isPositionSet;
-}
-
-class BaseGLWindow : BaseWindow{
-	SDL_GLContext glcontext;
-	
-	this(ref armos.app.BaseApp apprication){
-		DerelictSDL2.load();
-		DerelictGL.load();
-		SDL_Init(SDL_INIT_VIDEO);
-		window = SDL_CreateWindow(
-				cast(char*)name,
-				SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-				800, 600,
-				SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
-				);
-		
-		glcontext = SDL_GL_CreateContext(window);
-		glClearColor(32.0/255.0, 32.0/255.0, 32.0/255.0, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
-		
-		SDL_GL_SwapWindow(window);
-		super(apprication);
-	}
-	override void close(){
+	void close(){
 		SDL_GL_DeleteContext(glcontext); 
 		closeWindow();
 	}
+	
+	private void closeWindow(){
+		SDL_DestroyWindow(window);
+		SDL_Quit();
+	};	
+	
 	void update(){
 		SDL_GL_SwapWindow(window);
 	}
@@ -130,18 +149,10 @@ class BaseGLWindow : BaseWindow{
 		return windowSize_;
 	}
 	
-	float aspect(){
-		if(size[1]==0){
-			return 0;
-		}else{
-			return cast(float)size[0]/cast(float)size[1];
-		}
-		
-	}
 }
 
-armos.app.BaseGLWindow* currentWindow(){
-	return &armos.app.mainLoop.window;
+armos.app.Window currentWindow(){
+	return armos.app.mainLoop.window;
 }
 
 
