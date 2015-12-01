@@ -184,7 +184,8 @@ class Renderer {
 	void setBackground(const armos.types.Color color){
 		currentStyle.backgroundColor = cast(armos.types.Color)color;
 		glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 	}
 	
 	void setColor(const armos.types.Color color){
