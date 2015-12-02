@@ -172,7 +172,34 @@ class GLFWWindow : Window{
 		glfwSwapBuffers(window);
 	}
 	
+	private static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
+		if(action == GLFW_PRESS){
+			currentWindow.events.notifyKeyPressed(key);
+		}else if(action == GLFW_RELEASE){
+			currentWindow.events.notifyKeyReleased(key);
+		}
+	}
+	
+	private static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
+		currentWindow.events.notifyMouseMoved(cast(int)xpos, cast(int)ypos, 0);
+	}
+	
+	private static extern(C ) void mouseButtonFunction(GLFWwindow* window, int button, int action, int mods){
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		
+		if(action == GLFW_PRESS){
+			currentWindow.events.notifyMousePressed(cast(int)xpos, cast(int)ypos, button);
+		}else if(action == GLFW_RELEASE){
+			currentWindow.events.notifyMouseReleased(cast(int)xpos, cast(int)ypos, button);
+		}
+	}
+	
 	private void initGLFWEvents(){
+		// glfwSetKeyCallback(window, &keyCallbackFunction);
+		glfwSetKeyCallback(window, cast(GLFWkeyfun)&keyCallbackFunction);
+		glfwSetCursorPosCallback(window, cast(GLFWcursorposfun)&cursorPositionFunction);
+		glfwSetMouseButtonCallback(window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
 	}
 	
 	armos.math.Vector2i size(){
