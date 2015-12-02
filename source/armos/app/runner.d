@@ -16,7 +16,7 @@ class Loop {
 	
 	
 	void createWindow(ref armos.app.BaseApp app){
-		window = new armos.app.basewindow.BaseSDLWindow(app);
+		window = new armos.app.basewindow.SDLWindow(app);
 		renderer = new armos.graphics.Renderer;
 		application = &app;
 		assert(window);

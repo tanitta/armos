@@ -67,7 +67,7 @@ mixin template BaseWindow(){
 	}
 }
 
-class BaseSDLWindow : Window{
+class SDLWindow : Window{
 	mixin BaseWindow;
 	
 	private SDL_Window* window;
