@@ -74,7 +74,7 @@ class MatrixStack {
 	void updatedRelatedMatrices(){}
 	
 	armos.math.Vector2f renderSurfaceSize(){
-		return currentWindow_.size();
+		return cast(armos.math.Vector2f)currentWindow_.size();
 	}
 	
 	void viewport(float x, float y, float width, float height, bool vflip){

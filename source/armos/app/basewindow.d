@@ -7,7 +7,7 @@ import armos.app;
 
 interface Window{
 	armos.events.CoreEvents events();
-	armos.math.Vector2f size();
+	armos.math.Vector2i size();
 	void pollEvents();
 	void update();
 	void close();
@@ -142,11 +142,12 @@ class SDLWindow : Window{
 		SDL_GL_SwapWindow(window);
 	}
 	
-	armos.math.Vector2f size(){
+	armos.math.Vector2i size(){
 		int w, h;
 		SDL_GetWindowSize(window, &w, &h);
-		windowSize_ = armos.math.Vector2f(w, h);
-		return windowSize_;
+		// windowSize_ = armos.math.Vector2i(w, h);
+		// return windowSize_;
+		return armos.math.Vector2i(w, h);
 	}
 }
 
@@ -155,7 +156,7 @@ armos.app.Window currentWindow(){
 }
 
 
-armos.math.Vector2f windowSize(){
+armos.math.Vector2i windowSize(){
 	return currentWindow.size;
 }
 
