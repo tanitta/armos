@@ -1,10 +1,9 @@
 module armos.app.basewindow;
-import derelict.sdl2.sdl;
+
 import derelict.opengl3.gl;
 import armos.events;
 import armos.math;
 import armos.app;
-import std.math;
 
 interface Window{
 	armos.events.CoreEvents events();
@@ -68,6 +67,7 @@ mixin template BaseWindow(){
 }
 
 class SDLWindow : Window{
+	import derelict.sdl2.sdl;
 	mixin BaseWindow;
 	
 	private SDL_Window* window;
@@ -110,6 +110,7 @@ class SDLWindow : Window{
 					events.notifyKeyReleased(event.key.keysym.sym );
 					break;
 				case SDL_MOUSEMOTION:
+					import std.math;
 					int button = cast(int)fmax(0, log2( cast(float)event.motion.state*2));
 					events.notifyMouseMoved(event.motion.x, event.motion.y, button);
 					break;
