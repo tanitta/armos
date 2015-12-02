@@ -259,7 +259,12 @@ class Renderer {
 		auto size = armos.app.currentWindow.size();
 		position[1] = size[1] - (position[1] + size[1]);
 		// position[1] = renderSurfaceSize[1] - (y + height);
+		import std.stdio;
+		"!!null check!!".writeln;
+		size[0].writeln;
+		size[1].writeln;
 		glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
+		"!!null check!!".writeln;
 	}
 	
 	armos.types.Rectangle currentViewport(){

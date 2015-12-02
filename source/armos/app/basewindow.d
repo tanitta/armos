@@ -28,7 +28,7 @@ mixin template BaseWindow(){
 	protected bool shouldClose_ = false;
 	bool shouldClose(){return shouldClose_;}
 	
-	protected string name_;
+	protected string name_ = "";
 	string name(){return name_;}
 	void name(string str){name_ = str;}
 	
@@ -148,6 +148,49 @@ class SDLWindow : Window{
 		// windowSize_ = armos.math.Vector2i(w, h);
 		// return windowSize_;
 		return armos.math.Vector2i(w, h);
+	}
+}
+
+class GLFWWindow : Window{
+	import derelict.glfw3.glfw3;
+	mixin BaseWindow;
+	
+	private GLFWwindow* window;
+	
+	this(ref armos.app.BaseApp apprication){
+		DerelictGL.load();
+		DerelictGLFW3.load();
+		
+		if( !glfwInit() ){}
+		window = glfwCreateWindow(640, 480, cast(char*)name_, null, null);
+		if(!window){close;}
+		
+		glfwMakeContextCurrent(window);
+		initEvents(apprication);
+		initGLFWEvents();
+		
+		glfwSwapBuffers(window);
+	}
+	
+	private void initGLFWEvents(){
+	}
+	
+	armos.math.Vector2i size(){
+		auto vec = armos.Vector2i();
+		glfwGetWindowSize(window, &vec[0], &vec[1]);
+		return vec;
+	}
+	
+	void pollEvents(){
+		glfwPollEvents();
+	}
+	
+	void update(){
+		glfwSwapBuffers(window);
+	}
+
+	void close(){
+		glfwTerminate();
 	}
 }
 
