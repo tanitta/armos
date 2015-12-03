@@ -169,6 +169,7 @@ class GLFWWindow : Window{
 		initEvents(apprication);
 		initGLFWEvents();
 		
+		glfwSwapInterval(1);
 		glfwSwapBuffers(window);
 	}
 	

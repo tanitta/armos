@@ -16,7 +16,7 @@ class Loop {
 	
 	
 	void createWindow(ref armos.app.BaseApp app){
-		window = new armos.app.basewindow.GLFWWindow(app);
+		window = new armos.app.basewindow.SDLWindow(app);
 		renderer = new armos.graphics.Renderer;
 		application = &app;
 		assert(window);
@@ -45,8 +45,8 @@ class Loop {
 		renderer.startRender();
 		window.events().notifyDraw();
 		renderer.finishRender();
-		window.update();
 		window.pollEvents();
+		window.update();
 	}
 	
 	double fpsUseRate(){
