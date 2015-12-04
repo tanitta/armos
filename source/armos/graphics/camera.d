@@ -12,7 +12,7 @@ class Camera{
 	double nearDist = 1;
 	double farDist = 1000;
 	
-	void start(){
+	void begin(){
 		armos.math.Matrix4f lookAt = armos.graphics.lookAtViewMatrix(
 			position, 
 			target, 
