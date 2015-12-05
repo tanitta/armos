@@ -74,8 +74,8 @@ class SDLWindow : Window{
 	private SDL_GLContext glcontext;
 	
 	this(ref armos.app.BaseApp apprication){
-		DerelictSDL2.load();
 		DerelictGL.load();
+		DerelictSDL2.load();
 		
 		SDL_Init(SDL_INIT_VIDEO);
 		window = SDL_CreateWindow(

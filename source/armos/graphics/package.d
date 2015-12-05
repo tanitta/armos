@@ -7,4 +7,5 @@ public import armos.graphics.matrixstack;
 public import armos.graphics.primitives;
 public import armos.graphics.camera;
 public import armos.graphics.fbo;
+public import armos.graphics.rbo;
 public import armos.graphics.texture;

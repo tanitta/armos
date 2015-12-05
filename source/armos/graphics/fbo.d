@@ -4,9 +4,12 @@ import derelict.opengl3.gl;
 import armos.math.vector;
 
 class Fbo{
-	private int savedFboID_;
-	private int fboID_;
+	private int savedFboID_=0;
+	private int fboID_ = 0;
+	
 	private armos.graphics.Texture texture;
+	private armos.graphics.Rbo colorRbo;
+	private armos.graphics.Rbo depthRbo;
 	
 	int id(){
 		return fboID_;
@@ -14,6 +17,8 @@ class Fbo{
 	
 	this(){
 		glGenFramebuffers(1, cast(uint*)&fboID_);
+		colorRbo = new armos.graphics.Rbo;
+		depthRbo = new armos.graphics.Rbo;
 		texture = new armos.graphics.Texture;
 	}
 	
