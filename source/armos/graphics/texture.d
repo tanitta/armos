@@ -22,4 +22,8 @@ class Texture {
 	void end(){
 		glBindTexture(GL_TEXTURE_2D , savedTexID_);
 	}
+	
+	void resize(in armos.math.Vector2i size){
+	
+	};
 }

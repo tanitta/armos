@@ -86,11 +86,21 @@ class SDLWindow : Window{
 		);
 		
 		glcontext = SDL_GL_CreateContext(window);
+		
+		import std.stdio, std.conv;
+		writefln("Vendor:   %s",   to!string(glGetString(GL_VENDOR)));
+		writefln("Renderer: %s",   to!string(glGetString(GL_RENDERER)));
+		writefln("Version:  %s",   to!string(glGetString(GL_VERSION)));
+		writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+		
+		DerelictGL.reload();
+		
 		glClearColor(32.0/255.0, 32.0/255.0, 32.0/255.0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		SDL_GL_SwapWindow(window);
 		initEvents(apprication);
+		
 	}
 	
 	void pollEvents(){
@@ -166,6 +176,8 @@ class GLFWWindow : Window{
 		if(!window){close;}
 		
 		glfwMakeContextCurrent(window);
+		DerelictGL.reload();
+		
 		initEvents(apprication);
 		initGLFWEvents();
 		

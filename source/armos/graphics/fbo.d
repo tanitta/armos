@@ -16,10 +16,19 @@ class Fbo{
 	}
 	
 	this(){
-		glGenFramebuffers(1, cast(uint*)&fboID_);
-		colorRbo = new armos.graphics.Rbo;
-		depthRbo = new armos.graphics.Rbo;
-		texture = new armos.graphics.Texture;
+		// glGenFramebuffers(1, &hoge);
+		// glGenFramebuffers(1, cast(uint*)&fboID_);
+		// colorRbo = new armos.graphics.Rbo;
+		// depthRbo = new armos.graphics.Rbo;
+		//
+		//
+		// glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFboID_);
+		// glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
+		// 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRbo.id);
+		// 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRbo.id);
+		// glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
+		//
+		// texture = new armos.graphics.Texture;
 	}
 	
 	void begin(){
@@ -28,7 +37,7 @@ class Fbo{
 	}
 	
 	void end(){
-		glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
+		glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
 	}
 	
 	void draw(in float x, in float y, in float w, in float h){
