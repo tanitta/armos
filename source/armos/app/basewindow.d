@@ -85,6 +85,9 @@ class SDLWindow : Window{
 			SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
 		);
 		
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4);
+		
 		glcontext = SDL_GL_CreateContext(window);
 		
 		import std.stdio, std.conv;
@@ -92,6 +95,7 @@ class SDLWindow : Window{
 		writefln("Renderer: %s",   to!string(glGetString(GL_RENDERER)));
 		writefln("Version:  %s",   to!string(glGetString(GL_VERSION)));
 		writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+		
 		
 		DerelictGL.reload();
 		
