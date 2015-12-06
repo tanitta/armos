@@ -73,7 +73,6 @@ Loop* mainLoop(){
 	return &mainLoop_;
 }
 
-
 double fpsUseRate(){
 	return mainLoop.fpsUseRate;
 }
