@@ -176,10 +176,15 @@ class GLFWWindow : Window{
 		DerelictGLFW3.load();
 		
 		if( !glfwInit() ){}
+		
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+		
 		window = glfwCreateWindow(640, 480, cast(char*)name_, null, null);
 		if(!window){close;}
 		
 		glfwMakeContextCurrent(window);
+		
 		DerelictGL.reload();
 		
 		initEvents(apprication);
