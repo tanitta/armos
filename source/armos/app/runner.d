@@ -15,17 +15,16 @@ class Loop {
 	}
 	
 	
-	void createWindow(ref armos.app.BaseApp app){
-		window = new armos.app.basewindow.SDLWindow(app);
-		// window = new armos.app.basewindow.GLFWWindow(app);
+	void createWindow(WindowType)(ref armos.app.BaseApp app){
+		window = new WindowType(app);
 		renderer = new armos.graphics.Renderer;
 		application = &app;
 		assert(window);
 		renderer.setup();
 	};
 	
-	void run(ref armos.app.BaseApp app){
-		createWindow(app);
+	void run(WindowType)(ref armos.app.BaseApp app){
+		createWindow!(WindowType)(app);
 		
 	};
 	
@@ -56,25 +55,18 @@ class Loop {
 	void targetFps(double fps){
 		fpscounter.targetFps = fps;
 	}
-	// keyPressed(){
-	// 	ESC
-	// }
 }
 
-// class Runner{
-// 	this(App)(App app){
-// 		auto loop = new Loop;
-// 		loop.run(app);//addEventListener
-// 		loop.loop();
-// 	}
-// }
-class Hoge{}
-const auto hoge = new Hoge;
 private Loop mainLoop_;
-void run(armos.app.BaseApp app){
+
+void run(WindowType)(armos.app.BaseApp app){
 		mainLoop_ = new Loop;
-		mainLoop.run(app);//addEventListener
+		mainLoop.run!(WindowType)(app);
 		mainLoop.loop();
+}
+
+void run(armos.app.BaseApp app){
+	run!(armos.app.SDLWindow)(app);
 };
 
 Loop* mainLoop(){
