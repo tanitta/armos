@@ -85,23 +85,10 @@ class SDLWindow : Window{
 			SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
 		);
 		
-		import std.stdio, std.conv;
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-		int majorVersion, minorVersion;
-		SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &majorVersion);
-		SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minorVersion);
-		majorVersion.writeln;
-		minorVersion.writeln;
 		
 		glcontext = SDL_GL_CreateContext(window);
-		
-		writefln("##after##");
-		writefln("Vendor:   %s",   to!string(glGetString(GL_VENDOR)));
-		writefln("Renderer: %s",   to!string(glGetString(GL_RENDERER)));
-		writefln("Version:  %s",   to!string(glGetString(GL_VERSION)));
-		writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-		
 		
 		DerelictGL.reload();
 		
@@ -110,8 +97,15 @@ class SDLWindow : Window{
 		
 		SDL_GL_SwapWindow(window);
 		initEvents(apprication);
-		
 	}
+	
+	void writeVersion(){
+		import std.stdio, std.conv;
+		writefln("Vendor:   %s",   to!string(glGetString(GL_VENDOR)));
+		writefln("Renderer: %s",   to!string(glGetString(GL_RENDERER)));
+		writefln("Version:  %s",   to!string(glGetString(GL_VERSION)));
+		writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+	};
 	
 	void pollEvents(){
 		SDL_Event event;
