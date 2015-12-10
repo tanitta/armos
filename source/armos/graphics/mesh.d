@@ -2,6 +2,11 @@ module armos.graphics.mesh;
 import armos.graphics;
 import armos.math;
 
+struct TexCoord{
+	float u, v;
+	// int id;
+}
+
 struct Vertex{
 	float x, y, z;
 }
@@ -16,18 +21,22 @@ class Mesh{
 	
 	// armos.math.Vector3f[] vertices;
 	Vertex[] vertices;
+	TexCoord[] texCoords;
 	IndexType[] indices;
 
+	ulong numTexCoords()const{
+		return texCoords.length;
+	}
 	
-	const ulong numVertices(){
+	ulong numVertices()const{
 		return vertices.length;
 	}
 	
-	const ulong numIndices(){
+	ulong numIndices()const{
 		return indices.length;
 	}
 	
-	const armos.graphics.PrimitiveMode primitiveMode(){
+	armos.graphics.PrimitiveMode primitiveMode()const{
 		return primitiveMode_;
 	}
 	void primitiveMode(armos.graphics.PrimitiveMode mode){
@@ -36,13 +45,37 @@ class Mesh{
 	
 
 	
+	void addTexCoord(in armos.math.Vector2f vec){
+		addTexCoord(vec[0], vec[1]);
+	}
+	
+	void addTexCoord(in float u, in float v){
+		// glTexCoord2d(x, y);
+		auto texCoord = TexCoord();
+		texCoord.u = u;
+		texCoord.v = v;
+		texCoords ~= texCoord;
+	}
+	
+	void addTexCoord(in armos.math.Vector2f vec, armos.graphics.Texture texture){
+		texture.begin;
+		// addTexCoord(vec[0], vec[1]);
+		texture.end;
+	}
+	
+	void addTexCoord(in float x, in float y, armos.graphics.Texture texture){
+		texture.begin;
+		// glTexCoord2d(x, y);
+		texture.end;
+	}
+	
 	void addVertex(const armos.math.Vector3f vec){
 		// vertices ~= [cast(armos.math.Vector3f)vec];
-		auto vertex = new Vertex;
+		auto vertex = Vertex();
 		vertex.x = vec[0];
 		vertex.y = vec[1];
 		vertex.z = vec[2];
-		vertices ~= *vertex;
+		vertices ~= vertex;
 		isVertsChanged = true;
 		isFaceDirty = true;
 	};

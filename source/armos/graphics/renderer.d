@@ -18,6 +18,7 @@ enum PrimitiveMode{
 	LineStrip,
 	LineLoop,
 	Points,
+	Quads,
 }
 
 enum MatrixMode{
@@ -49,6 +50,9 @@ GLuint getGLPrimitiveMode(PrimitiveMode mode){
 					 break;
 		case PrimitiveMode.Points:
 				 return_mode =  GL_POINTS;
+					 break;
+		case PrimitiveMode.Quads:
+				 return_mode =  GL_QUADS;
 					 break;
 		default : assert(0);
 		
@@ -359,12 +363,33 @@ class Renderer {
 		
 		//add colors to GL
 		
-		//add texChoords to GL
+		//add texchoords to gl
+		if(mesh.numTexCoords){
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glTexCoordPointer(2, GL_FLOAT, 0, mesh.texCoords.ptr);
+			// foreach (texCoord; mesh.texCoords ) {
+			// 	glTexCoord2f(texCoord.u , texCoord.v);
+			// }
+		}
+		// 	if(texturelocationsenabled.size() == 0){
+		// 		glenableclientstate(gl_texture_coord_array);
+		// 		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+		// 	}else{
+		// 		set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+		// 		for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+		// 			glActiveTexture(GL_TEXTURE0+*textureLocation);
+		// 			glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+		// 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		// 			glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+		// 		}
+		// 		glActiveTexture(GL_TEXTURE0);
+		// 		glClientActiveTexture(GL_TEXTURE0);
+		// 	}
 		
 		//add indicees to GL
 		
 		
-		if(mesh.numIndices()){
+		if(mesh.numIndices){
 			glDrawElements(
 				armos.graphics.getGLPrimitiveMode(mesh.primitiveMode),
 				cast(int)mesh.numIndices(),
@@ -377,6 +402,9 @@ class Renderer {
 		
 		if(mesh.numVertices){
 			glDisableClientState(GL_VERTEX_ARRAY);
+		}
+		if(mesh.numTexCoords){
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 	}
 }
@@ -399,6 +427,9 @@ void setBackground(const float gray){
 
 void setBackgroundAuto(const bool isAuto){
 	currentRenderer.isBackgroundAuto = isAuto;
+}
+void setColor(in float r, in float g, in float b, in float a = 255){
+	currentRenderer.setColor(armos.types.Color(r, g, b, a));
 }
 
 void setColor(const armos.types.Color color){
