@@ -13,6 +13,10 @@ class Rbo{
 	
 	this(){
 		glGenRenderbuffers(1, cast(uint*)&rboID_);
+		// begin;
+		// glRenderbufferStorage(GL_RENDERBUFFER, internalFormat,
+		// 	600, 800);
+		// end;
 	}
 	
 	void begin(){

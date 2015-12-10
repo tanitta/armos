@@ -39,6 +39,12 @@ class Texture {
 		
 		size_ = textureSize;
 		bitsPtr = null;
+		
+		begin;
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+		end;
+		allocate;
 	}
 	
 	this(in int width, in int height){
@@ -55,16 +61,14 @@ class Texture {
 	}
 	
 	void resize(in armos.math.Vector2i textureSize){
-		begin;
-			size_ = textureSize;
-			allocate();
-		end;
+		size_ = textureSize;
+		allocate;
 	};
 	
 	private void allocate(){
 		begin;
 			glTexImage2D(
-				GL_TEXTURE_2D, 0, GL_RGBA,
+				GL_TEXTURE_2D, 0, GL_RGBA8,
 				size_[0], size_[1],
 				0, GL_RGBA, GL_UNSIGNED_BYTE, cast(GLvoid*)bitsPtr
 			);

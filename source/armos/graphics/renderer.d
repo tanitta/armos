@@ -153,8 +153,11 @@ class Renderer {
 	
 	bool isBackgroundAuto = true;
 	
+	armos.graphics.Fbo fbo;
+	
 	this(){
 		matrixStack = new armos.graphics.MatrixStack(armos.app.currentWindow);
+		fbo = new armos.graphics.Fbo;
 	}
 	
 	void matrixMode(MatrixMode mode){
@@ -244,6 +247,11 @@ class Renderer {
 	void setup(){
 		viewport();
 		setupScreenPerspective();
+		
+		fbo.begin;
+			setBackground(currentStyle.backgroundColor );
+		fbo.end;
+		
 		// auto position = armos.math.Vector2f(0, 0);
 		// auto size = armos.app.currentWindow.windowSize();
 		
@@ -253,6 +261,13 @@ class Renderer {
 		
 		
 	};
+	
+	void resize(){
+		fbo.resize(armos.app.currentWindow.size);
+		fbo.begin;
+		setBackground(currentStyle.backgroundColor );
+		fbo.end;
+	}
 	
 	void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
 		// matrixStack.viewport(x, y, width, height, vflip);
@@ -336,11 +351,15 @@ class Renderer {
 	void startRender(){
 		viewport();
 		setupScreenPerspective();
+		
+		fbo.begin;
 		if( isBackgroundAuto ){
 			setBackground(currentStyle.backgroundColor );
 		}
 	};
 	void finishRender(){
+		fbo.end;
+		fbo.draw;
 		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	};
 	
@@ -423,6 +442,10 @@ void setBackground(const armos.types.Color color){
 
 void setBackground(const float gray){
 	currentRenderer.setBackground(armos.types.Color(gray, gray, gray, 255));
+}
+
+void setBackground(in float r, in float g, in float b, in float a = 255){
+	currentRenderer.setBackground(armos.types.Color(r, g, b, a));
 }
 
 void setBackgroundAuto(const bool isAuto){

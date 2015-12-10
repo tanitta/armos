@@ -217,11 +217,17 @@ class GLFWWindow : Window{
 		}
 	}
 	
+	private static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
+		armos.graphics.currentRenderer.resize();
+	}
+	
 	private void initGLFWEvents(){
 		// glfwSetKeyCallback(window, &keyCallbackFunction);
 		glfwSetKeyCallback(window, cast(GLFWkeyfun)&keyCallbackFunction);
 		glfwSetCursorPosCallback(window, cast(GLFWcursorposfun)&cursorPositionFunction);
 		glfwSetMouseButtonCallback(window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
+		glfwSetWindowSizeCallback(window, cast(GLFWwindowsizefun)&resizeWindowFunction);
+		glfwSetWindowSizeCallback(window, cast(GLFWwindowsizefun)&resizeWindowFunction);
 	}
 	
 	armos.math.Vector2i size(){
@@ -236,9 +242,11 @@ class GLFWWindow : Window{
 	
 	void update(){
 		glfwSwapBuffers(window);
+		shouldClose_ = cast(bool)glfwWindowShouldClose(window);
 	}
 
 	void close(){
+		shouldClose_ = true;
 		glfwTerminate();
 	}
 }

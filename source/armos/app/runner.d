@@ -66,7 +66,7 @@ void run(WindowType)(armos.app.BaseApp app){
 }
 
 void run(armos.app.BaseApp app){
-	run!(armos.app.SDLWindow)(app);
+	run!(armos.app.GLFWWindow)(app);
 };
 
 Loop* mainLoop(){
