@@ -135,6 +135,13 @@ class SDLWindow : Window{
 					events.notifyMouseReleased(event.button.x, event.button.y, event.button.button);
 					break;
 					
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					armos.graphics.currentRenderer.resize();
+					import std.stdio;
+					"resize".writeln;
+					// events.notifyMouseReleased(event.button.x, event.button.y, event.button.button);
+					break;
+					
 				default:
 					// events.notify...
 					break;
@@ -190,7 +197,7 @@ class GLFWWindow : Window{
 		initEvents(apprication);
 		initGLFWEvents();
 		
-		glfwSwapInterval(1);
+		glfwSwapInterval(0);
 		glfwSwapBuffers(window);
 	}
 	
@@ -227,7 +234,6 @@ class GLFWWindow : Window{
 		glfwSetCursorPosCallback(window, cast(GLFWcursorposfun)&cursorPositionFunction);
 		glfwSetMouseButtonCallback(window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
 		glfwSetWindowSizeCallback(window, cast(GLFWwindowsizefun)&resizeWindowFunction);
-		glfwSetWindowSizeCallback(window, cast(GLFWwindowsizefun)&resizeWindowFunction);
 	}
 	
 	armos.math.Vector2i size(){
@@ -241,6 +247,8 @@ class GLFWWindow : Window{
 	}
 	
 	void update(){
+		// glFlush();
+		// glFinish();
 		glfwSwapBuffers(window);
 		shouldClose_ = cast(bool)glfwWindowShouldClose(window);
 	}
