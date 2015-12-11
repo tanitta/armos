@@ -240,6 +240,22 @@ class Renderer {
 		currentStyle.isSmoothing = smooth;
 	}
 	
+	void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
+		armos.graphics.Vertex[2] vertices;
+		vertices[0].x = x1;
+		vertices[0].y = y1;
+		vertices[0].z = z1;
+		vertices[1].x = x2;
+		vertices[1].y = y2;
+		vertices[1].z = z2;
+		
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
+		glDrawArrays(GL_LINES, 0, 2);
+		glDisableClientState(GL_VERTEX_ARRAY);
+	};
+
+	
 
 	// void rotate(armos.math.Quaternionf q){
 	// 	glRotatef(q[3], q[0], q[1], q[2]);
@@ -463,6 +479,21 @@ void setColor(const float gray){
 	currentRenderer.setColor(armos.types.Color(gray, gray, gray, 255));
 }
 
+void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
+	currentRenderer.drawLine(x1, y1, z1, x2, y2, z2);
+}
+
+void drawLine(armos.math.Vector3f vec1, armos.math.Vector3f vec2){
+	drawLine(vec1[0], vec1[1], vec1[2], vec2[0], vec2[1], vec2[2]);
+}	
+
+void drawLine(in float x1, in float y1, in float x2, in float y2){
+	currentRenderer.drawLine(x1, y1, 0, x2, y2, 0);
+}	
+
+void drawLine(armos.math.Vector2f vec1, armos.math.Vector2f vec2){
+	drawLine(vec1[0], vec1[1], 0, vec2[0], vec2[1], 0);
+}
 
 void popMatrix(){
 	currentRenderer.popMatrix();
@@ -482,6 +513,10 @@ void translate(armos.math.Vector3f vec){
 
 void scale(float x, float y, float z){
 	currentRenderer.scale(x, y, z);
+}
+
+void scale(float s){
+	currentRenderer.scale(s, s, s);
 }
 
 void scale(armos.math.Vector3f vec){

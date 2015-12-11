@@ -12,24 +12,32 @@ class Fbo{
 	
 	private armos.graphics.Mesh rect = new armos.graphics.Mesh;
 	
-	int id(){
+	int id()const{
 		return fboID_;
 	}
 	
 	this(){
+		this(armos.app.currentWindow.size);
+	}
+	
+	this(armos.math.Vector2i size){
+		this(size[0], size[1]);
+	}
+	
+	this(in int width, in int height){
 		glGenFramebuffers(1, cast(uint*)&fboID_);
 		depthRbo = new armos.graphics.Rbo;
 		
-		texture = new armos.graphics.Texture(armos.app.currentWindow.size);
-		float x = armos.app.currentWindow.size[0];
-		float y = armos.app.currentWindow.size[1];
+		texture = new armos.graphics.Texture(width, height);
+		float x = width;
+		float y = height;
 		rect.primitiveMode = armos.graphics.PrimitiveMode.Quads;
 		
 		texture.begin;
-			rect.addTexCoord(0, 0);rect.addVertex(0, 0, 0);
-			rect.addTexCoord(0, 1);rect.addVertex(0, y, 0);
-			rect.addTexCoord(1, 1);rect.addVertex(x, y, 0);
-			rect.addTexCoord(1, 0);rect.addVertex(x, 0, 0);
+			rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
+			rect.addTexCoord(0, 0);rect.addVertex(0, y, 0);
+			rect.addTexCoord(1, 0);rect.addVertex(x, y, 0);
+			rect.addTexCoord(1, 1);rect.addVertex(x, 0, 0);
 		texture.end;
 		
 		rect.addIndex(0);
