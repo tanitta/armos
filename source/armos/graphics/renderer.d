@@ -154,6 +154,7 @@ class Renderer {
 	bool isBackgroundAuto = true;
 	
 	armos.graphics.Fbo fbo;
+	bool _isUseFbo = true;
 	
 	this(){
 		matrixStack = new armos.graphics.MatrixStack(armos.app.currentWindow);
@@ -368,14 +369,18 @@ class Renderer {
 		viewport();
 		setupScreenPerspective();
 		
-		fbo.begin;
+		if(_isUseFbo){
+			fbo.begin;
+		}
 		if( isBackgroundAuto ){
 			setBackground(currentStyle.backgroundColor );
 		}
 	};
 	void finishRender(){
-		fbo.end;
-		fbo.draw;
+		if(_isUseFbo){
+			fbo.end;
+			fbo.draw;
+		}
 		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	};
 	
@@ -441,6 +446,22 @@ class Renderer {
 		if(mesh.numTexCoords){
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
+	}
+	
+	void enableDepthTest(){
+		glEnable(GL_DEPTH_TEST);
+	}
+	
+	void disableDepthTest(){
+		glDisable(GL_DEPTH_TEST);
+	}
+	
+	void enableFbo(){
+		_isUseFbo = true;
+	}
+	
+	void disableFbo(){
+		_isUseFbo = false;
 	}
 }
 
@@ -533,4 +554,18 @@ void rotate(float degrees, armos.math.Vector3f vec){
 
 void setLineWidth(float width){
 	currentRenderer.setLineWidth(width);
+}
+void enableDepthTest(){
+	currentRenderer.enableDepthTest;
+}
+void disableDepthTest(){
+	currentRenderer.disableDepthTest;
+}
+
+void enableFbo(){
+	currentRenderer.enableFbo;
+}
+
+void disableFbo(){
+	currentRenderer.disableFbo;
 }
