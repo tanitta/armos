@@ -74,4 +74,13 @@ class Texture {
 			);
 		end;
 	}
+	
+	ubyte pixel(){
+		assert(bitsPtr!=null);
+		return 0x00;
+	}
+	
+	void pixel(ubyte v){
+		assert(bitsPtr!=null);
+	}
 }

@@ -32,6 +32,13 @@ class BaseApp{
 	void keyPressed(int str) {
 	}
 	
+	void keyReleased(ref armos.events.KeyReleasedEventArg message) {
+		keyReleased(message.key);
+	}
+	
+	void keyReleased(int str) {
+	}
+	
 	int mouseX, mouseY;
 	
 	void mouseMoved(ref armos.events.MouseMovedEventArg message){

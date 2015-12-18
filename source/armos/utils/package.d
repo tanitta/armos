@@ -1,3 +1,4 @@
 module armos.utils;
-import armos.utils.fpscounter;
+public import armos.utils.fpscounter;
+public import armos.utils.file;
 
