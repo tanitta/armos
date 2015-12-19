@@ -37,7 +37,7 @@ int numPixelTypeElements(PixelType pixelType){
 struct Pixel(T){
 	public{
 		this(int numElements){
-			elements_ = new T[](numElements);
+			_elements = new T[](numElements);
 		}
 
 		this(PixelType pixelType){
@@ -47,22 +47,22 @@ struct Pixel(T){
 		void element(int index, T level)
 		in{
 			assert(index>=0);
-			assert(index<elements.length);
+			assert(index<_elements.length);
 		}body{
-			elements_[index] = level;
+			_elements[index] = level;
 		}
 		
 		T element(int index)
 		in{
 			assert(index>=0);
-			assert(index<elements.length);
+			assert(index<_elements.length);
 		}body{
-			return elements_[index];
+			return _elements[index];
 		}
 	}
 	
 	private{
-		T[] elements_;
+		T[] _elements;
 	}
 }
 
