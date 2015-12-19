@@ -31,31 +31,31 @@ GLuint getGLPrimitiveMode(PrimitiveMode mode){
 	GLuint return_mode;
 	switch (mode) {
 		case PrimitiveMode.Triangles:
-				 return_mode = GL_TRIANGLES;
-					 break;
+			return_mode = GL_TRIANGLES;
+			break;
 		case PrimitiveMode.TriangleStrip:
-				 return_mode =  GL_TRIANGLE_STRIP;
-					 break;
+			return_mode =  GL_TRIANGLE_STRIP;
+			break;
 		case PrimitiveMode.TriangleFan:
-				 return_mode =  GL_TRIANGLE_FAN;
-					 break;
+			return_mode =  GL_TRIANGLE_FAN;
+			break;
 		case PrimitiveMode.Lines:
-				 return_mode =  GL_LINES;
-					 break;
+			return_mode =  GL_LINES;
+			break;
 		case PrimitiveMode.LineStrip:
-				 return_mode =  GL_LINE_STRIP;
-					 break;
+			return_mode =  GL_LINE_STRIP;
+			break;
 		case PrimitiveMode.LineLoop:
-				 return_mode =  GL_LINE_LOOP;
-					 break;
+			return_mode =  GL_LINE_LOOP;
+			break;
 		case PrimitiveMode.Points:
-				 return_mode =  GL_POINTS;
-					 break;
+			return_mode =  GL_POINTS;
+			break;
 		case PrimitiveMode.Quads:
-				 return_mode =  GL_QUADS;
-					 break;
+			return_mode =  GL_QUADS;
+			break;
 		default : assert(0);
-		
+
 	}
 	return return_mode;
 }
