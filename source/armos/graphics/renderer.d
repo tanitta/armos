@@ -31,31 +31,31 @@ GLuint getGLPrimitiveMode(PrimitiveMode mode){
 	GLuint return_mode;
 	switch (mode) {
 		case PrimitiveMode.Triangles:
-				 return_mode = GL_TRIANGLES;
-					 break;
+			return_mode = GL_TRIANGLES;
+			break;
 		case PrimitiveMode.TriangleStrip:
-				 return_mode =  GL_TRIANGLE_STRIP;
-					 break;
+			return_mode =  GL_TRIANGLE_STRIP;
+			break;
 		case PrimitiveMode.TriangleFan:
-				 return_mode =  GL_TRIANGLE_FAN;
-					 break;
+			return_mode =  GL_TRIANGLE_FAN;
+			break;
 		case PrimitiveMode.Lines:
-				 return_mode =  GL_LINES;
-					 break;
+			return_mode =  GL_LINES;
+			break;
 		case PrimitiveMode.LineStrip:
-				 return_mode =  GL_LINE_STRIP;
-					 break;
+			return_mode =  GL_LINE_STRIP;
+			break;
 		case PrimitiveMode.LineLoop:
-				 return_mode =  GL_LINE_LOOP;
-					 break;
+			return_mode =  GL_LINE_LOOP;
+			break;
 		case PrimitiveMode.Points:
-				 return_mode =  GL_POINTS;
-					 break;
+			return_mode =  GL_POINTS;
+			break;
 		case PrimitiveMode.Quads:
-				 return_mode =  GL_QUADS;
-					 break;
+			return_mode =  GL_QUADS;
+			break;
 		default : assert(0);
-		
+
 	}
 	return return_mode;
 }
@@ -201,6 +201,11 @@ class Renderer {
 		glColor4f(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
 	}
 	
+	void setColor(int colorCode){
+		auto color =  armos.types.Color(colorCode);
+		setColor(color);
+	}
+	
 	void pushMatrix(){
 		glPushMatrix();
 	};
@@ -262,12 +267,16 @@ class Renderer {
 	// 	glRotatef(q[3], q[0], q[1], q[2]);
 	// }
 	void setup(){
-		viewport();
-		setupScreenPerspective();
-		
-		fbo.begin;
+		if(_isUseFbo){
+			fbo.begin;
+		}
+			viewport();
+			setupScreenPerspective();
 			setBackground(currentStyle.backgroundColor );
-		fbo.end;
+			
+		if(_isUseFbo){
+			fbo.end;
+		}
 		
 		// auto position = armos.math.Vector2f(0, 0);
 		// auto size = armos.app.currentWindow.windowSize();
@@ -280,10 +289,16 @@ class Renderer {
 	};
 	
 	void resize(){
-		fbo.resize(armos.app.currentWindow.size);
-		fbo.begin;
+		if(_isUseFbo){
+			fbo.resize(armos.app.currentWindow.size);
+			fbo.begin;
+		}
+		
 		setBackground(currentStyle.backgroundColor );
-		fbo.end;
+		
+		if(_isUseFbo){
+			fbo.end;
+		}
 	}
 	
 	void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
@@ -366,12 +381,13 @@ class Renderer {
 	}
 	
 	void startRender(){
-		viewport();
-		setupScreenPerspective();
-		
 		if(_isUseFbo){
 			fbo.begin;
 		}
+		
+		viewport();
+		setupScreenPerspective();
+		
 		if( isBackgroundAuto ){
 			setBackground(currentStyle.backgroundColor );
 		}
@@ -379,7 +395,10 @@ class Renderer {
 	void finishRender(){
 		if(_isUseFbo){
 			fbo.end;
+			armos.types.Color tmp =currentStyle.color;
+			setColor(0xFFFFFF);
 			fbo.draw;
+			setColor(tmp);
 		}
 		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	};
