@@ -1,6 +1,7 @@
 module armos.graphics.font;
 import armos.graphics;
 import derelict.freetype.ft;
+
 struct Character{
 	int index;
 	int glyph;
@@ -12,6 +13,7 @@ struct Character{
 	float tW,tH;
 	float t1,t2,v1,v2;
 } 
+
 class Font{
 	public{
 		this(){
@@ -106,25 +108,26 @@ class Font{
 				auto width  = bitmap.width;
 				auto height = bitmap.rows;
 				
-				character.index = i;
-				character.glyph          = glyph;
-				character.height         = cast(int)_face.glyph.metrics.height >>6;
-				character.width          = cast(int) _face.glyph.metrics.width >>6;
-				character.bearingX       = cast(int)_face.glyph.metrics.horiBearingX >>6;
-				character.bearingY       = cast(int)_face.glyph.metrics.horiBearingY >>6;
-				character.xmin           = _face.glyph.bitmap_left;
-				character.xmax           = character.xmin + character.width;
-				character.ymin           = -_face.glyph.bitmap_top;
-				character.ymax           = character.ymin + character.height;
-				character.advance        = cast(int)_face.glyph.metrics.horiAdvance >>6;
-				character.tW             = character.width;
-				character.tH             = character.height;
+				character.index    = i;
+				character.glyph    = glyph;
+				character.height   = cast(int)_face.glyph.metrics.height >>6;
+				character.width    = cast(int) _face.glyph.metrics.width >>6;
+				character.bearingX = cast(int)_face.glyph.metrics.horiBearingX >>6;
+				character.bearingY = cast(int)_face.glyph.metrics.horiBearingY >>6;
+				character.xmin     = _face.glyph.bitmap_left;
+				character.xmax     = character.xmin + character.width;
+				character.ymin     = -_face.glyph.bitmap_top;
+				character.ymax     = character.ymin + character.height;
+				character.advance  = cast(int)_face.glyph.metrics.horiAdvance >>6;
+				character.tW       = character.width;
+				character.tH       = character.height;
 				
 				areaSum += cast(long)( (character.tW+border*2)*(character.tH+border*2) );
 				
 				if(width==0 || height==0) continue;
-				
-
+				expandedData[i].allocate(width, height, armos.graphics.PixelType.GrayAlpha);
+				expandedData[i].setAllPixels(0, 255);
+				expandedData[i].setAllPixels(1, 0);
 			}	
 			
 		}
