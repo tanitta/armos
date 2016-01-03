@@ -1,4 +1,7 @@
 module armos.utils.file;
-string toDataPath(string dataPath){
+/**
+	
+ **/
+string toDataPath(in string dataPath, in bool makeAbsolute){
 	return dataPath;
 }

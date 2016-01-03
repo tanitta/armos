@@ -3,10 +3,17 @@ import armos.math;
 import core.vararg;
 import std.math;
 
+/++
+	ベクトル計算を行うstructです
+++/
 struct Vector(T, int Dimention){
 	alias Vector!(T, Dimention) VectorType;
 
 	T[Dimention] data = cast(T)0;
+	
+	/++
+		Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
+	++/
 	this(T[] arr ...){
 		if(arr.length == 0){
 			foreach (ref var; data) {
@@ -21,10 +28,14 @@ struct Vector(T, int Dimention){
 		}
 	}
 
+	/++
+	++/
 	pure T opIndex(in int index)const{
 		return data[index];
 	}
 
+	/++
+	++/
 	ref T opIndex(in int index){
 		return data[index];
 	}
@@ -54,6 +65,8 @@ struct Vector(T, int Dimention){
 		assert(vec1 != vec2);
 	}
 
+	/++
+	++/
 	VectorType opNeg()const{
 		auto result = VectorType();
 		foreach (int index, ref var; result.data) {
@@ -68,6 +81,8 @@ struct Vector(T, int Dimention){
 		assert((-vec1)[0] == -1.5);
 	}
 
+	/++
+	++/
 	VectorType opAdd(in VectorType r)const{
 		auto result = VectorType();
 		foreach (int index, const T var; r.data) {
@@ -85,6 +100,8 @@ struct Vector(T, int Dimention){
 		assert((vec1+vec2)[0] == 1.7);
 	}
 
+	/++
+	++/
 	VectorType opSub(in VectorType r)const{
 		auto result = VectorType();
 		foreach (int index, const T var; r.data) {
@@ -97,6 +114,8 @@ struct Vector(T, int Dimention){
 		assert(result == Vector3d(2, 0, -2));
 	}
 
+	/++
+	++/
 	VectorType opAdd(in T v)const{
 		auto result = VectorType();
 		foreach (int index, const T var; data) {
@@ -110,6 +129,8 @@ struct Vector(T, int Dimention){
 		assert(2.0+result == Vector3d(5.0, 4.0, 3.0));
 	}
 
+	/++
+	++/
 	VectorType opSub(in T v)const{
 		auto result = VectorType();
 		foreach (int index, const T var; data) {
@@ -122,6 +143,8 @@ struct Vector(T, int Dimention){
 		assert(result-2.0 == Vector3d(1.0, 0.0, -1.0));
 	}
 
+	/++
+	++/
 	VectorType opMul(in T v)const{
 		auto result = VectorType();
 		foreach (int index, const T var; data) {
@@ -135,6 +158,8 @@ struct Vector(T, int Dimention){
 		assert(2.0*result == Vector3d(6.0, 4.0, 2.0));
 	}
 
+	/++
+	++/
 	VectorType opDiv(in T v)const{
 		auto result = VectorType();
 		foreach (int index, const T var; data) {
@@ -147,6 +172,9 @@ struct Vector(T, int Dimention){
 		assert(result/2.0 == Vector3d(1.5, 1.0, 0.5));
 	}
 	
+	/++
+		Vectorのノルムを返します．
+	++/
 	T norm()const{
 		T sum_of_squar = cast(T)0;
 		foreach (var; this.data) {
@@ -163,6 +191,9 @@ struct Vector(T, int Dimention){
 		assert(result.norm() == ( 3.0^^2.0+2.0^^2.0+1.0^^2.0 )^^0.5);
 	}
 
+	/++
+		Vectorのドット積を返します．
+	++/
 	T dotProduct(const VectorType v)const{
 		T sum = cast(T)0;
 		for (int i = 0; i < Dimention; i++) {
@@ -176,6 +207,10 @@ struct Vector(T, int Dimention){
 		assert(vec1.dotProduct(vec2) == 8.0);
 	}
 
+	/++
+		Vectorのベクトル積(クロス積，外積)を返します．
+		Dimentionが3以上の場合のみ使用できます．
+	++/
 	static if (Dimention >= 3)
 	VectorType vectorProduct(VectorType[] arg ...)const{
 		if(arg.length != Dimention-2){
@@ -203,6 +238,9 @@ struct Vector(T, int Dimention){
 		assert(vector0.vectorProduct(vector1) == anser);
 	}
 
+	/++
+		正規化したVectorを返します．
+	++/
 	VectorType normalized()const{
 		return this/this.norm();
 	}
@@ -211,6 +249,9 @@ struct Vector(T, int Dimention){
 		assert(vec1.normalized().norm() == 1.0);
 	}
 
+	/++
+		Vectorを正規化します．
+	++/
 	void normalize(){
 		this.data = this.normalized().data;
 	}
@@ -220,7 +261,9 @@ struct Vector(T, int Dimention){
 		assert(vec1.norm() == 1.0);
 	}
 	
-	// opCast(armos.math.Matrix!())
+	/++
+		Vectorの要素を一次元配列で返します．
+	++/
 	T[Dimention] array()const{
 		return data;
 	}
@@ -232,6 +275,10 @@ struct Vector(T, int Dimention){
 		assert(array == [4, 2, 3]);
 		assert(vector == Vector3f(1, 2, 3));
 	}
+	
+	/++
+		Vectorを標準出力に渡します
+	++/
 	void print(){
 		import std.stdio;
 		for (int i = 0; i < Dimention ; i++) {
@@ -243,6 +290,9 @@ struct Vector(T, int Dimention){
 		writef("\n");
 	}
 	
+	/++
+		自身を別の型のVectorへキャストしたものを返します．キャスト後の型は元のVectorと同じ次元である必要があります．
+	++/
 	CastType opCast(CastType)()const{
 		auto vec = CastType();
 		if (vec.data.length != data.length) {

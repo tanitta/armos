@@ -12,3 +12,4 @@ public import armos.graphics.texture;
 public import armos.graphics.font;
 public import armos.graphics.pixel;
 public import armos.graphics.bitmap;
+public import armos.graphics.image;

@@ -1,5 +1,5 @@
 module armos.graphics.pixel;
-enum PixelType{
+enum ColorFormat{
 	Gray, 
 	GrayAlpha, 
 	RGB,
@@ -8,25 +8,25 @@ enum PixelType{
 	BGRA, 
 }
 
-int numPixelTypeElements(PixelType pixelType){
+int numColorFormatElements(ColorFormat ColorFormat){
 	int num;
-	switch (pixelType) {
-		case PixelType.Gray:
+	switch (ColorFormat) {
+		case ColorFormat.Gray:
 			num = 1;
-			break;
-		case PixelType.GrayAlpha:
+		break;
+		case ColorFormat.GrayAlpha:
 			num = 2;
 			break;
-		case PixelType.RGB:
+		case ColorFormat.RGB:
 			num = 3;
 			break;
-		case PixelType.BGR:
+		case ColorFormat.BGR:
 			num = 3;
 			break;
-		case PixelType.RGBA:
+		case ColorFormat.RGBA:
 			num = 4;
 			break;
-		case PixelType.BGRA:
+		case ColorFormat.BGRA:
 			num = 4;
 			break;
 		default : assert(0, "case is not defined");
@@ -36,14 +36,22 @@ int numPixelTypeElements(PixelType pixelType){
 
 struct Pixel(T){
 	public{
-		this(int numElements){
-			_elements = new T[](numElements);
+		// this(int numElements){
+		// 	_elements = new T[](numElements);
+		// }
+
+		this(ColorFormat colorType){
+			_colorType = colorType;
+			_elements = new T[](numColorFormatElements(colorType));
 		}
 
-		this(PixelType pixelType){
-			this(numPixelTypeElements(pixelType));
+		void element(Pixel!(T) px){
+			for (int i = 0; i < _elements.length; i++) {
+				_elements[i] = px.element(i);
+			}
+			// _elements = px.element;
 		}
-
+		
 		void element(int index, T level)
 		in{
 			assert(index>=0);
@@ -59,10 +67,15 @@ struct Pixel(T){
 		}body{
 			return _elements[index];
 		}
+		
+		int numElements(){
+			return numColorFormatElements(_colorType);
+		}
 	}
 	
 	private{
 		T[] _elements;
+		ColorFormat _colorType;
 	}
 }
 

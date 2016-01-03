@@ -4,11 +4,12 @@
 	"copyright": "Copyright © 2015, tanitta",
 	"authors": ["tanitta"],
 	"version": "0.0.1",
+	"dflags": ["-XfdocFolder/index.json"],
 	"dependencies": {
 		"derelict-sdl2": ">=1.9.7", 
 		"derelict-assimp3": ">=1.0.1", 
 		"derelict-glfw3": ">=1.1.0", 
 		"derelict-gl3": ">=1.0.17" , 
 		"derelict-ft": ">=1.0.2" 
-	}
+	},
 }
