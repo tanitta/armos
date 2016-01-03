@@ -8,24 +8,19 @@ import std.math;
 ++/
 struct Vector(T, int Dimention){
 	alias Vector!(T, Dimention) VectorType;
-
-	T[Dimention] data = cast(T)0;
+	
+	T[Dimention] data = T(0);
 	
 	/++
 		Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
 	++/
 	this(T[] arr ...){
-		if(arr.length == 0){
-			foreach (ref var; data) {
-				var = cast(T)0;
-			}
-			return;
-		}
-		if(arr.length == Dimention){
+		if(arr.length == 0)
+			data[] = T(0);
+		else if(arr.length == Dimention)
 			data = arr;
-		}else{
-			assert(0);
-		}
+		else
+			assert(false);
 	}
 
 	/++
@@ -58,7 +53,7 @@ struct Vector(T, int Dimention){
 		auto vec1 = Vector3d(1, 2, 3);
 		auto vec2 = Vector3d(1, 2, 3);
 		assert(vec1 == vec2);
-	}	
+	}
 	unittest{
 		auto vec1 = Vector3d(1, 2, 3);
 		auto vec2 = Vector3d(2, 2, 1);
@@ -69,9 +64,7 @@ struct Vector(T, int Dimention){
 	++/
 	VectorType opNeg()const{
 		auto result = VectorType();
-		foreach (int index, ref var; result.data) {
-			var = -this[index];
-		}
+		result.data[] = -data[];
 		return result;
 	};
 	unittest{
@@ -85,12 +78,10 @@ struct Vector(T, int Dimention){
 	++/
 	VectorType opAdd(in VectorType r)const{
 		auto result = VectorType();
-		foreach (int index, const T var; r.data) {
-			result[index] = this[index] + var;
-		}
+		result.data[] = data[] + r.data[];
 		return result;
 	}
-	unittest{	
+	unittest{
 		auto vec1 = Vector3d();
 		vec1[0] = 1.5;
 
@@ -104,9 +95,7 @@ struct Vector(T, int Dimention){
 	++/
 	VectorType opSub(in VectorType r)const{
 		auto result = VectorType();
-		foreach (int index, const T var; r.data) {
-			result[index] = this[index] - var;
-		}
+		result.data[] = data[] - r.data[];
 		return result;
 	}
 	unittest{
@@ -118,9 +107,7 @@ struct Vector(T, int Dimention){
 	++/
 	VectorType opAdd(in T v)const{
 		auto result = VectorType();
-		foreach (int index, const T var; data) {
-			result[index] = this[index]+v;
-		}
+		result.data[] = data[] + v;
 		return result;
 	}
 	unittest{
@@ -133,9 +120,7 @@ struct Vector(T, int Dimention){
 	++/
 	VectorType opSub(in T v)const{
 		auto result = VectorType();
-		foreach (int index, const T var; data) {
-			result[index] = this[index]-v;
-		}
+		result.data[] = data[] - v;
 		return result;
 	}
 	unittest{
@@ -147,9 +132,7 @@ struct Vector(T, int Dimention){
 	++/
 	VectorType opMul(in T v)const{
 		auto result = VectorType();
-		foreach (int index, const T var; data) {
-			result[index] = this[index]*v;
-		}
+		result.data[] = data[] * v;
 		return result;
 	}
 	unittest{
@@ -162,9 +145,7 @@ struct Vector(T, int Dimention){
 	++/
 	VectorType opDiv(in T v)const{
 		auto result = VectorType();
-		foreach (int index, const T var; data) {
-			result[index] = this[index]/v;
-		}
+		result.data[] = data[] / v;
 		return result;
 	}
 	unittest{
@@ -176,15 +157,13 @@ struct Vector(T, int Dimention){
 		Vectorのノルムを返します．
 	++/
 	T norm()const{
-		T sum_of_squar = cast(T)0;
-		foreach (var; this.data) {
-			sum_of_squar += var*var;
-		}
-		
+		import std.numeric : dotProduct;
+		T sumsq = dotProduct(data, data);
+
 		static if( is(T == int ) )
-			return cast(int)sqrt( cast(float)sum_of_squar );
+			return cast(int)sqrt(cast(float)sumsq);
 		else
-			return sqrt( sum_of_squar );
+			return sqrt(sumsq);
 	}
 	unittest{
 		auto result = Vector3d(3.0, 2.0, 1.0);
@@ -195,11 +174,8 @@ struct Vector(T, int Dimention){
 		Vectorのドット積を返します．
 	++/
 	T dotProduct(const VectorType v)const{
-		T sum = cast(T)0;
-		for (int i = 0; i < Dimention; i++) {
-			sum += this[i]*v[i];
-		}
-		return sum;
+		import std.numeric : dotProduct;
+		return dotProduct(data, v.data);
 	}
 	unittest{
 		auto vec1 = Vector3d(3.0, 2.0, 1.0);
@@ -253,7 +229,7 @@ struct Vector(T, int Dimention){
 		Vectorを正規化します．
 	++/
 	void normalize(){
-		this.data = this.normalized().data;
+		this.data[] /= this.norm();
 	}
 	unittest{
 		auto vec1 = Vector3d(3.0, 2.0, 1.0);
@@ -307,9 +283,9 @@ struct Vector(T, int Dimention){
 	unittest{
 		auto vec_f = Vector3f(2.5, 0, 0);
 		auto vec_i = Vector3i(0, 0, 0);
-		
+
 		vec_i = cast(Vector3i)vec_f;
-		
+
 		assert(vec_i[0] == 2);
 	}
 }
