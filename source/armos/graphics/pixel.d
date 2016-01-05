@@ -34,6 +34,24 @@ int numColorFormatElements(ColorFormat ColorFormat){
 	return num;
 }
 
+import derelict.opengl3.gl;
+GLuint getGLInternalFormat(ColorFormat format){
+	GLuint num;
+	switch(format.numColorFormatElements){
+		case 3:
+			num = GL_RGB32F;
+			break;
+		case 4:
+			num =  GL_RGBA32F;
+			break;
+		case 2:
+			num =  GL_LUMINANCE_ALPHA;
+			break;
+		default: num = GL_LUMINANCE;break;
+	}
+	return num;
+}
+
 struct Pixel(T){
 	public{
 		// this(int numElements){

@@ -8,13 +8,16 @@ import armos.graphics;
 struct Bitmap(T){
 	public{
 		void allocate(armos.math.Vector2i size, armos.graphics.ColorFormat colorType){
-			_colorType = colorType;
+			_colorFormat = colorType;
 			allocate(size[0], size[1], colorType);
 		}
 		
 		void allocate(int width, int height, armos.graphics.ColorFormat colorType){
-			_colorType = colorType;
+			_size[0] = width;
+			_size[1] = height;
+			_colorFormat = colorType;
 			auto arraySize = width * height;
+			_data = [];
 			for (int i = 0; i < arraySize; i++) {
 				_data ~= armos.graphics.Pixel!T(colorType);
 			}
@@ -99,13 +102,59 @@ struct Bitmap(T){
 			pixelの要素の数を返します．
 		++/
 		int numElements(){
-			return armos.graphics.numColorFormatElements(_colorType);
+			return armos.graphics.numColorFormatElements(_colorFormat);
+		}
+		
+		/++
+			一次元配列からBitmapを生成します
+		++/
+		void setFromAlignedPixels(T* pixels, int width, int height, armos.graphics.ColorFormat format){
+			allocate(width, height, format);
+			auto size = width * height;
+			auto numChannels = armos.graphics.numColorFormatElements(format);
+			for (int i = 0; i < size*numChannels; i += numChannels) {
+				for (int channel = 0; channel < numChannels; channel++){
+					_data[i/numChannels].element(channel, pixels[channel+i]);
+				}
+			}
+		}
+		
+		/++
+			RとBのチャンネルを入れ替えます
+		++/
+		void swapRAndB(){
+			if(numElements < 3){assert(0);}
+			foreach (ref pixel; _data) {
+				auto r = pixel.element(0);
+				auto b = pixel.element(2);
+				pixel.element(0, b);
+				pixel.element(2, r);
+			}
+		}
+		
+		/++
+		++/
+		armos.graphics.ColorFormat colorFormat()const{
+			return _colorFormat;
+		}
+		
+		void print(){
+			import std.stdio;
+			size.print;
+			numElements.writeln;
+			for (int i = 0; i < size[0]; i++) {
+				for (int j = 0; j < size[1]; j++) {
+					for (int k = 0; k < numElements; k++) {
+						( cast(int)pixel(i, j).element(k) ).writeln;
+					}
+				}
+			}
 		}
 	}
 	
 	private{
 		armos.math.Vector2i _size;
 		armos.graphics.Pixel!(T)[] _data;
-		armos.graphics.ColorFormat _colorType;
+		armos.graphics.ColorFormat _colorFormat;
 	}
 }

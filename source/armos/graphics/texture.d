@@ -97,7 +97,7 @@ class Texture {
 		void allocate(in int w, in int h){
 			size_[0] = w;
 			size_[1] = h;
-			allocate();
+			allocate(_format);
 		}
 		
 		/++
@@ -107,14 +107,24 @@ class Texture {
 		++/
 		void allocate(armos.graphics.Bitmap!(char) bitmap){
 			ubyte[] bits;
+			import std.stdio;
 			for (int i = 0; i < bitmap.size[0]; i++) {
 				for (int j = 0; j < bitmap.size[1]; j++) {
 					for (int k = 0; k < bitmap.numElements; k++) {
 						bits ~= bitmap.pixel(i, j).element(k);
+						if(k == 0){
+							if(bitmap.pixel(i, j).element(k)!=255){
+								write("-");
+							}else{
+								write("*");
+							}
+						}
 					}
 				}
+				write("\n");
 			}
-			allocate(bitmap.size[0], bitmap.size[1], bits);
+			bits.writeln;
+			allocate(bits, bitmap.size[0], bitmap.size[1], bitmap.colorFormat);
 		}
 		
 		/++
@@ -124,17 +134,17 @@ class Texture {
 				h    = height
 				bits = image data
 		++/
-		void allocate(in int w, in int h, ubyte[] bits){
+		void allocate(ubyte[] bits, in int w, in int h, armos.graphics.ColorFormat format){
 			size_[0] = w;
 			size_[1] = h;
 			bitsPtr = bits.ptr;
-			allocate();
+			allocate(format);
 		}
 		
 		/++
 			Allocate texture
 		++/
-		void allocate(){
+		void allocate(armos.graphics.ColorFormat format){
 			glEnable(GL_TEXTURE_2D);
 			glGenTextures(1 , cast(uint*)&texID_);
 
@@ -142,7 +152,7 @@ class Texture {
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 				glTexImage2D(
-					GL_TEXTURE_2D, 0, GL_RGBA8,
+					GL_TEXTURE_2D, 0, GL_RGBA,
 					size_[0], size_[1],
 					0, GL_RGBA, GL_UNSIGNED_BYTE, cast(GLvoid*)bitsPtr
 				);
@@ -155,5 +165,6 @@ class Texture {
 		int texID_;
 		ubyte* bitsPtr;
 		armos.math.Vector2i size_;
+		armos.graphics.ColorFormat _format;
 	}
 }
