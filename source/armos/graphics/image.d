@@ -163,7 +163,7 @@ class Image {
 			
 			画像のビットマップデータを返します．
 		++/
-		armos.graphics.Bitmap!(char)* bitmap(){return &_bitmap;}
+		ref armos.graphics.Bitmap!(char) bitmap(){return _bitmap;}
 		
 		/++
 			Retun true if the image was loaded.
