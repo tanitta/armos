@@ -1,8 +1,10 @@
 module armos.utils.file;
 /**
  **/
-string toDataPath(in string dataPath, in bool makeAbsolute = true){
+string toPublicPath(in string fileName, in bool makeAbsolute = true){
 	import std.string;
 	import std.file;
-	return thisExePath.split("/")[0..$-1].join("/") ~ "/data/" ~ dataPath;
+	import std.path;
+	// return thisExePath.dirName ~ dirSeparator ~ "data" ~ dirSeparator ~ dataPath;
+	return buildPath(thisExePath.dirName, "public", fileName);
 }
