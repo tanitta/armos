@@ -1,6 +1,14 @@
 module armos.graphics.texture;
 import derelict.opengl3.gl;
 import armos.math.vector;
+
+int nextPow2(int a){
+	// from nehe.gamedev.net lesson 43
+	int rval=1;
+	while(rval<a) rval<<=1;
+	return rval;
+}
+
 /++
 	openGLのtextureを表すクラスです．
 	初期化後，allocateして利用します．
@@ -38,6 +46,18 @@ class Texture {
 			textureのサイズを返します．
 		++/
 		armos.math.Vector2i size(){return size_;}
+		
+		/++
+		++/
+		int width(){
+			return size[0];
+		}
+		
+		/++
+		++/
+		int height(){
+			return size[1];
+		}
 		
 		/++
 			Return gl texture id.
@@ -106,25 +126,37 @@ class Texture {
 				bitmap =
 		++/
 		void allocate(armos.graphics.Bitmap!(char) bitmap){
-			ubyte[] bits;
-			import std.stdio;
-			for (int i = 0; i < bitmap.size[0]; i++) {
-				for (int j = 0; j < bitmap.size[1]; j++) {
-					for (int k = 0; k < bitmap.numElements; k++) {
-						bits ~= bitmap.pixel(i, j).element(k);
-						if(k == 0){
-							if(bitmap.pixel(i, j).element(k)!=255){
-								write("-");
-							}else{
-								write("*");
-							}
+			import std.math;
+			if(bitmap.width != bitmap.height){
+				int side = cast( int )fmax(bitmap.width, bitmap.height);
+				armos.graphics.Bitmap!(char) squareBitmap;
+				squareBitmap.allocate(side, side, bitmap.colorFormat);
+				for (int i = 0; i < bitmap.size[0]; i++) {
+					for (int j = 0; j < bitmap.size[1]; j++) {
+						squareBitmap.pixel(i, j, bitmap.pixel(i, j));
+					}
+				}
+				ubyte[] bits;
+				for (int i = 0; i < squareBitmap.size[0]; i++) {
+					for (int j = 0; j < squareBitmap.size[1]; j++) {
+						for (int k = 0; k < squareBitmap.numElements; k++) {
+							bits ~= squareBitmap.pixel(i, j).element(k);
 						}
 					}
 				}
-				write("\n");
+				allocate(bits, squareBitmap.size[0], squareBitmap.size[1], squareBitmap.colorFormat);
+			}else{
+				ubyte[] bits;
+				for (int i = 0; i < bitmap.size[0]; i++) {
+					for (int j = 0; j < bitmap.size[1]; j++) {
+						for (int k = 0; k < bitmap.numElements; k++) {
+							bits ~= bitmap.pixel(i, j).element(k);
+						}
+					}
+				}
+				allocate(bits, bitmap.size[0], bitmap.size[1], bitmap.colorFormat);
 			}
-			bits.writeln;
-			allocate(bits, bitmap.size[0], bitmap.size[1], bitmap.colorFormat);
+			
 		}
 		
 		/++
