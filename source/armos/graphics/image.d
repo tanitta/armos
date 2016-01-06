@@ -60,11 +60,17 @@ class Image {
 			
 			画像を読み込みます．
 		++/
-		void load(string localPathInDataDir){
+		void load(string pathInDataDir){
 			import std.string;
 			FIBITMAP * freeImageBitmap = null;
 			_bitmap = armos.graphics.Bitmap!(char)();
-			auto fileName = armos.utils.toDataPath(localPathInDataDir);
+			import std.path;
+			string fileName;
+			if(isAbsolute(pathInDataDir)){
+				fileName = pathInDataDir;
+			}else{
+				fileName = armos.utils.toDataPath(pathInDataDir);
+			}
 			
 			FREE_IMAGE_FORMAT freeImageFormat = FIF_UNKNOWN;
 			freeImageFormat = FreeImage_GetFileType(fileName.toStringz , 0);
