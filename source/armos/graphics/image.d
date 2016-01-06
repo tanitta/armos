@@ -191,7 +191,6 @@ class Image {
 			
 			uint bits = char.sizeof;
 			
-			import std.stdio;
 			FIBITMAP* bitmapConverted;
 			bitmapConverted = FreeImage_ConvertTo32Bits(freeImageBitmap);
 			freeImageBitmap = bitmapConverted;
@@ -222,16 +221,6 @@ class Image {
 			
 			FreeImage_FlipVertical(freeImageBitmap);
 			char* bitmapBits = cast(char*)FreeImage_GetBits(freeImageBitmap);
-			
-			import std.stdio;
-			"bpp : ".write; bpp.writeln;
-			"width : ".write; width.writeln;
-			"height : ".write; height.writeln;
-			
-			// for (int i = 0; i < width*height*channels; i++) {
-			// 	i.write; " : ".write;
-			// 	( cast(int)bitmapBits[i] ).writeln;
-			// }
 				
 			_bitmap.setFromAlignedPixels(bitmapBits, width, height, armosColorFormat);
 			_bitmap.swapRAndB;

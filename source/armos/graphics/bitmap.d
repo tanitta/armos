@@ -137,19 +137,6 @@ struct Bitmap(T){
 		armos.graphics.ColorFormat colorFormat()const{
 			return _colorFormat;
 		}
-		
-		void print(){
-			import std.stdio;
-			size.print;
-			numElements.writeln;
-			for (int i = 0; i < size[0]; i++) {
-				for (int j = 0; j < size[1]; j++) {
-					for (int k = 0; k < numElements; k++) {
-						( cast(int)pixel(i, j).element(k) ).writeln;
-					}
-				}
-			}
-		}
 	}
 	
 	private{
