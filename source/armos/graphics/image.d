@@ -64,7 +64,7 @@ class Image {
 			import std.string;
 			FIBITMAP * freeImageBitmap = null;
 			_bitmap = armos.graphics.Bitmap!(char)();
-			auto fileName = armos.utils.toPublicPath(localPathInDataDir);
+			auto fileName = armos.utils.toDataPath(localPathInDataDir);
 			
 			FREE_IMAGE_FORMAT freeImageFormat = FIF_UNKNOWN;
 			freeImageFormat = FreeImage_GetFileType(fileName.toStringz , 0);
