@@ -4,12 +4,16 @@ import armos.graphics;
 import derelict.opengl3.gl;
 import std.math;
 
+/++
+++/
 enum PolyRenderMode {
 	Points,
 	WireFrame,
 	Fill,
 }
 
+/++
+++/
 enum PrimitiveMode{
 	Triangles,
 	TriangleStrip,
@@ -21,12 +25,26 @@ enum PrimitiveMode{
 	Quads,
 }
 
+/++
+++/
 enum MatrixMode{
 	ModelView,
 	Projection,
 	Texture
 }
 
+/++
+++/
+enum BlendMode{
+	Disable,
+	Alpha,
+	Add,
+	Screen,
+	Subtract
+}
+
+/++
+++/
 GLuint getGLPrimitiveMode(PrimitiveMode mode){
 	GLuint return_mode;
 	switch (mode) {
@@ -60,6 +78,8 @@ GLuint getGLPrimitiveMode(PrimitiveMode mode){
 	return return_mode;
 }
 
+/++
+++/
 GLuint getGLPolyRenderMode(PolyRenderMode mode){
 	GLuint return_mode;
 	switch (mode) {
@@ -77,6 +97,8 @@ GLuint getGLPolyRenderMode(PolyRenderMode mode){
 	return return_mode;
 }
 
+/++
+++/
 GLuint getGLMatrixMode(MatrixMode mode){
 	GLuint return_mode;
 	switch (mode) {
@@ -94,6 +116,8 @@ GLuint getGLMatrixMode(MatrixMode mode){
 	return return_mode;
 }
 
+/++
+++/
 armos.math.Matrix4f perspectiveMatrix(float fov, float aspect, float nearDist, float farDist){
     double tan_fovy = tan(fov*0.5*PI/180.0);
     double right  =  tan_fovy * aspect* nearDist;
@@ -104,6 +128,8 @@ armos.math.Matrix4f perspectiveMatrix(float fov, float aspect, float nearDist, f
 	return frustumMatrix(left,right,bottom,top,nearDist,farDist);
 }
 
+/++
+++/
 armos.math.Matrix4f frustumMatrix(double left, double right, double bottom, double top, double zNear, double zFar){
     double A = (right+left)/(right-left);
     double B = (top+bottom)/(top-bottom);
@@ -118,6 +144,8 @@ armos.math.Matrix4f frustumMatrix(double left, double right, double bottom, doub
 	);
 }
 	
+/++
+++/
 armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.Vector3f center, in armos.math.Vector3f up){
 	armos.math.Vector3f zaxis;
 	if((eye-center).norm>0){
@@ -143,6 +171,8 @@ armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.V
 	);
 };
 
+/++
+++/
 class Renderer {
 	armos.graphics.Style[] styleStack;
 	auto currentStyle_ = new armos.graphics.Style;
@@ -475,6 +505,22 @@ class Renderer {
 		glDisable(GL_DEPTH_TEST);
 	}
 	
+	void blendMode(armos.graphics.BlendMode mode){
+		switch (mode) {
+			case BlendMode.Alpha:
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				break;
+				
+			case BlendMode.Disable:
+				glDisable(GL_BLEND);
+				break;
+			default:
+				assert(0);
+		}
+		currentStyle.blendMode = mode;
+	}
+	
 	void enableFbo(){
 		_isUseFbo = true;
 	}
@@ -484,107 +530,170 @@ class Renderer {
 	}
 }
 
+/++
+++/
 armos.graphics.Renderer* currentRenderer(){
 	return &armos.app.mainLoop.renderer;
 }
 
+/++
+++/
 armos.graphics.Style* currentStyle(){
 	return armos.graphics.currentRenderer.currentStyle;
 }
 
+/++
+++/
 void setBackground(const armos.types.Color color){
 	currentRenderer.setBackground(color);
 }
 
+/++
+++/
 void setBackground(const float gray){
 	currentRenderer.setBackground(armos.types.Color(gray, gray, gray, 255));
 }
 
+/++
+++/
 void setBackground(in float r, in float g, in float b, in float a = 255){
 	currentRenderer.setBackground(armos.types.Color(r, g, b, a));
 }
 
+/++
+++/
 void setBackgroundAuto(const bool isAuto){
 	currentRenderer.isBackgroundAuto = isAuto;
 }
+
+/++
+++/
 void setColor(in float r, in float g, in float b, in float a = 255){
 	currentRenderer.setColor(armos.types.Color(r, g, b, a));
 }
 
+/++
+++/
 void setColor(const armos.types.Color color){
 	currentRenderer.setColor(color);
 }
 
+/++
+++/
 void setColor(const float gray){
 	currentRenderer.setColor(armos.types.Color(gray, gray, gray, 255));
 }
 
+/++
+++/
 void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
 	currentRenderer.drawLine(x1, y1, z1, x2, y2, z2);
 }
 
+/++
+++/
 void drawLine(armos.math.Vector3f vec1, armos.math.Vector3f vec2){
 	drawLine(vec1[0], vec1[1], vec1[2], vec2[0], vec2[1], vec2[2]);
 }	
 
+/++
+++/
 void drawLine(in float x1, in float y1, in float x2, in float y2){
 	currentRenderer.drawLine(x1, y1, 0, x2, y2, 0);
 }	
 
+/++
+++/
 void drawLine(armos.math.Vector2f vec1, armos.math.Vector2f vec2){
 	drawLine(vec1[0], vec1[1], 0, vec2[0], vec2[1], 0);
 }
 
+/++
+++/
 void popMatrix(){
 	currentRenderer.popMatrix();
 }
 
+/++
+++/
 void pushMatrix(){
 	currentRenderer.pushMatrix();
 }
 
+/++
+++/
 void translate(float x, float y, float z){
 	currentRenderer.translate(x, y, z);
 }
 
+/++
+++/
 void translate(armos.math.Vector3f vec){
 	currentRenderer.translate(vec);
 }
 
+/++
+++/
 void scale(float x, float y, float z){
 	currentRenderer.scale(x, y, z);
 }
 
+/++
+++/
 void scale(float s){
 	currentRenderer.scale(s, s, s);
 }
 
+/++
+++/
 void scale(armos.math.Vector3f vec){
 	currentRenderer.scale(vec);
 }
 
+/++
+++/
 void rotate(float degrees, float vec_x, float vec_y, float vec_z){
 	currentRenderer.rotate(degrees, vec_x, vec_y, vec_z);
 }
 
+/++
+++/
 void rotate(float degrees, armos.math.Vector3f vec){
 	currentRenderer.rotate(degrees, vec);
 }
 
+/++
+++/
 void setLineWidth(float width){
 	currentRenderer.setLineWidth(width);
 }
+
+/++
+++/
 void enableDepthTest(){
 	currentRenderer.enableDepthTest;
 }
+
+/++
+++/
 void disableDepthTest(){
 	currentRenderer.disableDepthTest;
 }
 
+/++
+++/
 void enableFbo(){
 	currentRenderer.enableFbo;
 }
 
+/++
+++/
 void disableFbo(){
 	currentRenderer.disableFbo;
+}
+
+/++
+++/
+void blendMode(armos.graphics.BlendMode mode){
+	currentRenderer.blendMode = mode;
 }

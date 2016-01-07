@@ -2,9 +2,12 @@ module armos.graphics.style;
 import armos.graphics;
 import armos.types;
 
+/++
+++/
 class Style {
 	armos.types.Color color;
 	armos.types.Color backgroundColor;
+	armos.graphics.BlendMode blendMode;
 	float lineWidth = 1.0;
 	bool isSmoothing = true;
 	bool isFill = true;
