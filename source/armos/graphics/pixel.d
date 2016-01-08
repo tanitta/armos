@@ -13,7 +13,7 @@ int numColorFormatElements(ColorFormat ColorFormat){
 	switch (ColorFormat) {
 		case ColorFormat.Gray:
 			num = 1;
-		break;
+			break;
 		case ColorFormat.GrayAlpha:
 			num = 2;
 			break;
@@ -38,16 +38,21 @@ import derelict.opengl3.gl;
 GLuint getGLInternalFormat(ColorFormat format){
 	GLuint num;
 	switch(format.numColorFormatElements){
-		case 3:
-			num = GL_RGB32F;
-			break;
-		case 4:
-			num =  GL_RGBA32F;
+		case 1:
+			num = GL_LUMINANCE;
 			break;
 		case 2:
-			num =  GL_LUMINANCE_ALPHA;
+			num = GL_LUMINANCE_ALPHA;
 			break;
-		default: num = GL_LUMINANCE;break;
+		case 3:
+			num = GL_RGB;
+			break;
+		case 4:
+			num = GL_RGBA;
+			break;
+		default: 
+			num = GL_LUMINANCE;
+		break;
 	}
 	return num;
 }

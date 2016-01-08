@@ -106,6 +106,8 @@ struct Bitmap(T){
 		}
 		
 		/++
+			Generate a bitmap from the aligned pixels
+			
 			一次元配列からBitmapを生成します
 		++/
 		void setFromAlignedPixels(T* pixels, int width, int height, armos.graphics.ColorFormat format){

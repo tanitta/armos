@@ -179,14 +179,15 @@ class Texture {
 		void allocate(armos.graphics.ColorFormat format){
 			glEnable(GL_TEXTURE_2D);
 			glGenTextures(1 , cast(uint*)&texID_);
-
+			
+			GLuint glInternalFormat = armos.graphics.getGLInternalFormat(format);
 			begin;
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 				glTexImage2D(
-					GL_TEXTURE_2D, 0, GL_RGBA,
+					GL_TEXTURE_2D, 0, glInternalFormat,
 					size_[0], size_[1],
-					0, GL_RGBA, GL_UNSIGNED_BYTE, cast(GLvoid*)bitsPtr
+					0, glInternalFormat, GL_UNSIGNED_BYTE, cast(GLvoid*)bitsPtr
 				);
 			end;
 		}
