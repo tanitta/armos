@@ -163,8 +163,8 @@ class Image {
 			
 			一次元配列からImageを生成します
 		++/
-		void setFromAlignedPixels(char* pixels, int width, int height, armos.graphics.ColorFormat format){
-			_bitmap.setFromAlignedPixels(pixels, width, height, format);
+		void setFromAlignedPixels(T)(T* pixels, int width, int height, armos.graphics.ColorFormat format){
+			_bitmap.setFromAlignedPixels(cast(char*)pixels, width, height, format);
 			allocate;
 			_isLoaded = true;
 		}
