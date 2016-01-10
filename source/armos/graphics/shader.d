@@ -91,11 +91,7 @@ class Shader {
 				begin;
 				int location = uniformLocation(name);
 				if(location != -1){
-					string funcString = glFunctionString!(typeof(v[0]), v.length)("glUniform");
 					mixin(glFunctionString!(typeof(v[0]), v.length)("glUniform"));
-					import std.stdio;
-					funcString.writeln;
-					location.writeln;
 				}
 				end;
 			}
