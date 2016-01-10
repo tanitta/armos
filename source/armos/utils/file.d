@@ -9,7 +9,7 @@ string toDataPath(in string fileName, in bool makeAbsolute = true){
 }
 
 /++
-	Return absolutePath
+	Return absolutePath from absolute or relative
 ++/
 string absolutePath(string path){
 	import std.path;
