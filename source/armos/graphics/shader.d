@@ -1,5 +1,6 @@
 module armos.graphics.shader;
 import derelict.opengl3.gl;
+import armos.math.vector;
 
 /++
 ++/
@@ -33,6 +34,8 @@ class Shader {
 			if (isLinked == GL_FALSE) {
 				import std.stdio;
 				"link error".writeln;
+			}else{
+				_isLoaded = true;
 			}
 		}
 		
@@ -50,6 +53,53 @@ class Shader {
 		void end(){
 			glUseProgram(_savedProgramID);
 		}
+		
+		/++
+		++/
+		bool isLoaded(){
+			return _isLoaded;
+		}
+		
+		/++
+		++/
+		int uniformLocation(in string name){
+			import std.string;
+			return glGetUniformLocation(_programID, name.toStringz);
+		}
+		
+		/++
+		++/
+		// void setUniform(T, int N)(string name, armos.math.Vector!(T,N) v){
+		// 	if(_isLoaded){
+		// 		int location = uniformLocation(name);
+		// 		if(location != -1){
+		// 			mixin(glFunctionString!(N, T)("glUniform"));
+		// 		}
+		// 	}
+		//
+		// }
+		// unittest{
+		// 	auto shader = new Shader;
+		// 	auto vector = armos.math.Vector!(float, 3)(0, 0, 0);
+		// 	shader.setUniform("hoge", vector);
+		// }
+		
+		/++
+		++/
+		void setUniform(Args...)(string name, Args v){
+			if(_isLoaded){
+				begin;
+				int location = uniformLocation(name);
+				if(location != -1){
+					string funcString = glFunctionString!(typeof(v[0]), v.length)("glUniform");
+					mixin(glFunctionString!(typeof(v[0]), v.length)("glUniform"));
+					import std.stdio;
+					funcString.writeln;
+					location.writeln;
+				}
+				end;
+			}
+		}
 	}//public
 
 	private{
@@ -57,6 +107,7 @@ class Shader {
 		int _fragmentID;
 		int _programID;
 		int _savedProgramID;
+		bool _isLoaded = false;
 		
 		string loadedSource(string path){
 			auto absolutePath = armos.utils.absolutePath(path);
@@ -75,8 +126,6 @@ class Shader {
 
 				glAttachShader(_programID, shaderID);
 				// scope(exit) glDetachShader(_programID, shaderID);
-				import std.stdio;
-				shaderID.writeln;
 		}
 		
 		void compile(int id, string source){
@@ -91,5 +140,27 @@ class Shader {
 				"compile error".writeln;
 			}
 		}
+		
 	}//private
 }//class Shader
+
+string glFunctionString(T, size_t Dim)(string functionString){
+	import std.conv;
+	string type;
+	static if(is(T == float)){
+		type = "f";
+	}else if(is(T == double)){
+		type = "d";
+	}
+
+	string args = "v[0]";
+	for (int i = 1; i < Dim; i++) {
+		args ~= ", v[" ~ i.to!string~ "]";
+	}
+	return functionString ~ Dim.to!string~ type ~ "(location, " ~ args ~ ");";
+}
+static unittest{
+	import std.stdio;
+	assert( glFunctionString!(float, 3)("glUniform") == "glUniform3f(location, v[0], v[1], v[2]);" );
+}
+
