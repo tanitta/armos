@@ -43,7 +43,9 @@ class Shader {
 			Begin adapted process
 		++/
 		void begin(){
-			glGetIntegerv(GL_CURRENT_PROGRAM,&_savedProgramID);
+			int savedProgramID;
+			glGetIntegerv(GL_CURRENT_PROGRAM,&savedProgramID);
+			_savedProgramIDs ~= savedProgramID;
 			glUseProgram(_programID);
 		}
 		
@@ -51,7 +53,13 @@ class Shader {
 			End adapted process
 		++/
 		void end(){
-			glUseProgram(_savedProgramID);
+			import std.range;
+			glUseProgram(_savedProgramIDs[$-1]);
+			if (_savedProgramIDs.length == 0) {
+				assert(0, "stack is empty");
+			}else{
+				_savedProgramIDs.popBack;
+			}
 		}
 		
 		/++
@@ -86,7 +94,7 @@ class Shader {
 		
 		/++
 		++/
-		void setUniform(Args...)(string name, Args v){
+		void setUniform(Args...)(in string name, Args v){
 			if(_isLoaded){
 				begin;
 				int location = uniformLocation(name);
@@ -96,13 +104,27 @@ class Shader {
 				end;
 			}
 		}
+		
+		/++
+		++/
+		void setUniformTexture(in string name, armos.graphics.Texture texture, int textureLocation){
+			import std.string;
+			if(_isLoaded){
+				begin;scope(exit)end;
+				texture.begin;scope(exit)texture.end;
+				glActiveTexture(GL_TEXTURE0 + textureLocation);
+				glUniform1i(glGetUniformLocation(_programID, name.toStringz), textureLocation);
+				// setUniform(name, textureLocation);
+				glActiveTexture(GL_TEXTURE0);
+			}
+		}
 	}//public
 
 	private{
 		int _vertexID;
 		int _fragmentID;
 		int _programID;
-		int _savedProgramID;
+		int[] _savedProgramIDs;
 		bool _isLoaded = false;
 		
 		string loadedSource(string path){
@@ -147,6 +169,8 @@ string glFunctionString(T, size_t Dim)(string functionString){
 		type = "f";
 	}else if(is(T == double)){
 		type = "d";
+	}else if(is(T == int)){
+		type = "i";
 	}
 
 	string args = "v[0]";
