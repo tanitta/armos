@@ -182,14 +182,27 @@ class Texture {
 			
 			GLuint glInternalFormat = armos.graphics.getGLInternalFormat(format);
 			begin;
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexImage2D(
 					GL_TEXTURE_2D, 0, glInternalFormat,
 					size_[0], size_[1],
 					0, glInternalFormat, GL_UNSIGNED_BYTE, cast(GLvoid*)bitsPtr
 				);
 			end;
+		}
+		
+		/++
+		++/
+		void setMinMagFilter(in TextureFilter minFilter, in TextureFilter magFilter){
+			begin;
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+			end;
+		}
+		
+		void setMinMagFilter(in TextureFilter filter){
+			setMinMagFilter(filter, filter);
 		}
 	}
 
@@ -200,4 +213,9 @@ class Texture {
 		armos.math.Vector2i size_;
 		armos.graphics.ColorFormat _format;
 	}
+}
+
+enum TextureFilter{
+	Linear = GL_LINEAR,
+	Nearest = GL_NEAREST
 }

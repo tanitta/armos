@@ -203,8 +203,22 @@ class Image {
 			return _isLoaded;
 		}
 		
+		/++
+		++/
 		armos.graphics.Texture texture(){
 			return _texture;
+		}
+		
+		/++
+		++/
+		void setMinMagFilter(in armos.graphics.TextureFilter minFilter, in armos.graphics.TextureFilter magFilter){
+			_texture.setMinMagFilter(minFilter, magFilter);
+		}
+		
+		/++
+		++/
+		void setMinMagFilter(in armos.graphics.TextureFilter filter){
+			_texture.setMinMagFilter(filter);
 		}
 	}//public
 
