@@ -232,46 +232,46 @@ class Image {
 
 		/++
 			ImageのbitmapにfreeImageのbitmapを指定します．
-			++/
-			void bitmap(FIBITMAP* freeImageBitmap, bool swapForLittleEndian = true){
-				FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(freeImageBitmap);
+		++/
+		void bitmap(FIBITMAP* freeImageBitmap, bool swapForLittleEndian = true){
+			FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(freeImageBitmap);
 
-				uint bits = char.sizeof;
+			uint bits = char.sizeof;
 
-				import std.stdio;
-				FIBITMAP* bitmapConverted;
-				bitmapConverted = FreeImage_ConvertTo32Bits(freeImageBitmap);
-				freeImageBitmap = bitmapConverted;
+			import std.stdio;
+			FIBITMAP* bitmapConverted;
+			bitmapConverted = FreeImage_ConvertTo32Bits(freeImageBitmap);
+			freeImageBitmap = bitmapConverted;
 
-				uint width = FreeImage_GetWidth(freeImageBitmap);
-				uint height = FreeImage_GetHeight(freeImageBitmap);
-				uint bpp = FreeImage_GetBPP(freeImageBitmap);
-				uint channels = (bpp / bits) / 8;
-				uint pitch = FreeImage_GetPitch(freeImageBitmap);
+			uint width = FreeImage_GetWidth(freeImageBitmap);
+			uint height = FreeImage_GetHeight(freeImageBitmap);
+			uint bpp = FreeImage_GetBPP(freeImageBitmap);
+			uint channels = (bpp / bits) / 8;
+			uint pitch = FreeImage_GetPitch(freeImageBitmap);
 
-				armos.graphics.ColorFormat armosColorFormat;
-				switch (channels) {
-					case 1:
-						armosColorFormat = armos.graphics.ColorFormat.Gray;
-						break;
-					case 2:
-						armosColorFormat = armos.graphics.ColorFormat.Gray;
-						break;
-					case 3:
-						armosColorFormat = armos.graphics.ColorFormat.BGR;
-						break;
-					case 4:
-						armosColorFormat = armos.graphics.ColorFormat.BGRA;
-						break;
-					default:
-						break;
-				}
-
-				FreeImage_FlipVertical(freeImageBitmap);
-				char* bitmapBits = cast(char*)FreeImage_GetBits(freeImageBitmap);
-
-				_bitmap.setFromAlignedPixels(bitmapBits, width, height, armosColorFormat);
-				_bitmap.swapRAndB;
+			armos.graphics.ColorFormat armosColorFormat;
+			switch (channels) {
+				case 1:
+					armosColorFormat = armos.graphics.ColorFormat.Gray;
+					break;
+				case 2:
+					armosColorFormat = armos.graphics.ColorFormat.Gray;
+					break;
+				case 3:
+					armosColorFormat = armos.graphics.ColorFormat.BGR;
+					break;
+				case 4:
+					armosColorFormat = armos.graphics.ColorFormat.BGRA;
+					break;
+				default:
+					break;
 			}
+
+			FreeImage_FlipVertical(freeImageBitmap);
+			char* bitmapBits = cast(char*)FreeImage_GetBits(freeImageBitmap);
+
+			_bitmap.setFromAlignedPixels(bitmapBits, width, height, armosColorFormat);
+			_bitmap.swapRAndB;
+		}
 	}//private
 }//class Image
