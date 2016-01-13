@@ -154,6 +154,18 @@ struct Vector(T, int Dimention){
 	}
 	
 	/++
+	++/
+	VectorType opMod(in T v)const{
+		auto result = VectorType();
+		result.data[] = data[] % v;
+		return result;
+	}
+	unittest{
+		auto result = Vector3d(4.0, 2.0, 1.0);
+		assert(result%2.0 == Vector3d(0.0, 0.0, 1.0));
+	}
+	
+	/++
 		Vectorのノルムを返します．
 	++/
 	T norm()const{
@@ -255,7 +267,7 @@ struct Vector(T, int Dimention){
 	/++
 		Vectorを標準出力に渡します
 	++/
-	void print(){
+	void print()const{
 		import std.stdio;
 		for (int i = 0; i < Dimention ; i++) {
 			static if( is(T == int ) )
