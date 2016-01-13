@@ -2,6 +2,8 @@ module armos.graphics.font;
 import armos.graphics;
 import derelict.freetype.ft;
 
+/++
+++/
 struct Character{
 	int index;
 	int glyph;
@@ -30,6 +32,8 @@ struct Character{
 	}
 } 
 
+/++
+++/
 class Font{
 	public{
 		this(){
@@ -42,7 +46,9 @@ class Font{
 			}
 		}
 		
-		void loadFont(
+		/++
+		++/
+		void load(
 			string fontName, int fontSize, 
 			bool isAntiAliased=false,
 			bool isFullCharacterSet=false,
@@ -79,14 +85,15 @@ class Font{
 			loadEachCharacters(isAntiAliased);
 		}
 		
+		/++
+		++/
 		void drawString(string drawnString, int x, int y)const{}
 		
+		/++
+		++/
 		void drawStringAsShapes(string drawnString, int x, int y)const{}
 		
-		string FontPathByName(string fontName){
-			return fontName;
-		};
-	}
+	}//public
 	
 	private{
 		static immutable  NUM_CHARACTER_TO_START = 32;
@@ -103,6 +110,8 @@ class Font{
 		armos.types.Rectangle _glyphBBox;
 		armos.graphics.Texture _textureAtlas;
 		
+		/++
+		++/
 		void loadEachCharacters(bool isAntiAliased){
 			int border = 1;
 			long areaSum=0;
@@ -157,6 +166,8 @@ class Font{
 			
 		}
 		
+		/++
+		++/
 		bool packInTexture(in long areaSum, in int border, armos.graphics.Bitmap!(char)[] expandedData){
 			import std.algorithm;
 			bool compareCharacters(in Character c1, in Character c2){
@@ -205,6 +216,8 @@ class Font{
 			return true;
 		}
 		
+		/++
+		++/
 		armos.math.Vector2i calcAtlasSize(long areaSum, in Character[] sortedCharacter, int border){
 			import std.math;
 			bool packed = false;
@@ -235,11 +248,29 @@ class Font{
 			}
 			return armos.math.Vector2i(w, h);
 		}
-	}
+		
+		/++
+		++/
+		// string fontPathByName(string fontName){
+		// 	version(linux){
+		// 		import std.string;
+		// 		string fileName;
+		// 		FcPattern* pattern = FcNameParse(cast(const FcChar8*)fontname.toStringz);
+		// 		return fileName;
+		// 	}
+		// 	version(Windows){
+		// 		return "";
+		// 	}
+		// };
+	}//private
 }
 
+/++
+++/
 class FontLoader{
 	public{
+		/++
+		++/
 		void loadFont(
 			string fontName, int fontSize, 
 			bool isAntiAliased=false,
@@ -248,7 +279,7 @@ class FontLoader{
 			float simplifyAmt=0.3f,
 			int dpi=0
 		){}
-	}
+	}//public
 	
-	private{}
+	private{}//private
 }
