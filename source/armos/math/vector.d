@@ -166,6 +166,45 @@ struct Vector(T, int Dimention){
 	}
 	
 	/++
+	++/
+	VectorType opMul(in VectorType v)const{
+		auto result = VectorType();
+		result.data[] = data[] * v.data[];
+		return result;
+	}
+	unittest{
+		auto vec1 = Vector3d(3.0, 2.0, 1.0);
+		auto vec2 = Vector3d(2.0, 1.0, 0.0);
+		assert(vec1*vec2 == Vector3d(6.0, 2.0, 0.0));
+	}
+	
+	/++
+	++/
+	VectorType opDiv(in VectorType v)const{
+		auto result = VectorType();
+		result.data[] = data[] / v.data[];
+		return result;
+	}
+	unittest{
+		auto vec1 = Vector3d(4.0, 2.0, 1.0);
+		auto vec2 = Vector3d(2.0, 1.0, 1.0);
+		assert(vec1/vec2 == Vector3d(2.0, 2.0, 1.0));
+	}
+	
+	/++
+	++/
+	VectorType opMod(in VectorType v)const{
+		auto result = VectorType();
+		result.data[] = data[] % v.data[];
+		return result;
+	}
+	unittest{
+		auto vec1 = Vector3d(3.0, 2.0, 1.0);
+		auto vec2 = Vector3d(2.0, 1.0, 1.0);
+		assert(vec1%vec2 == Vector3d(1.0, 0.0, 0.0));
+	}
+	
+	/++
 		Vectorのノルムを返します．
 	++/
 	T norm()const{
