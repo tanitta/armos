@@ -91,14 +91,43 @@ class Image {
 
 			allocate;
 		}
-
-		/++
-			Draw image data which loaded in advance.
-
-			読み込んだ画像データを画面に描画します．
-		++/
-		void draw(T)(in T x, in T y, in T z = T(0)){
+		
+		
+		void drawCropped(T)(
+			in T x, in T y,
+			in T startX, in T startY,
+			in T endX, in T endY
+		){
+			drawCropped(x, y, T(0), startX, startY, endX, endY);
+		}
+		
+		void drawCropped(T)(
+			in T x, in T y, in T z,
+			in T startX, in T startY,
+			in T endX, in T endY
+		){
 			if(_isLoaded){
+				_rect.texCoords[0].u = cast(float)startY/_texture.height;
+				_rect.texCoords[0].v = cast(float)startX/_texture.width;
+				
+				_rect.texCoords[1].u = cast(float)endY/_texture.height;
+				_rect.texCoords[1].v = cast(float)startX/_texture.width;
+				
+				_rect.texCoords[2].u = cast(float)endY/_texture.height;
+				_rect.texCoords[2].v = cast(float)endX/_texture.width;
+				
+				_rect.texCoords[3].u = cast(float)startY/_texture.height;
+				_rect.texCoords[3].v = cast(float)endX/_texture.width;
+				
+				_rect.vertices[0].x = cast(float)0.0;
+				_rect.vertices[0].y = cast(float)0.0;
+				_rect.vertices[1].x = cast(float)0.0;
+				_rect.vertices[1].y = cast(float)endY-startY;
+				_rect.vertices[2].x = cast(float)endX-startX;
+				_rect.vertices[2].y = cast(float)endY-startY;
+				_rect.vertices[3].x = cast(float)endX-startX;
+				_rect.vertices[3].y = cast(float)0.0;
+				
 				armos.graphics.pushMatrix;
 				armos.graphics.translate(x, y, z);
 				_texture.begin;
@@ -106,6 +135,15 @@ class Image {
 				_texture.end;
 				armos.graphics.popMatrix;
 			}
+		}
+
+		/++
+			Draw image data which loaded in advance.
+
+			読み込んだ画像データを画面に描画します．
+		++/
+		void draw(T)(in T x, in T y, in T z = T(0)){
+			drawCropped(x, y, z, 0, 0, bitmap.width, bitmap.height);
 		}
 
 		/++
@@ -184,8 +222,8 @@ class Image {
 			_texture.begin;
 			_rect.addTexCoord(0, 0);_rect.addVertex(0, 0, 0);
 			_rect.addTexCoord(1.0*_bitmap.height/_texture.height, 0);_rect.addVertex(0, y, 0);
-			_rect.addTexCoord(1.0*_bitmap.height/_texture.height, 1.0);_rect.addVertex(x, y, 0);
-			_rect.addTexCoord(0, 1.0);_rect.addVertex(x, 0, 0);
+			_rect.addTexCoord(1.0*_bitmap.height/_texture.height, 1.0*_bitmap.width/_texture.width);_rect.addVertex(x, y, 0);
+			_rect.addTexCoord(0, 1.0*_bitmap.width/_texture.width);_rect.addVertex(x, 0, 0);
 			_texture.end;
 
 			_rect.addIndex(0);
