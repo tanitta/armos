@@ -14,3 +14,4 @@ public import armos.graphics.pixel;
 public import armos.graphics.bitmap;
 public import armos.graphics.image;
 public import armos.graphics.shader;
+public import armos.graphics.bitmapfont;
