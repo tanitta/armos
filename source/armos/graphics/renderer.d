@@ -177,7 +177,7 @@ class Renderer {
 	armos.graphics.Style[] styleStack;
 	auto currentStyle_ = new armos.graphics.Style;
 	
-	armos.graphics.MatrixStack matrixStack;
+	// armos.graphics.MatrixStack matrixStack;
 	
 	armos.math.Matrix4f projectionMatrix;
 	
@@ -187,7 +187,7 @@ class Renderer {
 	bool _isUseFbo = true;
 	
 	this(){
-		matrixStack = new armos.graphics.MatrixStack(armos.app.currentWindow);
+		// matrixStack = new armos.graphics.MatrixStack(armos.app.currentWindow);
 		fbo = new armos.graphics.Fbo;
 	}
 	
@@ -343,10 +343,10 @@ class Renderer {
 		glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
 	}
 	
-	armos.types.Rectangle currentViewport(){
-		// nativeViewport();
-		return matrixStack.currentViewport;
-	}
+	// armos.types.Rectangle currentViewport(){
+	// 	// nativeViewport();
+	// 	return matrixStack.currentViewport;
+	// }
 	
 	// armos.type.Rectangle nativeViewport(){
 	// 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
