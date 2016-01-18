@@ -1,4 +1,4 @@
-[English](https://github.com/tanitta/armos/blob/master/README.md)/Japanese
+[English](https://github.com/tanitta/armos/blob/master/README.md)/日本語
 
 armos
 ====
