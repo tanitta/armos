@@ -6,6 +6,7 @@ enum ColorFormat{
 	BGR,
 	RGBA,
 	BGRA, 
+	Depth, 
 }
 
 int numColorFormatElements(ColorFormat ColorFormat){
@@ -29,6 +30,9 @@ int numColorFormatElements(ColorFormat ColorFormat){
 		case ColorFormat.BGRA:
 			num = 4;
 			break;
+		case ColorFormat.Depth:
+			num = GL_DEPTH_COMPONENT;
+			break;
 		default : assert(0, "case is not defined");
 	}
 	return num;
@@ -37,18 +41,27 @@ int numColorFormatElements(ColorFormat ColorFormat){
 import derelict.opengl3.gl;
 GLuint getGLInternalFormat(ColorFormat format){
 	GLuint num;
-	switch(format.numColorFormatElements){
-		case 1:
+	switch(format){
+		case ColorFormat.Gray:
 			num = GL_LUMINANCE;
 			break;
-		case 2:
+		case ColorFormat.GrayAlpha:
 			num = GL_LUMINANCE_ALPHA;
 			break;
-		case 3:
+		case ColorFormat.RGB:
 			num = GL_RGB;
 			break;
-		case 4:
+		case ColorFormat.BGR:
+			num = GL_BGR;
+			break;
+		case ColorFormat.RGBA:
 			num = GL_RGBA;
+			break;
+		case ColorFormat.BGRA:
+			num = GL_BGRA;
+			break;
+		case ColorFormat.Depth:
+			num = GL_DEPTH_COMPONENT;
 			break;
 		default: 
 			num = GL_LUMINANCE;

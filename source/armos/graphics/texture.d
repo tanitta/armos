@@ -38,14 +38,23 @@ int nextPow2(int a){
 ++/
 class Texture {
 	public{
-		this(){}
+		/++
+		++/
+		this(){
+			glEnable(GL_TEXTURE_2D);
+			glGenTextures(1 , cast(uint*)&_texID);
+		}
+		
+		~this(){
+			glDeleteTextures(1 , cast(uint*)&_texID);
+		}
 		
 		/++
 			Return the texture size.
 			
 			textureのサイズを返します．
 		++/
-		armos.math.Vector2i size(){return size_;}
+		armos.math.Vector2i size(){return _size;}
 		
 		/++
 		++/
@@ -62,33 +71,33 @@ class Texture {
 		/++
 			Return gl texture id.
 		++/
-		int id(){return texID_;}
+		int id(){return _texID;}
 
 		/++
 			Begin to bind the texture.
 		++/
 		void begin(){
-			glGetIntegerv(GL_TEXTURE_BINDING_2D, &savedTexID_);
-			glBindTexture(GL_TEXTURE_2D , texID_);
+			glGetIntegerv(GL_TEXTURE_BINDING_2D, &_savedTexID);
+			glBindTexture(GL_TEXTURE_2D , _texID);
 		}
 
 		/++
 			End to bind the texture.
 		++/
 		void end(){
-			glBindTexture(GL_TEXTURE_2D , savedTexID_);
+			glBindTexture(GL_TEXTURE_2D , _savedTexID);
 		}
 
 		/++
 			Resize texture.
 		++/
 		void resize(in armos.math.Vector2i textureSize){
-			size_ = textureSize;
+			_size = textureSize;
 			begin;
 				glTexImage2D(
 					GL_TEXTURE_2D, 0, GL_RGBA8,
-					size_[0], size_[1],
-					0, GL_RGBA, GL_UNSIGNED_BYTE, cast(GLvoid*)bitsPtr
+					_size[0], _size[1],
+					0, GL_RGBA, GL_UNSIGNED_BYTE, cast(GLvoid*)_bitsPtr
 				);
 			end;
 		};
@@ -97,7 +106,7 @@ class Texture {
 			Return pixel of texture
 		++/
 		ubyte pixel(){
-			assert(bitsPtr!=null);
+			assert(_bitsPtr!=null);
 			return 0x00;
 		}
 
@@ -105,7 +114,7 @@ class Texture {
 			Set pixel of texture
 		++/
 		void pixel(ubyte v){
-			assert(bitsPtr!=null);
+			assert(_bitsPtr!=null);
 		}
 		
 		/++
@@ -115,8 +124,8 @@ class Texture {
 				h = height
 		++/
 		void allocate(in int w, in int h){
-			size_[0] = w;
-			size_[1] = h;
+			_size[0] = w;
+			_size[1] = h;
 			allocate(_format);
 		}
 		
@@ -167,9 +176,9 @@ class Texture {
 				bits = image data
 		++/
 		void allocate(ubyte[] bits, in int w, in int h, armos.graphics.ColorFormat format){
-			size_[0] = w;
-			size_[1] = h;
-			bitsPtr = bits.ptr;
+			_size[0] = w;
+			_size[1] = h;
+			_bitsPtr = bits.ptr;
 			allocate(format);
 		}
 		
@@ -177,17 +186,23 @@ class Texture {
 			Allocate texture
 		++/
 		void allocate(armos.graphics.ColorFormat format){
-			glEnable(GL_TEXTURE_2D);
-			glGenTextures(1 , cast(uint*)&texID_);
-			
-			GLuint glInternalFormat = armos.graphics.getGLInternalFormat(format);
+			_format = format;
+			allocate();
+		}
+		
+		/++
+			Allocate texture
+		++/
+		void allocate(){
+			GLuint internalFormat = armos.graphics.getGLInternalFormat(_format);
+			GLuint components= armos.graphics.numColorFormatElements(_format);
 			begin;
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexImage2D(
-					GL_TEXTURE_2D, 0, glInternalFormat,
-					size_[0], size_[1],
-					0, glInternalFormat, GL_UNSIGNED_BYTE, cast(GLvoid*)bitsPtr
+					GL_TEXTURE_2D, 0, components,
+					_size[0], _size[1],
+					0, internalFormat, GL_UNSIGNED_BYTE, cast(GLvoid*)_bitsPtr
 				);
 			end;
 		}
@@ -201,20 +216,24 @@ class Texture {
 			end;
 		}
 		
+		/++
+		++/
 		void setMinMagFilter(in TextureFilter filter){
 			setMinMagFilter(filter, filter);
 		}
 	}
 
 	private{
-		int savedTexID_;
-		int texID_;
-		ubyte* bitsPtr;
-		armos.math.Vector2i size_;
+		int _savedTexID;
+		int _texID;
+		ubyte* _bitsPtr;
+		armos.math.Vector2i _size;
 		armos.graphics.ColorFormat _format;
 	}
 }
 
+/++
+++/
 enum TextureFilter{
 	Linear = GL_LINEAR,
 	Nearest = GL_NEAREST

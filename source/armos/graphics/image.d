@@ -296,10 +296,10 @@ class Image {
 					armosColorFormat = armos.graphics.ColorFormat.Gray;
 					break;
 				case 3:
-					armosColorFormat = armos.graphics.ColorFormat.BGR;
+					armosColorFormat = armos.graphics.ColorFormat.RGB;
 					break;
 				case 4:
-					armosColorFormat = armos.graphics.ColorFormat.BGRA;
+					armosColorFormat = armos.graphics.ColorFormat.RGBA;
 					break;
 				default:
 					break;
