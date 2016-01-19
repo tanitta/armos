@@ -3,22 +3,31 @@ import armos.graphics;
 import derelict.opengl3.gl;
 import armos.math.vector;
 
+/++
+++/
 class Fbo{
 	public{
+		/++
+		++/
 		this(){
 			this(armos.app.currentWindow.size);
 		}
 
+		/++
+		++/
 		this(armos.math.Vector2i size){
 			this(size[0], size[1]);
 		}
 
+		/++
+		++/
 		this(in int width, in int height){
 			glGenFramebuffers(1, cast(uint*)&fboID_);
 			depthRbo = new armos.graphics.Rbo;
 
 			texture = new armos.graphics.Texture;
-			texture.allocate(width, height);
+			texture.allocate(width, height, armos.graphics.ColorFormat.RGBA);
+			
 			float x = width;
 			float y = height;
 			rect.primitiveMode = armos.graphics.PrimitiveMode.Quads;
@@ -42,30 +51,39 @@ class Fbo{
 			glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
 		}
 
+		/++
+		++/
 		void begin(){
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFboID_);
 			glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
 			// colorRbo.begin;
-			// depthRbo.begin;
+			depthRbo.begin;
 		}
 
+		/++
+		++/
 		void end(){
 			// colorRbo.end;
-			// depthRbo.end;
+			depthRbo.end;
 			glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
 		}
 		
+		/++
+		++/
 		int id()const{
 			return fboID_;
 		}
 
-		// void draw(in float x, in float y, in float w, in float h){
+		/++
+		++/
 		void draw(){
 			texture.begin;
 			rect.drawFill();
 			texture.end;
 		}
 
+		/++
+		++/
 		void resize(in armos.math.Vector2i size){
 			begin;
 			rect.vertices[1].y = size[1];
