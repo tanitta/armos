@@ -113,8 +113,7 @@ class Shader {
 				begin;scope(exit)end;
 				texture.begin;scope(exit)texture.end;
 				glActiveTexture(GL_TEXTURE0 + textureLocation);
-				glUniform1i(glGetUniformLocation(_programID, name.toStringz), textureLocation);
-				// setUniform(name, textureLocation);
+				setUiform(name, textureLocation);
 				glActiveTexture(GL_TEXTURE0);
 			}
 		}
