@@ -23,21 +23,23 @@ class Fbo{
 		++/
 		this(in int width, in int height){
 			glGenFramebuffers(1, cast(uint*)&fboID_);
-			depthRbo = new armos.graphics.Rbo;
 
-			texture = new armos.graphics.Texture;
-			texture.allocate(width, height, armos.graphics.ColorFormat.RGBA);
+			_colorTexture = new armos.graphics.Texture;
+			_colorTexture.allocate(width, height, armos.graphics.ColorFormat.RGBA);
+			
+			_depthTexture= new armos.graphics.Texture;
+			_depthTexture.allocate(width, height, armos.graphics.ColorFormat.Depth);
 			
 			float x = width;
 			float y = height;
 			rect.primitiveMode = armos.graphics.PrimitiveMode.Quads;
 
-			texture.begin;
+			_colorTexture.begin;
 				rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
 				rect.addTexCoord(0, 0);rect.addVertex(0, y, 0);
 				rect.addTexCoord(1, 0);rect.addVertex(x, y, 0);
 				rect.addTexCoord(1, 1);rect.addVertex(x, 0, 0);
-			texture.end;
+			_colorTexture.end;
 
 			rect.addIndex(0);
 			rect.addIndex(1);
@@ -46,8 +48,9 @@ class Fbo{
 
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFboID_);
 			glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_RENDERBUFFER, depthRbo.id);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.id, 0);
+			
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorTexture.id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, _depthTexture.id, 0);
 			glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
 		}
 
@@ -56,15 +59,11 @@ class Fbo{
 		void begin(){
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFboID_);
 			glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
-			// colorRbo.begin;
-			depthRbo.begin;
 		}
 
 		/++
 		++/
 		void end(){
-			// colorRbo.end;
-			depthRbo.end;
 			glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
 		}
 		
@@ -77,9 +76,9 @@ class Fbo{
 		/++
 		++/
 		void draw(){
-			texture.begin;
+			_colorTexture.begin;
 			rect.drawFill();
-			texture.end;
+			_colorTexture.end;
 		}
 
 		/++
@@ -90,7 +89,8 @@ class Fbo{
 			rect.vertices[2].x = size[0];
 			rect.vertices[2].y = size[1];
 			rect.vertices[3].x = size[0];
-			texture.resize(size);
+			_colorTexture.resize(size);
+			_depthTexture.resize(size);
 			end;
 		}
 
@@ -102,8 +102,8 @@ class Fbo{
 	private{
 		int savedFboID_=0;
 		int fboID_ = 0;
-		armos.graphics.Texture texture;
-		armos.graphics.Rbo depthRbo;
+		armos.graphics.Texture _colorTexture;
+		armos.graphics.Texture _depthTexture;
 		armos.graphics.Mesh rect = new armos.graphics.Mesh;
 	}//private
 }

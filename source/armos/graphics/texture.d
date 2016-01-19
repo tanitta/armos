@@ -94,27 +94,6 @@ class Texture {
 		void resize(in armos.math.Vector2i textureSize){
 			_size = textureSize;
 			allocate;
-			// begin;
-			// 	glTexImage2D(
-			// 		GL_TEXTURE_2D, 0, GL_RGBA8,
-			// 		_size[0], _size[1],
-			// 		0, GL_RGBA, GL_UNSIGNED_BYTE, cast(GLvoid*)_bitsPtr
-			// 	);
-			// end;
-			
-			// GLuint internalFormat = armos.graphics.getGLInternalFormat(_format);
-			// int components= armos.graphics.numColorFormatElements(_format);
-			// begin;
-			// 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			// 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			// 	glTexImage2D(
-			// 		GL_TEXTURE_2D, 0, components,
-			// 		_size[0], _size[1],
-			// 		0, internalFormat, GL_UNSIGNED_BYTE, cast(GLvoid*)_bitsPtr
-			// 	);
-			// end;
-			// import std.stdio;
-			// components.writeln;
 		};
 		
 		/++
@@ -141,7 +120,7 @@ class Texture {
 		void allocate(in int w, in int h){
 			_size[0] = w;
 			_size[1] = h;
-			allocate(_format);
+			allocate;
 		}
 		
 		/++

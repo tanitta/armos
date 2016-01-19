@@ -425,10 +425,18 @@ class Renderer {
 	void finishRender(){
 		if(_isUseFbo){
 			fbo.end;
-			armos.types.Color tmp =currentStyle.color;
+			armos.types.Color tmp = currentStyle.color;
 			setColor(0xFFFFFF);
+			
+			bool isEnableDepthTest;
+			glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
+			disableDepthTest;
+			
 			fbo.draw;
 			setColor(tmp);
+			if(isEnableDepthTest){
+				enableDepthTest;
+			}
 		}
 		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	};
