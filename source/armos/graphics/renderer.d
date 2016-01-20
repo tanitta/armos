@@ -276,20 +276,6 @@ class Renderer {
 		currentStyle.isSmoothing = smooth;
 	}
 	
-	void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
-		armos.graphics.Vertex[2] vertices;
-		vertices[0].x = x1;
-		vertices[0].y = y1;
-		vertices[0].z = z1;
-		vertices[1].x = x2;
-		vertices[1].y = y2;
-		vertices[1].z = z2;
-		
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
-		glDrawArrays(GL_LINES, 0, 2);
-		glDisableClientState(GL_VERTEX_ARRAY);
-	};
 
 	
 
@@ -441,8 +427,84 @@ class Renderer {
 		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	};
 	
+	void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
+		armos.graphics.Vertex[2] vertices;
+		vertices[0].x = x1;
+		vertices[0].y = y1;
+		vertices[0].z = z1;
+		vertices[1].x = x2;
+		vertices[1].y = y2;
+		vertices[1].z = z2;
+		
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
+		glDrawArrays(GL_LINES, 0, 2);
+		glDisableClientState(GL_VERTEX_ARRAY);
+	};
+	
+	void drawRectangle(in float x, in float y, in float w, in float h){
+		armos.graphics.Vertex[4] vertices;
+		vertices[0].x = x;
+		vertices[0].y = y;
+		vertices[0].z = 0;
+		
+		vertices[1].x = x;
+		vertices[1].y = y+h;
+		vertices[1].z = 0;
+		
+		vertices[2].x = x+w;
+		vertices[2].y = y+h;
+		vertices[2].z = 0;
+	
+		vertices[3].x = x+w;
+		vertices[3].y = y;
+		vertices[3].z = 0;
+		
+		armos.graphics.TexCoord[] texCoords;
+		int[4] indices = [0, 1, 2, 3];
+		
+		armos.graphics.PolyRenderMode renderMode;
+		if(currentStyle_.isFill){
+			renderMode = armos.graphics.PolyRenderMode.Fill;
+		}else{
+			renderMode = armos.graphics.PolyRenderMode.WireFrame;
+		}
+		draw(
+			vertices,
+			texCoords,
+			indices, 
+			armos.graphics.PrimitiveMode.Quads, 
+			renderMode,
+			true,
+			false,
+			false
+		);
+	}
+	
 	void draw(
 		in armos.graphics.Mesh mesh,
+		armos.graphics.PolyRenderMode renderMode,
+		bool useColors,
+		bool useTextures,
+		bool useNormals
+	){
+		draw(
+			mesh.vertices,
+			mesh.texCoords,
+			mesh.indices, 
+			mesh.primitiveMode,
+			renderMode,
+			useColors,
+			useTextures,
+			useNormals
+		);
+	}
+	
+	void draw(
+		in armos.graphics.Vertex[] vertices,
+		in armos.graphics.TexCoord[] texCoords,
+		in int[] indices,
+		in armos.graphics.PrimitiveMode primitiveMode, 
 		armos.graphics.PolyRenderMode renderMode,
 		bool useColors,
 		bool useTextures,
@@ -451,9 +513,9 @@ class Renderer {
 		
 		glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
 		//add vertices to GL
-		if(mesh.numVertices){
+		if(vertices.length){
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, 0, mesh.vertices.ptr);
+			glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
 		}
 		
 		//add normals to GL
@@ -461,9 +523,9 @@ class Renderer {
 		//add colors to GL
 		
 		//add texchoords to gl
-		if(mesh.numTexCoords){
+		if(texCoords.length){
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(2, GL_FLOAT, 0, mesh.texCoords.ptr);
+			glTexCoordPointer(2, GL_FLOAT, 0, texCoords.ptr);
 			// foreach (texCoord; mesh.texCoords ) {
 			// 	glTexCoord2f(texCoord.u , texCoord.v);
 			// }
@@ -486,21 +548,21 @@ class Renderer {
 		//add indicees to GL
 		
 		
-		if(mesh.numIndices){
+		if(indices.length){
 			glDrawElements(
-				armos.graphics.getGLPrimitiveMode(mesh.primitiveMode),
-				cast(int)mesh.numIndices(),
+				armos.graphics.getGLPrimitiveMode(primitiveMode),
+				cast(int)indices.length,
 				GL_UNSIGNED_INT,
-				mesh.indices.ptr
+				indices.ptr
 			);
 		}
 		
 		glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
 		
-		if(mesh.numVertices){
+		if(vertices.length){
 			glDisableClientState(GL_VERTEX_ARRAY);
 		}
-		if(mesh.numTexCoords){
+		if(texCoords.length){
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 	}
@@ -614,6 +676,16 @@ void drawLine(in float x1, in float y1, in float x2, in float y2){
 ++/
 void drawLine(armos.math.Vector2f vec1, armos.math.Vector2f vec2){
 	drawLine(vec1[0], vec1[1], 0, vec2[0], vec2[1], 0);
+}
+
+
+void drawRectangle(T)(in T x, in T y, in T w, in T h){
+	import std.conv;
+	currentRenderer.drawRectangle(x.to!float, y.to!float, w.to!float, h.to!float);
+}
+
+void drawRectangle(Vector)(in Vector position, in Vector size){
+	drawRectangle(position[0], position[1], size[0], size[1]);
 }
 
 /++
