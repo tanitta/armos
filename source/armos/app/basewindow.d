@@ -5,65 +5,110 @@ import armos.events;
 import armos.math;
 import armos.app;
 
+/++
+++/
 interface Window{
-	armos.events.CoreEvents events();
-	armos.math.Vector2i size();
-	void pollEvents();
-	void update();
-	void close();
-	bool shouldClose();
-	float aspect();
-	string name();
-	void name(string str);
+	public{
+		/++
+		++/
+		armos.events.CoreEvents events();
+		
+		/++
+		++/
+		armos.math.Vector2i size();
+		
+		/++
+		++/
+		void pollEvents();
+		
+		/++
+		++/
+		void update();
+		
+		/++
+		++/
+		void close();
+		
+		/++
+		++/
+		bool shouldClose();
+		
+		/++
+		++/
+		float aspect();
+		
+		/++
+		++/
+		string name();
+		
+		/++
+		++/
+		void name(string str);
+	}//public
 }
 
-class WindowSettings{
-	int width;
-	int height;
-	// position
-	bool isPositionSet;
-}
-
+/++
+++/
 mixin template BaseWindow(){
-	protected bool shouldClose_ = false;
-	bool shouldClose(){return shouldClose_;}
-	
-	protected string name_ = "";
-	string name(){return name_;}
-	void name(string str){name_ = str;}
-	
-	private armos.app.baseapp.BaseApp app;
-	private armos.events.CoreEvents core_events;
-	protected armos.math.Vector2f windowSize_;
-	
-	void initEvents(armos.app.baseapp.BaseApp app){
-		this.app = app;
-		core_events = new armos.events.CoreEvents;
-		assert(core_events);
+	public{
+		/++
+		++/
+		bool shouldClose(){return _shouldClose;}
 		
-		armos.events.addListener(core_events.setup, app, &app.setup);
-		armos.events.addListener(core_events.update, app, &app.update);
-		armos.events.addListener(core_events.draw, app, &app.draw);
-		armos.events.addListener(core_events.keyPressed, app, &app.keyPressed);
-		armos.events.addListener(core_events.mouseMoved, app, &app.mouseMoved);
-		armos.events.addListener(core_events.mouseDragged, app, &app.mouseDragged);
-		armos.events.addListener(core_events.mouseReleased, app, &app.mouseReleased);
-		armos.events.addListener(core_events.mousePressed, app, &app.mousePressed);
-	}
-	
-	armos.events.CoreEvents events(){
-		assert(core_events);
-		return core_events;
-	}
-	
-	float aspect(){
-		if(size[1]==0){
-			return 0;
-		}else{
-			return cast(float)size[0]/cast(float)size[1];
+		/++
+		++/
+		string name(){return _name;}
+		
+		/++
+		++/
+		void name(string str){_name = str;}
+		
+		/++
+		++/
+		void initEvents(armos.app.baseapp.BaseApp app){
+			_app = app;
+			_coreEvents= new armos.events.CoreEvents;
+			assert(_coreEvents);
+
+			armos.events.addListener(_coreEvents.setup, app, &app.setup);
+			armos.events.addListener(_coreEvents.update, app, &app.update);
+			armos.events.addListener(_coreEvents.draw, app, &app.draw);
+			armos.events.addListener(_coreEvents.keyPressed, app, &app.keyPressed);
+			armos.events.addListener(_coreEvents.mouseMoved, app, &app.mouseMoved);
+			armos.events.addListener(_coreEvents.mouseDragged, app, &app.mouseDragged);
+			armos.events.addListener(_coreEvents.mouseReleased, app, &app.mouseReleased);
+			armos.events.addListener(_coreEvents.mousePressed, app, &app.mousePressed);
 		}
-		
-	}
+
+		/++
+		++/
+		armos.events.CoreEvents events(){
+			assert(_coreEvents);
+			return _coreEvents;
+		}
+
+		/++
+		++/
+		float aspect(){
+			if(size[1]==0){
+				return 0;
+			}else{
+				return cast(float)size[0]/cast(float)size[1];
+			}
+
+		}
+	}//public
+	
+	private{
+		armos.app.baseapp.BaseApp _app;
+		armos.events.CoreEvents _coreEvents;
+	}//private
+	
+	protected{
+		bool _shouldClose = false;
+		string _name = "";
+		armos.math.Vector2f _windowSize;
+	}//protected
 }
 
 class SDLWindow : Window{
@@ -79,7 +124,7 @@ class SDLWindow : Window{
 		
 		SDL_Init(SDL_INIT_VIDEO);
 		window = SDL_CreateWindow(
-			cast(char*)name_,
+			cast(char*)_name,
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			800, 600,
 			SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
@@ -114,7 +159,7 @@ class SDLWindow : Window{
 			switch (event.type)
 			{
 				case SDL_QUIT:
-					shouldClose_ = true;
+					_shouldClose = true;
 					break;
 					
 				case SDL_KEYDOWN:
@@ -166,113 +211,129 @@ class SDLWindow : Window{
 	armos.math.Vector2i size(){
 		int w, h;
 		SDL_GetWindowSize(window, &w, &h);
-		// windowSize_ = armos.math.Vector2i(w, h);
-		// return windowSize_;
+		// _windowSize = armos.math.Vector2i(w, h);
+		// return _windowSize;
 		return armos.math.Vector2i(w, h);
 	}
 }
 
+/++
+++/
 class GLFWWindow : Window{
 	import derelict.glfw3.glfw3;
 	mixin BaseWindow;
-	
-	private GLFWwindow* window;
-	
-	this(ref armos.app.BaseApp apprication){
-		DerelictGL.load();
-		DerelictGLFW3.load();
-		
-		if( !glfwInit() ){}
-		
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-		
-		window = glfwCreateWindow(640, 480, cast(char*)name_, null, null);
-		if(!window){close;}
-		
-		glfwMakeContextCurrent(window);
-		
-		DerelictGL.reload();
-		
-		initEvents(apprication);
-		initGLFWEvents();
-		
-		glfwSwapInterval(0);
-		glfwSwapBuffers(window);
-	}
-	
-	private static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
-		if(action == GLFW_PRESS){
-			currentWindow.events.notifyKeyPressed(key);
-		}else if(action == GLFW_RELEASE){
-			currentWindow.events.notifyKeyReleased(key);
-		}
-	}
-	
-	private static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
-		currentWindow.events.notifyMouseMoved(cast(int)xpos, cast(int)ypos, 0);
-	}
-	
-	private static extern(C ) void mouseButtonFunction(GLFWwindow* window, int button, int action, int mods){
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
-		
-		if(action == GLFW_PRESS){
-			currentWindow.events.notifyMousePressed(cast(int)xpos, cast(int)ypos, button);
-		}else if(action == GLFW_RELEASE){
-			currentWindow.events.notifyMouseReleased(cast(int)xpos, cast(int)ypos, button);
-		}
-	}
-	
-	private static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
-		armos.graphics.currentRenderer.resize();
-	}
-	
-	private void initGLFWEvents(){
-		// glfwSetKeyCallback(window, &keyCallbackFunction);
-		glfwSetKeyCallback(window, cast(GLFWkeyfun)&keyCallbackFunction);
-		glfwSetCursorPosCallback(window, cast(GLFWcursorposfun)&cursorPositionFunction);
-		glfwSetMouseButtonCallback(window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
-		glfwSetWindowSizeCallback(window, cast(GLFWwindowsizefun)&resizeWindowFunction);
-	}
-	
-	armos.math.Vector2i size(){
-		auto vec = armos.Vector2i();
-		glfwGetWindowSize(window, &vec[0], &vec[1]);
-		return vec;
-	}
-	
-	void pollEvents(){
-		glfwPollEvents();
-	}
-	
-	void update(){
-		// glFlush();
-		// glFinish();
-		glfwSwapBuffers(window);
-		shouldClose_ = cast(bool)glfwWindowShouldClose(window);
-	}
 
-	void close(){
-		shouldClose_ = true;
-		glfwTerminate();
-	}
+	public{
+		/++
+		++/
+		this(ref armos.app.BaseApp apprication){
+			DerelictGL.load();
+			DerelictGLFW3.load();
+
+			if( !glfwInit() ){}
+
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+
+			window = glfwCreateWindow(640, 480, cast(char*)_name, null, null);
+			if(!window){close;}
+
+			glfwMakeContextCurrent(window);
+
+			DerelictGL.reload();
+
+			initEvents(apprication);
+			initGLFWEvents();
+
+			glfwSwapInterval(0);
+			glfwSwapBuffers(window);
+		}
+		
+		/++
+		++/
+		armos.math.Vector2i size(){
+			auto vec = armos.Vector2i();
+			glfwGetWindowSize(window, &vec[0], &vec[1]);
+			return vec;
+		}
+
+		/++
+		++/
+		void pollEvents(){
+			glfwPollEvents();
+		}
+
+		/++
+		++/
+		void update(){
+			// glFlush();
+			// glFinish();
+			glfwSwapBuffers(window);
+			_shouldClose = cast(bool)glfwWindowShouldClose(window);
+		}
+
+		/++
+		++/
+		void close(){
+			_shouldClose = true;
+			glfwTerminate();
+		}
+	}//public
+
+	private{
+		GLFWwindow* window;
+
+		static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
+			if(action == GLFW_PRESS){
+				currentWindow.events.notifyKeyPressed(key);
+			}else if(action == GLFW_RELEASE){
+				currentWindow.events.notifyKeyReleased(key);
+			}
+		}
+
+		static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
+			currentWindow.events.notifyMouseMoved(cast(int)xpos, cast(int)ypos, 0);
+		}
+
+		static extern(C ) void mouseButtonFunction(GLFWwindow* window, int button, int action, int mods){
+			double xpos, ypos;
+			glfwGetCursorPos(window, &xpos, &ypos);
+
+			if(action == GLFW_PRESS){
+				currentWindow.events.notifyMousePressed(cast(int)xpos, cast(int)ypos, button);
+			}else if(action == GLFW_RELEASE){
+				currentWindow.events.notifyMouseReleased(cast(int)xpos, cast(int)ypos, button);
+			}
+		}
+
+		static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
+			armos.graphics.currentRenderer.resize();
+		}
+
+		void initGLFWEvents(){
+			// glfwSetKeyCallback(window, &keyCallbackFunction);
+			glfwSetKeyCallback(window, cast(GLFWkeyfun)&keyCallbackFunction);
+			glfwSetCursorPosCallback(window, cast(GLFWcursorposfun)&cursorPositionFunction);
+			glfwSetMouseButtonCallback(window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
+			glfwSetWindowSizeCallback(window, cast(GLFWwindowsizefun)&resizeWindowFunction);
+		}
+	}//private
 }
 
+/++
+++/
 armos.app.Window currentWindow(){
 	return armos.app.mainLoop.window;
 }
 
-
+/++
+++/
 armos.math.Vector2i windowSize(){
 	return currentWindow.size;
 }
 
+/++
+++/
 float windowAspect(){
 	return currentWindow.aspect;
 }
-
-// armos.math.Vector2f screenSize(){
-// 	return currentWindow.screenSize;
-// }
-

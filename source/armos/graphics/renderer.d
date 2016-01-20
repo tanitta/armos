@@ -174,430 +174,442 @@ armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.V
 /++
 ++/
 class Renderer {
-	armos.graphics.Style[] styleStack;
-	auto currentStyle_ = new armos.graphics.Style;
-	
-	// armos.graphics.MatrixStack matrixStack;
-	
-	armos.math.Matrix4f projectionMatrix;
-	
-	bool isBackgroundAuto = true;
-	
-	armos.graphics.Fbo fbo;
-	bool _isUseFbo = true;
-	
-	this(){
-		// matrixStack = new armos.graphics.MatrixStack(armos.app.currentWindow);
-		fbo = new armos.graphics.Fbo;
-	}
-	
-	void matrixMode(MatrixMode mode){
-		glMatrixMode(getGLMatrixMode(mode));
-	}
-	// void draw(ref armos.graphics.Mesh mesh, armos.graphics.PolyRenderMode renderMode){
-		// if(mesh.vertices != 0){
-			// glEnableClientState(GL_VERTEX_ARRAY);
-			// glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
-		// }
-	// };
-	
-	// void viewport(float x, float y, float width, float height, bool vflip){
-	// 	glViewport(nativeViewport.x,nativeViewport.y,nativeViewport.width,nativeViewport.height);
-	// };
-	
-	armos.graphics.Style* currentStyle(){
-		return &currentStyle_;
-	};
-	
-	void bind(armos.math.Matrix4f projectionMatrix){
-		glMatrixMode(GL_PROJECTION);
-		pushMatrix();
-		glLoadMatrixf(projectionMatrix.array.ptr);
-	}
-	void unbind(){
-		glMatrixMode(GL_PROJECTION);
-		popMatrix();
-	}
-	
-	void setBackground(const armos.types.Color color){
-		currentStyle.backgroundColor = cast(armos.types.Color)color;
-		glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	public{
 		
-	}
-	
-	void setColor(const armos.types.Color color){
-		currentStyle.color = cast(armos.types.Color)color; 
-		glColor4f(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
-	}
-	
-	void setColor(int colorCode){
-		auto color =  armos.types.Color(colorCode);
-		setColor(color);
-	}
-	
-	void pushMatrix(){
-		glPushMatrix();
-	};
-	
-	void popMatrix(){
-		glPopMatrix();
-	};
-	
-	void translate(float x, float y, float z){
-		glTranslatef(x, y, z);
-	}
-
-	void translate(armos.math.Vector3f vec){
-		glTranslatef(vec[0], vec[1], vec[2]);
-	};
-	
-	void scale(float x, float y, float z){
-		glScalef(x, y, z);
-	}
-	
-	void scale(armos.math.Vector3f vec){
-		glScalef(vec[0], vec[1], vec[2]);
-	}
-	
-	void rotate(float degrees, armos.math.Vector3f vec){
-		rotate(degrees, vec[0], vec[1], vec[2]);
-	}
-	void rotate(float degrees, float vecX, float vecY, float vecZ){
-		glRotatef(degrees, vecX, vecY, vecZ);
-	}
-	
-	void setLineWidth(float width){
-		currentStyle.lineWidth = width;
-		glLineWidth(width);
-	}
-	
-	void setLineSmoothing(bool smooth){
-		currentStyle.isSmoothing = smooth;
-	}
-	
-
-	
-
-	// void rotate(armos.math.Quaternionf q){
-	// 	glRotatef(q[3], q[0], q[1], q[2]);
-	// }
-	void setup(){
-		if(_isUseFbo){
-			fbo.begin;
+		/++
+		++/
+		this(){
+			_fbo = new armos.graphics.Fbo;
 		}
-			viewport();
-			setupScreenPerspective();
+		
+		/++
+		++/
+		void matrixMode(MatrixMode mode){
+			glMatrixMode(getGLMatrixMode(mode));
+		}
+		
+		/++
+		++/
+		armos.graphics.Style* currentStyle(){
+			return &_currentStyle;
+		};
+		
+		/++
+		++/
+		void bind(armos.math.Matrix4f projectionMatrix){
+			glMatrixMode(GL_PROJECTION);
+			pushMatrix();
+			glLoadMatrixf(projectionMatrix.array.ptr);
+		}
+		
+		/++
+		++/
+		void unbind(){
+			glMatrixMode(GL_PROJECTION);
+			popMatrix();
+		}
+		
+		/++
+		++/
+		void setBackgroundAuto(bool b){
+			_isBackgroundAuto = b;
+		};
+		
+		/++
+		++/
+		void setBackground(const armos.types.Color color){
+			currentStyle.backgroundColor = cast(armos.types.Color)color;
+			glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
+			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
+		}
+		
+		/++
+		++/
+		void setColor(const armos.types.Color color){
+			currentStyle.color = cast(armos.types.Color)color; 
+			glColor4f(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
+		}
+		
+		/++
+		++/
+		void setColor(int colorCode){
+			auto color =  armos.types.Color(colorCode);
+			setColor(color);
+		}
+		
+		/++
+		++/
+		void pushMatrix(){
+			glPushMatrix();
+		};
+		
+		/++
+		++/
+		void popMatrix(){
+			glPopMatrix();
+		};
+		
+		/++
+		++/
+		void translate(float x, float y, float z){
+			glTranslatef(x, y, z);
+		}
+
+		/++
+		++/
+		void translate(armos.math.Vector3f vec){
+			glTranslatef(vec[0], vec[1], vec[2]);
+		};
+		
+		/++
+		++/
+		void scale(float x, float y, float z){
+			glScalef(x, y, z);
+		}
+		
+		/++
+		++/
+		void scale(armos.math.Vector3f vec){
+			glScalef(vec[0], vec[1], vec[2]);
+		}
+		
+		/++
+		++/
+		void rotate(float degrees, armos.math.Vector3f vec){
+			rotate(degrees, vec[0], vec[1], vec[2]);
+		}
+		
+		/++
+		++/
+		void rotate(float degrees, float vecX, float vecY, float vecZ){
+			glRotatef(degrees, vecX, vecY, vecZ);
+		}
+		
+		/++
+		++/
+		void setLineWidth(float width){
+			currentStyle.lineWidth = width;
+			glLineWidth(width);
+		}
+		
+		/++
+		++/
+		void setLineSmoothing(bool smooth){
+			currentStyle.isSmoothing = smooth;
+		}
+		
+		/++
+		++/
+		void setup(){
+			if(_isUseFbo){
+				_fbo.begin;
+			}
+				viewport();
+				setupScreenPerspective();
+				setBackground(currentStyle.backgroundColor );
+				
+			if(_isUseFbo){
+				_fbo.end;
+			}
+		};
+		
+		/++
+		++/
+		void resize(){
+			if(_isUseFbo){
+				_fbo.resize(armos.app.currentWindow.size);
+				_fbo.begin;
+			}
+			
 			setBackground(currentStyle.backgroundColor );
 			
-		if(_isUseFbo){
-			fbo.end;
-		}
-		
-		// auto position = armos.math.Vector2f(0, 0);
-		// auto size = armos.app.currentWindow.windowSize();
-		
-		// position[1] = size[1] - (position[1] + size[1]);
-		// position[1] = renderSurfaceSize[1] - (y + height);
-		// glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
-		
-		
-	};
-	
-	void resize(){
-		if(_isUseFbo){
-			fbo.resize(armos.app.currentWindow.size);
-			fbo.begin;
-		}
-		
-		setBackground(currentStyle.backgroundColor );
-		
-		if(_isUseFbo){
-			fbo.end;
-		}
-	}
-	
-	void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
-		// matrixStack.viewport(x, y, width, height, vflip);
-		// auto nativeViewport = matrixStack.nativeViewport();
-		// glViewport(cast(int)nativeViewport.x,cast(int)nativeViewport.y,cast(int)nativeViewport.width,cast(int)nativeViewport.height);
-		
-		auto position = armos.math.Vector2f(0, 0);
-		auto size = armos.app.currentWindow.size();
-		position[1] = size[1] - (position[1] + size[1]);
-		// position[1] = renderSurfaceSize[1] - (y + height);
-		glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
-	}
-	
-	// armos.types.Rectangle currentViewport(){
-	// 	// nativeViewport();
-	// 	return matrixStack.currentViewport;
-	// }
-	
-	// armos.type.Rectangle nativeViewport(){
-	// 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
-	// 	glGetIntegerv(GL_VIEWPORT, viewport);
-	//
-	// 	ofGLRenderer* mutRenderer = const_cast<ofGLRenderer*>(this);
-	// 	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-	// 	mutRenderer->matrixStack.nativeViewport(nativeViewport);
-		// return nativeViewport;
-	// }
-	
-	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
-		float viewW, viewH;
-		if(width<0 || height<0){
-			viewW = armos.app.windowSize[0];
-			viewH = armos.app.windowSize[1];
-		}else{
-			viewW = width;
-			viewH = height;
-		}
-		
-		float eyeX = viewW / 2.0;
-		float eyeY = viewH / 2.0;
-		float halfFov = PI * fov / 360;
-		float theTan = tan(halfFov);
-		float dist = eyeY / theTan;
-		float aspect = viewW / viewH;
-		//
-		if(nearDist == 0) nearDist = dist / 10.0f;
-		if(farDist == 0) farDist = dist * 10.0f;
-		
-		
-		armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, nearDist, farDist);
-		
-		// matrixStack.loadProjectionMatrix( persp );
-		// loadMatrix(persp);
-		
-		armos.math.Matrix4f lookAt = lookAtViewMatrix(
-			armos.math.Vector3f(eyeX, eyeY, dist),
-			armos.math.Vector3f(eyeX, eyeY, 0),
-			armos.math.Vector3f(0, 1, 0)
-		);
-		
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		
-		// import std.stdio;
-		// writeln("persp:");
-		// persp.print();
-		//
-		// writeln("lookAt:");
-		// lookAt.print();
-		//
-		// writeln("persp*lookAt:");
-		// ( persp*lookAt ).print();
-		
-		glLoadMatrixf((persp*lookAt).array.ptr);
-		glScalef(1, -1, 1);
-		glTranslatef(0, -viewH, 0);
-		glMatrixMode(GL_MODELVIEW);
-		// glLoadIdentity();
-	}
-	
-	void startRender(){
-		if(_isUseFbo){
-			fbo.begin;
-		}
-		
-		viewport();
-		setupScreenPerspective();
-		
-		if( isBackgroundAuto ){
-			setBackground(currentStyle.backgroundColor );
-		}
-	};
-	void finishRender(){
-		if(_isUseFbo){
-			fbo.end;
-			armos.types.Color tmp = currentStyle.color;
-			setColor(0xFFFFFF);
-			
-			bool isEnableDepthTest;
-			glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
-			disableDepthTest;
-			
-			fbo.draw;
-			setColor(tmp);
-			if(isEnableDepthTest){
-				enableDepthTest;
+			if(_isUseFbo){
+				_fbo.end;
 			}
 		}
-		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	};
-	
-	void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
-		armos.graphics.Vertex[2] vertices;
-		vertices[0].x = x1;
-		vertices[0].y = y1;
-		vertices[0].z = z1;
-		vertices[1].x = x2;
-		vertices[1].y = y2;
-		vertices[1].z = z2;
 		
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
-		glDrawArrays(GL_LINES, 0, 2);
-		glDisableClientState(GL_VERTEX_ARRAY);
-	};
-	
-	void drawRectangle(in float x, in float y, in float w, in float h){
-		armos.graphics.Vertex[4] vertices;
-		vertices[0].x = x;
-		vertices[0].y = y;
-		vertices[0].z = 0;
-		
-		vertices[1].x = x;
-		vertices[1].y = y+h;
-		vertices[1].z = 0;
-		
-		vertices[2].x = x+w;
-		vertices[2].y = y+h;
-		vertices[2].z = 0;
-	
-		vertices[3].x = x+w;
-		vertices[3].y = y;
-		vertices[3].z = 0;
-		
-		armos.graphics.TexCoord[] texCoords;
-		int[4] indices = [0, 1, 2, 3];
-		
-		armos.graphics.PolyRenderMode renderMode;
-		if(currentStyle_.isFill){
-			renderMode = armos.graphics.PolyRenderMode.Fill;
-		}else{
-			renderMode = armos.graphics.PolyRenderMode.WireFrame;
+		/++
+		++/
+		void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
+			auto position = armos.math.Vector2f(0, 0);
+			auto size = armos.app.currentWindow.size();
+			position[1] = size[1] - (position[1] + size[1]);
+			glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
 		}
-		draw(
-			vertices,
-			texCoords,
-			indices, 
-			armos.graphics.PrimitiveMode.Quads, 
-			renderMode,
-			true,
-			false,
-			false
-		);
-	}
-	
-	void draw(
-		in armos.graphics.Mesh mesh,
-		armos.graphics.PolyRenderMode renderMode,
-		bool useColors,
-		bool useTextures,
-		bool useNormals
-	){
-		draw(
-			mesh.vertices,
-			mesh.texCoords,
-			mesh.indices, 
-			mesh.primitiveMode,
-			renderMode,
-			useColors,
-			useTextures,
-			useNormals
-		);
-	}
-	
-	void draw(
-		in armos.graphics.Vertex[] vertices,
-		in armos.graphics.TexCoord[] texCoords,
-		in int[] indices,
-		in armos.graphics.PrimitiveMode primitiveMode, 
-		armos.graphics.PolyRenderMode renderMode,
-		bool useColors,
-		bool useTextures,
-		bool useNormals
-	){
 		
-		glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
-		//add vertices to GL
-		if(vertices.length){
+		/++
+		++/
+		void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
+			float viewW, viewH;
+			if(width<0 || height<0){
+				viewW = armos.app.windowSize[0];
+				viewH = armos.app.windowSize[1];
+			}else{
+				viewW = width;
+				viewH = height;
+			}
+			
+			float eyeX = viewW / 2.0;
+			float eyeY = viewH / 2.0;
+			float halfFov = PI * fov / 360;
+			float theTan = tan(halfFov);
+			float dist = eyeY / theTan;
+			float aspect = viewW / viewH;
+			//
+			if(nearDist == 0) nearDist = dist / 10.0f;
+			if(farDist == 0) farDist = dist * 10.0f;
+			
+			
+			armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, nearDist, farDist);
+			
+			armos.math.Matrix4f lookAt = lookAtViewMatrix(
+				armos.math.Vector3f(eyeX, eyeY, dist),
+				armos.math.Vector3f(eyeX, eyeY, 0),
+				armos.math.Vector3f(0, 1, 0)
+			);
+			
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			
+			glLoadMatrixf((persp*lookAt).array.ptr);
+			glScalef(1, -1, 1);
+			glTranslatef(0, -viewH, 0);
+			glMatrixMode(GL_MODELVIEW);
+		}
+		
+		/++
+		++/
+		void startRender(){
+			if(_isUseFbo){
+				_fbo.begin;
+			}
+			
+			viewport();
+			setupScreenPerspective();
+			
+			if( _isBackgroundAuto ){
+				setBackground(currentStyle.backgroundColor );
+			}
+		};
+		
+		/++
+		++/
+		void finishRender(){
+			if(_isUseFbo){
+				_fbo.end;
+				armos.types.Color tmp = currentStyle.color;
+				setColor(0xFFFFFF);
+				
+				bool isEnableDepthTest;
+				glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
+				disableDepthTest;
+				
+				_fbo.draw;
+				setColor(tmp);
+				if(isEnableDepthTest){
+					enableDepthTest;
+				}
+			}
+		};
+		
+		/++
+		++/
+		void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
+			armos.graphics.Vertex[2] vertices;
+			vertices[0].x = x1;
+			vertices[0].y = y1;
+			vertices[0].z = z1;
+			vertices[1].x = x2;
+			vertices[1].y = y2;
+			vertices[1].z = z2;
+			
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
-		}
+			glDrawArrays(GL_LINES, 0, 2);
+			glDisableClientState(GL_VERTEX_ARRAY);
+		};
 		
-		//add normals to GL
+		/++
+		++/
+		void drawRectangle(in float x, in float y, in float w, in float h){
+			armos.graphics.Vertex[4] vertices;
+			vertices[0].x = x;
+			vertices[0].y = y;
+			vertices[0].z = 0;
+			
+			vertices[1].x = x;
+			vertices[1].y = y+h;
+			vertices[1].z = 0;
+			
+			vertices[2].x = x+w;
+			vertices[2].y = y+h;
+			vertices[2].z = 0;
 		
-		//add colors to GL
-		
-		//add texchoords to gl
-		if(texCoords.length){
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(2, GL_FLOAT, 0, texCoords.ptr);
-			// foreach (texCoord; mesh.texCoords ) {
-			// 	glTexCoord2f(texCoord.u , texCoord.v);
-			// }
-		}
-		// 	if(texturelocationsenabled.size() == 0){
-		// 		glenableclientstate(gl_texture_coord_array);
-		// 		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-		// 	}else{
-		// 		set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-		// 		for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-		// 			glActiveTexture(GL_TEXTURE0+*textureLocation);
-		// 			glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-		// 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		// 			glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-		// 		}
-		// 		glActiveTexture(GL_TEXTURE0);
-		// 		glClientActiveTexture(GL_TEXTURE0);
-		// 	}
-		
-		//add indicees to GL
-		
-		
-		if(indices.length){
-			glDrawElements(
-				armos.graphics.getGLPrimitiveMode(primitiveMode),
-				cast(int)indices.length,
-				GL_UNSIGNED_INT,
-				indices.ptr
+			vertices[3].x = x+w;
+			vertices[3].y = y;
+			vertices[3].z = 0;
+			
+			armos.graphics.TexCoord[] texCoords;
+			int[4] indices = [0, 1, 2, 3];
+			
+			armos.graphics.PolyRenderMode renderMode;
+			if(_currentStyle.isFill){
+				renderMode = armos.graphics.PolyRenderMode.Fill;
+			}else{
+				renderMode = armos.graphics.PolyRenderMode.WireFrame;
+			}
+			draw(
+				vertices,
+				texCoords,
+				indices, 
+				armos.graphics.PrimitiveMode.Quads, 
+				renderMode,
+				true,
+				false,
+				false
 			);
 		}
 		
-		glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
+		/++
+		++/
+		void draw(
+			in armos.graphics.Mesh mesh,
+			armos.graphics.PolyRenderMode renderMode,
+			bool useColors,
+			bool useTextures,
+			bool useNormals
+		){
+			draw(
+				mesh.vertices,
+				mesh.texCoords,
+				mesh.indices, 
+				mesh.primitiveMode,
+				renderMode,
+				useColors,
+				useTextures,
+				useNormals
+			);
+		}
 		
-		if(vertices.length){
-			glDisableClientState(GL_VERTEX_ARRAY);
+		/++
+		++/
+		void draw(
+			in armos.graphics.Vertex[] vertices,
+			in armos.graphics.TexCoord[] texCoords,
+			in int[] indices,
+			in armos.graphics.PrimitiveMode primitiveMode, 
+			armos.graphics.PolyRenderMode renderMode,
+			bool useColors,
+			bool useTextures,
+			bool useNormals
+		){
+			
+			glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
+			//add vertices to GL
+			if(vertices.length){
+				glEnableClientState(GL_VERTEX_ARRAY);
+				glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
+			}
+			
+			//add normals to GL
+			
+			//add colors to GL
+			
+			//add texchoords to gl
+			if(texCoords.length){
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(2, GL_FLOAT, 0, texCoords.ptr);
+				// foreach (texCoord; mesh.texCoords ) {
+				// 	glTexCoord2f(texCoord.u , texCoord.v);
+				// }
+			}
+			// 	if(texturelocationsenabled.size() == 0){
+			// 		glenableclientstate(gl_texture_coord_array);
+			// 		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+			// 	}else{
+			// 		set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+			// 		for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+			// 			glActiveTexture(GL_TEXTURE0+*textureLocation);
+			// 			glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+			// 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			// 			glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+			// 		}
+			// 		glActiveTexture(GL_TEXTURE0);
+			// 		glClientActiveTexture(GL_TEXTURE0);
+			// 	}
+			
+			//add indicees to GL
+			
+			
+			if(indices.length){
+				glDrawElements(
+					armos.graphics.getGLPrimitiveMode(primitiveMode),
+					cast(int)indices.length,
+					GL_UNSIGNED_INT,
+					indices.ptr
+				);
+			}
+			
+			glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
+			
+			if(vertices.length){
+				glDisableClientState(GL_VERTEX_ARRAY);
+			}
+			if(texCoords.length){
+				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			}
 		}
-		if(texCoords.length){
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		
+		/++
+		++/
+		void enableDepthTest(){
+			glEnable(GL_DEPTH_TEST);
 		}
-	}
-	
-	void enableDepthTest(){
-		glEnable(GL_DEPTH_TEST);
-	}
-	
-	void disableDepthTest(){
-		glDisable(GL_DEPTH_TEST);
-	}
-	
-	void blendMode(armos.graphics.BlendMode mode){
-		switch (mode) {
-			case BlendMode.Alpha:
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				break;
-				
-			case BlendMode.Disable:
-				glDisable(GL_BLEND);
-				break;
-			default:
-				assert(0);
+		
+		/++
+		++/
+		void disableDepthTest(){
+			glDisable(GL_DEPTH_TEST);
 		}
-		currentStyle.blendMode = mode;
-	}
+		
+		/++
+		++/
+		void blendMode(armos.graphics.BlendMode mode){
+			switch (mode) {
+				case BlendMode.Alpha:
+					glEnable(GL_BLEND);
+					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					break;
+					
+				case BlendMode.Disable:
+					glDisable(GL_BLEND);
+					break;
+				default:
+					assert(0);
+			}
+			currentStyle.blendMode = mode;
+		}
+		
+		/++
+		++/
+		void enableFbo(){
+			_isUseFbo = true;
+		}
+		
+		/++
+		++/
+		void disableFbo(){
+			_isUseFbo = false;
+		}
+	}//public
 	
-	void enableFbo(){
-		_isUseFbo = true;
-	}
-	
-	void disableFbo(){
-		_isUseFbo = false;
-	}
+	private{
+		armos.graphics.Fbo _fbo;
+		bool _isUseFbo = true;
+		auto _currentStyle = new armos.graphics.Style;
+		bool _isBackgroundAuto = true;
+	}//private
 }
 
 /++
@@ -633,7 +645,7 @@ void setBackground(in float r, in float g, in float b, in float a = 255){
 /++
 ++/
 void setBackgroundAuto(const bool isAuto){
-	currentRenderer.isBackgroundAuto = isAuto;
+	currentRenderer.setBackgroundAuto = isAuto;
 }
 
 /++
@@ -678,12 +690,15 @@ void drawLine(armos.math.Vector2f vec1, armos.math.Vector2f vec2){
 	drawLine(vec1[0], vec1[1], 0, vec2[0], vec2[1], 0);
 }
 
-
+/++
+++/
 void drawRectangle(T)(in T x, in T y, in T w, in T h){
 	import std.conv;
 	currentRenderer.drawRectangle(x.to!float, y.to!float, w.to!float, h.to!float);
 }
 
+/++
+++/
 void drawRectangle(Vector)(in Vector position, in Vector size){
 	drawRectangle(position[0], position[1], size[0], size[1]);
 }
