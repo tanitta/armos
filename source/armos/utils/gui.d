@@ -26,8 +26,6 @@ class Gui {
 		// Gui add(lazy List list){
 		Gui add(List list){
 			_lists ~= list;
-			import std.stdio;
-			"gui add".writeln;
 			return this;
 		};
 		
@@ -77,8 +75,6 @@ class List {
 		++/
 		List add(lazy Widget widget){
 			_widgets ~= widget;
-			import std.stdio;
-			"list add".writeln;
 			return this;
 		}
 		
