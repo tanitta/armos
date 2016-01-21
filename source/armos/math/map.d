@@ -12,15 +12,21 @@ pure T clamp(T)(in T v, in T min, in T max){
 }
 
 pure T map(T)(in T v1, in T v1_min, in T v1_max, in T v2_min, in T v2_max, bool isClamp = true){
-		if(( v1_max - v1_min ).abs < T.epsilon){
-			return v2_min;
+	T epsilon;
+	static if(is(T == int)){
+		epsilon = 0;
+	}else{
+		epsilon = T.epsilon;
+	}
+	if(( v1_max - v1_min ).abs <= epsilon){
+		return v2_min;
+	}else{
+		if(isClamp){
+			return clamp( (v1 - v1_min) / (v1_max - v1_min) * (v2_max - v2_min) + v2_min, v2_min, v2_max);
 		}else{
-			if(isClamp){
-				return clamp( (v1 - v1_min) / (v1_max - v1_min) * (v2_max - v2_min) + v2_min, v2_min, v2_max);
-			}else{
-				return (v1 - v1_min) / (v1_max - v1_min) * (v2_max - v2_min) + v2_min;
-			}
+			return (v1 - v1_min) / (v1_max - v1_min) * (v2_max - v2_min) + v2_min;
 		}
+	}
 }
 
 
