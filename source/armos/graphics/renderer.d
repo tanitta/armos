@@ -581,7 +581,10 @@ class Renderer {
 					glEnable(GL_BLEND);
 					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 					break;
-					
+				case BlendMode.Add:
+					glEnable(GL_BLEND);
+					glBlendFunc(GL_ONE, GL_ONE);
+					break;
 				case BlendMode.Disable:
 					glDisable(GL_BLEND);
 					break;
