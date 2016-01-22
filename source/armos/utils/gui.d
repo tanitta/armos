@@ -16,7 +16,7 @@ class Gui {
 			_style.font.load("font.png", 8, 8);
 			_style.colors["font1"] = Color(200, 200, 200);
 			_style.colors["font2"] = Color(105, 105, 105);
-			_style.colors["background"] = Color(50, 50, 50, 128);
+			_style.colors["background"] = Color(40, 40, 40, 200);
 			_style.colors["base1"] = Color(105, 105, 105);
 			_style.colors["base2"] = Color(150, 150, 150);
 			_style.width = 256;
@@ -24,7 +24,6 @@ class Gui {
 		
 		/++
 		++/
-		// Gui add(lazy List list){
 		Gui add(List list){
 			_lists ~= list;
 			list.style = _style;
