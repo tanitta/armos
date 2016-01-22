@@ -381,6 +381,7 @@ class Renderer {
 		/++
 		++/
 		void startRender(){
+			// setBackground(currentStyle.backgroundColor );
 			if(_isUseFbo){
 				_fbo.begin;
 			}
@@ -671,26 +672,21 @@ void setColor(const float gray){
 
 /++
 ++/
-void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
-	currentRenderer.drawLine(x1, y1, z1, x2, y2, z2);
+void drawLine(T)(in T x1, in T y1, in T z1, in T x2, in T y2, in T z2){
+	import std.conv;
+	currentRenderer.drawLine(x1.to!float, y1.to!float, z1.to!float, x2.to!float, y2.to!float, z2.to!float);
 }
 
 /++
 ++/
-void drawLine(armos.math.Vector3f vec1, armos.math.Vector3f vec2){
+void drawLine(T)(in T x1, in T y1, in T x2, in T y2){
+	drawLine(x1, y1, 0, x2, y2, 0);
+}	
+
+/++
+++/
+void drawLine(Vector)(Vector vec1, Vector vec2){
 	drawLine(vec1[0], vec1[1], vec1[2], vec2[0], vec2[1], vec2[2]);
-}	
-
-/++
-++/
-void drawLine(in float x1, in float y1, in float x2, in float y2){
-	currentRenderer.drawLine(x1, y1, 0, x2, y2, 0);
-}	
-
-/++
-++/
-void drawLine(armos.math.Vector2f vec1, armos.math.Vector2f vec2){
-	drawLine(vec1[0], vec1[1], 0, vec2[0], vec2[1], 0);
 }
 
 /++
