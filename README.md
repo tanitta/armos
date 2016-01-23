@@ -48,16 +48,16 @@ void main(){ar.run(new TestApp);}
 
 #Why use D?
 - Processing Speed
-D is as fast as C++ programs.
+	D is as fast as C++ programs.
 
 - Build Speed
-The compilation is more faster than a speed of C++. Because of that, we can repeat trial and error.
+	The compilation is more faster than a speed of C++. Because of that, we can repeat trial and error.
 
 - Extensibility
-We can use C/C++/Objective-C via D binding.
+	We can use C/C++/Objective-C via D binding.
 
 - Easiness to learn
-It isn't so much complex than C++!
+	It isn't so much complex than C++!
 
 - Other point is [here](http://dlang.org/index.html)
 
