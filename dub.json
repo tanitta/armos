@@ -5,6 +5,7 @@
 	"authors": ["tanitta"],
 	"license": "Boost",
 	"version": "0.0.1",
+	"targetType": "library",
 	"dflags": ["-XfdocFolder/index.json"],
 	"dependencies": {
 		"derelict-sdl2": ">=1.9.7", 

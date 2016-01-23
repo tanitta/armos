@@ -50,7 +50,6 @@ private{
 	static unittest{
 		import std.stdio;
 		auto array = hypercube!(int, 3);
-		array.writeln;
 	}
 	// armos.math.Vector!(T, Dim) bitarrayToVector(T, int Dim)(BitArray bitArray){
 	// 	index
