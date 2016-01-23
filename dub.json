@@ -4,7 +4,6 @@
 	"copyright": "Copyright © 2015, tanitta",
 	"authors": ["tanitta"],
 	"license": "Boost",
-	"version": "v0.0.1",
 	"targetType": "library",
 	"dflags": ["-XfdocFolder/index.json"],
 	"dependencies": {
