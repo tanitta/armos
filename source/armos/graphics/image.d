@@ -310,6 +310,7 @@ class Image {
 
 			_bitmap.setFromAlignedPixels(bitmapBits, width, height, armosColorFormat);
 			_bitmap.swapRAndB;
+			_size = _bitmap.size;
 		}
 	}//private
 }//class Image
