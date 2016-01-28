@@ -4,7 +4,9 @@ armos
 ====
 D言語によるクリエイティブコーディングのためのオープンソースライブラリです．
 
-#Demo
+
+# Demo
+
 ```
 import armos;
 class TestApp : ar.BaseApp{
@@ -28,14 +30,18 @@ class TestApp : ar.BaseApp{
 void main(){ar.run(new TestApp);}
 ```
 
-#Require
+
+# Require
+
 - [dub](http://code.dlang.org/)
 - GLFW
 - SDL2(optional)
 - openGL3
 - FreeImage
 
-#Install
+
+# Install
+
 1. このpackageを利用できるようにするため，dubのプロジェクトのdub.sdlに以下の記述を追加します．
 	```
 	dependency "armos" version="~>0.0.1"
@@ -46,7 +52,9 @@ void main(){ar.run(new TestApp);}
 	dub build
 	```
 	
-#Why use D?
+	
+# Why use D?
+
 - 処理速度 : D言語はC++と同程度の速度で動作します．
 
 - ビルド速度 : コンパイルはC++よりもずっと高速です．そのため，開発者はより多くの試行錯誤を繰り返すことができます．
@@ -57,12 +65,16 @@ void main(){ar.run(new TestApp);}
 
 - [その他のDの特徴](http://www.kmonos.net/alang/d/overview.html)
 
-#ScreenShots
+
+# ScreenShots
+
 ![ss0](https://41.media.tumblr.com/2297723261811b737966bc353aa3fb5b/tumblr_o1eruzJSFd1u9jb8mo1_1280.png)
 
 ![ss1](https://41.media.tumblr.com/34ca170f2fc91b8b7d789faa6fd85ba3/tumblr_o1bl8yAazQ1u9jb8mo2_r1_1280.png)
 
-#Contribution
+
+# Contribution
+
 1. このリポジトリをForkします
 2. feature branch を作ってください(git checkout -b my-new-feature)
 3. 変更をcommitします(git commit -am 'Add some feature')

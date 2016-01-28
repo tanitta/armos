@@ -4,7 +4,9 @@ armos
 ====
 armos is a free and open source library for creative coding in D programming language.
 
-#Demo
+
+# Demo
+
 ```
 import armos;
 class TestApp : ar.BaseApp{
@@ -28,14 +30,18 @@ class TestApp : ar.BaseApp{
 void main(){ar.run(new TestApp);}
 ```
 	
-#Require
+	
+# Require
+
 - [dub](http://code.dlang.org/)
 - GLFW
 - SDL2(optional)
 - openGL3
 - FreeImage
 
-#Install
+
+# Install
+
 1. To use this package, put the following dependency into your project's dub.sdl.
 	```
 	dependency "armos" version="~>0.0.1"
@@ -46,7 +52,9 @@ void main(){ar.run(new TestApp);}
 	dub build
 	```
 
-#Why use D?
+
+# Why use D?
+
 - Processing Speed : D is as fast as C++ programs.
 
 - Build Speed : The compilation is more faster than a speed of C++. Because of that, we can repeat trial and error.
@@ -57,12 +65,16 @@ void main(){ar.run(new TestApp);}
 
 - Other point is [here](http://dlang.org/index.html)
 
-#ScreenShots
+
+# ScreenShots
+
 ![ss0](https://41.media.tumblr.com/2297723261811b737966bc353aa3fb5b/tumblr_o1eruzJSFd1u9jb8mo1_1280.png)
 
 ![ss1](https://41.media.tumblr.com/34ca170f2fc91b8b7d789faa6fd85ba3/tumblr_o1bl8yAazQ1u9jb8mo2_r1_1280.png)
 
-#Contribution
+
+# Contribution
+
 Contributions are very welcome! 
 
 1. Fork it
