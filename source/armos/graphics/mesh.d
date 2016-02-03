@@ -167,7 +167,9 @@ class Mesh {
 			vertices = [];
 			texCoords = [];
 			indices = [];
-			(new AssimpModelLoader).load(pathInDataDir);
+			vertices = (new AssimpModelLoader).load(pathInDataDir).vertices;
+			indices = (new AssimpModelLoader).load(pathInDataDir).indices;
+			
 		}
 	}//public
 
@@ -191,7 +193,7 @@ class AssimpModelLoader {
 		}
 
 		///
-		void load(string pathInDataDir){
+		Mesh load(string pathInDataDir){
 			import std.string;
 			string fileName = armos.utils.absolutePath(pathInDataDir);
 
@@ -214,6 +216,7 @@ class AssimpModelLoader {
 				.map!(m => createMesh(m, materials))
 				.array;
 
+				return meshes[0];
 		}
 		
 		///
@@ -308,40 +311,25 @@ class AssimpModelLoader {
 				.map!(n => fromAiVector(n))
 				.array;
 			}
-
-			Appender!(uint[])[uint] faces;
+			
+			auto convertedMesh= new Mesh;
+			
+			convertedMesh.vertices = vertices.map!((armos.math.Vector3f vec){
+				auto vert = Vertex();
+				vert.x = vec[0];
+				vert.y = vec[1];
+				vert.z = vec[2];
+				return vert;
+			}).array;
+			
 			foreach(f; mesh.mFaces[0 .. mesh.mNumFaces]) {
-				immutable n = f.mNumIndices;
-				auto app = n in faces;
-				if(app is null) {
-					app = &(faces[n] = Appender!(uint[])());
+				int numVertices =  f.mNumIndices;
+				foreach(i; f.mIndices[0 .. numVertices]){
+					convertedMesh.addIndex(i);
 				}
-				app.put(f.mIndices[0 .. n]);
 			}
-			import std.stdio;
-			mesh.mNumVertices.writeln;
-			mesh.mNumBones.writeln;
 			
-			// const(Bone)[] bones;
-			// if(mesh.mBones !is null) {
-			// 	bones = mesh.mBones[0 .. mesh.mNumBones]
-			// 	.map!(b => createBone(b))
-			// 	.array;
-			// }
-			//
-			//
-			// uint[][uint] facesArray;
-			// foreach(e; faces.byKeyValue) {
-			// 	facesArray[e.key] = e.value.data;
-			// }
-			// facesArray.rehash;
-			//
-			// immutable mi = mesh.mMaterialIndex;
-			// auto material = (mi < materials.length) ? materials[mi] : null;
-			// return new Mesh(
-			// 		name, vertices, normals, bones, facesArray, material);
-			
-			return new Mesh();
+			return convertedMesh;
 		}
 
 		aiScene* _scene;
