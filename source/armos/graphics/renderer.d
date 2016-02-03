@@ -462,6 +462,8 @@ class Renderer {
 			}
 			draw(
 				vertices,
+				null,
+				null,
 				texCoords,
 				indices, 
 				armos.graphics.PrimitiveMode.Quads, 
@@ -483,6 +485,8 @@ class Renderer {
 		){
 			draw(
 				mesh.vertices,
+				mesh.normals,
+				mesh.colors, 
 				mesh.texCoords,
 				mesh.indices, 
 				mesh.primitiveMode,
@@ -497,6 +501,8 @@ class Renderer {
 		++/
 		void draw(
 			in armos.graphics.Vertex[] vertices,
+			in armos.graphics.Normal[] normals,
+			in armos.types.FloatColor[] colors,
 			in armos.graphics.TexCoord[] texCoords,
 			in int[] indices,
 			in armos.graphics.PrimitiveMode primitiveMode, 
@@ -514,8 +520,16 @@ class Renderer {
 			}
 			
 			//add normals to GL
+			if(normals.length && useNormals){
+				glEnableClientState(GL_NORMAL_ARRAY);
+				glNormalPointer(GL_FLOAT, 0, normals.ptr);
+			}
 			
 			//add colors to GL
+			if(colors.length && useColors){
+				glEnableClientState(GL_COLOR_ARRAY);
+				glColorPointer(4, GL_FLOAT, armos.types.FloatColor.sizeof, colors.ptr);
+			}
 			
 			//add texchoords to gl
 			if(texCoords.length){

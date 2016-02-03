@@ -1,4 +1,5 @@
 module armos.graphics.mesh;
+import armos.types;
 
 struct TexCoord{
 	float u, v;
@@ -24,6 +25,7 @@ class Mesh {
 
 		Vertex[] vertices;
 		Normal[] normals;
+		armos.types.FloatColor[] colors;
 		TexCoord[] texCoords;
 		IndexType[] indices;
 
@@ -179,6 +181,7 @@ import derelict.assimp3.assimp;
 import std.stdio;
 import std.algorithm : map;
 import std.array : array, Appender;
+
 /++
 ++/
 class AssimpModelLoader {
