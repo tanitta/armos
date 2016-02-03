@@ -7,12 +7,16 @@ class Material {
 		
 		///
 		void begin(){
-			_texture.begin;
+			if(_texture){
+				_texture.begin;
+			}
 		}
 		
 		///
 		void end(){
-			_texture.end;
+			if(_texture){
+				_texture.end;
+			}
 		}
 		
 		///
@@ -47,6 +51,7 @@ class Material {
 		
 		///
 		void texture(armos.graphics.Texture tex){ _texture = tex; }
+		armos.graphics.Texture texture(){return _texture;}
 		
 		///
 		void loadImage(string pathInDataDir){

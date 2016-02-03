@@ -34,12 +34,12 @@ class Camera{
 		/++
 			描画を行う最短距離です．
 		++/
-		double nearDist = 1;
+		double nearDist = 0.1;
 
 		/++
 			描画を行う最長距離です．
 		++/
-		double farDist = 1000;
+		double farDist = 10000;
 
 		/++
 			Cameraで表示する処理を開始します．

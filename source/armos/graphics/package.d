@@ -15,3 +15,4 @@ public import armos.graphics.image;
 public import armos.graphics.shader;
 public import armos.graphics.bitmapfont;
 public import armos.graphics.material;
+public import armos.graphics.model;
