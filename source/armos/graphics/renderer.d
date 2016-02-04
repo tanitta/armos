@@ -118,7 +118,7 @@ GLuint getGLMatrixMode(MatrixMode mode){
 
 /++
 ++/
-armos.math.Matrix4f perspectiveMatrix(float fov, float aspect, float nearDist, float farDist){
+armos.math.Matrix4f perspectiveMatrix(in float fov, in float aspect, in float nearDist, in float farDist){
     double tan_fovy = tan(fov*0.5*PI/180.0);
     double right  =  tan_fovy * aspect* nearDist;
     double left   = -right;
@@ -130,7 +130,7 @@ armos.math.Matrix4f perspectiveMatrix(float fov, float aspect, float nearDist, f
 
 /++
 ++/
-armos.math.Matrix4f frustumMatrix(double left, double right, double bottom, double top, double zNear, double zFar){
+armos.math.Matrix4f frustumMatrix(in double left, in double right, in double bottom, in double top, in double zNear, in double zFar){
     double A = (right+left)/(right-left);
     double B = (top+bottom)/(top-bottom);
     double C = -(zFar+zNear)/(zFar-zNear);
@@ -190,8 +190,8 @@ class Renderer {
 		
 		/++
 		++/
-		armos.graphics.Style* currentStyle(){
-			return &_currentStyle;
+		ref armos.graphics.Style currentStyle(){
+			return _currentStyle;
 		};
 		
 		/++
@@ -217,25 +217,61 @@ class Renderer {
 		
 		/++
 		++/
-		void setBackground(const armos.types.Color color){
-			currentStyle.backgroundColor = cast(armos.types.Color)color;
+		void setBackground(in armos.types.Color color){
+			_currentStyle.backgroundColor = cast(armos.types.Color)color;
 			glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
-			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
 		}
 		
 		/++
 		++/
-		void setColor(const armos.types.Color color){
-			currentStyle.color = cast(armos.types.Color)color; 
+		void background(in armos.types.Color color){
+			setBackground(color);
+			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+		
+		/++
+		++/
+		void setColor(in armos.types.Color color){
+			_currentStyle.color = cast(armos.types.Color)color; 
 			glColor4f(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
 		}
 		
 		/++
 		++/
-		void setColor(int colorCode){
+		void setColor(in int colorCode){
 			auto color =  armos.types.Color(colorCode);
 			setColor(color);
+		}
+		
+		/++
+		++/
+		void setStyle(armos.graphics.Style style){
+			setColor(style.color);
+			setBackground(style.backgroundColor);
+			blendMode(style.blendMode);
+			setLineWidth(style.lineWidth);
+			setLineSmoothing(style.isSmoothing);
+			setDepthTest(style.isDepthTest);
+			_currentStyle.isFill = style.isFill;
+		}
+		
+		/++
+		++/
+		void pushStyle(){
+			_styleStack ~= _currentStyle;
+		}
+		
+		/++
+		++/
+		void popStyle(){
+			import std.range;
+			if(_styleStack.length == 0){
+				assert(0, "stack is empty");
+			}else{
+				_currentStyle = _styleStack[$-1];
+				_styleStack.popBack;
+				setStyle(_currentStyle);
+			}
 		}
 		
 		/++
@@ -289,14 +325,14 @@ class Renderer {
 		/++
 		++/
 		void setLineWidth(float width){
-			currentStyle.lineWidth = width;
+			_currentStyle.lineWidth = width;
 			glLineWidth(width);
 		}
 		
 		/++
 		++/
 		void setLineSmoothing(bool smooth){
-			currentStyle.isSmoothing = smooth;
+			_currentStyle.isSmoothing = smooth;
 		}
 		
 		/++
@@ -307,7 +343,7 @@ class Renderer {
 			}
 				viewport();
 				setupScreenPerspective();
-				setBackground(currentStyle.backgroundColor );
+				background(currentStyle.backgroundColor );
 				
 			if(_isUseFbo){
 				_fbo.end;
@@ -322,7 +358,7 @@ class Renderer {
 				_fbo.begin;
 			}
 			
-			setBackground(currentStyle.backgroundColor );
+			background(currentStyle.backgroundColor );
 			
 			if(_isUseFbo){
 				_fbo.end;
@@ -390,7 +426,7 @@ class Renderer {
 			setupScreenPerspective();
 			
 			if( _isBackgroundAuto ){
-				setBackground(currentStyle.backgroundColor );
+				background(currentStyle.backgroundColor );
 			}
 		};
 		
@@ -579,13 +615,24 @@ class Renderer {
 		/++
 		++/
 		void enableDepthTest(){
-			glEnable(GL_DEPTH_TEST);
+			setDepthTest(true);
 		}
 		
 		/++
 		++/
 		void disableDepthTest(){
-			glDisable(GL_DEPTH_TEST);
+			setDepthTest(false);
+		}
+		
+		/++
+		++/
+		void setDepthTest(bool b){
+			if(b){
+				glEnable(GL_DEPTH_TEST);
+			}else{
+				glDisable(GL_DEPTH_TEST);
+			}
+			_currentStyle.isDepthTest = b;
 		}
 		
 		/++
@@ -606,7 +653,7 @@ class Renderer {
 				default:
 					assert(0);
 			}
-			currentStyle.blendMode = mode;
+			_currentStyle.blendMode = mode;
 		}
 		
 		/++
@@ -625,7 +672,8 @@ class Renderer {
 	private{
 		armos.graphics.Fbo _fbo;
 		bool _isUseFbo = true;
-		auto _currentStyle = new armos.graphics.Style;
+		auto _currentStyle = armos.graphics.Style();
+		armos.graphics.Style[] _styleStack;
 		bool _isBackgroundAuto = true;
 	}//private
 }
@@ -638,8 +686,26 @@ armos.graphics.Renderer* currentRenderer(){
 
 /++
 ++/
-armos.graphics.Style* currentStyle(){
+armos.graphics.Style currentStyle(){
 	return armos.graphics.currentRenderer.currentStyle;
+}
+
+/++
+++/
+void setStyle(in armos.graphics.Style style){
+	currentRenderer.setStyle(style);
+}
+
+/++
+++/
+void pushStyle(){
+	currentRenderer.pushStyle;
+}
+
+/++
+++/
+void popStyle(){
+	currentRenderer.popStyle;
 }
 
 /++
