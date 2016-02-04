@@ -33,15 +33,19 @@ class Gui {
 		/++
 		++/
 		void draw(){
-			int currentWidth = 0;
-			foreach (list; _lists) {
-				armos.graphics.pushMatrix;
-				armos.graphics.translate(currentWidth, 0, 0);
-				list.draw(currentWidth);
-				armos.graphics.popMatrix;
-				currentWidth += list.width + _style.font.width;
-			}
-			armos.graphics.blendMode(armos.graphics.BlendMode.Alpha);
+			armos.graphics.pushStyle;
+				armos.graphics.blendMode(armos.graphics.BlendMode.Alpha);
+				armos.graphics.disableDepthTest;
+				
+				int currentWidth = 0;
+				foreach (list; _lists) {
+					armos.graphics.pushMatrix;
+					armos.graphics.translate(currentWidth, 0, 0);
+					list.draw(currentWidth);
+					armos.graphics.popMatrix;
+					currentWidth += list.width + _style.font.width;
+				}
+			armos.graphics.popStyle;
 		}
 		
 	}//public
