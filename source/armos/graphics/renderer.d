@@ -784,6 +784,61 @@ void drawRectangle(Vector)(in Vector position, in Vector size){
 
 /++
 ++/
+void drawGridPlane(
+	in float stepSize, in int numberOfSteps,
+	in bool labels=false 
+){
+	for (int i = -numberOfSteps; i <= numberOfSteps; i++) {
+		drawLine( -stepSize*numberOfSteps, 0.0,  i*stepSize,              stepSize*numberOfSteps, 0.0, i*stepSize             );
+		drawLine( i*stepSize,              0.0,  -stepSize*numberOfSteps, i*stepSize            , 0.0, stepSize*numberOfSteps );
+	}
+}
+
+/++
+++/
+void drawAxis(
+	in float size
+){
+	pushStyle;{
+		setLineWidth = 2.0;
+		setColor(255, 0, 0);
+		drawLine( -size, 0.0,   0.0,   size, 0.0,  0.0  );
+		setColor(0, 255, 0);
+		drawLine( 0.0,   -size, 0.0,   0.0,  size, 0.0  );
+		setColor(0, 0, 255);
+		drawLine( 0.0,   0.0,   -size, 0.0,  0.0,  size );
+	}popStyle;
+}
+
+/++
+++/
+void drawGrid(
+	in float stepSize, in int numberOfSteps,
+	in bool labels=false, in bool x=true, in bool y=true, in bool z=true
+){
+	pushStyle;{
+		pushMatrix;{
+			rotate(90.0, 0, 0, 1);
+			if(x){
+				setColor(255, 0, 0);
+				drawGridPlane(stepSize, numberOfSteps);
+			}
+			rotate(-90.0, 0, 0, 1);
+			if(y){
+				setColor(0, 255, 0);
+				drawGridPlane(stepSize, numberOfSteps);
+			}
+			rotate(90.0, 1, 0, 0);
+			if(z){
+				setColor(0, 0, 255);
+				drawGridPlane(stepSize, numberOfSteps);
+			}
+		}popMatrix;
+	}popStyle;
+}
+
+/++
+++/
 void popMatrix(){
 	currentRenderer.popMatrix();
 }
@@ -871,3 +926,4 @@ void disableFbo(){
 void blendMode(armos.graphics.BlendMode mode){
 	currentRenderer.blendMode = mode;
 }
+
