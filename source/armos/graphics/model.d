@@ -182,17 +182,13 @@ class AssimpModelLoader {
 					null, null, null, null, null 
 				) ==  aiReturn_SUCCESS
 			){
-				string textureFileName = fromAiString( aiPath );
-				import std.stdio;
-				// textureFileName.writeln;
 				auto image = new armos.graphics.Image;
+				
 				import std.path;
-
+				string textureFileName = fromAiString( aiPath );
 				image.load(buildPath( dirName(_modelfilepath), textureFileName ));
 				
 				mat.texture = image.texture;
-
-				// buildPath( dirName(_modelfilepath), textureFileName ).writeln;
 			}
 			
 			return mat;
