@@ -173,7 +173,7 @@ class AssimpModelLoader {
 			aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
 			mat.ambient = fromAiColor(color);
 			
-			//material
+			//texture
 			aiString aiPath;
 			if(
 				aiGetMaterialTexture(
