@@ -32,10 +32,6 @@ class TestApp : ar.BaseApp{
 		mesh = ar.boxPrimitive(ar.Vector3f(0, 0, 0), ar.Vector3f( 100, 10, 10 ));
 	}
 	
-	void update(){
-	}
-	
-	
 	void draw(){
 		camera.begin;
 		ar.pushMatrix;
