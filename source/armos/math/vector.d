@@ -230,8 +230,14 @@ struct Vector(T, int Dimention){
 	}
 	unittest{
 		auto vec1 = Vector3d(3.0, 2.0, 1.0);
-		auto vec2 = Vector3d(2.0, 1.0, 0.0);
-		assert(vec1.dotProduct(vec2) == 8.0);
+		auto vec2 = Vector3d(2.0, 1.0, 2.0);
+		assert(vec1.dotProduct(vec2) == 10.0);
+	}
+	
+	unittest{
+		auto vec1 = Vector3d(0.4, 0.1, 0.3);
+		auto vec2 = Vector3d(0.2, 0.5, 2.0);
+		assert(vec1.dotProduct(vec2) == 0.73);
 	}
 
 	/++
