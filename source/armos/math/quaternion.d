@@ -216,6 +216,17 @@ struct Quaternion(T){
 			assert( approxEqual(value, qA[i]) );
 		}
 	}
+	
+	armos.math.Matrix!(T, 4, 4) matrix()const{
+		return armos.math.Matrix!(T, 4, 4)(
+			[this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2]),               0],
+			[2.0*(this[1]*this[2]+this[0]*this[3]),               this[0]^^2.0-this[1]^^2.0+this[2]^^2.0-this[3]^^2.0, 2.0*(this[2]*this[3]-this[0]*this[1]),               0],
+			[2.0*(this[1]*this[3]-this[0]*this[2]),               2.0*(this[2]*this[3]+this[0]*this[1]),               this[0]^^2.0-this[1]^^2.0-this[2]^^2.0+this[3]^^2.0, 0],
+			[0,                                                   0,                                                   0,                                                   1]
+		);
+	}
+	unittest{
+	}
 		
 	/++
 	++/
