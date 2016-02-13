@@ -27,6 +27,15 @@ struct Quaternion(T){
 	
 	/++
 	++/
+	this( in V4 v){
+		this[0] = v[0];
+		this[1] = v[1];
+		this[2] = v[2];
+		this[3] = v[3];
+	}
+	
+	/++
+	++/
 	T opIndex(in int index)const{
 		return vec[index];
 	}
@@ -171,6 +180,16 @@ struct Quaternion(T){
 	}
 	
 	/++
+	++/
+	Q normalized()const {
+		return Q(vec.normalized);
+	}
+	unittest{
+		// auto q = Quaternion!(double)(1, 2, 3, 4);
+		// assert(q.norm == sqrt(30.0));
+	}
+	
+	/++
 		Quaternionの共役Quaternionを返します．
 	++/
 	Q conjugate()const{
@@ -237,42 +256,47 @@ struct Quaternion(T){
 		}
 	}
 	
-	static Q slerp(in Q from, in Q to,  T t){
-		double omega, cos_omega, sin_omega, scale_from, scale_to;
-		
-		Q quatTo = cast(Q)to;
-		cos_omega = from.vec.dotProduct(to.vec);
-		
-		if (cos_omega < T( 0.0 )) {
-			cos_omega = -cos_omega;
-			quatTo = -to;
-		}
-		
-		if( (T( 1.0 ) - cos_omega) > T.epsilon ){
-			omega = acos(cos_omega);
-			sin_omega = sin(omega);
-			scale_from = sin(( T( 1.0 ) - t ) * omega) / sin_omega;
-			scale_to = sin(t * omega) / sin_omega;
-		}else{
-			scale_from = T( 1.0 ) - t;
-			scale_to = t;
-		}
-		
-		return ( from * scale_from ) + ( quatTo * scale_to  );
+	Q productAngle(T gain){
+		return slerp(Q.zero, this, gain);
 	}
-	unittest{
-		auto v = armos.math.Vector3d(1, 0, 0);
-		auto qBegin= Quaternion!(double).angleAxis(0, armos.math.Vector3d(0, 0, 1));
-		auto qEnd = Quaternion!(double).angleAxis(PI, armos.math.Vector3d(0, 0, 1));
-		auto qSlerped = Quaternion!(double).slerp(qBegin, qEnd, 0.5);
-		auto vR = qSlerped.rotatedVector(v);
-		auto vA = armos.math.Vector3d(0, 1, 0);
-		
-		foreach (int i, value; vR.data) {
-			assert( approxEqual(value, vA[i]) );
-		}
-		
+	
+}
+
+Q slerp(Q, T)(in Q from, in Q to,  T t){
+	double omega, cos_omega, sin_omega, scale_from, scale_to;
+
+	Q quatTo = to;
+	cos_omega = from.vec.dotProduct(to.vec);
+
+	if (cos_omega < T( 0.0 )) {
+		cos_omega = -cos_omega;
+		quatTo = -to;
 	}
+
+	if( (T( 1.0 ) - cos_omega) > T.epsilon ){
+		omega = acos(cos_omega);
+		sin_omega = sin(omega);
+		scale_from = sin(( T( 1.0 ) - t ) * omega) / sin_omega;
+		scale_to = sin(t * omega) / sin_omega;
+	}else{
+		scale_from = T( 1.0 ) - t;
+		scale_to = t;
+	}
+
+	return ( from * scale_from ) + ( quatTo * scale_to  );
+}
+unittest{
+	auto v = armos.math.Vector3d(1, 0, 0);
+	auto qBegin= Quaternion!(double).angleAxis(0, armos.math.Vector3d(0, 0, 1));
+	auto qEnd = Quaternion!(double).angleAxis(PI*0.5, armos.math.Vector3d(0, 0, 1));
+	auto qSlerped = qBegin.slerp(qEnd, 2.0);
+	auto vR = qSlerped.rotatedVector(v);
+	auto vA = armos.math.Vector3d(-1, 0, 0);
+
+	foreach (int i, value; vR.data) {
+		assert( approxEqual(value, vA[i]) );
+	}
+
 }
 
 alias Quaternion!(float) Quaternionf;
