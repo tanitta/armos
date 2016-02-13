@@ -250,6 +250,55 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(vector2 == vector_answer);
 	}
 	
+	MatrixType opDiv(in T v)const{
+		auto result = MatrixType();
+		foreach (int index, const VectorType var; data) {
+			result[index] = this[index]/v;
+		}
+		return result;
+	}
+	unittest{
+		auto matrix1 = Matrix2d(
+			[2.0, 4.0],
+			[3.0, 1.0]
+		);
+		auto matrix2 = matrix1 / 2.0;
+		
+		auto matrixA = Matrix2d(
+			[1.0, 2.0],
+			[1.5, 0.5]
+		);
+		assert(matrix2 == matrixA);
+	}
+	
+	
+	static if(RowSize == 3 && ColSize == 3 && ( is(T == double) || is(T == float) )){
+		MatrixType inverse(){
+			MatrixType mat = MatrixType(
+				[this[1][1]*this[2][2]-this[1][2]*this[2][1], this[0][2]*this[2][1]-this[0][1]*this[2][2], this[0][1]*this[1][2]-this[0][2]*this[1][1]],
+				[this[1][2]*this[2][0]-this[1][0]*this[2][2], this[0][0]*this[2][2]-this[0][2]*this[2][0], this[0][2]*this[1][0]-this[0][0]*this[1][2]],
+				[this[1][0]*this[2][1]-this[1][1]*this[2][0], this[0][1]*this[2][0]-this[0][0]*this[2][1], this[0][0]*this[1][1]-this[0][1]*this[1][0]]
+			);
+			return mat/determinant;
+		}
+	}
+	unittest{
+		auto m= Matrix3f(
+				[1, 2, 0], 
+				[3, 2, 2], 
+				[1, 4, 3]
+		);
+
+		auto mInv= m.inverse;
+		
+		auto mA= Matrix3f(
+				[1, 0, 0], 
+				[0, 1, 0], 
+				[0, 0, 1]
+		);
+		assert(mInv*m == mA);
+	}
+	
 	/++
 	++/
 	void setColumnVector(in int column, in VectorType vec){
@@ -329,10 +378,10 @@ struct Matrix(T, int RowSize, int ColSize){
 	/++
 	++/
 	T determinant()const{
-		T sum = cast(T)0;
+		T sum = T(0);
 		for (int i = 0; i < RowSize; i++) {
-			T vp = cast(T)1;
-			T v = cast(T)1;
+			T vp = (1);
+			T v = T(1);
 			for (int j = 0; j < RowSize; j++) {
 				if (i+j>=RowSize) {
 					v *= this[i+j-RowSize][j];
@@ -341,7 +390,7 @@ struct Matrix(T, int RowSize, int ColSize){
 				}
 			}
 			sum +=v;
-			v = cast(T)1;
+			v = T(1);
 			for (int j = 0; j < RowSize; j++) {
 				if (i-j<0) {
 					v *= this[i-j+RowSize][j];
