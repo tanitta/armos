@@ -9,7 +9,9 @@ struct Matrix(T, int RowSize, int ColSize){
 	static const int colSize = ColSize;
 
 	VectorType[RowSize] data;
-
+	
+	/++
+	++/
 	this(T[][] arr ...){
 		if(arr.length == 0){
 			foreach (ref var; data) {
@@ -26,6 +28,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		}
 	}
 
+	/++
+	++/
 	pure VectorType opIndex(in int index)const{
 		return cast(VectorType)data[index];
 	}
@@ -41,6 +45,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix[0][0] == 1.00);
 	}
 
+	/++
+	++/
 	ref VectorType opIndex(in int index){
 		return cast(VectorType)data[index];
 	}
@@ -95,6 +101,8 @@ struct Matrix(T, int RowSize, int ColSize){
 	
 	}
 
+	/++
+	++/
 	MatrixType opNeg()const{
 		auto result = MatrixType();
 		foreach (int index, ref var; result.data) {
@@ -108,6 +116,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert((-matrix)[0][0] == -1.0);
 	}		
 
+	/++
+	++/
 	MatrixType opAdd(in MatrixType r)const{
 		auto result = MatrixType();
 		foreach (int index, const VectorType var; r.data) {
@@ -126,6 +136,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix3[0][1] == 1.0);
 	}		
 
+	/++
+	++/
 	MatrixType opSub(in MatrixType r)const{
 		auto result = MatrixType();
 		foreach (int index, const VectorType var; r.data) {
@@ -145,6 +157,8 @@ struct Matrix(T, int RowSize, int ColSize){
 	}		
 
 
+	/++
+	++/
 	MatrixType opAdd(in T v)const{
 		auto result = MatrixType();
 		foreach (int index, const VectorType var; data) {
@@ -160,6 +174,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix3[1][1] == 3.0);
 	}
 
+	/++
+	++/
 	MatrixType opSub(in T v)const{
 		auto result = MatrixType();
 		foreach (int index, const VectorType var; data) {
@@ -173,6 +189,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix2[1][0] == -3.0);
 	}
 	
+	/++
+	++/
 	MatrixType opMul(in MatrixType mat_r)const{
 		auto result = MatrixType();
 		for (int targetRow = 0; targetRow < data.length; targetRow++) {
@@ -208,11 +226,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix3 == matrix_answer);
 	}
 	
-	// const VectorType opMul(in VectorType vec_r){
-	// 	auto mat_r
-	// 	return result;
-	// }
-	
+	/++
+	++/
 	VectorType opMul(in VectorType vec_r)const{
 		auto result = VectorType();
 		for (int targetRow = 0; targetRow < data.length; targetRow++) {
@@ -235,6 +250,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(vector2 == vector_answer);
 	}
 	
+	/++
+	++/
 	void setColumnVector(in int column, in VectorType vec){
 		foreach (int i , ref VectorType v; data) {
 			v[column] = vec[i];
@@ -253,6 +270,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		
 	}
 	
+	/++
+	++/
 	void setRowVector(in int row, in VectorType vec){
 		this[row] = cast(VectorType)vec;
 	}
@@ -268,6 +287,47 @@ struct Matrix(T, int RowSize, int ColSize){
 					));
 	}
 	
+	/++
+	++/
+	MatrixType setMatrix(M)(M mat, in int offsetR = 0, in int offsetC = 0)
+	in{
+		assert(M.rowSize<=this.rowSize);
+		assert(M.colSize<=this.colSize);
+		assert(offsetR + M.rowSize<=this.rowSize);
+		assert(offsetC + M.colSize<=this.colSize);
+	}body{
+		for (int x = 0; x < mat.rowSize; x++) {
+			for (int y = 0; y < mat.colSize; y++) {
+				this[x+offsetR][y+offsetC] = mat[x][y];
+			}
+		}
+		return this;
+	}
+	unittest{
+		auto mat44 = Matrix!(double, 4, 4)(
+			[1, 0, 0, 4],
+			[0, 1, 0, 0],
+			[0, 0, 1, 0],
+			[0, 0, 0, 2]
+		);
+		auto mat33 = Matrix!(double, 3, 3)(
+			[2, 1, 0],
+			[0, 1, 3],
+			[0, 0, 3]
+		);
+		
+		auto mat44A = Matrix!(double, 4, 4)(
+			[1, 2, 1, 0],
+			[0, 0, 1, 3],
+			[0, 0, 0, 3],
+			[0, 0, 0, 2]
+		);
+		assert( mat44.setMatrix(mat33, 0, 1) == mat44A );
+	}
+
+	
+	/++
+	++/
 	T determinant()const{
 		T sum = cast(T)0;
 		for (int i = 0; i < RowSize; i++) {
@@ -302,6 +362,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix.determinant == 6+4+0 - (8+18+0) );
 	}
 	
+	/++
+	++/
 	T[RowSize*ColSize] array()const{
 		T[RowSize*ColSize] tmp;
 		for (int i = 0; i < RowSize ; i++) {
@@ -320,6 +382,8 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix.array == [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 	}
 	
+	/++
+	++/
 	void print()const{
 		import std.stdio;
 		for (int i = 0; i < RowSize ; i++) {
