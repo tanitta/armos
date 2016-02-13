@@ -310,7 +310,7 @@ struct Matrix(T, int RowSize, int ColSize){
 			[0, 0, 1, 0],
 			[0, 0, 0, 2]
 		);
-		auto mat33 = Matrix!(double, 3, 3)(
+		auto mat33 = Matrix!(float, 3, 3)(
 			[2, 1, 0],
 			[0, 1, 3],
 			[0, 0, 3]
