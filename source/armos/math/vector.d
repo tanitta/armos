@@ -59,6 +59,14 @@ struct Vector(T, int Dimention){
 		auto vec2 = Vector3d(2, 2, 1);
 		assert(vec1 != vec2);
 	}
+	
+	static zero(){
+		auto v =  VectorType();
+		for (int i = 0; i < Dimention; i++) {
+			v[i] = T(0);
+		}
+		return v;
+	}
 
 	/++
 	++/

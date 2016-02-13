@@ -294,36 +294,36 @@ class Renderer {
 		
 		/++
 		++/
-		void loadMatrix(M)(M matrix)
+		void loadMatrix(M)(in M matrix)
 		in{
 			assert(M.rowSize<=4);
 			assert(M.colSize<=4);
 			assert(M.rowSize==M.colSize);
 		}body{
 			static if(M.rowSize == 4){
-				glLoadMatrixf(matrix.array.ptr);
-			}else{
-				auto mat44 = armos.math.Matrix!(float, 4, 4)();
-				mat44.setMatrix(matrix);
-				glLoadMatrixf(mat44.array.ptr);
-			}
+				static if(is(M == armos.math.Matrix!(double, 4, 4))){
+					glLoadMatrixd(matrix.array.ptr);
+				}else if(is(M == armos.math.Matrix!(float, 4, 4))){
+					glLoadMatrixf(matrix.array.ptr);
+				}else{assert(false);}
+			}else{assert(false);}
 		}
 		
 		/++
 		++/
-		void multMatrix(M)(M matrix)
+		void multMatrix(M)(in M matrix)
 		in{
 			assert(M.rowSize<=4);
 			assert(M.colSize<=4);
 			assert(M.rowSize==M.colSize);
 		}body{
 			static if(M.rowSize == 4){
-				glMultMatrixf(matrix.array.ptr);
-			}else{
-				auto mat44 = armos.math.Matrix!(float, 4, 4)();
-				mat44.setMatrix(matrix);
-				glMultMatrixf(mat44.array.ptr);
-			}
+				static if(is(M == armos.math.Matrix!(double, 4, 4))){
+					glMultMatrixd(matrix.array.ptr);
+				}else if(is(M == armos.math.Matrix!(float, 4, 4))){
+					glMultMatrixf(matrix.array.ptr);
+				}else{assert(false);}
+			}else{assert(false);}
 		}
 		
 		/++
@@ -899,6 +899,12 @@ void translate(float x, float y, float z){
 ++/
 void translate(armos.math.Vector3f vec){
 	currentRenderer.translate(vec);
+}
+
+/++
+++/
+void translate(armos.math.Vector3d vec){
+	currentRenderer.translate(vec[0], vec[1], vec[2]);
 }
 
 /++
