@@ -288,6 +288,46 @@ class Renderer {
 		
 		/++
 		++/
+		void loadIdentity(){
+			glLoadIdentity();
+		}
+		
+		/++
+		++/
+		void loadMatrix(M)(M matrix)
+		in{
+			assert(M.rowSize<=4);
+			assert(M.colSize<=4);
+			assert(M.rowSize==M.colSize);
+		}body{
+			static if(M.rowSize == 4){
+				glLoadMatrixf(matrix.array.ptr);
+			}else{
+				auto mat44 = armos.math.Matrix!(float, 4, 4)();
+				mat44.setMatrix(matrix);
+				glLoadMatrixf(mat44.array.ptr);
+			}
+		}
+		
+		/++
+		++/
+		void multMatrix(M)(M matrix)
+		in{
+			assert(M.rowSize<=4);
+			assert(M.colSize<=4);
+			assert(M.rowSize==M.colSize);
+		}body{
+			static if(M.rowSize == 4){
+				glMultMatrixf(matrix.array.ptr);
+			}else{
+				auto mat44 = armos.math.Matrix!(float, 4, 4)();
+				mat44.setMatrix(matrix);
+				glMultMatrixf(mat44.array.ptr);
+			}
+		}
+		
+		/++
+		++/
 		void translate(float x, float y, float z){
 			glTranslatef(x, y, z);
 		}
@@ -889,6 +929,24 @@ void rotate(float degrees, float vec_x, float vec_y, float vec_z){
 ++/
 void rotate(float degrees, armos.math.Vector3f vec){
 	currentRenderer.rotate(degrees, vec);
+}
+
+/++
+++/
+void loadIdentity(){
+	currentRenderer.loadIdentity();
+}
+
+/++
+++/
+void loadMatrix(Q)(Q matrix){
+	currentRenderer.loadMatrix(matrix);
+}
+
+/++
+++/
+void multMatrix(Q)(Q matrix){
+	currentRenderer.multMatrix(matrix);
 }
 
 /++
