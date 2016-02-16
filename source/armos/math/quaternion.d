@@ -217,7 +217,7 @@ struct Quaternion(T){
 		}
 	}
 	
-	armos.math.Matrix!(T, 4, 4) matrix()const{
+	armos.math.Matrix!(T, 4, 4) matrix44()const{
 		return armos.math.Matrix!(T, 4, 4)(
 			[this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2]),               0],
 			[2.0*(this[1]*this[2]+this[0]*this[3]),               this[0]^^2.0-this[1]^^2.0+this[2]^^2.0-this[3]^^2.0, 2.0*(this[2]*this[3]-this[0]*this[1]),               0],
@@ -226,6 +226,14 @@ struct Quaternion(T){
 		);
 	}
 	unittest{
+	}
+	
+	armos.math.Matrix!(T, 3, 3) matrix33()const{
+		return armos.math.Matrix!(T, 3, 3)(
+			[this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2])              ],
+			[2.0*(this[1]*this[2]+this[0]*this[3]),               this[0]^^2.0-this[1]^^2.0+this[2]^^2.0-this[3]^^2.0, 2.0*(this[2]*this[3]-this[0]*this[1])              ],
+			[2.0*(this[1]*this[3]-this[0]*this[2]),               2.0*(this[2]*this[3]+this[0]*this[1]),               this[0]^^2.0-this[1]^^2.0-this[2]^^2.0+this[3]^^2.0]
+		);
 	}
 		
 	/++
