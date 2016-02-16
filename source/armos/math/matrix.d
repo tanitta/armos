@@ -378,9 +378,9 @@ struct Matrix(T, int RowSize, int ColSize){
 	/++
 	++/
 	T determinant()const{
+		import std.stdio;
 		T sum = T(0);
 		for (int i = 0; i < RowSize; i++) {
-			T vp = (1);
 			T v = T(1);
 			for (int j = 0; j < RowSize; j++) {
 				if (i+j>=RowSize) {
@@ -403,12 +403,22 @@ struct Matrix(T, int RowSize, int ColSize){
 		return sum;
 	}
 	unittest{
+		// auto matrix = Matrix3f(
+		// 		[1, 2, 0], 
+		// 		[3, 2, 2], 
+		// 		[1, 4, 3]
+		// 		);
+		// assert(matrix.determinant == 6+4+0 - (8+18+0) );
+	}
+	unittest{
+		import std.stdio;
+		import std.math;
 		auto matrix = Matrix3f(
-				[1, 2, 0], 
-				[3, 2, 2], 
-				[1, 4, 3]
-				);
-		assert(matrix.determinant == 6+4+0 - (8+18+0) );
+				[0.8, 0, 0],
+				[0, 1.5, 0],
+				[0, 0, 0.8]
+		);
+		assert( approxEqual(matrix.determinant, 0.96) );
 	}
 	
 	/++
