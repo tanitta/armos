@@ -22,7 +22,6 @@ enum PrimitiveMode{
 	LineStrip,
 	LineLoop,
 	Points,
-	Quads,
 }
 
 /++
@@ -68,9 +67,6 @@ GLuint getGLPrimitiveMode(PrimitiveMode mode){
 			break;
 		case PrimitiveMode.Points:
 			return_mode =  GL_POINTS;
-			break;
-		case PrimitiveMode.Quads:
-			return_mode =  GL_QUADS;
 			break;
 		default : assert(0);
 
@@ -520,11 +516,11 @@ class Renderer {
 			vertices[1].z = 0;
 			
 			vertices[2].x = x+w;
-			vertices[2].y = y+h;
+			vertices[2].y = y;
 			vertices[2].z = 0;
-		
+			
 			vertices[3].x = x+w;
-			vertices[3].y = y;
+			vertices[3].y = y+h;
 			vertices[3].z = 0;
 			
 			armos.graphics.TexCoord[] texCoords;
@@ -542,7 +538,7 @@ class Renderer {
 				null,
 				texCoords,
 				indices, 
-				armos.graphics.PrimitiveMode.Quads, 
+				armos.graphics.PrimitiveMode.TriangleStrip, 
 				renderMode,
 				true,
 				false,

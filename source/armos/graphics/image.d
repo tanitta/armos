@@ -113,20 +113,23 @@ class Image {
 				_rect.texCoords[1].u = cast(float)endY/_texture.height;
 				_rect.texCoords[1].v = cast(float)startX/_texture.width;
 				
-				_rect.texCoords[2].u = cast(float)endY/_texture.height;
+				_rect.texCoords[2].u = cast(float)startY/_texture.height;
 				_rect.texCoords[2].v = cast(float)endX/_texture.width;
 				
-				_rect.texCoords[3].u = cast(float)startY/_texture.height;
+				_rect.texCoords[3].u = cast(float)endY/_texture.height;
 				_rect.texCoords[3].v = cast(float)endX/_texture.width;
 				
 				_rect.vertices[0].x = cast(float)0.0;
 				_rect.vertices[0].y = cast(float)0.0;
+				
 				_rect.vertices[1].x = cast(float)0.0;
 				_rect.vertices[1].y = cast(float)endY-startY;
+				
 				_rect.vertices[2].x = cast(float)endX-startX;
-				_rect.vertices[2].y = cast(float)endY-startY;
+				_rect.vertices[2].y = cast(float)0.0;
+				
 				_rect.vertices[3].x = cast(float)endX-startX;
-				_rect.vertices[3].y = cast(float)0.0;
+				_rect.vertices[3].y = cast(float)endY-startY;
 				
 				armos.graphics.pushMatrix;
 				armos.graphics.translate(x, y, z);
@@ -215,7 +218,7 @@ class Image {
 			_texture = new armos.graphics.Texture;
 			_texture.allocate(_bitmap);
 			_rect = new armos.graphics.Mesh;
-			_rect.primitiveMode = armos.graphics.PrimitiveMode.Quads;
+			_rect.primitiveMode = armos.graphics.PrimitiveMode.TriangleStrip ;
 			float x = _bitmap.width;
 			float y = _bitmap.height;
 

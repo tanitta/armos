@@ -32,13 +32,13 @@ class Fbo{
 			
 			float x = width;
 			float y = height;
-			rect.primitiveMode = armos.graphics.PrimitiveMode.Quads;
+			rect.primitiveMode = armos.graphics.PrimitiveMode.TriangleStrip;
 
 			_colorTexture.begin;
 				rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
 				rect.addTexCoord(0, 0);rect.addVertex(0, y, 0);
-				rect.addTexCoord(1, 0);rect.addVertex(x, y, 0);
 				rect.addTexCoord(1, 1);rect.addVertex(x, 0, 0);
+				rect.addTexCoord(1, 0);rect.addVertex(x, y, 0);
 			_colorTexture.end;
 
 			rect.addIndex(0);
@@ -87,7 +87,7 @@ class Fbo{
 			begin;
 			rect.vertices[1].y = size[1];
 			rect.vertices[2].x = size[0];
-			rect.vertices[2].y = size[1];
+			rect.vertices[3].y = size[1];
 			rect.vertices[3].x = size[0];
 			_colorTexture.resize(size);
 			_depthTexture.resize(size);
