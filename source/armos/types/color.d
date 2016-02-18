@@ -45,6 +45,45 @@ mixin template BaseColor(ColorType, PixelType) {
 		// result.a = cast(PixelType)( this.a - color.a );
 		return result;
 	}
+	
+	ColorType hsb(in PixelType hue, in PixelType saturation, in PixelType value){
+		import std.math;
+		float castedLimit = cast(float)limit;
+		float h = cast(float)hue*360.0/castedLimit;
+		int hi = cast(int)( floor(h / 60.0f) % 6 );
+		auto f  = (h / 60.0f) - floor(h / 60.0f);
+		auto p  = round(value * (1.0f - (saturation / castedLimit)));
+		auto q  = round(value * (1.0f - (saturation / castedLimit) * f));
+		auto t  = round(value * (1.0f - (saturation / castedLimit) * (1.0f - f)));
+		float red, green, blue;
+		switch (hi) {
+			case 0:
+				red = value, green = t,     blue = p;
+				break;
+			case 1:
+				red = q,     green = value, blue = p;
+				break;
+			case 2:
+				red = p,     green = value, blue = t;
+				break;
+			case 3:
+				red = p,     green = q,     blue = value;
+				break;
+			case 4:
+				red = t,     green = p,     blue = value;
+				break;
+			case 5:
+				red = value, green = p,     blue = q;
+				break;
+			default:
+				break;
+		}
+		r = cast(PixelType)red;
+		g = cast(PixelType)green;
+		b = cast(PixelType)blue;
+		return this;
+	}
+	
 }
 
 struct Color{
