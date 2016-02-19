@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+
+		<!-- Use title if it's in the page YAML frontmatter -->
+		<title>vector.html</title>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+		<link href="/armos/stylesheets/site.css" rel="stylesheet" />
+		<script src="/armos/javascripts/all.js"></script>
+	</head>
+
+	<body class="docs docs_vector">
+		<nav class="nav-bar">
+			<div id="menu" class="menu">
+				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+				<ul class="menu-items">
+					<li><a href="../about.html">About</a></li>
+					<li><a href="../reference.html">Reference</a></li>
+					<li><a href="/tutorials.html">Tutorials</a></li>
+					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class=reference-doc>
+<h1>armos.math.vector</h1>
+<dl>
+<dt><big><a name="Vector"></a>struct <u>Vector</u>(T, int Dimention);
+</big></dt>
+<dd>ベクトル計算を行うstructです<br><br>
+
+<dl>
+<dt><big><a name="Vector.this"></a>this(T[] <i>arr</i>...);
+</big></dt>
+<dd>Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．<br><br>
+
+</dd>
+<dt><big><a name="Vector.opIndex"></a>const pure T <u>opIndex</u>(in int <i>index</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opIndex.2"></a>ref T <u>opIndex</u>(in int <i>index</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opNeg"></a>const VectorType <u>opNeg</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opAdd"></a>const VectorType <u>opAdd</u>(in VectorType <i>r</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opSub"></a>const VectorType <u>opSub</u>(in VectorType <i>r</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opAdd.2"></a>const VectorType <u>opAdd</u>(in T <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opSub.2"></a>const VectorType <u>opSub</u>(in T <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opMul"></a>const VectorType <u>opMul</u>(in T <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opDiv"></a>const VectorType <u>opDiv</u>(in T <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opMod"></a>const VectorType <u>opMod</u>(in T <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opMul.2"></a>const VectorType <u>opMul</u>(in VectorType <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opDiv.2"></a>const VectorType <u>opDiv</u>(in VectorType <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.opMod.2"></a>const VectorType <u>opMod</u>(in VectorType <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Vector.norm"></a>const T <u>norm</u>();
+</big></dt>
+<dd>Vectorのノルムを返します．<br><br>
+
+</dd>
+<dt><big><a name="Vector.dotProduct"></a>const T <u>dotProduct</u>(const VectorType <i>v</i>);
+</big></dt>
+<dd>Vectorのドット積を返します．<br><br>
+
+</dd>
+<dt><big><a name="Vector.vectorProduct"></a>const VectorType <u>vectorProduct</u>(VectorType[] <i>arg</i>...);
+</big></dt>
+<dd>Vectorのベクトル積(クロス積，外積)を返します．
+		Dimentionが3以上の場合のみ使用できます．<br><br>
+
+</dd>
+<dt><big><a name="Vector.normalized"></a>const VectorType <u>normalized</u>();
+</big></dt>
+<dd>正規化したVectorを返します．<br><br>
+
+</dd>
+<dt><big><a name="Vector.normalize"></a>void <u>normalize</u>();
+</big></dt>
+<dd>Vectorを正規化します．<br><br>
+
+</dd>
+<dt><big><a name="Vector.array"></a>const T[Dimention] <u>array</u>();
+</big></dt>
+<dd>Vectorの要素を一次元配列で返します．<br><br>
+
+</dd>
+<dt><big><a name="Vector.print"></a>const void <u>print</u>();
+</big></dt>
+<dd>Vectorを標準出力に渡します<br><br>
+
+</dd>
+<dt><big><a name="Vector.opCast"></a>const CastType <u>opCast</u>(CastType)();
+</big></dt>
+<dd>自身を別の型のVectorへキャストしたものを返します．キャスト後の型は元のVectorと同じ次元である必要があります．<br><br>
+
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+	</body>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+
+		<!-- Use title if it's in the page YAML frontmatter -->
+		<title>basewindow.html</title>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+		<link href="/armos/stylesheets/site.css" rel="stylesheet" />
+		<script src="/armos/javascripts/all.js"></script>
+	</head>
+
+	<body class="docs docs_basewindow">
+		<nav class="nav-bar">
+			<div id="menu" class="menu">
+				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+				<ul class="menu-items">
+					<li><a href="../about.html">About</a></li>
+					<li><a href="../reference.html">Reference</a></li>
+					<li><a href="/tutorials.html">Tutorials</a></li>
+					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class=reference-doc>
+<h1>armos.app.basewindow</h1>
+<dl>
+<dt><big><a name="Window"></a>interface <u>Window</u>;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="Window.events"></a>abstract armos.<u>events</u>.CoreEvents <u>events</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Window.size"></a>abstract armos.math.Vector2i <u>size</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Window.pollEvents"></a>abstract void <u>pollEvents</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Window.update"></a>abstract void <u>update</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Window.close"></a>abstract void <u>close</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Window.shouldClose"></a>abstract bool <u>shouldClose</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Window.aspect"></a>abstract float <u>aspect</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Window.name"></a>abstract string <u>name</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Window.name.2"></a>abstract void <u>name</u>(string <i>str</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="BaseWindow"></a>template <u>BaseWindow</u>()</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="BaseWindow.shouldClose"></a>bool <u>shouldClose</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="BaseWindow.name"></a>string <u>name</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="BaseWindow.name.2"></a>void <u>name</u>(string <i>str</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="BaseWindow.initEvents"></a>void <u>initEvents</u>(armos.<i>app</i>.baseapp.BaseApp <i>app</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="BaseWindow.events"></a>armos.<u>events</u>.CoreEvents <u>events</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="BaseWindow.aspect"></a>float <u>aspect</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="GLFWWindow"></a>class <u>GLFWWindow</u>: <u>armos.app.basewindow.Window</u>;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="GLFWWindow.this"></a>this(ref armos.app.BaseApp <i>apprication</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="GLFWWindow.size"></a>armos.math.Vector2i <u>size</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="GLFWWindow.pollEvents"></a>void <u>pollEvents</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="GLFWWindow.update"></a>void <u>update</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="GLFWWindow.close"></a>void <u>close</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="currentWindow"></a>armos.app.Window <u>currentWindow</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="windowSize"></a>armos.math.Vector2i <u>windowSize</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="windowAspect"></a>float <u>windowAspect</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</div>
+	</body>
+</html>

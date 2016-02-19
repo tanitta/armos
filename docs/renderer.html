@@ -1,0 +1,497 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+
+		<!-- Use title if it's in the page YAML frontmatter -->
+		<title>renderer.html</title>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+		<link href="/armos/stylesheets/site.css" rel="stylesheet" />
+		<script src="/armos/javascripts/all.js"></script>
+	</head>
+
+	<body class="docs docs_renderer">
+		<nav class="nav-bar">
+			<div id="menu" class="menu">
+				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+				<ul class="menu-items">
+					<li><a href="../about.html">About</a></li>
+					<li><a href="../reference.html">Reference</a></li>
+					<li><a href="/tutorials.html">Tutorials</a></li>
+					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class=reference-doc>
+<h1>armos.graphics.renderer</h1>
+<dl>
+<dt><big><a name="PolyRenderMode"></a>enum <u>PolyRenderMode</u>: int;
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="PrimitiveMode"></a>enum <u>PrimitiveMode</u>: int;
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="MatrixMode"></a>enum <u>MatrixMode</u>: int;
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="BlendMode"></a>enum <u>BlendMode</u>: int;
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="getGLPrimitiveMode"></a>GLuint <u>getGLPrimitiveMode</u>(PrimitiveMode <i>mode</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="getGLPolyRenderMode"></a>GLuint <u>getGLPolyRenderMode</u>(PolyRenderMode <i>mode</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="getGLMatrixMode"></a>GLuint <u>getGLMatrixMode</u>(MatrixMode <i>mode</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="perspectiveMatrix"></a>armos.math.Matrix4f <u>perspectiveMatrix</u>(in float <i>fov</i>, in float <i>aspect</i>, in float <i>nearDist</i>, in float <i>farDist</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="frustumMatrix"></a>armos.math.Matrix4f <u>frustumMatrix</u>(in double <i>left</i>, in double <i>right</i>, in double <i>bottom</i>, in double <i>top</i>, in double <i>zNear</i>, in double <i>zFar</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="lookAtViewMatrix"></a>armos.math.Matrix4f <u>lookAtViewMatrix</u>(in armos.math.Vector3f <i>eye</i>, in armos.math.Vector3f <i>center</i>, in armos.math.Vector3f <i>up</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer"></a>class <u>Renderer</u>;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="Renderer.this"></a>this();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.matrixMode"></a>void <u>matrixMode</u>(MatrixMode <i>mode</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.currentStyle"></a>ref armos.graphics.Style <u>currentStyle</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.bind"></a>void <u>bind</u>(armos.math.Matrix4f <i>projectionMatrix</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.unbind"></a>void <u>unbind</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setBackgroundAuto"></a>void <u>setBackgroundAuto</u>(bool <i>b</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setBackground"></a>void <u>setBackground</u>(in armos.types.Color <i>color</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.background"></a>void <u>background</u>(in armos.types.Color <i>color</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setColor"></a>void <u>setColor</u>(in armos.types.Color <i>color</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setColor.2"></a>void <u>setColor</u>(in int <i>colorCode</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setStyle"></a>void <u>setStyle</u>(armos.graphics.Style <i>style</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.pushStyle"></a>void <u>pushStyle</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.popStyle"></a>void <u>popStyle</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.pushMatrix"></a>void <u>pushMatrix</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.popMatrix"></a>void <u>popMatrix</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.loadIdentity"></a>void <u>loadIdentity</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.loadMatrix"></a>void <u>loadMatrix</u>(M)(in M <i>matrix</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.multMatrix"></a>void <u>multMatrix</u>(M)(in M <i>matrix</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.translate"></a>void <u>translate</u>(float <i>x</i>, float <i>y</i>, float <i>z</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.translate.2"></a>void <u>translate</u>(armos.math.Vector3f <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.scale"></a>void <u>scale</u>(float <i>x</i>, float <i>y</i>, float <i>z</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.scale.2"></a>void <u>scale</u>(armos.math.Vector3f <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.rotate"></a>void <u>rotate</u>(float <i>degrees</i>, armos.math.Vector3f <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.rotate.2"></a>void <u>rotate</u>(float <i>degrees</i>, float <i>vecX</i>, float <i>vecY</i>, float <i>vecZ</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setLineWidth"></a>void <u>setLineWidth</u>(float <i>width</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setLineSmoothing"></a>void <u>setLineSmoothing</u>(bool <i>smooth</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setup"></a>void <u>setup</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.resize"></a>void <u>resize</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.viewport"></a>void <u>viewport</u>(in float <i>x</i> = 0, in float <i>y</i> = 0, in float <i>width</i> = -1, in float <i>height</i> = -1, in bool <i>vflip</i> = true);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setupScreenPerspective"></a>void <u>setupScreenPerspective</u>(float <i>width</i> = -1, float <i>height</i> = -1, float <i>fov</i> = 60, float <i>nearDist</i> = 0, float <i>farDist</i> = 0);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.startRender"></a>void <u>startRender</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.finishRender"></a>void <u>finishRender</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.drawLine"></a>void <u>drawLine</u>(in float <i>x1</i>, in float <i>y1</i>, in float <i>z1</i>, in float <i>x2</i>, in float <i>y2</i>, in float <i>z2</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.drawRectangle"></a>void <u>drawRectangle</u>(in float <i>x</i>, in float <i>y</i>, in float <i>w</i>, in float <i>h</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.draw"></a>void <u>draw</u>(in armos.graphics.Mesh <i>mesh</i>, armos.graphics.PolyRenderMode <i>renderMode</i>, bool <i>useColors</i>, bool <i>useTextures</i>, bool <i>useNormals</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.draw.2"></a>void <u>draw</u>(in armos.graphics.Vertex[] <i>vertices</i>, in armos.graphics.Normal[] <i>normals</i>, in armos.types.FloatColor[] <i>colors</i>, in armos.graphics.TexCoord[] <i>texCoords</i>, in int[] <i>indices</i>, in armos.graphics.PrimitiveMode <i>primitiveMode</i>, armos.graphics.PolyRenderMode <i>renderMode</i>, bool <i>useColors</i>, bool <i>useTextures</i>, bool <i>useNormals</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.enableDepthTest"></a>void <u>enableDepthTest</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.disableDepthTest"></a>void <u>disableDepthTest</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.setDepthTest"></a>void <u>setDepthTest</u>(bool <i>b</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.blendMode"></a>void <u>blendMode</u>(armos.graphics.BlendMode <i>mode</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.enableFbo"></a>void <u>enableFbo</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Renderer.disableFbo"></a>void <u>disableFbo</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="currentRenderer"></a>armos.graphics.Renderer* <u>currentRenderer</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="currentStyle"></a>armos.graphics.Style <u>currentStyle</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setStyle"></a>void <u>setStyle</u>(in armos.graphics.Style <i>style</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="pushStyle"></a>void <u>pushStyle</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="popStyle"></a>void <u>popStyle</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setBackground"></a>void <u>setBackground</u>(const armos.types.Color <i>color</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setBackground.2"></a>void <u>setBackground</u>(const float <i>gray</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setBackground.3"></a>void <u>setBackground</u>(in float <i>r</i>, in float <i>g</i>, in float <i>b</i>, in float <i>a</i> = 255);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setBackgroundAuto"></a>void <u>setBackgroundAuto</u>(const bool <i>isAuto</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setColor"></a>void <u>setColor</u>(in float <i>r</i>, in float <i>g</i>, in float <i>b</i>, in float <i>a</i> = 255);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setColor.2"></a>void <u>setColor</u>(const armos.types.Color <i>color</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setColor.3"></a>void <u>setColor</u>(const float <i>gray</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="drawLine"></a>void <u>drawLine</u>(T)(in T <i>x1</i>, in T <i>y1</i>, in T <i>z1</i>, in T <i>x2</i>, in T <i>y2</i>, in T <i>z2</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="drawLine.2"></a>void <u>drawLine</u>(T)(in T <i>x1</i>, in T <i>y1</i>, in T <i>x2</i>, in T <i>y2</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="drawLine.3"></a>void <u>drawLine</u>(Vector)(Vector <i>vec1</i>, Vector <i>vec2</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="drawRectangle"></a>void <u>drawRectangle</u>(T)(in T <i>x</i>, in T <i>y</i>, in T <i>w</i>, in T <i>h</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="drawRectangle.2"></a>void <u>drawRectangle</u>(Vector)(in Vector <i>position</i>, in Vector <i>size</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="drawGridPlane"></a>void <u>drawGridPlane</u>(in float <i>stepSize</i>, in int <i>numberOfSteps</i>, in bool <i>labels</i> = false);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="drawAxis"></a>void <u>drawAxis</u>(in float <i>size</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="drawGrid"></a>void <u>drawGrid</u>(in float <i>stepSize</i>, in int <i>numberOfSteps</i>, in bool <i>labels</i> = false, in bool <i>x</i> = true, in bool <i>y</i> = true, in bool <i>z</i> = true);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="popMatrix"></a>void <u>popMatrix</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="pushMatrix"></a>void <u>pushMatrix</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="translate"></a>void <u>translate</u>(float <i>x</i>, float <i>y</i>, float <i>z</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="translate.2"></a>void <u>translate</u>(armos.math.Vector3f <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="translate.3"></a>void <u>translate</u>(armos.math.Vector3d <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="scale"></a>void <u>scale</u>(float <i>x</i>, float <i>y</i>, float <i>z</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="scale.2"></a>void <u>scale</u>(float <i>s</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="scale.3"></a>void <u>scale</u>(armos.math.Vector3f <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="rotate"></a>void <u>rotate</u>(float <i>degrees</i>, float <i>vec_x</i>, float <i>vec_y</i>, float <i>vec_z</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="rotate.2"></a>void <u>rotate</u>(float <i>degrees</i>, armos.math.Vector3f <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="loadIdentity"></a>void <u>loadIdentity</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="loadMatrix"></a>void <u>loadMatrix</u>(Q)(Q <i>matrix</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="multMatrix"></a>void <u>multMatrix</u>(Q)(Q <i>matrix</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="setLineWidth"></a>void <u>setLineWidth</u>(float <i>width</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="enableDepthTest"></a>void <u>enableDepthTest</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="disableDepthTest"></a>void <u>disableDepthTest</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="enableFbo"></a>void <u>enableFbo</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="disableFbo"></a>void <u>disableFbo</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="blendMode"></a>void <u>blendMode</u>(armos.graphics.BlendMode <i>mode</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</div>
+	</body>
+</html>

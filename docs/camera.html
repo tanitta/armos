@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+
+		<!-- Use title if it's in the page YAML frontmatter -->
+		<title>camera.html</title>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+		<link href="/armos/stylesheets/site.css" rel="stylesheet" />
+		<script src="/armos/javascripts/all.js"></script>
+	</head>
+
+	<body class="docs docs_camera">
+		<nav class="nav-bar">
+			<div id="menu" class="menu">
+				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+				<ul class="menu-items">
+					<li><a href="../about.html">About</a></li>
+					<li><a href="../reference.html">Reference</a></li>
+					<li><a href="/tutorials.html">Tutorials</a></li>
+					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class=reference-doc>
+<h1>armos.graphics.camera</h1>
+<dl>
+<dt><big><a name="Camera"></a>class <u>Camera</u>;
+</big></dt>
+<dd>Cameraを表すClassです．Cameraで写したい処理をbegin()とend()の間に記述します．<br><br>
+
+<dl>
+<dt><big><a name="Camera.projectionMatrix"></a>armos.math.Matrix4f <u>projectionMatrix</u>();
+</big></dt>
+<dd>projectionMatrixを取得します．<br><br>
+
+</dd>
+<dt><big><a name="Camera.position"></a>armos.math.Vector3f <u>position</u>;
+</big></dt>
+<dd>Cameraの位置を表します．<br><br>
+
+</dd>
+<dt><big><a name="Camera.target"></a>armos.math.Vector3f <u>target</u>;
+</big></dt>
+<dd>Cameraが映す対象の位置を表します．<br><br>
+
+</dd>
+<dt><big><a name="Camera.up"></a>armos.math.Vector3f <u>up</u>;
+</big></dt>
+<dd>Cameraの方向を表します．<br><br>
+
+</dd>
+<dt><big><a name="Camera.fov"></a>double <u>fov</u>;
+</big></dt>
+<dd>Cameraの視野角を表します．単位はdegreeです．<br><br>
+
+</dd>
+<dt><big><a name="Camera.nearDist"></a>double <u>nearDist</u>;
+</big></dt>
+<dd>描画を行う最短距離です．<br><br>
+
+</dd>
+<dt><big><a name="Camera.farDist"></a>double <u>farDist</u>;
+</big></dt>
+<dd>描画を行う最長距離です．<br><br>
+
+</dd>
+<dt><big><a name="Camera.begin"></a>void <u>begin</u>();
+</big></dt>
+<dd>Cameraで表示する処理を開始します．<br><br>
+
+</dd>
+<dt><big><a name="Camera.end"></a>void <u>end</u>();
+</big></dt>
+<dd>Cameraで表示する処理を終了します．<br><br>
+
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+	</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+
+		<!-- Use title if it's in the page YAML frontmatter -->
+		<title>bitmap.html</title>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+		<link href="/armos/stylesheets/site.css" rel="stylesheet" />
+		<script src="/armos/javascripts/all.js"></script>
+	</head>
+
+	<body class="docs docs_bitmap">
+		<nav class="nav-bar">
+			<div id="menu" class="menu">
+				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+				<ul class="menu-items">
+					<li><a href="../about.html">About</a></li>
+					<li><a href="../reference.html">Reference</a></li>
+					<li><a href="/tutorials.html">Tutorials</a></li>
+					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class=reference-doc>
+<h1>armos.graphics.bitmap</h1>
+<dl>
+<dt><big><a name="Bitmap"></a>struct <u>Bitmap</u>(T);
+</big></dt>
+<dd>Bitmapデータを表すstructです．
+	画素を表すPixelの集合で構成されます．<br><br>
+
+<dl>
+<dt><big><a name="Bitmap.setAllPixels"></a>void <u>setAllPixels</u>(int <i>index</i>, T <i>level</i>);
+</big></dt>
+<dd>Set value to all pixels for the given <i>index</i>.
+<br><br>
+全てのピクセルのindexで与えられた画素に値を代入します<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.pixel"></a>void <u>pixel</u>(in int <i>x</i>, in int <i>y</i>, in int <i>index</i>, in T <i>value</i>);
+</big></dt>
+<dd>Set <i>value</i> to the <u>pixel</u> for the given <i>index</i> and position.
+<br><br>
+positionとindexで指定された画素に値を代入します．<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.pixel.2"></a>armos.graphics.Pixel!T <u>pixel</u>(in int <i>x</i>, in int <i>y</i>);
+</big></dt>
+<dd>Return the <u>pixel</u> for the given position.
+<br><br>
+positionで指定された座標のpixelを返します．<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.pixel.3"></a>void <u>pixel</u>(in int <i>x</i>, in int <i>y</i>, armos.graphics.Pixel!T <u>pixel</u>);
+</big></dt>
+<dd>Set <u>pixel</u> to the <u>pixel</u> for the given position.
+<br><br>
+positionで指定された座標のpixelにpixelを設定します．<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.pasteInto"></a>void <u>pasteInto</u>(ref Bitmap!T <i>targetBitmap</i>, in int <i>x</i>, in int <i>y</i>);
+</big></dt>
+<dd>Paste a arg bitmap into this for the given position.
+<br><br>
+bitmapを指定した座標に貼り付けます．<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.size"></a>const armos.math.Vector2i <u>size</u>();
+</big></dt>
+<dd>Return the bitmap <u>size</u>;<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.width"></a>const int <u>width</u>();
+</big></dt>
+<dd>Return <u>width</u>.
+<br><br>
+bitmapの幅を返します．<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.height"></a>const int <u>height</u>();
+</big></dt>
+<dd>Return <u>height</u>.
+<br><br>
+bitmapの高さを返します．<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.numElements"></a>int <u>numElements</u>();
+</big></dt>
+<dd>Return the number of Elements.
+<br><br>
+pixelの要素の数を返します．<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.setFromAlignedPixels"></a>void <u>setFromAlignedPixels</u>(T* <i>pixels</i>, int <i>width</i>, int <i>height</i>, armos.graphics.ColorFormat <i>format</i>);
+</big></dt>
+<dd>Generate a bitmap from the aligned <i>pixels</i>
+<br><br>
+一次元配列からBitmapを生成します<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.swapRAndB"></a>void <u>swapRAndB</u>();
+</big></dt>
+<dd>RとBのチャンネルを入れ替えます<br><br>
+
+</dd>
+<dt><big><a name="Bitmap.colorFormat"></a>const armos.graphics.ColorFormat <u>colorFormat</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+	</body>
+</html>

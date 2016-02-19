@@ -1,0 +1,224 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+
+		<!-- Use title if it's in the page YAML frontmatter -->
+		<title>texture.html</title>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+		<link href="/armos/stylesheets/site.css" rel="stylesheet" />
+		<script src="/armos/javascripts/all.js"></script>
+	</head>
+
+	<body class="docs docs_texture">
+		<nav class="nav-bar">
+			<div id="menu" class="menu">
+				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+				<ul class="menu-items">
+					<li><a href="../about.html">About</a></li>
+					<li><a href="../reference.html">Reference</a></li>
+					<li><a href="/tutorials.html">Tutorials</a></li>
+					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class=reference-doc>
+<h1>armos.graphics.texture</h1>
+<dl>
+<dt><big><a name="Texture"></a>class <u>Texture</u>;
+</big></dt>
+<dd>openGLのtextureを表すクラスです．
+	初期化後，allocateして利用します．
+<br><br>
+<b>Example:</b><br>
+<pre class="d_code">	<font color="blue">auto</font> texture = <font color="blue">new</font> armos.graphics.<u>Texture</u>;
+	texture.allocate(256, 256);
+
+	<font color="blue">auto</font> rect = <font color="blue">new</font> armos.graphics.Mesh;
+	rect.primitiveMode = armos.graphics.PrimitiveMode.Quads;
+	texture.begin;
+		rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
+		rect.addTexCoord(0, 0);rect.addVertex(0, 1, 0);
+		rect.addTexCoord(1, 0);rect.addVertex(1, 1, 0);
+		rect.addTexCoord(1, 1);rect.addVertex(1, 0, 0);
+	texture.end;
+
+	rect.addIndex(0);
+	rect.addIndex(1);
+	rect.addIndex(2);
+	rect.addIndex(3);
+
+	texture.begin;
+		rect.drawFill();
+	texture.end;
+</pre>
+<br><br>
+
+<dl>
+<dt><big><a name="Texture.this"></a>this();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Texture.size"></a>armos.math.Vector2i <u>size</u>();
+</big></dt>
+<dd>Return the texture <u>size</u>.
+<br><br>
+textureのサイズを返します．<br><br>
+
+</dd>
+<dt><big><a name="Texture.width"></a>int <u>width</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Texture.height"></a>int <u>height</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Texture.id"></a>int <u>id</u>();
+</big></dt>
+<dd>Return gl texture <u>id</u>.<br><br>
+
+</dd>
+<dt><big><a name="Texture.begin"></a>void <u>begin</u>();
+</big></dt>
+<dd>Begin to bind the texture.<br><br>
+
+</dd>
+<dt><big><a name="Texture.end"></a>void <u>end</u>();
+</big></dt>
+<dd>End to bind the texture.<br><br>
+
+</dd>
+<dt><big><a name="Texture.resize"></a>void <u>resize</u>(in armos.math.Vector2i <i>textureSize</i>);
+</big></dt>
+<dd>Resize texture.<br><br>
+
+</dd>
+<dt><big><a name="Texture.pixel"></a>ubyte <u>pixel</u>();
+</big></dt>
+<dd>Return <u>pixel</u> of texture<br><br>
+
+</dd>
+<dt><big><a name="Texture.pixel.2"></a>void <u>pixel</u>(ubyte <i>v</i>);
+</big></dt>
+<dd>Set <u>pixel</u> of texture<br><br>
+
+</dd>
+<dt><big><a name="Texture.allocate"></a>void <u>allocate</u>(in int <i>w</i>, in int <i>h</i>);
+</big></dt>
+<dd>Allocate texture
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>int <i>w</i>
+</td>
+<td>width</td>
+</tr>
+<tr>
+<td>int <i>h</i>
+</td>
+<td>height</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="Texture.allocate.2"></a>void <u>allocate</u>(in int <i>w</i>, in int <i>h</i>, armos.graphics.ColorFormat <i>format</i>);
+</big></dt>
+<dd>Allocate texture
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>int <i>w</i>
+</td>
+<td>width</td>
+</tr>
+<tr>
+<td>int <i>h</i>
+</td>
+<td>height</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="Texture.allocate.3"></a>void <u>allocate</u>(armos.graphics.Bitmap!char <i>bitmap</i>);
+</big></dt>
+<dd>Allocate texture
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.graphics.Bitmap!char <i>bitmap</i>
+</td>
+<td></td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="Texture.allocate.4"></a>void <u>allocate</u>(ubyte[] <i>bits</i>, in int <i>w</i>, in int <i>h</i>, armos.graphics.ColorFormat <i>format</i>);
+</big></dt>
+<dd>Allocate texture
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>int <i>w</i>
+</td>
+<td>width</td>
+</tr>
+<tr>
+<td>int <i>h</i>
+</td>
+<td>height</td>
+</tr>
+<tr>
+<td>ubyte[] <i>bits</i>
+</td>
+<td>image data</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="Texture.allocate.5"></a>void <u>allocate</u>(armos.graphics.ColorFormat <i>format</i>);
+</big></dt>
+<dd>Allocate texture<br><br>
+
+</dd>
+<dt><big><a name="Texture.allocate.6"></a>void <u>allocate</u>();
+</big></dt>
+<dd>Allocate texture<br><br>
+
+</dd>
+<dt><big><a name="Texture.setMinMagFilter"></a>void <u>setMinMagFilter</u>(in TextureFilter <i>minFilter</i>, in TextureFilter <i>magFilter</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Texture.setMinMagFilter.2"></a>void <u>setMinMagFilter</u>(in TextureFilter <i>filter</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="TextureFilter"></a>enum <u>TextureFilter</u>: int;
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</div>
+	</body>
+</html>

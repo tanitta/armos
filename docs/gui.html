@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+
+		<!-- Use title if it's in the page YAML frontmatter -->
+		<title>gui.html</title>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+		<link href="/armos/stylesheets/site.css" rel="stylesheet" />
+		<script src="/armos/javascripts/all.js"></script>
+	</head>
+
+	<body class="docs docs_gui">
+		<nav class="nav-bar">
+			<div id="menu" class="menu">
+				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+				<ul class="menu-items">
+					<li><a href="../about.html">About</a></li>
+					<li><a href="../reference.html">Reference</a></li>
+					<li><a href="/tutorials.html">Tutorials</a></li>
+					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class=reference-doc>
+<h1>armos.utils.gui</h1>
+<dl>
+<dt><big><a name="Gui"></a>class <u>Gui</u>;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="Gui.this"></a>this();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Gui.add"></a>Gui <u>add</u>(List <i>list</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Gui.draw"></a>void <u>draw</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="Style"></a>class <u>Style</u>;
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="List"></a>class <u>List</u>;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="List.add"></a>List <u>add</u>(lazy Widget <i>widget</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="List.style"></a>void <u>style</u>(Style <i>stl</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="List.draw"></a>void <u>draw</u>(in int <i>posX</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="List.width"></a>const int <u>width</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="Widget"></a>class <u>Widget</u>;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="Widget.draw"></a>void <u>draw</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Widget.height"></a>int <u>height</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Widget.style"></a>void <u>style</u>(Style <i>stl</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Widget.position"></a>void <u>position</u>(armos.math.Vector2i <i>pos</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Widget.mouseMoved"></a>void <u>mouseMoved</u>(ref armos.events.MouseMovedEventArg <i>message</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Widget.mouseReleased"></a>void <u>mouseReleased</u>(ref armos.events.MouseReleasedEventArg <i>message</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Widget.mousePressed"></a>void <u>mousePressed</u>(ref armos.events.MousePressedEventArg <i>message</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="Label"></a>class <u>Label</u>: <u>armos.utils.gui.Widget</u>;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="Label.this"></a>this(string <i>str</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Label.draw"></a>void <u>draw</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="Partition"></a>class <u>Partition</u>: <u>armos.utils.gui.Widget</u>;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="Partition.this"></a>this(string <i>str</i> = "/");
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Partition.draw"></a>void <u>draw</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Partition.height"></a>int <u>height</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+<dt><big><a name="Slider"></a>class <u>Slider</u>(T): Widget;
+</big></dt>
+<dd>
+<br><br>
+<dl>
+<dt><big><a name="Slider.this"></a>this(string <i>name</i>, ref T <i>var</i>, T <i>min</i>, T <i>max</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Slider.draw"></a>void <u>draw</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Slider.height"></a>int <u>height</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Slider.mousePressed"></a>void <u>mousePressed</u>(ref armos.events.MousePressedEventArg <i>message</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Slider.mouseMoved"></a>void <u>mouseMoved</u>(ref armos.events.MouseMovedEventArg <i>message</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Slider.mouseReleased"></a>void <u>mouseReleased</u>(ref armos.events.MouseReleasedEventArg <i>message</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+	</body>
+</html>

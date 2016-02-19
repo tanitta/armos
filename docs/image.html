@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="IE=edge" http-equiv="X-UA-Compatible">
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+
+		<!-- Use title if it's in the page YAML frontmatter -->
+		<title>image.html</title>
+
+		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+		<link href="/armos/stylesheets/site.css" rel="stylesheet" />
+		<script src="/armos/javascripts/all.js"></script>
+	</head>
+
+	<body class="docs docs_image">
+		<nav class="nav-bar">
+			<div id="menu" class="menu">
+				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+				<ul class="menu-items">
+					<li><a href="../about.html">About</a></li>
+					<li><a href="../reference.html">Reference</a></li>
+					<li><a href="/tutorials.html">Tutorials</a></li>
+					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class=reference-doc>
+<h1>armos.graphics.image</h1>
+<dl>
+<dt><big><a name="Image"></a>class <u>Image</u>;
+</big></dt>
+<dd>画像を表すクラスです．
+load()で画像を読み込み，draw()で表示することができます．<br><br>
+
+<dl>
+<dt><big><a name="Image.load"></a>void <u>load</u>(string <i>pathInDataDir</i>);
+</big></dt>
+<dd>Load image.
+<br><br>
+画像を読み込みます．<br><br>
+
+</dd>
+<dt><big><a name="Image.draw"></a>void <u>draw</u>(T)(in T <i>x</i>, in T <i>y</i>, in T <i>z</i> = T(0));
+</big></dt>
+<dd>Draw image data which loaded in advance.
+<br><br>
+読み込んだ画像データを画面に描画します．<br><br>
+
+</dd>
+<dt><big><a name="Image.draw.2"></a>const void <u>draw</u>(T)(in T <i>position</i>);
+</big></dt>
+<dd>Draw image data which loaded in advance.
+<br><br>
+読み込んだ画像データを画面に描画します．<br><br>
+
+</dd>
+<dt><big><a name="Image.size"></a>const armos.math.Vector2i <u>size</u>();
+</big></dt>
+<dd>Return image <u>size</u>.
+<br><br>
+画像のサイズを返します．<br><br>
+
+</dd>
+<dt><big><a name="Image.width"></a>const int <u>width</u>();
+</big></dt>
+<dd>Return <u>width</u>.
+<br><br>
+画像の幅を返します．<br><br>
+
+</dd>
+<dt><big><a name="Image.height"></a>const int <u>height</u>();
+</big></dt>
+<dd>Return <u>height</u>.
+<br><br>
+画像の高さを返します．<br><br>
+
+</dd>
+<dt><big><a name="Image.bitmap"></a>armos.graphics.Bitmap!char <u>bitmap</u>();
+</big></dt>
+<dd>Return <u>bitmap</u> pointer.
+<br><br>
+画像のビットマップデータを返します．<br><br>
+
+</dd>
+<dt><big><a name="Image.bitmap.2"></a>void <u>bitmap</u>(armos.graphics.Bitmap!char <i>data</i>);
+</big></dt>
+<dd>Set <u>bitmap</u><br><br>
+
+</dd>
+<dt><big><a name="Image.setFromAlignedPixels"></a>void <u>setFromAlignedPixels</u>(T)(T* <i>pixels</i>, int <i>width</i>, int <i>height</i>, armos.graphics.ColorFormat <i>format</i>);
+</big></dt>
+<dd>Generate a image from the aligned <i>pixels</i>
+<br><br>
+一次元配列からImageを生成します<br><br>
+
+</dd>
+<dt><big><a name="Image.allocate"></a>void <u>allocate</u>();
+</big></dt>
+<dd>与えられたbitmapを元にtextureとrectを生成します<br><br>
+
+</dd>
+<dt><big><a name="Image.isLoaded"></a>bool <u>isLoaded</u>();
+</big></dt>
+<dd>Retun <b>true</b> if the image was loaded.
+<br><br>
+画像が読み込まれている場合trueを，そうでない場合はfalseを返します．<br><br>
+
+</dd>
+<dt><big><a name="Image.texture"></a>armos.graphics.Texture <u>texture</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Image.setMinMagFilter"></a>void <u>setMinMagFilter</u>(in armos.graphics.TextureFilter <i>minFilter</i>, in armos.graphics.TextureFilter <i>magFilter</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Image.setMinMagFilter.2"></a>void <u>setMinMagFilter</u>(in armos.graphics.TextureFilter <i>filter</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+	</body>
+</html>
