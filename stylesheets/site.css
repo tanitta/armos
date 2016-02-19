@@ -489,3 +489,9 @@ h1 {
     margin-left: 10px; }
   .reference-doc dl {
     margin-left: 10px; }
+
+.reference-doc body {
+  background-color: white;
+  text-align: center;
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1em; }
