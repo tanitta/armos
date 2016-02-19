@@ -3,57 +3,80 @@ import armos.app;
 import armos.utils;
 import armos.events;
 import armos.graphics;
-
+/++
+	armosのアプリケーションの更新を行うclassです．
++/
 class Loop {
-	private bool isLoop = true;
-	private armos.utils.FpsCounter fpscounter;
-	armos.app.basewindow.Window window;
-	armos.graphics.Renderer renderer;
-	armos.app.BaseApp* application;
+	public{
+		armos.app.basewindow.Window window;
+		armos.graphics.Renderer renderer;
+		armos.app.BaseApp* application;
 
-	this(){
-		fpscounter = new armos.utils.FpsCounter;
-	}
-
-	void createWindow(WindowType)(ref armos.app.BaseApp app){
-		window = new WindowType(app);
-		renderer = new armos.graphics.Renderer;
-		application = &app;
-		assert(window);
-		renderer.setup();
-	};
-
-	void run(WindowType)(ref armos.app.BaseApp app){
-		createWindow!(WindowType)(app);
-	};
-
-	void loop(){
-		window.events.notifySetup();
-		while(isLoop){
-			loopOnce();
-			fpscounter.adjust();
-			fpscounter.newFrame();
-			isLoop = !window.shouldClose;
+		/++
+		+/
+		this(){
+			fpscounter = new armos.utils.FpsCounter;
 		}
 
-		window.close();
-	}
+		/++
+			イベントループに入ります．
+			Params:
+			app = 更新されるアプリケーションです．
+		+/
+		void run(WindowType)(ref armos.app.BaseApp app){
+			createWindow!(WindowType)(app);
+			loop();
+		};
 
-	void loopOnce(){
-		window.events().notifyUpdate();
-		renderer.startRender();
-		window.events().notifyDraw();
-		renderer.finishRender();
-		window.pollEvents();
-		window.update();
-	}
+		/++
+			現在のFPS(Frame Per Second)の使用率を返します．
+		+/
+		double fpsUseRate(){
+			return fpscounter.fpsUseRate;
+		}
+		
+		/++
+			FPS(Frame Per Second)を指定します．
+		+/
+		void targetFps(double fps){
+			fpscounter.targetFps = fps;
+		}
+	}//public
 
-	double fpsUseRate(){
-		return fpscounter.fpsUseRate;
-	}
-	void targetFps(double fps){
-		fpscounter.targetFps = fps;
-	}
+	private{
+		bool isLoop = true;
+		armos.utils.FpsCounter fpscounter;
+		
+		void createWindow(WindowType)(ref armos.app.BaseApp app){
+			window = new WindowType(app);
+			renderer = new armos.graphics.Renderer;
+			application = &app;
+			assert(window);
+			renderer.setup();
+		};
+		
+		void loop(){
+			window.events.notifySetup();
+			while(isLoop){
+				loopOnce();
+				fpscounter.adjust();
+				fpscounter.newFrame();
+				isLoop = !window.shouldClose;
+			}
+
+			window.close();
+		}
+		
+		void loopOnce(){
+			window.events().notifyUpdate();
+			renderer.startRender();
+			window.events().notifyDraw();
+			renderer.finishRender();
+			window.pollEvents();
+			window.update();
+		}
+
+	}//private
 }
 
 Loop mainLoop() @property
@@ -63,19 +86,26 @@ Loop mainLoop() @property
 	return initOnce!instance(new Loop);
 }
 
-void run(WindowType)(armos.app.BaseApp app){
+/++
+	armosのアプリケーションを実行します．
+	Params:
+	WindowType = 立ち上げるWindowの型を指定します．省略可能です．
+	app = 立ち上げるアプリケーションを指定します．
++/
+void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app){
 	mainLoop.run!(WindowType)(app);
-	mainLoop.loop();
 }
 
-void run(armos.app.BaseApp app){
-	run!(armos.app.GLFWWindow)(app);
-};
-
+/++
+	現在のFPS(Frame Per Second)の使用率を返します．
++/
 double fpsUseRate(){
 	return mainLoop.fpsUseRate;
 }
 
+/++
+	FPS(Frame Per Second)を指定します．
++/
 void targetFps(double fps){
 	mainLoop.targetFps(fps);
 }
