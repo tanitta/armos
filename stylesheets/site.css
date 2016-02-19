@@ -312,6 +312,18 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+::selection {
+  background: #0000FF;
+  /* Safari */
+  color: #FFFFFF;
+  /* Safari */ }
+
+::-moz-selection {
+  background: #40318d;
+  /* Firefox */
+  color: #8071cc;
+  /* Safari */ }
+
 nav {
   position: fixed;
   top: 0;
