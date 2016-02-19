@@ -365,7 +365,7 @@ nav {
   margin-top: 10px;
   text-decoration: none; }
 
-@media only screen and (max-width: 300px) {
+@media only screen and (max-width: 400px) {
   .menu {
     position: relative;
     width: 100%; }
@@ -465,7 +465,7 @@ h1 {
     color: #333333; }
 
 .side-bar {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0);
   margin-top: 80px;
   width: 10em;
   text-align: left; }
@@ -479,3 +479,13 @@ h1 {
 
 .side-bar li {
   list-style: none; }
+
+.reference-doc {
+  background-color: white;
+  text-align: left;
+  margin-top: 40px;
+  color: #333333; }
+  .reference-doc h1 {
+    margin-left: 10px; }
+  .reference-doc dl {
+    margin-left: 10px; }
