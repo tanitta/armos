@@ -5,14 +5,16 @@ import derelict.opengl3.gl;
 import std.math;
 
 /++
+ポリゴンのレンダリング方法を表します
 ++/
 enum PolyRenderMode {
-	Points,
-	WireFrame,
-	Fill,
+	Points,/// 頂点のみ描画します．
+	WireFrame,/// 線のみ描画します．
+	Fill,/// 面を塗りつぶして描画します．
 }
 
 /++
+ポリゴンのプリミティブを指定します．
 ++/
 enum PrimitiveMode{
 	Triangles,
@@ -25,6 +27,7 @@ enum PrimitiveMode{
 }
 
 /++
+openGLで扱うMatrixの種類を表します．
 ++/
 enum MatrixMode{
 	ModelView,

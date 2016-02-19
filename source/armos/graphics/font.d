@@ -3,7 +3,8 @@ import armos.graphics;
 import derelict.freetype.ft;
 
 /++
-++/
+読み込まれる文字を表します．
++/
 struct Character{
 	int index;
 	int glyph;
@@ -33,6 +34,8 @@ struct Character{
 } 
 
 /++
+Fontを読み込み，描画を行います．
+Deprecated: 現在動作しません．
 ++/
 class Font{
 	public{
@@ -266,6 +269,8 @@ class Font{
 }
 
 /++
+Fontを読み込みます
+Deprecated: 現在動作しません．
 ++/
 class FontLoader{
 	public{

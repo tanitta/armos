@@ -4,14 +4,27 @@ import armos.graphics;
 /++
 	Bitmapデータを表すstructです．
 	画素を表すPixelの集合で構成されます．
-++/
++/
 struct Bitmap(T){
 	public{
+		/++
+			領域を確保します．
+			Params:
+			size = Bitmapのサイズです．
+			colorType = Bitmapのカラーフォーマットを指定します．
+		+/
 		void allocate(armos.math.Vector2i size, armos.graphics.ColorFormat colorType){
 			_colorFormat = colorType;
 			allocate(size[0], size[1], colorType);
 		}
 		
+		/++
+			領域を確保します．
+			Params:
+			width = Bitmapの横幅です．
+			height = Bitmapの縦幅です．
+			colorType = Bitmapのカラーフォーマットを指定します．
+		+/
 		void allocate(int width, int height, armos.graphics.ColorFormat colorType){
 			_size[0] = width;
 			_size[1] = height;
@@ -122,7 +135,7 @@ struct Bitmap(T){
 		}
 		
 		/++
-			RとBのチャンネルを入れ替えます
+			RとBのチャンネルを入れ替えます．
 		++/
 		void swapRAndB(){
 			if(numElements < 3){assert(0);}
@@ -135,6 +148,7 @@ struct Bitmap(T){
 		}
 		
 		/++
+			Bitmapのカラーフォーマットを返します．
 		++/
 		armos.graphics.ColorFormat colorFormat()const{
 			return _colorFormat;

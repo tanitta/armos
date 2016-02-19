@@ -3,7 +3,8 @@ import armos.graphics;;
 import armos.math;
 
 /++
-++/
+	BitmapFontを描画するclassです．
++/
 class BitmapFont {
 	public{
 		/++
@@ -13,7 +14,12 @@ class BitmapFont {
 		}
 		
 		/++
-		++/
+			fontのBitmap画像を読み込みます．
+			Params:
+			filename = fontの画像のPathを指定します．
+			fontWidth = フォントの横幅を指定します．
+			fontHeight= フォントの縦幅を指定します．
+		+/
 		void load(in string fileName, in int fontWidth, in int fontHeight){
 			_image.load(fileName);
 			_image.setMinMagFilter(armos.graphics.TextureFilter.Nearest);
@@ -22,6 +28,12 @@ class BitmapFont {
 		};
 		
 		/++
+			読み込まれたFontにより文字を描画します．
+			Params:
+			str = 描画する文字列を指定します．
+			x = 文字列を描画するX座標を指定します．
+			y = 文字列を描画するY座標を指定します．
+			z = 文字列を描画するZ座標を指定します．
 		++/
 		void draw(in string str, in int x, in int y, in int z = 0){
 			if(str == ""){return;}
@@ -47,33 +59,52 @@ class BitmapFont {
 		}
 		
 		/++
+			fontの横幅のプロパティです．
 		++/
 		int width(){
 			return _size[0];
 		}
 		
 		/++
+			fontの横幅のプロパティです．
 		++/
 		void width(int w){
 			_size[0] = w;
 		}
 		
 		/++
+			fontの縦幅のプロパティです．
 		++/
 		int height(){
 			return _size[1];
 		}
 		
 		/++
+			fontの縦幅のプロパティです．
 		++/
 		void height(int h){
 			_size[1] = h;
 		}
 		
+		/++
+			tab幅のプロパティです．
+		+/
 		int tabWidth= 4;
 		
+		/++
+			文字の位置を左寄せに設定します．
+			Deprecated: 現在動作しません．
+		+/
 		void alignLeft(){_align = armos.graphics.TextAlign.Left;}
+		/++
+			文字の位置を中央寄せに設定します．
+			Deprecated: 現在動作しません．
+		+/
 		void alignCenter(){_align = armos.graphics.TextAlign.Center;}
+		/++
+			文字の位置を右寄せに設定します．
+			Deprecated: 現在動作しません．
+		+/
 		void alignRight(){_align = armos.graphics.TextAlign.Right;}
 		
 	}//public

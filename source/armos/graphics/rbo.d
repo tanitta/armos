@@ -4,10 +4,12 @@ import derelict.opengl3.gl;
 import armos.math.vector;
 
 /++
+Render Buffer Objectを表すclassです．
 ++/
 class Rbo{
 	public{
 		/++
+			IDを返します．
 		++/
 		int id(){
 			return rboID_;
@@ -24,6 +26,7 @@ class Rbo{
 		}
 		
 		/++
+			RBOへの書き込みを開始します．
 		++/
 		void begin(){
 			glGetIntegerv(GL_RENDERBUFFER_BINDING, &savedRboID_);
@@ -31,13 +34,12 @@ class Rbo{
 		}
 		
 		/++
+			RBOへの書き込みを終了します．
 		++/
 		void end(){
 			glBindRenderbuffer(GL_RENDERBUFFER, savedRboID_);
 		}
 		
-		/++
-		++/
 		void allocate(){}
 	}//public
 	

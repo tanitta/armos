@@ -1,6 +1,9 @@
 module armos.math.matrix;
 import armos.math;
 
+/++
+	行列を表すstructです．
++/
 struct Matrix(T, int RowSize, int ColSize){
 	alias Matrix!(T, RowSize, ColSize) MatrixType;
 	alias armos.math.Vector!(T, ColSize) VectorType;

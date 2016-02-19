@@ -3,6 +3,10 @@ import armos.app;
 import armos.types;
 import std.array;
 
+/++
+RendererでのMatrixを管理するclassです．
+Deprecated: 現在使用されていません．
++/
 class MatrixStack {
 	private{
 	armos.types.Rectangle[] viewportHistory;

@@ -1,4 +1,7 @@
 module armos.graphics.pixel;
+/++
+カラーフォーマットを表します．
++/
 enum ColorFormat{
 	Gray, 
 	GrayAlpha, 
@@ -9,6 +12,9 @@ enum ColorFormat{
 	Depth, 
 }
 
+/++
+カラーフォーマットのパラメータの数を返します．
++/
 int numColorFormatElements(ColorFormat ColorFormat){
 	int num;
 	switch (ColorFormat) {
@@ -39,6 +45,9 @@ int numColorFormatElements(ColorFormat ColorFormat){
 }
 
 import derelict.opengl3.gl;
+/++
+ColorFormatを元にGLで用いられる定数を返します
++/
 GLuint getGLInternalFormat(ColorFormat format){
 	GLuint num;
 	switch(format){
@@ -70,17 +79,20 @@ GLuint getGLInternalFormat(ColorFormat format){
 	return num;
 }
 
+/++
+画素を表すstructです．
++/
 struct Pixel(T){
 	public{
-		// this(int numElements){
-		// 	_elements = new T[](numElements);
-		// }
-
+		/++
+		+/
 		this(ColorFormat colorType){
 			_colorType = colorType;
 			_elements = new T[](numColorFormatElements(colorType));
 		}
 
+		/++
+		+/
 		void element(Pixel!(T) px){
 			for (int i = 0; i < _elements.length; i++) {
 				_elements[i] = px.element(i);
@@ -88,6 +100,8 @@ struct Pixel(T){
 			// _elements = px.element;
 		}
 		
+		/++
+		+/
 		void element(int index, T level)
 		in{
 			assert(index>=0);
@@ -96,6 +110,8 @@ struct Pixel(T){
 			_elements[index] = level;
 		}
 		
+		/++
+		+/
 		T element(int index)
 		in{
 			assert(index>=0);
@@ -104,6 +120,8 @@ struct Pixel(T){
 			return _elements[index];
 		}
 		
+		/++
+		+/
 		int numElements(){
 			return numColorFormatElements(_colorType);
 		}

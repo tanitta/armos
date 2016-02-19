@@ -1,26 +1,42 @@
 module armos.graphics.model;
 
 /++
+	3Dモデルを読み込み，描画するclassです．
 ++/
 class Model {
 	public{
 		armos.graphics.Mesh[] meshes;
 		armos.graphics.Material[] materials;
 		
+		/++
+			モデルを読み込みます．
+
+			読み込み時にmeshはmaterial毎に分割されます．
+		+/
 		void load(string pathInDataDir){
 			meshes = (new AssimpModelLoader).load(pathInDataDir).meshes;
 			materials = (new AssimpModelLoader).load(pathInDataDir).materials;
 		}
 		
+		/++
+			読み込まれたmeshの数を返します．
+		+/
 		size_t numMeshes(){
 			return meshes.length;
 		}
 		
+		/++
+			読み込まれたmaterialの数を返します．
+		+/
 		size_t numMaterials(){
 			return materials.length;
 		}
 			
-		///
+		/++
+			modelを描画します．
+			Params:
+			renderMode = 面，線，点のどれを描画するか指定します．
+		+/
 		void draw(armos.graphics.PolyRenderMode renderMode){
 			foreach (mesh; meshes) {
 				mesh.material.begin;
@@ -32,17 +48,23 @@ class Model {
 			}
 		};
 
-		///
+		/++
+			modelをワイヤフレームで描画します．
+		+/
 		void drawWireFrame(){
 			draw(armos.graphics.PolyRenderMode.WireFrame);
 		};
 
-		///
+		/++
+			modelの頂点を点で描画します．
+		+/
 		void drawVertices(){
 			draw(armos.graphics.PolyRenderMode.Points);
 		};
 
-		///
+		/++
+			meshの面を塗りつぶして描画します．
+		+/
 		void drawFill(){
 			draw(armos.graphics.PolyRenderMode.Fill);
 		};
@@ -59,6 +81,7 @@ import std.algorithm : map;
 import std.array : array, Appender;
 
 /++
+Assimpによりmodelの読み込みを行います．
 ++/
 class AssimpModelLoader {
 	public{
@@ -66,7 +89,7 @@ class AssimpModelLoader {
 			clear;
 		}
 
-		///
+		/// modelを読み込みそれを返します．
 		Model load(string pathInDataDir){
 			import std.string;
 			_modelfilepath = armos.utils.absolutePath(pathInDataDir);
@@ -96,7 +119,7 @@ class AssimpModelLoader {
 			return model;
 		}
 		
-		///
+		/// 読み込んだモデルを削除します．
 		void clear(){
 			if(_isLoaded){
 				aiReleaseImport(_scene);

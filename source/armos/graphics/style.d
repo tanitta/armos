@@ -3,6 +3,7 @@ import armos.graphics;
 import armos.types;
 
 /++
+色や線の幅などの描画方法をまとめたstructです．
 ++/
 struct Style {
 	armos.types.Color color = armos.types.Color(255, 255, 255, 255);

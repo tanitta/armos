@@ -1,6 +1,9 @@
 module armos.math.quaternion;
 import armos.math;
 import std.math;
+/++
+クオータニオンを表すstructです．
++/
 struct Quaternion(T){
 	alias Quaternion!(T) Q;
 	alias V4 = armos.armos.math.Vector!(T, 4);
@@ -217,6 +220,9 @@ struct Quaternion(T){
 		}
 	}
 	
+	/++
+		自身の回転行列(4x4)を返します．
+	+/
 	armos.math.Matrix!(T, 4, 4) matrix44()const{
 		return armos.math.Matrix!(T, 4, 4)(
 			[this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2]),               0],
@@ -228,6 +234,9 @@ struct Quaternion(T){
 	unittest{
 	}
 	
+	/++
+		自身の回転行列(3x3)を返します．
+	+/
 	armos.math.Matrix!(T, 3, 3) matrix33()const{
 		return armos.math.Matrix!(T, 3, 3)(
 			[this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2])              ],
@@ -237,6 +246,7 @@ struct Quaternion(T){
 	}
 		
 	/++
+		指定したベクトルを自身で回転させたベクトルを返します．
 	++/
 	V3 rotatedVector(V3 vec)const {
 		if( norm^^2.0 < T.epsilon){
@@ -260,6 +270,12 @@ struct Quaternion(T){
 		}
 	}
 	
+	/++
+		指定した軸で自身を回転させます．
+		Params:
+		ang = 回転角
+		axis = 回転軸
+	++/
 	static Q angleAxis(T ang, V3 axis){
 		auto halfAngle = ang*T(0.5);
 		return Q(cos(halfAngle), axis[0]*sin(halfAngle), axis[1]*sin(halfAngle), axis[2]*sin(halfAngle));
@@ -281,6 +297,13 @@ struct Quaternion(T){
 	
 }
 
+/++
+球面線形補間(Sphercal Linear Interpolation)を行います．
+Params:
+from = tが0の時のQuaternion
+to = tが1の時のQuaternion
+t = 
++/
 Q slerp(Q, T)(in Q from, in Q to,  T t){
 	double omega, cos_omega, sin_omega, scale_from, scale_to;
 

@@ -60,6 +60,8 @@ struct Vector(T, int Dimention){
 		assert(vec1 != vec2);
 	}
 	
+	/++
+	+/
 	static zero(){
 		auto v =  VectorType();
 		for (int i = 0; i < Dimention; i++) {
@@ -69,7 +71,7 @@ struct Vector(T, int Dimention){
 	}
 
 	/++
-	++/
+	+/
 	VectorType opNeg()const{
 		auto result = VectorType();
 		result.data[] = -data[];
@@ -355,12 +357,21 @@ struct Vector(T, int Dimention){
 	}
 }
 
+/// int型の2次元ベクトルです．
 alias Vector!(int, 2) Vector2i;
+/// int型の3次元ベクトルです．
 alias Vector!(int, 3) Vector3i;
+/// int型の4次元ベクトルです．
 alias Vector!(int, 4) Vector4i;
+/// float型の2次元ベクトルです．
 alias Vector!(float, 2) Vector2f;
+/// float型の3次元ベクトルです．
 alias Vector!(float, 3) Vector3f;
+/// float型の4次元ベクトルです．
 alias Vector!(float, 4) Vector4f;
+/// double型の2次元ベクトルです．
 alias Vector!(double, 2) Vector2d;
+/// double型の3次元ベクトルです．
 alias Vector!(double, 3) Vector3d;
+/// double型の4次元ベクトルです．
 alias Vector!(double, 4) Vector4d;

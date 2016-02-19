@@ -1,4 +1,7 @@
 module armos.graphics.image;
+/++
+画像のファイルフォーマットを表します
++/
 enum ImageFormat{
 	BMP     = 0,
 	ICO     = 1,
@@ -44,7 +47,7 @@ import derelict.freeimage.freeimage;
 /++
 画像を表すクラスです．
 load()で画像を読み込み，draw()で表示することができます．
-++/
++/
 class Image {
 	public{
 		this(){

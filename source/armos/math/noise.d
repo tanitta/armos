@@ -2,6 +2,10 @@ module armos.math.noise;
 import std.random;
 import armos.math;
 
+/++
+ノイズを生成します．
+Deprecated: 現在動作しません．
++/
 template perlinNoise(Args ...){
 	alias T = Args[0];
 	const int Dim = Args.length;

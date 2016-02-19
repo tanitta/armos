@@ -4,6 +4,7 @@ import derelict.opengl3.gl;
 import armos.math.vector;
 
 /++
+	Frame Buffer Objectを表すclassです．
 ++/
 class Fbo{
 	public{
@@ -55,6 +56,7 @@ class Fbo{
 		}
 
 		/++
+			FBOへの描画処理を開始します．
 		++/
 		void begin(){
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFboID_);
@@ -62,18 +64,21 @@ class Fbo{
 		}
 
 		/++
+			FBOへの描画処理を終了します．
 		++/
 		void end(){
 			glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
 		}
 		
 		/++
+			FBOのIDを返します．
 		++/
 		int id()const{
 			return fboID_;
 		}
 
 		/++
+			FBOを描画します．
 		++/
 		void draw(){
 			_colorTexture.begin;
@@ -82,6 +87,9 @@ class Fbo{
 		}
 
 		/++
+			FBOをリサイズします．
+			Params:
+			size = リサイズ後のサイズ
 		++/
 		void resize(in armos.math.Vector2i size){
 			begin;
