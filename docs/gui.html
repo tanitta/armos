@@ -14,25 +14,174 @@
 		<script src="/armos/javascripts/all.js"></script>
 	</head>
 
-	<body class="docs docs_gui">
+	<body class="reference">
 		<nav class="nav-bar">
-			<div id="menu" class="menu">
-				<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
-				<ul class="menu-items">
-					<li><a href="../about.html">About</a></li>
-					<li><a href="../reference.html">Reference</a></li>
-					<li><a href="/tutorials.html">Tutorials</a></li>
-					<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+	<div id="menu" class="menu">
+		<a class="show" href="#menu">Menu</a><a class="hide" href="#hidemenu">Menu</a>
+		<ul class="menu-items">
+			<li><a href="../about.html">About</a></li>
+			<li><a href="../reference.html">Reference</a></li>
+			<li><a href="/tutorials.html">Tutorials</a></li>
+			<li><a href="https://github.com/tanitta/armos/tree/master">GitHub</a></li>
+		</ul>
+	</div>
+</nav>
+
+		<div class="side-bar">
+	<aside class="side-bar">
+		<nav class="side-bar">
+			<div>
+				<h1>Reference</h1>
+				<h3>app</h3>
+				<ul>
+					<li class="doc-item">
+						<li><a href="baseapp.html">baseapp</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="basewindow.html">basewindow</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="runner.html">runner</a></li>
+					</li>
+				</ul>
+
+				
+				<h3>events</h3>
+				<ul>
+					<li class="doc-item">
+						<li><a href="event.html">event</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="events.html">events</a></li>
+					</li>
+				</ul>
+				
+				<h3>graphics</h3>
+				<ul>
+					<li class="doc-item">
+						<li><a href="bitmap.html">bitmap</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="bitmapfont.html">bitmapfont</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="camera.html">camera</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="fbo.html">fbo</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="rbo.html">rbo</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="image.html">image</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="material.html">material</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="mesh.html">mesh</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="model.html">model</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="pixel.html">pixel</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="primitives.html">primitives</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="renderer.html">renderer</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="shader.html">shader</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="style.html">style</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="texture.html">texture</a></li>
+					</li>
+				</ul>
+				<h3>math</h3>
+				<ul>
+					<li class="doc-item">
+						<li><a href="map.html">map</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="vector.html">vector</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="matrix.html">matrix</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="quaternion.html">quaternion</a></li>
+					</li>
+				</ul>
+				<h3>types</h3>
+				<ul>
+					<li class="doc-item">
+						<li><a href="color.html">color</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="rectangle.html">rectangle</a></li>
+					</li>
+				</ul>
+				<h3>utils</h3>
+				<ul>
+					<li class="doc-item">
+						<li><a href="file.html">file</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="fpscounter.html">fpscounter</a></li>
+					</li>
+					<li class="doc-item">
+						<li><a href="gui.html">gui</a></li>
+					</li>
 				</ul>
 			</div>
+
 		</nav>
-		<div class=reference-doc>
+	</aside>
+</div><!-- .welcome -->
+
+		<div class="reference-doc">
 <h1>armos.utils.gui</h1>
 <dl>
 <dt><big><a name="Gui"></a>class <u>Gui</u>;
 </big></dt>
-<dd>
+<dd>値にアクセスするGuiを表すclassです．
 <br><br>
+<b>Examples:</b><br>
+<pre class="d_code"><font color="blue">class</font> TestApp : ar.BaseApp{
+	ar.<u>Gui</u> gui;
+	<font color="blue">float</font> f=128;
+
+	<font color="blue">void</font> setup(){
+		gui = (<font color="blue">new</font> ar.<u>Gui</u>)
+		.add(
+			(<font color="blue">new</font> ar.List)
+			.add(<font color="blue">new</font> ar.Partition)
+			.add(<font color="blue">new</font> ar.Label(<font color="red">"some text"</font>))
+			.add(<font color="blue">new</font> ar.Partition(<font color="red">"*"</font>))
+		)
+		.add(
+			(<font color="blue">new</font> ar.List)
+			.add(<font color="blue">new</font> ar.Partition)
+			.add(<font color="blue">new</font> ar.Slider!<font color="blue">float</font>(<font color="red">"slider!float"</font>, f, 0, 255))
+		);
+	}
+
+	<font color="blue">void</font> draw(){
+		f.writeln;
+		gui.draw;
+	}
+}
+<font color="blue">void</font> main(){ar.run(<font color="blue">new</font> TestApp);}
+</pre>
+<br><br>
+
 <dl>
 <dt><big><a name="Gui.this"></a>this();
 </big></dt>
@@ -41,30 +190,25 @@
 </dd>
 <dt><big><a name="Gui.add"></a>Gui <u>add</u>(List <i>list</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>Listを自身に追加します．また自身を返すためメソッドチェインが可能です．<br><br>
+
 </dd>
 <dt><big><a name="Gui.draw"></a>void <u>draw</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Guiの内部のウィジェットを再帰的に描画します．<br><br>
+
 </dd>
 </dl>
 </dd>
-<dt><big><a name="Style"></a>class <u>Style</u>;
-</big></dt>
-<dd>
-<br><br>
-</dd>
 <dt><big><a name="List"></a>class <u>List</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>Guiの構成要素でWidgetを複数格納するclassです．<br><br>
+
 <dl>
 <dt><big><a name="List.add"></a>List <u>add</u>(lazy Widget <i>widget</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>Widgetを追加します．また自身を返すためメソッドチェインが可能です．<br><br>
+
 </dd>
 <dt><big><a name="List.style"></a>void <u>style</u>(Style <i>stl</i>);
 </big></dt>
@@ -73,8 +217,8 @@
 </dd>
 <dt><big><a name="List.draw"></a>void <u>draw</u>(in int <i>posX</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>Widgetを描画します．<br><br>
+
 </dd>
 <dt><big><a name="List.width"></a>const int <u>width</u>();
 </big></dt>
@@ -85,18 +229,18 @@
 </dd>
 <dt><big><a name="Widget"></a>class <u>Widget</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>LabelやSlider等の基底クラスです．Listの構成要素となります．<br><br>
+
 <dl>
 <dt><big><a name="Widget.draw"></a>void <u>draw</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>描画を行います．<br><br>
+
 </dd>
 <dt><big><a name="Widget.height"></a>int <u>height</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Widgetの高さを返します．<br><br>
+
 </dd>
 <dt><big><a name="Widget.style"></a>void <u>style</u>(Style <i>stl</i>);
 </big></dt>
@@ -105,35 +249,35 @@
 </dd>
 <dt><big><a name="Widget.position"></a>void <u>position</u>(armos.math.Vector2i <i>pos</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>Widgetの座標を返します．<br><br>
+
 </dd>
 <dt><big><a name="Widget.mouseMoved"></a>void <u>mouseMoved</u>(ref armos.events.MouseMovedEventArg <i>message</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>マウスが動いた時に呼ばれるイベントハンドラです．<br><br>
+
 </dd>
 <dt><big><a name="Widget.mouseReleased"></a>void <u>mouseReleased</u>(ref armos.events.MouseReleasedEventArg <i>message</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>マウスのボタンが離された時に呼ばれるイベントハンドラです．<br><br>
+
 </dd>
 <dt><big><a name="Widget.mousePressed"></a>void <u>mousePressed</u>(ref armos.events.MousePressedEventArg <i>message</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>マウスのボタンが押された時に呼ばれるイベントハンドラです．<br><br>
+
 </dd>
 </dl>
 </dd>
 <dt><big><a name="Label"></a>class <u>Label</u>: <u>armos.utils.gui.Widget</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>文字列を表示するWidgetを継承したclassです．<br><br>
+
 <dl>
 <dt><big><a name="Label.this"></a>this(string <i>str</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>表示する文字列を指定して初期化を行います．<br><br>
+
 </dd>
 <dt><big><a name="Label.draw"></a>void <u>draw</u>();
 </big></dt>
@@ -144,13 +288,13 @@
 </dd>
 <dt><big><a name="Partition"></a>class <u>Partition</u>: <u>armos.utils.gui.Widget</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>パーティションを表示するWidgetを継承したclassです．<br><br>
+
 <dl>
 <dt><big><a name="Partition.this"></a>this(string <i>str</i> = "/");
 </big></dt>
-<dd>
-<br><br>
+<dd>初期化を行います．区切り文字を指定することもできます．<br><br>
+
 </dd>
 <dt><big><a name="Partition.draw"></a>void <u>draw</u>();
 </big></dt>
@@ -166,13 +310,13 @@
 </dd>
 <dt><big><a name="Slider"></a>class <u>Slider</u>(T): Widget;
 </big></dt>
-<dd>
-<br><br>
+<dd>値を操作するSliderを表す，Widgetを継承したclassです．<br><br>
+
 <dl>
 <dt><big><a name="Slider.this"></a>this(string <i>name</i>, ref T <i>var</i>, T <i>min</i>, T <i>max</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>初期化を行います．Slider固有の名前と操作する値，その上限下限を設定します．<br><br>
+
 </dd>
 <dt><big><a name="Slider.draw"></a>void <u>draw</u>();
 </big></dt>

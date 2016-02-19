@@ -402,8 +402,8 @@ nav {
 body {
   background-color: rgba(0, 0, 0, 0.6);
   text-align: center;
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1em; }
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.9em; }
 
 .logo img {
   height: 18.75em;
@@ -412,14 +412,28 @@ body {
 h1 {
   color: rgba(0, 0, 0, 0.5);
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1.8em;
-  font-weight: 400;
+  font-size: 2.0em;
+  font-weight: bold;
+  margin: 0; }
+
+h2 {
+  color: rgba(0, 0, 0, 0.5);
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 2.1em;
+  font-weight: bold;
+  margin: 0; }
+
+h3 {
+  color: rgba(0, 0, 0, 0.5);
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
   margin: 0; }
 
 .doc {
   color: #333333;
   margin: 2em 0;
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.0em;
   font-weight: 300;
   margin-left: auto;
@@ -453,42 +467,41 @@ h1 {
     color: #333333; }
 
 .reference {
-  background-color: white;
-  margin-top: 50px; }
-  .reference h1 {
-    margin-left: 10px;
-    text-align: left;
-    color: #333333; }
-  .reference h2 {
-    color: #333333; }
-  .reference h3 {
+  background-color: white; }
+  .reference body {
     color: #333333; }
 
 .side-bar {
-  background-color: rgba(255, 255, 255, 0);
+  background-color: white;
   margin-top: 80px;
-  width: 10em;
-  text-align: left; }
-  .side-bar h3 {
-    margin-left: 10px;
+  width: 14em;
+  text-align: left;
+  margin-left: 40px; }
+  .side-bar h1 {
     color: #333333; }
-
-.side-bar a {
-  color: #333333;
-  text-decoration: none; }
-
-.side-bar li {
-  list-style: none; }
+  .side-bar h2 {
+    color: #333333; }
+  .side-bar h3 {
+    color: #333333; }
+  .side-bar a {
+    color: #333333;
+    text-decoration: none; }
+  .side-bar li {
+    list-style: none; }
 
 .reference-doc {
   background-color: white;
   text-align: left;
+  margin-left: 220px;
   margin-top: 40px;
   color: #333333; }
   .reference-doc h1 {
-    margin-left: 10px; }
+    color: #333333;
+    margin-left: 30px; }
   .reference-doc dl {
-    margin-left: 10px; }
+    margin-left: 30px; }
+  .reference-doc dd {
+    margin-left: 30px; }
 
 .reference-doc body {
   background-color: white;
