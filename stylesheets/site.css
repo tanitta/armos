@@ -500,6 +500,8 @@ h3 {
     margin-left: 30px; }
   .reference-doc dl {
     margin-left: 30px; }
+  .reference-doc dt {
+    margin-top: 30px; }
   .reference-doc dd {
     margin-left: 30px; }
 
