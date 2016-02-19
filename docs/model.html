@@ -31,45 +31,72 @@
 <dl>
 <dt><big><a name="Model"></a>class <u>Model</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>3Dモデルを読み込み，描画するclassです．<br><br>
+
 <dl>
+<dt><big><a name="Model.load"></a>void <u>load</u>(string <i>pathInDataDir</i>);
+</big></dt>
+<dd>モデルを読み込みます．
+<br><br>
+読み込み時にmeshはmaterial毎に分割されます．<br><br>
+
+</dd>
+<dt><big><a name="Model.numMeshes"></a>size_t <u>numMeshes</u>();
+</big></dt>
+<dd>読み込まれたmeshの数を返します．<br><br>
+
+</dd>
+<dt><big><a name="Model.numMaterials"></a>size_t <u>numMaterials</u>();
+</big></dt>
+<dd>読み込まれたmaterialの数を返します．<br><br>
+
+</dd>
 <dt><big><a name="Model.draw"></a>void <u>draw</u>(armos.graphics.PolyRenderMode <i>renderMode</i>);
 </big></dt>
-<dd>
+<dd>modelを描画します．
 <br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.graphics.PolyRenderMode <i>renderMode</i>
+</td>
+<td>面，線，点のどれを描画するか指定します．</td>
+</tr>
+</table>
+<br>
+
 </dd>
 <dt><big><a name="Model.drawWireFrame"></a>void <u>drawWireFrame</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>modelをワイヤフレームで描画します．<br><br>
+
 </dd>
 <dt><big><a name="Model.drawVertices"></a>void <u>drawVertices</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>modelの頂点を点で描画します．<br><br>
+
 </dd>
 <dt><big><a name="Model.drawFill"></a>void <u>drawFill</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>meshの面を塗りつぶして描画します．<br><br>
+
 </dd>
 </dl>
 </dd>
 <dt><big><a name="AssimpModelLoader"></a>class <u>AssimpModelLoader</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>Assimpによりmodelの読み込みを行います．<br><br>
+
 <dl>
 <dt><big><a name="AssimpModelLoader.load"></a>Model <u>load</u>(string <i>pathInDataDir</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>modelを読み込みそれを返します．<br><br>
+
 </dd>
 <dt><big><a name="AssimpModelLoader.clear"></a>void <u>clear</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>読み込んだモデルを削除します．<br><br>
+
 </dd>
 </dl>
 </dd>

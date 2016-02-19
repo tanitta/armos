@@ -28,7 +28,51 @@
 		</nav>
 		<div class=reference-doc>
 <h1>armos.types.color</h1>
+<dl>
+<dt><big><a name="BaseColor"></a>template <u>BaseColor</u>(ColorType, PixelType)</big></dt>
+<dd>色情報を表すstructを構成するtemplateです．<br><br>
 
+<dl>
+<dt><big><a name="BaseColor.this"></a>this(int <i>hexColor</i>, float <i>alpha</i> = limit);
+</big></dt>
+<dd>16進数のカラーコードで色を指定します．<br><br>
+
+</dd>
+<dt><big><a name="BaseColor.this.2"></a>this(float <i>red</i>, float <i>green</i>, float <i>blue</i>, float <i>alpha</i> = limit);
+</big></dt>
+<dd>RGBAで色を指定します．透明度は省略可能です．<br><br>
+
+</dd>
+<dt><big><a name="BaseColor.opAdd"></a>ColorType <u>opAdd</u>(ColorType <i>color</i>);
+</big></dt>
+<dd>色の加算を行います．<br><br>
+
+</dd>
+<dt><big><a name="BaseColor.opSub"></a>ColorType <u>opSub</u>(ColorType <i>color</i>);
+</big></dt>
+<dd>色の減算を行います．<br><br>
+
+</dd>
+<dt><big><a name="BaseColor.hsb"></a>ColorType <u>hsb</u>(in PixelType <i>hue</i>, in PixelType <i>saturation</i>, in PixelType <i>value</i>);
+</big></dt>
+<dd>色をHSBで指定します．<br><br>
+
+</dd>
+</dl>
+</dd>
+<dt><big><a name="Color"></a>struct <u>Color</u>;
+</big></dt>
+<dd>色を表すstructです．1byteの色深度を持ちます．<br><br>
+
+</dd>
+<dt><big><a name="FloatColor"></a>struct <u>FloatColor</u>;
+</big></dt>
+<dd>色を表すstructです．浮動小数点型で値を持ちます．
+<br><br>
+最小値は0.0，最大値は1.0です．<br><br>
+
+</dd>
+</dl>
 </div>
 	</body>
 </html>

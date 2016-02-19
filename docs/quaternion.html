@@ -28,7 +28,150 @@
 		</nav>
 		<div class=reference-doc>
 <h1>armos.math.quaternion</h1>
+<dl>
+<dt><big><a name="Quaternion"></a>struct <u>Quaternion</u>(T);
+</big></dt>
+<dd>クオータニオンを表すstructです．<br><br>
 
+<dl>
+<dt><big><a name="Quaternion.this"></a>this(in T <i>x</i>, in T <i>y</i>, in T <i>z</i>, in T <i>w</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.this.2"></a>this(in T <i>s</i>, in V3 <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.this.3"></a>this(in V4 <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.opIndex"></a>const T <u>opIndex</u>(in int <i>index</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.opIndex.2"></a>ref T <u>opIndex</u>(in int <i>index</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.zero"></a>static Q <u>zero</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.unit"></a>static Q <u>unit</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.opMul"></a>const Q <u>opMul</u>(in Q <i>r_quat</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.opNeg"></a>const Q <u>opNeg</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.opAdd"></a>const Q <u>opAdd</u>(in Q <i>q</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.opMul.2"></a>const Q <u>opMul</u>(in T <i>r</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.opDiv"></a>const Q <u>opDiv</u>(in T <i>r</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.norm"></a>const T <u>norm</u>();
+</big></dt>
+<dd>Quaternionのノルムを返します．<br><br>
+
+</dd>
+<dt><big><a name="Quaternion.normalized"></a>const Q <u>normalized</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.conjugate"></a>const Q <u>conjugate</u>();
+</big></dt>
+<dd>Quaternionの共役Quaternionを返します．<br><br>
+
+</dd>
+<dt><big><a name="Quaternion.inverse"></a>const Q <u>inverse</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Quaternion.matrix44"></a>const armos.math.Matrix!(T, 4, 4) <u>matrix44</u>();
+</big></dt>
+<dd>自身の回転行列(4x4)を返します．<br><br>
+
+</dd>
+<dt><big><a name="Quaternion.matrix33"></a>const armos.math.Matrix!(T, 3, 3) <u>matrix33</u>();
+</big></dt>
+<dd>自身の回転行列(3x3)を返します．<br><br>
+
+</dd>
+<dt><big><a name="Quaternion.rotatedVector"></a>const V3 <u>rotatedVector</u>(V3 <i>vec</i>);
+</big></dt>
+<dd>指定したベクトルを自身で回転させたベクトルを返します．<br><br>
+
+</dd>
+<dt><big><a name="Quaternion.angleAxis"></a>static Q <u>angleAxis</u>(T <i>ang</i>, V3 <i>axis</i>);
+</big></dt>
+<dd>指定した軸で自身を回転させます．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>T <i>ang</i>
+</td>
+<td>回転角</td>
+</tr>
+<tr>
+<td>V3 <i>axis</i>
+</td>
+<td>回転軸</td>
+</tr>
+</table>
+<br>
+
+</dd>
+</dl>
+</dd>
+<dt><big><a name="slerp"></a>Q <u>slerp</u>(Q, T)(in Q <i>from</i>, in Q <i>to</i>, T <i>t</i>);
+</big></dt>
+<dd>球面線形補間(Sphercal Linear Interpolation)を行います．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>Q <i>from</i>
+</td>
+<td>tが0の時のQuaternion</td>
+</tr>
+<tr>
+<td>Q <i>to</i>
+</td>
+<td>tが1の時のQuaternion</td>
+</tr>
+</table>
+<br>
+
+</dd>
+</dl>
 </div>
 	</body>
 </html>

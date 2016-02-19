@@ -31,138 +31,119 @@
 <dl>
 <dt><big><a name="Window"></a>interface <u>Window</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>armosで用いるWindowsの雛形となるinterfaceです．新たにWindowを実装する際はこのinterfaceを継承することでrunnerから実行できます．<br><br>
+
 <dl>
 <dt><big><a name="Window.events"></a>abstract armos.<u>events</u>.CoreEvents <u>events</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowsが実行するイベントを表すプロパティです．<br><br>
+
 </dd>
 <dt><big><a name="Window.size"></a>abstract armos.math.Vector2i <u>size</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>サイズを返すプロパティです．<br><br>
+
 </dd>
 <dt><big><a name="Window.pollEvents"></a>abstract void <u>pollEvents</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>イベントが発生している場合，登録されたイベントを実行します<br><br>
+
 </dd>
 <dt><big><a name="Window.update"></a>abstract void <u>update</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowを更新します．<br><br>
+
 </dd>
 <dt><big><a name="Window.close"></a>abstract void <u>close</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowを閉じます．<br><br>
+
 </dd>
 <dt><big><a name="Window.shouldClose"></a>abstract bool <u>shouldClose</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowがフレームの最後に閉じる場合trueになります．<br><br>
+
 </dd>
 <dt><big><a name="Window.aspect"></a>abstract float <u>aspect</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowのアスペクト比を表します<br><br>
+
 </dd>
 <dt><big><a name="Window.name"></a>abstract string <u>name</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowのタイトル文字列のプロパティです．<br><br>
+
 </dd>
 <dt><big><a name="Window.name.2"></a>abstract void <u>name</u>(string <i>str</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowのタイトル文字列のプロパティです．<br><br>
+
 </dd>
 </dl>
 </dd>
-<dt><big><a name="BaseWindow"></a>template <u>BaseWindow</u>()</big></dt>
-<dd>
-<br><br>
-<dl>
-<dt><big><a name="BaseWindow.shouldClose"></a>bool <u>shouldClose</u>();
+<dt><big><a name="SDLWindow"></a>class <u>SDLWindow</u>: <u>armos.app.basewindow.Window</u>;
 </big></dt>
-<dd>
+<dd>SDLを利用したWindowです．
 <br><br>
-</dd>
-<dt><big><a name="BaseWindow.name"></a>string <u>name</u>();
-</big></dt>
-<dd>
-<br><br>
-</dd>
-<dt><big><a name="BaseWindow.name.2"></a>void <u>name</u>(string <i>str</i>);
-</big></dt>
-<dd>
-<br><br>
-</dd>
-<dt><big><a name="BaseWindow.initEvents"></a>void <u>initEvents</u>(armos.<i>app</i>.baseapp.BaseApp <i>app</i>);
-</big></dt>
-<dd>
-<br><br>
-</dd>
-<dt><big><a name="BaseWindow.events"></a>armos.<u>events</u>.CoreEvents <u>events</u>();
-</big></dt>
-<dd>
-<br><br>
-</dd>
-<dt><big><a name="BaseWindow.aspect"></a>float <u>aspect</u>();
-</big></dt>
-<dd>
-<br><br>
-</dd>
-</dl>
+<font color="red">Deprecated:</font><br>
+GLFWWindowの使用が推奨されています．<br><br>
+
 </dd>
 <dt><big><a name="GLFWWindow"></a>class <u>GLFWWindow</u>: <u>armos.app.basewindow.Window</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>GLFWを利用したWindowです．armosではデフォルトでこのclassを元にWindowが生成されます．<br><br>
+
 <dl>
 <dt><big><a name="GLFWWindow.this"></a>this(ref armos.app.BaseApp <i>apprication</i>);
 </big></dt>
 <dd>
-<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.app.BaseApp <i>apprication</i>
+</td>
+<td>Windowとひも付けされるアプリケーションです．</td>
+</tr>
+</table>
+<br>
+
 </dd>
 <dt><big><a name="GLFWWindow.size"></a>armos.math.Vector2i <u>size</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowのサイズを返します．<br><br>
+
 </dd>
 <dt><big><a name="GLFWWindow.pollEvents"></a>void <u>pollEvents</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>イベントが発生している場合，登録されたイベントを実行します<br><br>
+
 </dd>
 <dt><big><a name="GLFWWindow.update"></a>void <u>update</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowを更新します．<br><br>
+
 </dd>
 <dt><big><a name="GLFWWindow.close"></a>void <u>close</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Windowを閉じます．<br><br>
+
 </dd>
 </dl>
 </dd>
 <dt><big><a name="currentWindow"></a>armos.app.Window <u>currentWindow</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>現在のWindowを返す関数です．<br><br>
+
 </dd>
 <dt><big><a name="windowSize"></a>armos.math.Vector2i <u>windowSize</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>現在のWindowの大きさを返す関数です．<br><br>
+
 </dd>
 <dt><big><a name="windowAspect"></a>float <u>windowAspect</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>現在のWindowのアスペクト比を返す関数です．<br><br>
+
 </dd>
 </dl>
 </div>

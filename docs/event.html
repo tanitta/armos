@@ -36,13 +36,42 @@
 </dd>
 <dt><big><a name="addListener"></a>void <u>addListener</u>(EventType, ListenerClass, FunctionType)(ref EventType <i>event</i>, ref ListenerClass <i>listener</i>, FunctionType <i>listenerFunc</i>);
 </big></dt>
-<dd>
+<dd>イベントにイベントハンドラを登録します．
 <br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>EventType <i>event</i>
+</td>
+<td>登録先のイベントを表します．</td>
+</tr>
+<tr>
+<td>FunctionType <i>listenerFunc</i>
+</td>
+<td>登録されるイベントを表します．</td>
+</tr>
+</table>
+<br>
+
 </dd>
 <dt><big><a name="notifyEvent"></a>void <u>notifyEvent</u>(EventType, ArgType)(ref EventType <i>event</i>, ref ArgType <i>arg</i>);
 </big></dt>
-<dd>
+<dd>イベントが発生した際に実行される通知です．
 <br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>EventType <i>event</i>
+</td>
+<td>発生したイベントを指定します．</td>
+</tr>
+<tr>
+<td>listenerFunc</td>
+<td>イベントのメッセージを指定します．</td>
+</tr>
+</table>
+<br>
+
 </dd>
 </dl>
 </div>

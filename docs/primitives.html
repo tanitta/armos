@@ -28,7 +28,175 @@
 		</nav>
 		<div class=reference-doc>
 <h1>armos.graphics.primitives</h1>
+<dl>
+<dt><big><a name="boxPrimitive"></a>armos.graphics.Mesh <u>boxPrimitive</u>(in armos.math.Vector3f <i>position</i>, in armos.math.Vector3f <i>size</i>);
+</big></dt>
+<dd>箱状のMeshを返します．<br><br>
 
+</dd>
+<dt><big><a name="linePrimitive"></a>armos.graphics.Mesh <u>linePrimitive</u>(armos.math.Vector3f[] <i>arr</i>...);
+</big></dt>
+<dd>連続した線のMeshを返します．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.math.Vector3f[] <i>arr</i>
+</td>
+<td>線の頂点です．任意の個数設定できます．</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="spherePrimitive"></a>armos.graphics.Mesh <u>spherePrimitive</u>();
+</big></dt>
+<dd>球体のMeshを返します．
+<br><br>
+<font color="red">Deprecated:</font><br>
+現在動作しません．<br><br>
+
+</dd>
+<dt><big><a name="conePrimitive"></a>armos.graphics.Mesh <u>conePrimitive</u>();
+</big></dt>
+<dd>円錐のMeshを返します．
+<br><br>
+<font color="red">Deprecated:</font><br>
+現在動作しません．<br><br>
+
+</dd>
+<dt><big><a name="cylinderPrimitive"></a>armos.graphics.Mesh <u>cylinderPrimitive</u>();
+</big></dt>
+<dd>円筒のMeshを返します．
+<br><br>
+<font color="red">Deprecated:</font><br>
+現在動作しません．<br><br>
+
+</dd>
+<dt><big><a name="icoSpherePrimitive"></a>armos.graphics.Mesh <u>icoSpherePrimitive</u>();
+</big></dt>
+<dd>多面体のMeshを返します．
+<br><br>
+<font color="red">Deprecated:</font><br>
+現在動作しません．<br><br>
+
+</dd>
+<dt><big><a name="circlePrimitive"></a>armos.graphics.Mesh <u>circlePrimitive</u>(in armos.math.Vector3f <i>position</i>, in float <i>radius</i>, in int <i>resolution</i> = 12);
+</big></dt>
+<dd>円盤のMeshを返します．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.math.Vector3f <i>position</i>
+</td>
+<td>円盤の中心の座標を指定します．</td>
+</tr>
+<tr>
+<td>float <i>radius</i>
+</td>
+<td>円盤の半径を指定します．</td>
+</tr>
+<tr>
+<td>int <i>resolution</i>
+</td>
+<td>円盤の分割数を指定します．</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="circlePrimitive.2"></a>armos.graphics.Mesh <u>circlePrimitive</u>(in float <i>x</i>, in float <i>y</i>, in float <i>z</i>, in float <i>radius</i>, in int <i>resolution</i> = 12);
+</big></dt>
+<dd>円盤のMeshを返します．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>float <i>x</i>
+</td>
+<td>円盤の中心のX座標を指定します．</td>
+</tr>
+<tr>
+<td>float <i>y</i>
+</td>
+<td>円盤の中心のY座標を指定します．</td>
+</tr>
+<tr>
+<td>float <i>z</i>
+</td>
+<td>円盤の中心のZ座標を指定します．</td>
+</tr>
+<tr>
+<td>float <i>radius</i>
+</td>
+<td>円盤の半径を指定します．</td>
+</tr>
+<tr>
+<td>int <i>resolution</i>
+</td>
+<td>円盤の分割数を指定します．</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="planePrimitive"></a>armos.graphics.Mesh <u>planePrimitive</u>(in armos.math.Vector3f <i>position</i>, in armos.math.Vector2f <i>size</i>);
+</big></dt>
+<dd>長方形のMeshを返します．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.math.Vector3f <i>position</i>
+</td>
+<td>長方形の中心の座標を指定します．</td>
+</tr>
+<tr>
+<td>armos.math.Vector2f <i>size</i>
+</td>
+<td>長方形の大きさを指定します．</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="planePrimitive.2"></a>armos.graphics.Mesh <u>planePrimitive</u>(in float <i>x</i>, in float <i>y</i>, in float <i>z</i>, in float <i>w</i>, in float <i>h</i>);
+</big></dt>
+<dd>長方形のMeshを返します．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>float <i>x</i>
+</td>
+<td>長方形の中心のX座標を指定します．</td>
+</tr>
+<tr>
+<td>float <i>y</i>
+</td>
+<td>長方形の中心のY座標を指定します．</td>
+</tr>
+<tr>
+<td>float <i>z</i>
+</td>
+<td>長方形の中心のZ座標を指定します．</td>
+</tr>
+<tr>
+<td>float <i>w</i>
+</td>
+<td>長方形のX方向の大きさを指定します．</td>
+</tr>
+<tr>
+<td>float <i>h</i>
+</td>
+<td>長方形のY方向の大きさを指定します．</td>
+</tr>
+</table>
+<br>
+
+</dd>
+</dl>
 </div>
 	</body>
 </html>

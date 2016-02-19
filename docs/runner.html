@@ -28,7 +28,74 @@
 		</nav>
 		<div class=reference-doc>
 <h1>armos.app.runner</h1>
+<dl>
+<dt><big><a name="Loop"></a>class <u>Loop</u>;
+</big></dt>
+<dd>armosのアプリケーションの更新を行うclassです．<br><br>
 
+<dl>
+<dt><big><a name="Loop.this"></a>this();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Loop.run"></a>void <u>run</u>(WindowType)(ref armos.<i>app</i>.BaseApp <i>app</i>);
+</big></dt>
+<dd>イベントループに入ります．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.<i>app</i>.BaseApp <i>app</i>
+</td>
+<td>更新されるアプリケーションです．</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="Loop.fpsUseRate"></a>double <u>fpsUseRate</u>();
+</big></dt>
+<dd>現在のFPS(Frame Per Second)の使用率を返します．<br><br>
+
+</dd>
+<dt><big><a name="Loop.targetFps"></a>void <u>targetFps</u>(double <i>fps</i>);
+</big></dt>
+<dd>FPS(Frame Per Second)を指定します．<br><br>
+
+</dd>
+</dl>
+</dd>
+<dt><big><a name="run"></a>void <u>run</u>(WindowType = armos.<i>app</i>.GLFWWindow)(armos.<i>app</i>.BaseApp <i>app</i>);
+</big></dt>
+<dd>armosのアプリケーションを実行します．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>WindowType</td>
+<td>立ち上げるWindowの型を指定します．省略可能です．</td>
+</tr>
+<tr>
+<td>armos.<i>app</i>.BaseApp <i>app</i>
+</td>
+<td>立ち上げるアプリケーションを指定します．</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="fpsUseRate"></a>double <u>fpsUseRate</u>();
+</big></dt>
+<dd>現在のFPS(Frame Per Second)の使用率を返します．<br><br>
+
+</dd>
+<dt><big><a name="targetFps"></a>void <u>targetFps</u>(double <i>fps</i>);
+</big></dt>
+<dd>FPS(Frame Per Second)を指定します．<br><br>
+
+</dd>
+</dl>
 </div>
 	</body>
 </html>

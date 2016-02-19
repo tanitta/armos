@@ -29,100 +29,133 @@
 		<div class=reference-doc>
 <h1>armos.graphics.mesh</h1>
 <dl>
+<dt><big><a name="TexCoord"></a>struct <u>TexCoord</u>;
+</big></dt>
+<dd>テクスチャ座標を表すstructです．<br><br>
+
+</dd>
+<dt><big><a name="Vertex"></a>struct <u>Vertex</u>;
+</big></dt>
+<dd>頂点座標を表すstructです．<br><br>
+
+</dd>
+<dt><big><a name="Normal"></a>struct <u>Normal</u>;
+</big></dt>
+<dd>法線ベクトルを表すstructです．<br><br>
+
+</dd>
 <dt><big><a name="Mesh"></a>class <u>Mesh</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>ポリゴンで構成された形状を表すclassです．<br><br>
+
 <dl>
 <dt><big><a name="Mesh.numTexCoords"></a>const ulong <u>numTexCoords</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>テクスチャ座標の数を表します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.numVertices"></a>const ulong <u>numVertices</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>頂点座標の数を表します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.numNormals"></a>const ulong <u>numNormals</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>法線ベクトルの数を表します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.numIndices"></a>const ulong <u>numIndices</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>頂点インデックスの数を表します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.primitiveMode"></a>const armos.graphics.PrimitiveMode <u>primitiveMode</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>meshの描画モードを返します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.primitiveMode.2"></a>void <u>primitiveMode</u>(armos.graphics.PrimitiveMode <i>mode</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>meshの描画モードを指定します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.addTexCoord"></a>void <u>addTexCoord</u>(in armos.math.Vector2f <i>vec</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>テクスチャ座標を追加します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.addTexCoord.2"></a>void <u>addTexCoord</u>(in float <i>u</i>, in float <i>v</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>テクスチャ座標を追加します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.addTexCoord.3"></a>void <u>addTexCoord</u>(in armos.math.Vector2f <i>vec</i>, armos.graphics.Texture <i>texture</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>テクスチャ座標を追加します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.addTexCoord.4"></a>void <u>addTexCoord</u>(in float <i>x</i>, in float <i>y</i>, armos.graphics.Texture <i>texture</i>);
 </big></dt>
-<dd>
+<dd>テクスチャ座標を追加します．
 <br><br>
+<font color="red">Deprecated:</font><br>
+現在動作しません．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.addVertex"></a>void <u>addVertex</u>(const armos.math.Vector3f <i>vec</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>頂点座標を追加します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.addVertex.2"></a>void <u>addVertex</u>(in float <i>x</i>, in float <i>y</i>, in float <i>z</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>頂点座標を追加します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.addNormal"></a>void <u>addNormal</u>(const armos.math.Vector3f <i>vec</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>法線ベクトルを追加します．<br><br>
+
+</dd>
+<dt><big><a name="Mesh.addNormal.2"></a>void <u>addNormal</u>(in float <i>x</i>, in float <i>y</i>, in float <i>z</i>);
+</big></dt>
+<dd>法線ベクトルを追加します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.addIndex"></a>void <u>addIndex</u>(IndexType <i>index</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>頂点インデックスを追加します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.draw"></a>void <u>draw</u>(armos.graphics.PolyRenderMode <i>renderMode</i>);
 </big></dt>
-<dd>
+<dd>meshを描画します．
 <br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.graphics.PolyRenderMode <i>renderMode</i>
+</td>
+<td>面，線，点のどれを描画するか指定します．</td>
+</tr>
+</table>
+<br>
+
 </dd>
 <dt><big><a name="Mesh.drawWireFrame"></a>void <u>drawWireFrame</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>meshをワイヤフレームで描画します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.drawVertices"></a>void <u>drawVertices</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>meshの頂点を点で描画します．<br><br>
+
 </dd>
 <dt><big><a name="Mesh.drawFill"></a>void <u>drawFill</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>meshの面を塗りつぶして描画します．<br><br>
+
 </dd>
 </dl>
 </dd>

@@ -35,6 +35,51 @@
 	画素を表すPixelの集合で構成されます．<br><br>
 
 <dl>
+<dt><big><a name="Bitmap.allocate"></a>void <u>allocate</u>(armos.math.Vector2i <i>size</i>, armos.graphics.ColorFormat <i>colorType</i>);
+</big></dt>
+<dd>領域を確保します．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>armos.math.Vector2i <i>size</i>
+</td>
+<td>Bitmapのサイズです．</td>
+</tr>
+<tr>
+<td>armos.graphics.ColorFormat <i>colorType</i>
+</td>
+<td>Bitmapのカラーフォーマットを指定します．</td>
+</tr>
+</table>
+<br>
+
+</dd>
+<dt><big><a name="Bitmap.allocate.2"></a>void <u>allocate</u>(int <i>width</i>, int <i>height</i>, armos.graphics.ColorFormat <i>colorType</i>);
+</big></dt>
+<dd>領域を確保します．
+<br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>int <i>width</i>
+</td>
+<td>Bitmapの横幅です．</td>
+</tr>
+<tr>
+<td>int <i>height</i>
+</td>
+<td>Bitmapの縦幅です．</td>
+</tr>
+<tr>
+<td>armos.graphics.ColorFormat <i>colorType</i>
+</td>
+<td>Bitmapのカラーフォーマットを指定します．</td>
+</tr>
+</table>
+<br>
+
+</dd>
 <dt><big><a name="Bitmap.setAllPixels"></a>void <u>setAllPixels</u>(int <i>index</i>, T <i>level</i>);
 </big></dt>
 <dd>Set value to all pixels for the given <i>index</i>.
@@ -105,13 +150,13 @@ pixelの要素の数を返します．<br><br>
 </dd>
 <dt><big><a name="Bitmap.swapRAndB"></a>void <u>swapRAndB</u>();
 </big></dt>
-<dd>RとBのチャンネルを入れ替えます<br><br>
+<dd>RとBのチャンネルを入れ替えます．<br><br>
 
 </dd>
 <dt><big><a name="Bitmap.colorFormat"></a>const armos.graphics.ColorFormat <u>colorFormat</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>Bitmapのカラーフォーマットを返します．<br><br>
+
 </dd>
 </dl>
 </dd>

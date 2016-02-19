@@ -31,8 +31,8 @@
 <dl>
 <dt><big><a name="BitmapFont"></a>class <u>BitmapFont</u>;
 </big></dt>
-<dd>
-<br><br>
+<dd>BitmapFontを描画するclassです．<br><br>
+
 <dl>
 <dt><big><a name="BitmapFont.this"></a>this();
 </big></dt>
@@ -41,33 +41,106 @@
 </dd>
 <dt><big><a name="BitmapFont.load"></a>void <u>load</u>(in string <i>fileName</i>, in int <i>fontWidth</i>, in int <i>fontHeight</i>);
 </big></dt>
-<dd>
+<dd>fontのBitmap画像を読み込みます．
 <br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>filename</td>
+<td>fontの画像のPathを指定します．</td>
+</tr>
+<tr>
+<td>int <i>fontWidth</i>
+</td>
+<td>フォントの横幅を指定します．</td>
+</tr>
+<tr>
+<td>int <i>fontHeight</i>
+</td>
+<td>フォントの縦幅を指定します．</td>
+</tr>
+</table>
+<br>
+
 </dd>
 <dt><big><a name="BitmapFont.draw"></a>void <u>draw</u>(in string <i>str</i>, in int <i>x</i>, in int <i>y</i>, in int <i>z</i> = 0);
 </big></dt>
-<dd>
+<dd>読み込まれたFontにより文字を描画します．
 <br><br>
+<b>Params:</b><br>
+<table>
+<tr>
+<td>string <i>str</i>
+</td>
+<td>描画する文字列を指定します．</td>
+</tr>
+<tr>
+<td>int <i>x</i>
+</td>
+<td>文字列を描画するX座標を指定します．</td>
+</tr>
+<tr>
+<td>int <i>y</i>
+</td>
+<td>文字列を描画するY座標を指定します．</td>
+</tr>
+<tr>
+<td>int <i>z</i>
+</td>
+<td>文字列を描画するZ座標を指定します．</td>
+</tr>
+</table>
+<br>
+
 </dd>
 <dt><big><a name="BitmapFont.width"></a>int <u>width</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>fontの横幅のプロパティです．<br><br>
+
 </dd>
 <dt><big><a name="BitmapFont.width.2"></a>void <u>width</u>(int <i>w</i>);
 </big></dt>
-<dd>
-<br><br>
+<dd>fontの横幅のプロパティです．<br><br>
+
 </dd>
 <dt><big><a name="BitmapFont.height"></a>int <u>height</u>();
 </big></dt>
-<dd>
-<br><br>
+<dd>fontの縦幅のプロパティです．<br><br>
+
 </dd>
 <dt><big><a name="BitmapFont.height.2"></a>void <u>height</u>(int <i>h</i>);
 </big></dt>
-<dd>
+<dd>fontの縦幅のプロパティです．<br><br>
+
+</dd>
+<dt><big><a name="BitmapFont.tabWidth"></a>int <u>tabWidth</u>;
+</big></dt>
+<dd>tab幅のプロパティです．<br><br>
+
+</dd>
+<dt><big><a name="BitmapFont.alignLeft"></a>void <u>alignLeft</u>();
+</big></dt>
+<dd>文字の位置を左寄せに設定します．
 <br><br>
+<font color="red">Deprecated:</font><br>
+現在動作しません．<br><br>
+
+</dd>
+<dt><big><a name="BitmapFont.alignCenter"></a>void <u>alignCenter</u>();
+</big></dt>
+<dd>文字の位置を中央寄せに設定します．
+<br><br>
+<font color="red">Deprecated:</font><br>
+現在動作しません．<br><br>
+
+</dd>
+<dt><big><a name="BitmapFont.alignRight"></a>void <u>alignRight</u>();
+</big></dt>
+<dd>文字の位置を右寄せに設定します．
+<br><br>
+<font color="red">Deprecated:</font><br>
+現在動作しません．<br><br>
+
 </dd>
 </dl>
 </dd>

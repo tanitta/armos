@@ -28,7 +28,95 @@
 		</nav>
 		<div class=reference-doc>
 <h1>armos.math.matrix</h1>
+<dl>
+<dt><big><a name="Matrix"></a>struct <u>Matrix</u>(T, int RowSize, int ColSize);
+</big></dt>
+<dd>行列を表すstructです．<br><br>
 
+<dl>
+<dt><big><a name="Matrix.this"></a>this(T[][] <i>arr</i>...);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opIndex"></a>const pure VectorType <u>opIndex</u>(in int <i>index</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opIndex.2"></a>ref VectorType <u>opIndex</u>(in int <i>index</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opNeg"></a>const MatrixType <u>opNeg</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opAdd"></a>const MatrixType <u>opAdd</u>(in MatrixType <i>r</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opSub"></a>const MatrixType <u>opSub</u>(in MatrixType <i>r</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opAdd.2"></a>const MatrixType <u>opAdd</u>(in T <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opSub.2"></a>const MatrixType <u>opSub</u>(in T <i>v</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opMul"></a>const MatrixType <u>opMul</u>(in MatrixType <i>mat_r</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.opMul.2"></a>const VectorType <u>opMul</u>(in VectorType <i>vec_r</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.setColumnVector"></a>void <u>setColumnVector</u>(in int <i>column</i>, in VectorType <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.setRowVector"></a>void <u>setRowVector</u>(in int <i>row</i>, in VectorType <i>vec</i>);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.setMatrix"></a>MatrixType <u>setMatrix</u>(M)(M <i>mat</i>, in int <i>offsetR</i> = 0, in int <i>offsetC</i> = 0);
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.determinant"></a>const T <u>determinant</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.array"></a>const T[RowSize * ColSize] <u>array</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="Matrix.print"></a>const void <u>print</u>();
+</big></dt>
+<dd>
+<br><br>
+</dd>
+</dl>
+</dd>
+</dl>
 </div>
 	</body>
 </html>
