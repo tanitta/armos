@@ -161,7 +161,7 @@ class Shader {
 	}//private
 }//class Shader
 
-string glFunctionString(T, size_t Dim)(string functionString){
+private string glFunctionString(T, size_t Dim)(string functionString){
 	import std.conv;
 	string type;
 	static if(is(T == float)){
