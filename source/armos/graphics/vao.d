@@ -3,7 +3,7 @@ import armos.graphics.vbo;
 import derelict.opengl3.gl;
 
 /++
-++/
++/
 class Vao {
 	public{
 		this(){
