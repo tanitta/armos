@@ -5,6 +5,36 @@ import armos.app;
 import armos.math;
 
 /++
+値にアクセスするGuiを表すclassです．
+
+Examples:
+---
+class TestApp : ar.BaseApp{
+	ar.Gui gui;
+	float f=128;
+	
+	void setup(){
+		gui = (new ar.Gui)
+		.add(
+			(new ar.List)
+			.add(new ar.Partition)
+			.add(new ar.Label("some text"))
+			.add(new ar.Partition("*"))
+		)
+		.add(
+			(new ar.List)
+			.add(new ar.Partition)
+			.add(new ar.Slider!float("slider!float", f, 0, 255))
+		);
+	}
+	
+	void draw(){
+		f.writeln;
+		gui.draw;
+	}
+}
+void main(){ar.run(new TestApp);}
+---
 ++/
 class Gui {
 	public{
@@ -23,6 +53,7 @@ class Gui {
 		}
 		
 		/++
+			Listを自身に追加します．また自身を返すためメソッドチェインが可能です．
 		++/
 		Gui add(List list){
 			_lists ~= list;
@@ -31,6 +62,7 @@ class Gui {
 		};
 		
 		/++
+			Guiの内部のウィジェットを再帰的に描画します．
 		++/
 		void draw(){
 			armos.graphics.pushStyle;
@@ -56,8 +88,6 @@ class Gui {
 	}//private
 }//class Gui
 
-/++
-++/
 class Style {
 	public{
 		this(){}
@@ -73,11 +103,13 @@ class Style {
 }//class Style
 
 /++
+Guiの構成要素でWidgetを複数格納するclassです．
 ++/
 class List {
 	public{
 
 		/++
+			Widgetを追加します．また自身を返すためメソッドチェインが可能です．
 		++/
 		List add(lazy Widget widget){
 			_widgets ~= widget;
@@ -93,6 +125,7 @@ class List {
 		}
 		
 		/++
+			Widgetを描画します．
 		++/
 		void draw(in int posX){
 			int currentHeight= 0;
@@ -120,14 +153,17 @@ class List {
 }//class List
 
 /++
+LabelやSlider等の基底クラスです．Listの構成要素となります．
 ++/
 class Widget {
 	public{
 		/++
+			描画を行います．
 		++/
 		void draw(){};
 		
 		/++
+			Widgetの高さを返します．
 		++/
 		int height(){return _height;}
 		
@@ -136,18 +172,22 @@ class Widget {
 		void style(Style stl){_style = stl;}
 		
 		/++
+			Widgetの座標を返します．
 		++/
 		void position(armos.math.Vector2i pos){_position = pos;}
 		
 		/++
+			マウスが動いた時に呼ばれるイベントハンドラです．
 		++/
 		void mouseMoved(ref armos.events.MouseMovedEventArg message){}
 		
 		/++
+			マウスのボタンが離された時に呼ばれるイベントハンドラです．
 		++/
 		void mouseReleased(ref armos.events.MouseReleasedEventArg message){}
 		
 		/++
+			マウスのボタンが押された時に呼ばれるイベントハンドラです．
 		++/
 		void mousePressed(ref armos.events.MousePressedEventArg message){}
 	}//public
@@ -163,10 +203,12 @@ class Widget {
 }//class Widget
 
 /++
+文字列を表示するWidgetを継承したclassです．
 ++/
 class Label : Widget{
 	public{
 		/++
+			表示する文字列を指定して初期化を行います．
 		++/
 		this(string str){
 			_str = str;
@@ -189,10 +231,12 @@ class Label : Widget{
 }//class Label
 
 /++
+パーティションを表示するWidgetを継承したclassです．
 ++/
 class Partition : Widget{
 	public{
 		/++
+			初期化を行います．区切り文字を指定することもできます．
 		++/
 		this(string str = "/"){
 			_str = str;
@@ -223,12 +267,14 @@ class Partition : Widget{
 }//class Partition
 
 /++
+値を操作するSliderを表す，Widgetを継承したclassです．
 ++/
 class Slider(T) : Widget{
 	import std.format:format;
 	import std.conv;
 	public{
 		/++
+			初期化を行います．Slider固有の名前と操作する値，その上限下限を設定します．
 		++/
 		this(string name, ref T var, T min, T max){
 			_var = &var;
@@ -277,7 +323,7 @@ class Slider(T) : Widget{
 		++/
 		void mouseMoved(ref armos.events.MouseMovedEventArg message){
 			if(_isPressing){
-				*_var = armos.math.map.map( cast(float)( message.x-_position[0]+_style.font.width ),
+				*_var = armos.math.map.map( cast(float)( message.x-_position[0]),
 						_style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
 						_varMin.to!float, _varMax.to!float
 						, true).to!T;
@@ -288,7 +334,7 @@ class Slider(T) : Widget{
 		++/
 		void mouseReleased(ref armos.events.MouseReleasedEventArg message){
 			if(_isPressing){
-				*_var = armos.math.map.map( cast(float)( message.x-_position[0]+_style.font.width ),
+				*_var = armos.math.map.map( cast(float)( message.x-_position[0]),
 						_style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
 						_varMin.to!float, _varMax.to!float
 						, true).to!T;
