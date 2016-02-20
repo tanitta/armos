@@ -2,4 +2,5 @@ name "empty"
 description "A minimal D application."
 copyright "Copyright © 2015, tanitta"
 authors "tanitta"
-dependency "armos" version=">=0.0.1"
+dependency "armos" path="../../"
+

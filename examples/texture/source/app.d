@@ -19,13 +19,13 @@ class TestApp : ar.BaseApp{
 		texture.allocate(bits, textureSize, textureSize, ar.ColorFormat.RGBA);
 		
 		rect = new ar.Mesh;
-		rect.primitiveMode = ar.PrimitiveMode.Quads;
+		rect.primitiveMode = ar.PrimitiveMode.TriangleStrip;
 		float x = 512;
 		float y = 512;
-		rect.addTexCoord(0, 0);rect.addVertex(0, 0, 0);
-		rect.addTexCoord(0, 1);rect.addVertex(0, y, 0);
-		rect.addTexCoord(1, 1);rect.addVertex(x, y, 0);
-		rect.addTexCoord(1, 0);rect.addVertex(x, 0, 0);
+		rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
+		rect.addTexCoord(0, 0);rect.addVertex(0, y, 0);
+		rect.addTexCoord(1, 1);rect.addVertex(x, 0, 0);
+		rect.addTexCoord(1, 0);rect.addVertex(x, y, 0);
 		
 		rect.addIndex(0);
 		rect.addIndex(1);
