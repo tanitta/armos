@@ -53,7 +53,7 @@ interface Window{
 		/++
 			Windowのタイトル文字列のプロパティです．
 		++/
-		void name(string str);
+		void name(in string str);
 	}//public
 }
 
@@ -69,7 +69,7 @@ mixin template BaseWindow(){
 		
 		/++
 		++/
-		void name(string str){_name = str;}
+		void name(in string str){_name = str;}
 		
 		/++
 		++/
@@ -297,6 +297,12 @@ class GLFWWindow : Window{
 			_shouldClose = true;
 			glfwTerminate();
 		}
+		
+		void name(in string str){
+			import std.string;
+			_name = str;
+			glfwSetWindowTitle(window, str.toStringz);
+		}
 	}//public
 
 	private{
@@ -358,4 +364,16 @@ armos.math.Vector2i windowSize(){
 ++/
 float windowAspect(){
 	return currentWindow.aspect;
+}
+
+/++
++/
+void windowTitle(in string str){
+	currentWindow.name = str;
+}
+
+/++
++/
+string windowTitle(){
+	return currentWindow.name;
 }
