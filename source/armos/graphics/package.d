@@ -7,6 +7,8 @@ public import armos.graphics.primitives;
 public import armos.graphics.camera;
 public import armos.graphics.fbo;
 public import armos.graphics.rbo;
+public import armos.graphics.vbo;
+public import armos.graphics.vao;
 public import armos.graphics.texture;
 public import armos.graphics.font;
 public import armos.graphics.pixel;
