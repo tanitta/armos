@@ -1,15 +1,21 @@
 module armos.graphics.vao;
-import armos.graphics.vbo;
+
+import armos.graphics.buffer;
 import derelict.opengl3.gl;
 
 /++
 +/
 class Vao {
 	public{
+		
+		/++
+		+/
 		this(){
 			glGenVertexArrays(1, cast(uint*)&_id);
 		}
 		
+		/++
+		+/
 		void begin(){
 			int savedID;
 			glGetIntegerv(GL_VERTEX_ARRAY_BINDING,&savedID);
@@ -18,6 +24,8 @@ class Vao {
 			glBindVertexArray(_id);
 		}
 		
+		/++
+		+/
 		void end(){
 			import std.range;
 			glBindVertexArray(_savedIDs[$-1]);
@@ -28,7 +36,9 @@ class Vao {
 			}
 		}
 		
-		void set(Vbo vbo){
+		/++
+		+/
+		void set(Buffer buffer){
 			begin;
 			end;
 		}

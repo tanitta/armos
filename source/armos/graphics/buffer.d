@@ -1,9 +1,11 @@
-module armos.graphics.vbo;
+module armos.graphics.buffer;
+
 import derelict.opengl3.gl;
+import armos.graphics.vao;
 
 /++
 +/
-class Vbo {
+class Buffer {
 	public{
 		
 		/++
@@ -13,10 +15,18 @@ class Vbo {
 			glGenBuffers(1, cast(uint*)&_id);
 			_bufferType = bufferType;
 		}
+		
+		~this(){
+			glDeleteBuffers(1, cast(uint*)&_id);
+		}
 
 		/++
 		+/
 		void begin(){
+			if(_rootVao){
+				_rootVao.begin;
+			}
+			
 			int savedID;
 			glGetIntegerv(cast(GLenum)bindingEnum(_bufferType), &savedID);
 			_savedIDs ~= savedID;
@@ -33,20 +43,33 @@ class Vbo {
 			}else{
 				_savedIDs.popBack;
 			}
+			
+			if(_rootVao){
+				_rootVao.end;
+			}
 		}
 		
 		/++
 		+/
 		void set(Array)(Array array, in BufferUsageFrequency freq, in BufferUsageNature nature){
-			glBufferData(_bufferType, Array[0].sizeof, array.ptr, usageEnum(freq, nature));
+			begin;
+				glBufferData(_bufferType, Array[0].sizeof, array.ptr, usageEnum(freq, nature));
+			end;
 		}
 
+		/++
+		+/
+		void vao(Vao o){
+			_rootVao = o;
+		}
+		
 	}//public
 
 	private{
 		int _id;
 		int[] _savedIDs;
 		BufferType _bufferType;
+		Vao _rootVao;
 	}//private
 }//class Vbo
 
