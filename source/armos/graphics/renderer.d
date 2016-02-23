@@ -573,6 +573,12 @@ class Renderer {
 		}
 		
 		/++
+			deprecated:
+		+/
+		void draw(armos.graphics.Vao vao, in armos.graphics.PrimitiveMode primitiveMode){
+		}
+		
+		/++
 		++/
 		void draw(
 			in armos.graphics.Vertex[] vertices,

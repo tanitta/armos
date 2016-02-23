@@ -14,6 +14,10 @@ class Vao {
 			glGenVertexArrays(1, cast(uint*)&_id);
 		}
 		
+		~this(){
+			glDeleteVertexArrays(1, cast(uint*)&_id);
+		}
+		
 		/++
 		+/
 		void begin(){
@@ -22,11 +26,17 @@ class Vao {
 			_savedIDs ~= savedID;
 			
 			glBindVertexArray(_id);
+			import std.stdio;
+			"Vao:begin".writeln;
+			_id.writeln;
 		}
 		
 		/++
 		+/
 		void end(){
+			import std.stdio;
+			"Vao:end".writeln;
+			_savedIDs[1-$].writeln;
 			import std.range;
 			glBindVertexArray(_savedIDs[$-1]);
 			if (_savedIDs.length == 0) {
@@ -39,8 +49,7 @@ class Vao {
 		/++
 		+/
 		void set(Buffer buffer){
-			begin;
-			end;
+			buffer.vao = this;
 		}
 	}//public
 

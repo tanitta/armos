@@ -23,12 +23,12 @@ class Buffer {
 		/++
 		+/
 		void begin(){
-			if(_rootVao){
+			if(hasVao){
 				_rootVao.begin;
 			}
 			
 			int savedID;
-			glGetIntegerv(cast(GLenum)bindingEnum(_bufferType), &savedID);
+			glGetIntegerv(bindingEnum(_bufferType), &savedID);
 			_savedIDs ~= savedID;
 			glBindBuffer(_bufferType, _id);
 		}
@@ -44,7 +44,7 @@ class Buffer {
 				_savedIDs.popBack;
 			}
 			
-			if(_rootVao){
+			if(hasVao){
 				_rootVao.end;
 			}
 		}
@@ -53,7 +53,17 @@ class Buffer {
 		+/
 		void set(Array)(Array array, in BufferUsageFrequency freq, in BufferUsageNature nature){
 			begin;
-				glBufferData(_bufferType, Array[0].sizeof, array.ptr, usageEnum(freq, nature));
+			import std.stdio;
+				auto size = array.length * array[0].sizeof;
+				// size.writeln;
+				glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
+				glVertexAttribPointer(0, 3, GL_FLOAT, GLfloat.sizeof * 2, 0, null);
+				// glEnableVertexAttribArray(0);
+				
+				int size1;
+				glGetBufferParameteriv(_bufferType, GL_BUFFER_SIZE, &size1);
+				size1.writeln;
+				"".writeln;
 			end;
 		}
 
@@ -61,6 +71,12 @@ class Buffer {
 		+/
 		void vao(Vao o){
 			_rootVao = o;
+		}
+		
+		/++
+		+/
+		bool hasVao(){
+			return (_rootVao !is null);
 		}
 		
 	}//public
