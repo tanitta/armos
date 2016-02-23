@@ -6,6 +6,15 @@ import armos.math.vector;
 ++/
 class Shader {
 	public{
+		this(){
+			_programID = glCreateProgram();
+		}
+		
+		~this(){
+			_programID = glCreateProgram();
+			glDeleteProgram(_programID);
+		}
+		
 		/++
 			Load the shader from shaderName
 		++/
@@ -17,14 +26,15 @@ class Shader {
 			Load the shader from path
 		++/
 		void load(string vertexShaderSourcePath, string fragmentShaderSourcePath){
-			_programID = glCreateProgram();
-			
+			import std.stdio;
 			if(vertexShaderSourcePath != ""){
-				load(_vertexID, vertexShaderSourcePath, GL_VERTEX_SHADER);
+				"load vertex shader".writeln;
+				loadShader(_vertexID, vertexShaderSourcePath, GL_VERTEX_SHADER);
 			}
-			
+			"\n".writeln;
 			if(fragmentShaderSourcePath != ""){
-				load(_fragmentID, fragmentShaderSourcePath, GL_FRAGMENT_SHADER);
+				"load fragment shader".writeln;
+				loadShader(_fragmentID, fragmentShaderSourcePath, GL_FRAGMENT_SHADER);
 			}
 			
 			glLinkProgram(_programID);
@@ -32,12 +42,16 @@ class Shader {
 			int isLinked;
 			glGetProgramiv(_programID, GL_LINK_STATUS, &isLinked);
 			if (isLinked == GL_FALSE) {
-				import std.stdio;
 				"link error".writeln;
 			}else{
 				_isLoaded = true;
 			}
 		}
+		
+		/++
+			Return gl program id.
+		++/
+		int id(){return _programID;}
 		
 		/++
 			Begin adapted process
@@ -72,25 +86,10 @@ class Shader {
 		++/
 		int uniformLocation(in string name){
 			import std.string;
-			return glGetUniformLocation(_programID, name.toStringz);
+			auto location = glGetUniformLocation(_programID, name.toStringz);
+			assert(location != -1, "Could not find uniform \"" ~ name ~ "\"");
+			return location;
 		}
-		
-		/++
-		++/
-		// void setUniform(T, int N)(string name, armos.math.Vector!(T,N) v){
-		// 	if(_isLoaded){
-		// 		int location = uniformLocation(name);
-		// 		if(location != -1){
-		// 			mixin(glFunctionString!(N, T)("glUniform"));
-		// 		}
-		// 	}
-		//
-		// }
-		// unittest{
-		// 	auto shader = new Shader;
-		// 	auto vector = armos.math.Vector!(float, 3)(0, 0, 0);
-		// 	shader.setUniform("hoge", vector);
-		// }
 		
 		/++
 		++/
@@ -117,6 +116,15 @@ class Shader {
 				glActiveTexture(GL_TEXTURE0);
 			}
 		}
+		
+		/++
+		++/
+		int attribLocation(in string name){
+			import std.string;
+			auto location = glGetAttribLocation(_programID, name.toStringz);
+			assert(location != -1, "Could not find attribute \"" ~ name ~ "\"");
+			return location;
+		}
 	}//public
 
 	private{
@@ -132,7 +140,7 @@ class Shader {
 			return readText(absolutePath);
 		}
 		
-		void load(ref int shaderID, string shaderPath, GLuint shaderType){
+		void loadShader(ref int shaderID, string shaderPath, GLuint shaderType){
 				shaderID = glCreateShader(shaderType);
 				scope(exit) glDeleteShader(shaderID);
 
@@ -147,15 +155,29 @@ class Shader {
 		
 		void compile(int id, string source){
 			const char* sourcePtr = source.ptr;
-			glShaderSource(id, 1, &sourcePtr, null);
+			const int sourceLength = cast(int)source.length;
+			
+			glShaderSource(id, 1, &sourcePtr, &sourceLength);
 			glCompileShader(id);
 			
 			int isCompiled;
 			glGetShaderiv(id, GL_COMPILE_STATUS, &isCompiled);
+			
+			import std.stdio;
 			if (isCompiled == GL_FALSE) {
-				import std.stdio;
 				"compile error".writeln;
+				logShader(id).writeln;
+			}else{
+				"compile success".writeln;
 			}
+		}
+		
+		string logShader(int id){
+			int strLength;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &strLength);
+			char[] log = new char[strLength];
+			glGetShaderInfoLog(id, strLength, null, log.ptr);
+			return cast(string)log;
 		}
 		
 	}//private
