@@ -6,7 +6,7 @@
 		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
 
 		<!-- Use title if it's in the page YAML frontmatter -->
-		<title>bitmap.html</title>
+		<title>vao.html</title>
 
 		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
 
@@ -141,136 +141,32 @@
 </div><!-- .welcome -->
 
 		<div class="reference-doc">
-<h1>armos.graphics.bitmap</h1>
+<h1>armos.graphics.vao</h1>
 <dl>
-<dt><big><a name="Bitmap"></a>struct <u>Bitmap</u>(T);
+<dt><big><a name="Vao"></a>class <u>Vao</u>;
 </big></dt>
-<dd>Bitmapデータを表すstructです．
-	画素を表すPixelの集合で構成されます．<br><br>
-
+<dd>
+<br><br>
 <dl>
-<dt><big><a name="Bitmap.allocate"></a>void <u>allocate</u>(armos.math.Vector2i <i>size</i>, armos.graphics.ColorFormat <i>colorType</i>);
+<dt><big><a name="Vao.this"></a>this();
 </big></dt>
-<dd>領域を確保します．
+<dd>
 <br><br>
-<b>Params:</b><br>
-<table>
-<tr>
-<td>armos.math.Vector2i <i>size</i>
-</td>
-<td>Bitmapのサイズです．</td>
-</tr>
-<tr>
-<td>armos.graphics.ColorFormat <i>colorType</i>
-</td>
-<td>Bitmapのカラーフォーマットを指定します．</td>
-</tr>
-</table>
-<br>
-
 </dd>
-<dt><big><a name="Bitmap.allocate.2"></a>void <u>allocate</u>(int <i>width</i>, int <i>height</i>, armos.graphics.ColorFormat <i>colorType</i>);
+<dt><big><a name="Vao.begin"></a>void <u>begin</u>();
 </big></dt>
-<dd>領域を確保します．
+<dd>
 <br><br>
-<b>Params:</b><br>
-<table>
-<tr>
-<td>int <i>width</i>
-</td>
-<td>Bitmapの横幅です．</td>
-</tr>
-<tr>
-<td>int <i>height</i>
-</td>
-<td>Bitmapの縦幅です．</td>
-</tr>
-<tr>
-<td>armos.graphics.ColorFormat <i>colorType</i>
-</td>
-<td>Bitmapのカラーフォーマットを指定します．</td>
-</tr>
-</table>
-<br>
-
 </dd>
-<dt><big><a name="Bitmap.setAllPixels"></a>void <u>setAllPixels</u>(int <i>index</i>, T <i>level</i>);
+<dt><big><a name="Vao.end"></a>void <u>end</u>();
 </big></dt>
-<dd>Set value to all pixels for the given <i>index</i>.
+<dd>
 <br><br>
-全てのピクセルのindexで与えられた画素に値を代入します<br><br>
-
 </dd>
-<dt><big><a name="Bitmap.pixel"></a>void <u>pixel</u>(in int <i>x</i>, in int <i>y</i>, in int <i>index</i>, in T <i>value</i>);
+<dt><big><a name="Vao.set"></a>void <u>set</u>(Buffer <i>buffer</i>);
 </big></dt>
-<dd>Set <i>value</i> to the <u>pixel</u> for the given <i>index</i> and position.
+<dd>
 <br><br>
-positionとindexで指定された画素に値を代入します．<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.pixel.2"></a>armos.graphics.Pixel!T <u>pixel</u>(in int <i>x</i>, in int <i>y</i>);
-</big></dt>
-<dd>Return the <u>pixel</u> for the given position.
-<br><br>
-positionで指定された座標のpixelを返します．<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.pixel.3"></a>void <u>pixel</u>(in int <i>x</i>, in int <i>y</i>, armos.graphics.Pixel!T <u>pixel</u>);
-</big></dt>
-<dd>Set <u>pixel</u> to the <u>pixel</u> for the given position.
-<br><br>
-positionで指定された座標のpixelにpixelを設定します．<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.pasteInto"></a>void <u>pasteInto</u>(ref Bitmap!T <i>targetBitmap</i>, in int <i>x</i>, in int <i>y</i>);
-</big></dt>
-<dd>Paste a arg bitmap into this for the given position.
-<br><br>
-bitmapを指定した座標に貼り付けます．<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.size"></a>const armos.math.Vector2i <u>size</u>();
-</big></dt>
-<dd>Return the bitmap <u>size</u>;<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.width"></a>const int <u>width</u>();
-</big></dt>
-<dd>Return <u>width</u>.
-<br><br>
-bitmapの幅を返します．<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.height"></a>const int <u>height</u>();
-</big></dt>
-<dd>Return <u>height</u>.
-<br><br>
-bitmapの高さを返します．<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.numElements"></a>int <u>numElements</u>();
-</big></dt>
-<dd>Return the number of Elements.
-<br><br>
-pixelの要素の数を返します．<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.setFromAlignedPixels"></a>void <u>setFromAlignedPixels</u>(T* <i>pixels</i>, int <i>width</i>, int <i>height</i>, armos.graphics.ColorFormat <i>format</i>);
-</big></dt>
-<dd>Generate a bitmap from the aligned <i>pixels</i>
-<br><br>
-一次元配列からBitmapを生成します<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.swapRAndB"></a>void <u>swapRAndB</u>();
-</big></dt>
-<dd>RとBのチャンネルを入れ替えます．<br><br>
-
-</dd>
-<dt><big><a name="Bitmap.colorFormat"></a>const armos.graphics.ColorFormat <u>colorFormat</u>();
-</big></dt>
-<dd>Bitmapのカラーフォーマットを返します．<br><br>
-
 </dd>
 </dl>
 </dd>

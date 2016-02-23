@@ -6,7 +6,7 @@
 		<meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
 
 		<!-- Use title if it's in the page YAML frontmatter -->
-		<title>bitmap.html</title>
+		<title>vbo.html</title>
 
 		<link href='//fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
 
@@ -141,138 +141,91 @@
 </div><!-- .welcome -->
 
 		<div class="reference-doc">
-<h1>armos.graphics.bitmap</h1>
+<h1>armos.graphics.vbo</h1>
 <dl>
-<dt><big><a name="Bitmap"></a>struct <u>Bitmap</u>(T);
+<dt><big><a name="Vbo"></a>class <u>Vbo</u>;
 </big></dt>
-<dd>Bitmapデータを表すstructです．
-	画素を表すPixelの集合で構成されます．<br><br>
-
+<dd>
+<br><br>
+</dd>
+<dt><big><a name="BufferType"></a>enum <u>BufferType</u>: int;
+</big></dt>
+<dd>
+<br><br>
 <dl>
-<dt><big><a name="Bitmap.allocate"></a>void <u>allocate</u>(armos.math.Vector2i <i>size</i>, armos.graphics.ColorFormat <i>colorType</i>);
-</big></dt>
-<dd>領域を確保します．
-<br><br>
-<b>Params:</b><br>
-<table>
-<tr>
-<td>armos.math.Vector2i <i>size</i>
-</td>
-<td>Bitmapのサイズです．</td>
-</tr>
-<tr>
-<td>armos.graphics.ColorFormat <i>colorType</i>
-</td>
-<td>Bitmapのカラーフォーマットを指定します．</td>
-</tr>
-</table>
-<br>
+<dt><big><a name="BufferType.Array"></a><u>Array</u></big></dt>
+<dd>Vertex attributes<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.allocate.2"></a>void <u>allocate</u>(int <i>width</i>, int <i>height</i>, armos.graphics.ColorFormat <i>colorType</i>);
-</big></dt>
-<dd>領域を確保します．
-<br><br>
-<b>Params:</b><br>
-<table>
-<tr>
-<td>int <i>width</i>
-</td>
-<td>Bitmapの横幅です．</td>
-</tr>
-<tr>
-<td>int <i>height</i>
-</td>
-<td>Bitmapの縦幅です．</td>
-</tr>
-<tr>
-<td>armos.graphics.ColorFormat <i>colorType</i>
-</td>
-<td>Bitmapのカラーフォーマットを指定します．</td>
-</tr>
-</table>
-<br>
+<dt><big><a name="BufferType.AtomicCounter"></a><u>AtomicCounter</u></big></dt>
+<dd>Atomic counter storage<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.setAllPixels"></a>void <u>setAllPixels</u>(int <i>index</i>, T <i>level</i>);
-</big></dt>
-<dd>Set value to all pixels for the given <i>index</i>.
-<br><br>
-全てのピクセルのindexで与えられた画素に値を代入します<br><br>
+<dt><big><a name="BufferType.CopyRead"></a><u>CopyRead</u></big></dt>
+<dd>Buffer copy source<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.pixel"></a>void <u>pixel</u>(in int <i>x</i>, in int <i>y</i>, in int <i>index</i>, in T <i>value</i>);
-</big></dt>
-<dd>Set <i>value</i> to the <u>pixel</u> for the given <i>index</i> and position.
-<br><br>
-positionとindexで指定された画素に値を代入します．<br><br>
+<dt><big><a name="BufferType.CopyWrite"></a><u>CopyWrite</u></big></dt>
+<dd>Buffer copy destination<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.pixel.2"></a>armos.graphics.Pixel!T <u>pixel</u>(in int <i>x</i>, in int <i>y</i>);
-</big></dt>
-<dd>Return the <u>pixel</u> for the given position.
-<br><br>
-positionで指定された座標のpixelを返します．<br><br>
+<dt><big><a name="BufferType.DispatchIndirect"></a><u>DispatchIndirect</u></big></dt>
+<dd>Indirect compute dispatch commands<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.pixel.3"></a>void <u>pixel</u>(in int <i>x</i>, in int <i>y</i>, armos.graphics.Pixel!T <u>pixel</u>);
-</big></dt>
-<dd>Set <u>pixel</u> to the <u>pixel</u> for the given position.
-<br><br>
-positionで指定された座標のpixelにpixelを設定します．<br><br>
+<dt><big><a name="BufferType.DrawIndirect"></a><u>DrawIndirect</u></big></dt>
+<dd>Indirect command arguments<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.pasteInto"></a>void <u>pasteInto</u>(ref Bitmap!T <i>targetBitmap</i>, in int <i>x</i>, in int <i>y</i>);
-</big></dt>
-<dd>Paste a arg bitmap into this for the given position.
-<br><br>
-bitmapを指定した座標に貼り付けます．<br><br>
+<dt><big><a name="BufferType.ElementArray"></a><u>ElementArray</u></big></dt>
+<dd>Vertex array indices<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.size"></a>const armos.math.Vector2i <u>size</u>();
-</big></dt>
-<dd>Return the bitmap <u>size</u>;<br><br>
+<dt><big><a name="BufferType.PixelPack"></a><u>PixelPack</u></big></dt>
+<dd>Pixel read target<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.width"></a>const int <u>width</u>();
-</big></dt>
-<dd>Return <u>width</u>.
-<br><br>
-bitmapの幅を返します．<br><br>
+<dt><big><a name="BufferType.PixelUnpack"></a><u>PixelUnpack</u></big></dt>
+<dd>Texture data source<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.height"></a>const int <u>height</u>();
-</big></dt>
-<dd>Return <u>height</u>.
-<br><br>
-bitmapの高さを返します．<br><br>
+<dt><big><a name="BufferType.Query"></a><u>Query</u></big></dt>
+<dd>
+<u>Query</u> result buffer<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.numElements"></a>int <u>numElements</u>();
-</big></dt>
-<dd>Return the number of Elements.
-<br><br>
-pixelの要素の数を返します．<br><br>
+<dt><big><a name="BufferType.ShaderStorage"></a><u>ShaderStorage</u></big></dt>
+<dd>Read-write storage for shaders<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.setFromAlignedPixels"></a>void <u>setFromAlignedPixels</u>(T* <i>pixels</i>, int <i>width</i>, int <i>height</i>, armos.graphics.ColorFormat <i>format</i>);
-</big></dt>
-<dd>Generate a bitmap from the aligned <i>pixels</i>
-<br><br>
-一次元配列からBitmapを生成します<br><br>
+<dt><big><a name="BufferType.Texture"></a><u>Texture</u></big></dt>
+<dd>
+<u>Texture</u> data buffer<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.swapRAndB"></a>void <u>swapRAndB</u>();
-</big></dt>
-<dd>RとBのチャンネルを入れ替えます．<br><br>
+<dt><big><a name="BufferType.TransformFeedback"></a><u>TransformFeedback</u></big></dt>
+<dd>Transform feedback buffer<br><br>
 
 </dd>
-<dt><big><a name="Bitmap.colorFormat"></a>const armos.graphics.ColorFormat <u>colorFormat</u>();
-</big></dt>
-<dd>Bitmapのカラーフォーマットを返します．<br><br>
+<dt><big><a name="BufferType.Uniform"></a><u>Uniform</u></big></dt>
+<dd>
+<u>Uniform</u> block storage<br><br>
 
 </dd>
 </dl>
+</dd>
+<dt><big><a name="BufferUsageFrequency"></a>enum <u>BufferUsageFrequency</u>: int;
+</big></dt>
+<dd>Bufferの更新頻度を表すenumです．
+STREAM 読み込みも書き込みも一度のみのバッファ
+STATIC 書き込みが一度だけで、読み込みは何度も行われるバッファ
+DYNAMIC 何度も読み書きが行われるバッファ<br><br>
+
+</dd>
+<dt><big><a name="BufferUsageNature"></a>enum <u>BufferUsageNature</u>: int;
+</big></dt>
+<dd>
+<br><br>
 </dd>
 </dl>
 </div>
