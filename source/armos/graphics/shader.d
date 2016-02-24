@@ -93,6 +93,11 @@ class Shader {
 		
 		/++
 			Set vector to uniform.
+			example:
+			----
+			auto v = ar.Vector!(float, 3)(1.0, 2.0, 3.0);
+			shader.setAttrib("v", v);
+			----
 		++/
 		void setUniform(V)(in string name, V v)
 		if(
