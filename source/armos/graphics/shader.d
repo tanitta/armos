@@ -125,6 +125,42 @@ class Shader {
 			assert(location != -1, "Could not find attribute \"" ~ name ~ "\"");
 			return location;
 		}
+		
+		/++
+		++/
+		void setAttrib(Args...)(in string name, Args v){
+			if(_isLoaded){
+				begin;{
+					int location = attribLocation(name);
+					if(location != -1){
+						static if(Args.length == 0){
+							int dim = 2;
+							glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, null);
+						}else{
+							static if(__traits(isArithmetic, Args[0])){
+								mixin(glFunctionString!(typeof(v[0]), v.length)("glVertexAttrib"));
+							}else{
+								int dim = 2;
+								glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, v[0].ptr);
+							}
+						}
+					}
+				}end;
+			}
+		}
+		
+		
+		/++
+		+/
+		void enableAttrib(in string name){
+			glEnableVertexAttribArray(attribLocation(name));
+		}
+		
+		/++
+		+/
+		void disableAttrib(in string name){
+			glDisableVertexAttribArray(attribLocation(name));
+		}
 	}//public
 
 	private{
@@ -180,25 +216,88 @@ class Shader {
 			return cast(string)log;
 		}
 		
+		int attribDim(in string name)
+		out(dim){assert(dim>0);}
+		body{
+			int dim = 0;
+			if(_isLoaded){
+				begin;{
+					import std.stdio;
+					int location = attribLocation(name);
+					if(location != -1){
+						int maxLength;
+						glGetProgramiv(_programID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength);
+						
+						uint type = GL_ZERO;
+						char[100] nameBuf;
+						int l;
+						int s;
+						
+						glGetActiveAttrib(
+							_programID, 1, maxLength,
+							&l, &s, &type, nameBuf.ptr 
+						);
+						
+						switch (type) {
+							case GL_FLOAT:
+								dim = 1;
+								 break;
+							case GL_FLOAT_VEC2:
+								dim = 2;
+								 break;
+							case GL_FLOAT_VEC3:
+								dim = 3;
+								 break;
+							default:
+								dim = 0;
+						}
+					}
+				}end;
+			}
+			return dim;
+		}
 	}//private
 }//class Shader
 
-private string glFunctionString(T, size_t Dim)(string functionString){
+private template glFunctionString(T, size_t Dim){
 	import std.conv;
-	string type;
-	static if(is(T == float)){
-		type = "f";
-	}else if(is(T == double)){
-		type = "d";
-	}else if(is(T == int)){
-		type = "i";
+	
+	string glFunctionString(string functionString){
+		return glFunctionNameString(functionString) ~ "(location, " ~ args ~ ");";
 	}
-
-	string args = "v[0]";
-	for (int i = 1; i < Dim; i++) {
-		args ~= ", v[" ~ i.to!string~ "]";
+	
+	string glFunctionNameString(string functionString){
+		return functionString ~ Dim.to!string ~ suffix;
 	}
-	return functionString ~ Dim.to!string~ type ~ "(location, " ~ args ~ ");";
+	
+	private string suffix(){
+		string type;
+		static if(is(T == float)){
+			type = "f";
+		}else if(is(T == double)){
+			type = "d";
+		}else if(is(T == int)){
+			type = "i";
+		}
+		
+		static if(is(T == float[])){
+			type = "fv";
+		}else if(is(T == double[])){
+			type = "bv";
+		}else if(is(T == int[])){
+			type = "iv";
+		}
+		return type;
+	}
+	
+	private string args(){
+		string argsStr = "v[0]";
+		for (int i = 1; i < Dim; i++) {
+			argsStr ~= ", v[" ~ i.to!string~ "]";
+		}
+		return argsStr;
+	}
+	
 }
 static unittest{
 	import std.stdio;
