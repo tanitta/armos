@@ -200,8 +200,25 @@
 </dd>
 <dt><big><a name="Shader.setAttrib"></a>void <u>setAttrib</u>(Args...)(in string <i>name</i>, Args <i>v</i>);
 </big></dt>
-<dd>
+<dd>Set Attribute.
 <br><br>
+<b>example:</b><br>
+<pre class="d_code"><font color="green">// Set variables to glsl attribute named "v".
+</font><font color="blue">float</font> a = 1.0;
+<font color="blue">float</font> b = 2.0;
+<font color="blue">float</font> c = 3.0;
+shader.<u>setAttrib</u>(<font color="red">"v"</font>, a, b, c);
+</pre>
+<pre class="d_code"><font color="green">// Set a array to glsl vec2 attribute named "coord2d".
+</font><font color="blue">float</font>[] vertices = [
+	0.0,  0.8,
+	-0.8, -0.8,
+	0.8, -0.8,
+];
+shader.<u>setAttrib</u>(<font color="red">"coord2d"</font>, vertices);
+</pre>
+<br><br>
+
 </dd>
 <dt><big><a name="Shader.enableAttrib"></a>void <u>enableAttrib</u>(in string <i>name</i>);
 </big></dt>
