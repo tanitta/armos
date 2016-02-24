@@ -487,9 +487,9 @@ h3 {
 
 .side-bar {
   background-color: white;
-  margin-top: 60px;
   width: 14em;
   text-align: left;
+  margin-top: 60px;
   margin-left: 55px; }
   .side-bar h1 {
     font-size: 2.5em;
@@ -497,6 +497,8 @@ h3 {
   .side-bar h2 {
     color: #111111; }
   .side-bar h3 {
+    margin-top: 30px;
+    margin-bottom: -10px;
     color: #111111;
     margin-left: 3px; }
   .side-bar a {
