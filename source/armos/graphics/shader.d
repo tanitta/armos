@@ -134,13 +134,13 @@ class Shader {
 					int location = attribLocation(name);
 					if(location != -1){
 						static if(Args.length == 0){
-							int dim = 2;
+							int dim = attribDim(name);
 							glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, null);
 						}else{
 							static if(__traits(isArithmetic, Args[0])){
 								mixin(glFunctionString!(typeof(v[0]), v.length)("glVertexAttrib"));
 							}else{
-								int dim = 2;
+								int dim = attribDim(name);
 								glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, v[0].ptr);
 							}
 						}
@@ -222,7 +222,6 @@ class Shader {
 			int dim = 0;
 			if(_isLoaded){
 				begin;{
-					import std.stdio;
 					int location = attribLocation(name);
 					if(location != -1){
 						int maxLength;
@@ -234,7 +233,7 @@ class Shader {
 						int s;
 						
 						glGetActiveAttrib(
-							_programID, 1, maxLength,
+							_programID, location, maxLength,
 							&l, &s, &type, nameBuf.ptr 
 						);
 						
