@@ -183,7 +183,23 @@
 <dd>
 <br><br>
 </dd>
-<dt><big><a name="Shader.setUniform"></a>void <u>setUniform</u>(Args...)(in string <i>name</i>, Args <i>v</i>);
+<dt><big><a name="Shader.setUniform"></a>void <u>setUniform</u>(V)(in string <i>name</i>, V <i>v</i>) if (__traits(compiles, ()
+{
+V <i>v</i> = armos.math.Vector!(typeof(<i>v</i>[0]), <i>v</i>.data.length)();
+assert(<i>v</i>.length &lt;= 4);
+}
+));
+</big></dt>
+<dd>Set vector to uniform.
+<br><br>
+<b>example:</b><br>
+<pre class="d_code"><font color="blue">auto</font> <i>v</i> = ar.Vector!(<font color="blue">float</font>, 3)(1.0, 2.0, 3.0);
+shader.setAttrib(<font color="red">"v"</font>, <i>v</i>);
+</pre>
+<br><br>
+
+</dd>
+<dt><big><a name="Shader.setUniform.2"></a>void <u>setUniform</u>(Args...)(in string <i>name</i>, Args <i>v</i>);
 </big></dt>
 <dd>
 <br><br>
