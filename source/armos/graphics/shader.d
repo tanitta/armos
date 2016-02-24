@@ -92,6 +92,31 @@ class Shader {
 		}
 		
 		/++
+			Set vector to uniform.
+			example:
+			----
+			auto v = ar.Vector!(float, 3)(1.0, 2.0, 3.0);
+			shader.setAttrib("v", v);
+			----
+		++/
+		void setUniform(V)(in string name, V v)
+		if(
+			__traits(compiles, (){
+				V v = armos.math.Vector!(typeof(v[0]), v.data.length)();
+				assert(v.length<=4);
+			})
+		){
+			if(_isLoaded){
+				begin;
+				int location = uniformLocation(name);
+				if(location != -1){
+					mixin(glFunctionString!(typeof(v[0]), v.data.length)("glUniform"));
+				}
+				end;
+			}
+		}
+		
+		/++
 		++/
 		void setUniform(Args...)(in string name, Args v){
 			if(_isLoaded){
@@ -127,6 +152,24 @@ class Shader {
 		}
 		
 		/++
+			Set Attribute.
+			example:
+			----
+			// Set variables to glsl attribute named "v".
+			float a = 1.0;
+			float b = 2.0;
+			float c = 3.0;
+			shader.setAttrib("v", a, b, c);
+			----
+			----
+			// Set a array to glsl vec2 attribute named "coord2d".
+			float[] vertices = [
+				0.0,  0.8,
+				-0.8, -0.8,
+				0.8, -0.8,
+			];
+			shader.setAttrib("coord2d", vertices);
+			----
 		++/
 		void setAttrib(Args...)(in string name, Args v){
 			if(_isLoaded){
@@ -177,16 +220,12 @@ class Shader {
 		}
 		
 		void loadShader(ref int shaderID, string shaderPath, GLuint shaderType){
-				shaderID = glCreateShader(shaderType);
-				scope(exit) glDeleteShader(shaderID);
-
-				auto shaderSource = loadedSource(shaderPath);
-				
-
-				compile(shaderID, shaderSource);
-
-				glAttachShader(_programID, shaderID);
-				// scope(exit) glDetachShader(_programID, shaderID);
+			shaderID = glCreateShader(shaderType);
+			scope(exit) glDeleteShader(shaderID);
+			
+			auto shaderSource = loadedSource(shaderPath);
+			compile(shaderID, shaderSource);
+			glAttachShader(_programID, shaderID);
 		}
 		
 		void compile(int id, string source){
