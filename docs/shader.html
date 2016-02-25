@@ -186,7 +186,7 @@
 <dt><big><a name="Shader.setUniform"></a>void <u>setUniform</u>(V)(in string <i>name</i>, V <i>v</i>) if (__traits(compiles, ()
 {
 V <i>v</i> = armos.math.Vector!(typeof(<i>v</i>[0]), <i>v</i>.data.length)();
-assert(<i>v</i>.length &lt;= 4);
+static assert(<i>v</i>.data.length &lt;= 4);
 }
 ));
 </big></dt>
@@ -202,8 +202,8 @@ shader.<u>setUniform</u>(<font color="red">"v"</font>, <i>v</i>);
 <dt><big><a name="Shader.setUniform.2"></a>void <u>setUniform</u>(M)(in string <i>name</i>, M <i>m</i>) if (__traits(compiles, ()
 {
 M <i>m</i> = armos.math.Matrix!(typeof(<i>m</i>[0][0]), <i>m</i>.rowSize, <i>m</i>.colSize)();
-assert(<i>m</i>.rowSize &lt;= 4);
-assert(<i>m</i>.colSize &lt;= 4);
+static assert(<i>m</i>.rowSize &lt;= 4);
+static assert(<i>m</i>.colSize &lt;= 4);
 }
 ));
 </big></dt>
@@ -220,10 +220,19 @@ shader.<u>setUniform</u>(<font color="red">"m"</font>, <i>m</i>);
 <br><br>
 
 </dd>
-<dt><big><a name="Shader.setUniform.3"></a>void <u>setUniform</u>(Args...)(in string <i>name</i>, Args <i>v</i>);
+<dt><big><a name="Shader.setUniform.3"></a>void <u>setUniform</u>(Args...)(in string <i>name</i>, Args <i>v</i>) if (0 &lt; Args.length &amp;&amp; Args.length &lt;= 4 &amp;&amp; __traits(isArithmetic, Args[0]));
 </big></dt>
-<dd>
+<dd>Set as an uniform.
 <br><br>
+<b>example:</b><br>
+<pre class="d_code"><font color="green">// Set variables to glsl uniform named "v".
+</font><font color="blue">float</font> a = 1.0;
+<font color="blue">float</font> b = 2.0;
+<font color="blue">float</font> c = 3.0;
+shader.<u>setUniform</u>(<font color="red">"v"</font>, a, b, c);
+</pre>
+<br><br>
+
 </dd>
 <dt><big><a name="Shader.setUniformTexture"></a>void <u>setUniformTexture</u>(in string <i>name</i>, armos.graphics.Texture <i>texture</i>, int <i>textureLocation</i>);
 </big></dt>
@@ -273,7 +282,7 @@ shader.<u>setAttrib</u>(<font color="red">"coord2d"</font>, vertices);
 <dt><big><a name="Shader.setAttrib.4"></a>void <u>setAttrib</u>(V)(in string <i>name</i>, V <i>v</i>) if (__traits(compiles, ()
 {
 V <i>v</i> = armos.math.Vector!(typeof(<i>v</i>[0]), <i>v</i>.data.length)();
-assert(<i>v</i>.length &lt;= 4);
+static assert(<i>v</i>.length &lt;= 4);
 }
 ));
 </big></dt>
