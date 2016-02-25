@@ -199,7 +199,28 @@ shader.<u>setUniform</u>(<font color="red">"v"</font>, <i>v</i>);
 <br><br>
 
 </dd>
-<dt><big><a name="Shader.setUniform.2"></a>void <u>setUniform</u>(Args...)(in string <i>name</i>, Args <i>v</i>);
+<dt><big><a name="Shader.setUniform.2"></a>void <u>setUniform</u>(M)(in string <i>name</i>, M <i>m</i>) if (__traits(compiles, ()
+{
+M <i>m</i> = armos.math.Matrix!(typeof(<i>m</i>[0][0]), <i>m</i>.rowSize, <i>m</i>.colSize)();
+assert(<i>m</i>.rowSize &lt;= 4);
+assert(<i>m</i>.colSize &lt;= 4);
+}
+));
+</big></dt>
+<dd>Set matrix to uniform.
+<br><br>
+<b>example:</b><br>
+<pre class="d_code"><font color="blue">auto</font> <i>m</i> = ar.Matrix!(<font color="blue">float</font>, 3, 3)(
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+);
+shader.<u>setUniform</u>(<font color="red">"m"</font>, <i>m</i>);
+</pre>
+<br><br>
+
+</dd>
+<dt><big><a name="Shader.setUniform.3"></a>void <u>setUniform</u>(Args...)(in string <i>name</i>, Args <i>v</i>);
 </big></dt>
 <dd>
 <br><br>
