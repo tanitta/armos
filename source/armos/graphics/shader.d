@@ -96,9 +96,9 @@ class Shader {
 			example:
 			----
 			auto v = ar.Vector!(float, 3)(1.0, 2.0, 3.0);
-			shader.setAttrib("v", v);
+			shader.setUniform("v", v);
 			----
-		++/
+		+/
 		void setUniform(V)(in string name, V v)
 		if(
 			__traits(compiles, (){
@@ -115,9 +115,39 @@ class Shader {
 				end;
 			}
 		}
+			
+		/++
+			Set matrix to uniform.
+			example:
+			----
+			auto m = ar.Matrix!(float, 3, 3)(
+				[0, 0, 0], 
+				[0, 0, 0], 
+				[0, 0, 0], 
+			);
+			shader.setUniform("m", m);
+			----
+		+/
+		void setUniform(M)(in string name, M m)
+		if(
+			__traits(compiles, (){
+				M m = armos.math.Matrix!(typeof(m[0][0]), m.rowSize, m.colSize)();
+				assert(m.rowSize<=4);
+				assert(m.colSize<=4);
+			})
+		){
+			if(_isLoaded){
+				begin;
+				int location = uniformLocation(name);
+				if(location != -1){
+					mixin( glFunctionString!(typeof(m[0][0])[], m.rowSize, m.colSize).glFunctionNameString("glUniform") ~ "(location, 1, GL_FALSE, m.array.ptr);" );
+				}
+				end;
+			}
+		}
 		
 		/++
-		++/
+		+/
 		void setUniform(Args...)(in string name, Args v){
 			if(_isLoaded){
 				begin;
@@ -130,7 +160,7 @@ class Shader {
 		}
 		
 		/++
-		++/
+		+/
 		void setUniformTexture(in string name, armos.graphics.Texture texture, int textureLocation){
 			import std.string;
 			if(_isLoaded){
@@ -143,7 +173,7 @@ class Shader {
 		}
 		
 		/++
-		++/
+		+/
 		int attribLocation(in string name){
 			import std.string;
 			auto location = glGetAttribLocation(_programID, name.toStringz);
@@ -152,7 +182,7 @@ class Shader {
 		}
 		
 		/++
-			Set Attribute.
+			Set as an attribute.
 			example:
 			----
 			// Set variables to glsl attribute named "v".
@@ -161,6 +191,21 @@ class Shader {
 			float c = 3.0;
 			shader.setAttrib("v", a, b, c);
 			----
+		+/
+		void setAttrib(Args...)(in string name, Args v)if(Args.length > 0 && __traits(isArithmetic, Args[0])){
+			if(_isLoaded){
+				begin;{
+					int location = attribLocation(name);
+					if(location != -1){
+						mixin(glFunctionString!(typeof(v[0]), v.length)("glVertexAttrib"));
+					}
+				}end;
+			}
+		}
+	
+		/++
+			Set as an attribute.
+			example:
 			----
 			// Set a array to glsl vec2 attribute named "coord2d".
 			float[] vertices = [
@@ -170,28 +215,58 @@ class Shader {
 			];
 			shader.setAttrib("coord2d", vertices);
 			----
-		++/
-		void setAttrib(Args...)(in string name, Args v){
+		+/
+		void setAttrib(Args...)(in string name, Args v)if(Args.length > 0 && !__traits(isArithmetic, Args[0])){
 			if(_isLoaded){
 				begin;{
 					int location = attribLocation(name);
 					if(location != -1){
-						static if(Args.length == 0){
-							int dim = attribDim(name);
-							glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, null);
-						}else{
-							static if(__traits(isArithmetic, Args[0])){
-								mixin(glFunctionString!(typeof(v[0]), v.length)("glVertexAttrib"));
-							}else{
-								int dim = attribDim(name);
-								glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, v[0].ptr);
-							}
-						}
+						int dim = attribDim(name);
+						glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, v[0].ptr);
+					}
+				}end;
+			}
+		}
+			
+		/++
+			Set current selected buffer as an attribute.
+		+/
+		void setAttrib(in string name){
+			if(_isLoaded){
+				begin;{
+					int location = attribLocation(name);
+					if(location != -1){
+						int dim = attribDim(name);
+						glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, null);
 					}
 				}end;
 			}
 		}
 		
+		/++
+			Set vector as an attribute.
+			example:
+			----
+			auto v = ar.Vector!(float, 3)(1.0, 2.0, 3.0);
+			shader.setAttrib("v", v);
+			----
+		+/
+		void setAttrib(V)(in string name, V v)
+		if(
+			__traits(compiles, (){
+				V v = armos.math.Vector!(typeof(v[0]), v.data.length)();
+				assert(v.length<=4);
+			})
+		){
+			if(_isLoaded){
+				begin;{
+					int location = attribLocation(name);
+					if(location != -1){
+						mixin(glFunctionString!(typeof(v[0]), v.data.length)("glVertexAttrib"));
+					}
+				}end;
+			}
+		}
 		
 		/++
 		+/
@@ -297,48 +372,77 @@ class Shader {
 	}//private
 }//class Shader
 
-private template glFunctionString(T, size_t Dim){
+private template glFunctionString(T, size_t DimC, size_t DimR = 1){
 	import std.conv;
 	
-	string glFunctionString(string functionString){
-		return glFunctionNameString(functionString) ~ "(location, " ~ args ~ ");";
-	}
-	
-	string glFunctionNameString(string functionString){
-		return functionString ~ Dim.to!string ~ suffix;
-	}
-	
-	private string suffix(){
-		string type;
-		static if(is(T == float)){
-			type = "f";
-		}else if(is(T == double)){
-			type = "d";
-		}else if(is(T == int)){
-			type = "i";
+	public{
+		static if(DimR == 1){
+			string glFunctionString(string functionString){
+				return glFunctionNameString(functionString) ~ "(location, " ~ args ~ ");";
+			}
+		}
+
+		string glFunctionNameString(string functionString){
+			return functionString ~ suffix;
+		}
+	}//public
+
+	private{
+		string suffix(){
+			string type;
+			static if(is(T == float)){
+				type = "f";
+			}else if(is(T == double)){
+				type = "d";
+			}else if(is(T == int)){
+				type = "i";
+			}
+			
+			static if(is(T == float[])){
+				type = "fv";
+			}else if(is(T == double[])){
+				type = "bv";
+			}else if(is(T == int[])){
+				type = "iv";
+			}
+			
+			string str = "";
+			if(isMatrix){str ~= "Matrix";}
+			str ~= dim;
+			str ~= type;
+			return str;
 		}
 		
-		static if(is(T == float[])){
-			type = "fv";
-		}else if(is(T == double[])){
-			type = "bv";
-		}else if(is(T == int[])){
-			type = "iv";
+		string dim(){
+			auto str = DimC.to!string;
+			static if(isMatrix){
+				str ~= (DimC == DimR)?"":( "x" ~ DimR.to!string );
+			}
+			return str;
 		}
-		return type;
-	}
-	
-	private string args(){
-		string argsStr = "v[0]";
-		for (int i = 1; i < Dim; i++) {
-			argsStr ~= ", v[" ~ i.to!string~ "]";
+		
+		string args(){
+			string argsStr = "v[0]";
+			for (int i = 1; i < DimC; i++) {
+				argsStr ~= ", v[" ~ i.to!string~ "]";
+			}
+			return argsStr;
 		}
-		return argsStr;
-	}
-	
+		
+		bool isMatrix(){
+			return (DimR > 1);
+		}
+		
+		// bool isVector(){
+		// 	return false;
+		// }
+	}//private
 }
+
 static unittest{
 	import std.stdio;
 	assert( glFunctionString!(float, 3)("glUniform") == "glUniform3f(location, v[0], v[1], v[2]);" );
+	assert( glFunctionString!(float[], 3, 3).glFunctionNameString("glUniform") == "glUniformMatrix3fv" );
+	assert( glFunctionString!(float[], 2, 3).glFunctionNameString("glUniform") == "glUniformMatrix2x3fv" );
+	assert( glFunctionString!(float[], 3, 3).glFunctionNameString("glUniform") == "glUniformMatrix3fv" );
 }
-
