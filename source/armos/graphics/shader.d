@@ -103,7 +103,7 @@ class Shader {
 		if(
 			__traits(compiles, (){
 				V v = armos.math.Vector!(typeof(v[0]), v.data.length)();
-				assert(v.length<=4);
+				static assert(v.data.length<=4);
 			})
 		){
 			if(_isLoaded){
@@ -132,8 +132,8 @@ class Shader {
 		if(
 			__traits(compiles, (){
 				M m = armos.math.Matrix!(typeof(m[0][0]), m.rowSize, m.colSize)();
-				assert(m.rowSize<=4);
-				assert(m.colSize<=4);
+				static assert(m.rowSize<=4);
+				static assert(m.colSize<=4);
 			})
 		){
 			if(_isLoaded){
@@ -147,8 +147,17 @@ class Shader {
 		}
 		
 		/++
+			Set as an uniform.
+			example:
+			----
+			// Set variables to glsl uniform named "v".
+			float a = 1.0;
+			float b = 2.0;
+			float c = 3.0;
+			shader.setUniform("v", a, b, c);
+			----
 		+/
-		void setUniform(Args...)(in string name, Args v){
+		void setUniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0])){
 			if(_isLoaded){
 				begin;
 				int location = uniformLocation(name);
@@ -255,7 +264,7 @@ class Shader {
 		if(
 			__traits(compiles, (){
 				V v = armos.math.Vector!(typeof(v[0]), v.data.length)();
-				assert(v.length<=4);
+				static assert(v.length<=4);
 			})
 		){
 			if(_isLoaded){
