@@ -100,12 +100,7 @@ class Shader {
 			----
 		+/
 		void setUniform(V)(in string name, V v)
-		if(
-			__traits(compiles, (){
-				V v = armos.math.Vector!(typeof(v[0]), v.data.length)();
-				static assert(v.data.length<=4);
-			})
-		){
+		if(isVector!(V) && V.dimention <= 4){
 			if(_isLoaded){
 				begin;
 				int location = uniformLocation(name);
@@ -260,13 +255,7 @@ class Shader {
 			shader.setAttrib("v", v);
 			----
 		+/
-		void setAttrib(V)(in string name, V v)
-		if(
-			__traits(compiles, (){
-				V v = armos.math.Vector!(typeof(v[0]), v.data.length)();
-				static assert(v.length<=4);
-			})
-		){
+		void setAttrib(V)(in string name, V v)if(isVector!(V) && V.dimention <= 4){
 			if(_isLoaded){
 				begin;{
 					int location = attribLocation(name);

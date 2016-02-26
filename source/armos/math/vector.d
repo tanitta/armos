@@ -11,6 +11,8 @@ struct Vector(T, int Dimention){
 	
 	T[Dimention] data = T(0);
 	
+	/++
+	+/
 	enum int dimention = Dimention;
 	unittest{
 		static assert(Vector!(float, 3).dimention == 3);
