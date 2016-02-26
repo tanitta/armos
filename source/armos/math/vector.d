@@ -388,7 +388,7 @@ alias Vector!(double, 4) Vector4d;
 template isVector(V) {
 	public{
 		enum bool isVector = __traits(compiles, (){
-			static assert(is(V == Vector!(typeof(V()[0]), V().data.length)));
+			static assert(is(V == Vector!(typeof(V()[0]), V.dimention)));
 		});
 	}//public
 }//template isVector

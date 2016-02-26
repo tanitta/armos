@@ -1,6 +1,7 @@
 module armos.graphics.shader;
 import derelict.opengl3.gl;
 import armos.math.vector;
+import armos.math.matrix;
 
 /++
 ++/
@@ -124,13 +125,7 @@ class Shader {
 			----
 		+/
 		void setUniform(M)(in string name, M m)
-		if(
-			__traits(compiles, (){
-				M m = armos.math.Matrix!(typeof(m[0][0]), m.rowSize, m.colSize)();
-				static assert(m.rowSize<=4);
-				static assert(m.colSize<=4);
-			})
-		){
+		if(isMatrix!(M) && M.rowSize<=4 && M.colSize<=4){
 			if(_isLoaded){
 				begin;
 				int location = uniformLocation(name);
