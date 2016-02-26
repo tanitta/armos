@@ -183,12 +183,7 @@
 <dd>
 <br><br>
 </dd>
-<dt><big><a name="Shader.setUniform"></a>void <u>setUniform</u>(V)(in string <i>name</i>, V <i>v</i>) if (__traits(compiles, ()
-{
-V <i>v</i> = armos.math.Vector!(typeof(<i>v</i>[0]), <i>v</i>.data.length)();
-static assert(<i>v</i>.data.length &lt;= 4);
-}
-));
+<dt><big><a name="Shader.setUniform"></a>void <u>setUniform</u>(V)(in string <i>name</i>, V <i>v</i>) if (isVector!V &amp;&amp; V.dimention &lt;= 4);
 </big></dt>
 <dd>Set vector to uniform.
 <br><br>
@@ -199,13 +194,7 @@ shader.<u>setUniform</u>(<font color="red">"v"</font>, <i>v</i>);
 <br><br>
 
 </dd>
-<dt><big><a name="Shader.setUniform.2"></a>void <u>setUniform</u>(M)(in string <i>name</i>, M <i>m</i>) if (__traits(compiles, ()
-{
-M <i>m</i> = armos.math.Matrix!(typeof(<i>m</i>[0][0]), <i>m</i>.rowSize, <i>m</i>.colSize)();
-static assert(<i>m</i>.rowSize &lt;= 4);
-static assert(<i>m</i>.colSize &lt;= 4);
-}
-));
+<dt><big><a name="Shader.setUniform.2"></a>void <u>setUniform</u>(M)(in string <i>name</i>, M <i>m</i>) if (isMatrix!M &amp;&amp; M.rowSize &lt;= 4 &amp;&amp; M.colSize &lt;= 4);
 </big></dt>
 <dd>Set matrix to uniform.
 <br><br>
@@ -279,12 +268,7 @@ shader.<u>setAttrib</u>(<font color="red">"coord2d"</font>, vertices);
 <dd>Set current selected buffer as an attribute.<br><br>
 
 </dd>
-<dt><big><a name="Shader.setAttrib.4"></a>void <u>setAttrib</u>(V)(in string <i>name</i>, V <i>v</i>) if (__traits(compiles, ()
-{
-V <i>v</i> = armos.math.Vector!(typeof(<i>v</i>[0]), <i>v</i>.data.length)();
-static assert(<i>v</i>.length &lt;= 4);
-}
-));
+<dt><big><a name="Shader.setAttrib.4"></a>void <u>setAttrib</u>(V)(in string <i>name</i>, V <i>v</i>) if (isVector!V &amp;&amp; V.dimention &lt;= 4);
 </big></dt>
 <dd>Set vector as an attribute.
 <br><br>
