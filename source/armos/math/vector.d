@@ -11,6 +11,11 @@ struct Vector(T, int Dimention){
 	
 	T[Dimention] data = T(0);
 	
+	enum int dimention = Dimention;
+	unittest{
+		static assert(Vector!(float, 3).dimention == 3);
+	}
+	
 	/++
 		Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
 	++/
@@ -375,3 +380,17 @@ alias Vector!(double, 2) Vector2d;
 alias Vector!(double, 3) Vector3d;
 /// double型の4次元ベクトルです．
 alias Vector!(double, 4) Vector4d;
+
+/++
++/
+template isVector(V) {
+	public{
+		enum bool isVector = __traits(compiles, (){
+			static assert(is(V == Vector!(typeof(V()[0]), V().data.length)));
+		});
+	}//public
+}//template isVector
+unittest{
+	static assert(isVector!(Vector!(float, 3)));
+	static assert(!isVector!(float));
+}
