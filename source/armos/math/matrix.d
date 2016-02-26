@@ -8,8 +8,13 @@ struct Matrix(T, int RowSize, int ColSize){
 	alias Matrix!(T, RowSize, ColSize) MatrixType;
 	alias armos.math.Vector!(T, ColSize) VectorType;
 	
-	static const int rowSize = RowSize;
-	static const int colSize = ColSize;
+	/++
+	+/
+	enum int rowSize = RowSize;
+	
+	/++
+	+/
+	enum int colSize = ColSize;
 
 	VectorType[RowSize] data;
 	
@@ -474,3 +479,17 @@ alias Matrix!(float, 4, 4) Matrix4f;
 alias Matrix!(double, 2, 2) Matrix2d;
 alias Matrix!(double, 3, 3) Matrix3d;
 alias Matrix!(double, 4, 4) Matrix4d;
+
+/++
++/
+template isMatrix(M) {
+	public{
+		enum bool isMatrix = __traits(compiles, (){
+			static assert(is(M == Matrix!(typeof(M()[0][0]), M.rowSize, M.colSize)));
+		});
+	}//public
+}//template isMatrix
+unittest{
+	static assert(isMatrix!(Matrix!(float, 3, 3)));
+	static assert(!isMatrix!(float));
+}
