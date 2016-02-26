@@ -493,3 +493,19 @@ unittest{
 	static assert(isMatrix!(Matrix!(float, 3, 3)));
 	static assert(!isMatrix!(float));
 }
+
+/++
++/
+template isSquareMatrix(M){
+	public{
+		enum bool isSquareMatrix = __traits(compiles, (){
+			static assert(M.rowSize == M.colSize);
+			static assert(isMatrix!(M));
+		});
+	}//public
+}//template isSquareMatrix
+unittest{
+	static assert(isSquareMatrix!(Matrix!(float, 3, 3)));
+	static assert(!isSquareMatrix!(Matrix!(float, 2, 3)));
+	static assert(!isSquareMatrix!(float));
+}
