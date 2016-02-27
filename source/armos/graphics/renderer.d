@@ -6,7 +6,7 @@ import std.math;
 
 /++
 ポリゴンのレンダリング方法を表します
-++/
++/
 enum PolyRenderMode {
 	Points,/// 頂点のみ描画します．
 	WireFrame,/// 線のみ描画します．
@@ -15,7 +15,7 @@ enum PolyRenderMode {
 
 /++
 ポリゴンのプリミティブを指定します．
-++/
++/
 enum PrimitiveMode{
 	Triangles,
 	TriangleStrip,
@@ -28,7 +28,7 @@ enum PrimitiveMode{
 
 /++
 openGLで扱うMatrixの種類を表します．
-++/
++/
 enum MatrixMode{
 	ModelView,
 	Projection,
@@ -36,7 +36,7 @@ enum MatrixMode{
 }
 
 /++
-++/
++/
 enum BlendMode{
 	Disable,
 	Alpha,
@@ -46,7 +46,7 @@ enum BlendMode{
 }
 
 /++
-++/
++/
 GLuint getGLPrimitiveMode(PrimitiveMode mode){
 	GLuint return_mode;
 	switch (mode) {
@@ -78,7 +78,7 @@ GLuint getGLPrimitiveMode(PrimitiveMode mode){
 }
 
 /++
-++/
++/
 GLuint getGLPolyRenderMode(PolyRenderMode mode){
 	GLuint return_mode;
 	switch (mode) {
@@ -97,7 +97,7 @@ GLuint getGLPolyRenderMode(PolyRenderMode mode){
 }
 
 /++
-++/
++/
 GLuint getGLMatrixMode(MatrixMode mode){
 	GLuint return_mode;
 	switch (mode) {
@@ -116,7 +116,7 @@ GLuint getGLMatrixMode(MatrixMode mode){
 }
 
 /++
-++/
++/
 armos.math.Matrix4f perspectiveMatrix(in float fov, in float aspect, in float nearDist, in float farDist){
     double tan_fovy = tan(fov*0.5*PI/180.0);
     double right  =  tan_fovy * aspect* nearDist;
@@ -128,7 +128,7 @@ armos.math.Matrix4f perspectiveMatrix(in float fov, in float aspect, in float ne
 }
 
 /++
-++/
++/
 armos.math.Matrix4f frustumMatrix(in double left, in double right, in double bottom, in double top, in double zNear, in double zFar){
     double A = (right+left)/(right-left);
     double B = (top+bottom)/(top-bottom);
@@ -144,7 +144,7 @@ armos.math.Matrix4f frustumMatrix(in double left, in double right, in double bot
 }
 	
 /++
-++/
++/
 armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.Vector3f center, in armos.math.Vector3f up){
 	armos.math.Vector3f zaxis;
 	if((eye-center).norm>0){
@@ -171,30 +171,30 @@ armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.V
 };
 
 /++
-++/
++/
 class Renderer {
 	public{
 		
 		/++
-		++/
+		+/
 		this(){
 			_fbo = new armos.graphics.Fbo;
 		}
 		
 		/++
-		++/
+		+/
 		void matrixMode(MatrixMode mode){
 			glMatrixMode(getGLMatrixMode(mode));
 		}
 		
 		/++
-		++/
+		+/
 		ref armos.graphics.Style currentStyle(){
 			return _currentStyle;
 		};
 		
 		/++
-		++/
+		+/
 		void bind(armos.math.Matrix4f projectionMatrix){
 			glMatrixMode(GL_PROJECTION);
 			pushMatrix();
@@ -202,48 +202,48 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void unbind(){
 			glMatrixMode(GL_PROJECTION);
 			popMatrix();
 		}
 		
 		/++
-		++/
+		+/
 		void setBackgroundAuto(bool b){
 			_isBackgroundAuto = b;
 		};
 		
 		/++
-		++/
+		+/
 		void setBackground(in armos.types.Color color){
 			_currentStyle.backgroundColor = cast(armos.types.Color)color;
 			glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
 		}
 		
 		/++
-		++/
+		+/
 		void background(in armos.types.Color color){
 			setBackground(color);
 			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 		
 		/++
-		++/
+		+/
 		void setColor(in armos.types.Color color){
 			_currentStyle.color = cast(armos.types.Color)color; 
 			glColor4f(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
 		}
 		
 		/++
-		++/
+		+/
 		void setColor(in int colorCode){
 			auto color =  armos.types.Color(colorCode);
 			setColor(color);
 		}
 		
 		/++
-		++/
+		+/
 		void setStyle(armos.graphics.Style style){
 			setColor(style.color);
 			setBackground(style.backgroundColor);
@@ -255,13 +255,13 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void pushStyle(){
 			_styleStack ~= _currentStyle;
 		}
 		
 		/++
-		++/
+		+/
 		void popStyle(){
 			import std.range;
 			if(_styleStack.length == 0){
@@ -274,25 +274,25 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void pushMatrix(){
 			glPushMatrix();
 		};
 		
 		/++
-		++/
+		+/
 		void popMatrix(){
 			glPopMatrix();
 		};
 		
 		/++
-		++/
+		+/
 		void loadIdentity(){
 			glLoadIdentity();
 		}
 		
 		/++
-		++/
+		+/
 		void loadMatrix(M)(in M matrix)
 		in{
 			assert(M.rowSize<=4);
@@ -309,7 +309,7 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void multMatrix(M)(in M matrix)
 		in{
 			assert(M.rowSize<=4);
@@ -326,56 +326,56 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void translate(float x, float y, float z){
 			glTranslatef(x, y, z);
 		}
 
 		/++
-		++/
+		+/
 		void translate(armos.math.Vector3f vec){
 			glTranslatef(vec[0], vec[1], vec[2]);
 		};
 		
 		/++
-		++/
+		+/
 		void scale(float x, float y, float z){
 			glScalef(x, y, z);
 		}
 		
 		/++
-		++/
+		+/
 		void scale(armos.math.Vector3f vec){
 			glScalef(vec[0], vec[1], vec[2]);
 		}
 		
 		/++
-		++/
+		+/
 		void rotate(float degrees, armos.math.Vector3f vec){
 			rotate(degrees, vec[0], vec[1], vec[2]);
 		}
 		
 		/++
-		++/
+		+/
 		void rotate(float degrees, float vecX, float vecY, float vecZ){
 			glRotatef(degrees, vecX, vecY, vecZ);
 		}
 		
 		/++
-		++/
+		+/
 		void setLineWidth(float width){
 			_currentStyle.lineWidth = width;
 			glLineWidth(width);
 		}
 		
 		/++
-		++/
+		+/
 		void setLineSmoothing(bool smooth){
 			_currentStyle.isSmoothing = smooth;
 		}
 		
 		/++
-		++/
+		+/
 		void setup(){
 			if(_isUseFbo){
 				_fbo.begin;
@@ -390,7 +390,7 @@ class Renderer {
 		};
 		
 		/++
-		++/
+		+/
 		void resize(){
 			if(_isUseFbo){
 				_fbo.resize(armos.app.currentWindow.size);
@@ -405,7 +405,7 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
 			auto position = armos.math.Vector2f(0, 0);
 			auto size = armos.app.currentWindow.size();
@@ -414,7 +414,7 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
 			float viewW, viewH;
 			if(width<0 || height<0){
@@ -454,7 +454,7 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void startRender(){
 			// setBackground(currentStyle.backgroundColor );
 			if(_isUseFbo){
@@ -470,7 +470,7 @@ class Renderer {
 		};
 		
 		/++
-		++/
+		+/
 		void finishRender(){
 			if(_isUseFbo){
 				_fbo.end;
@@ -490,7 +490,7 @@ class Renderer {
 		};
 		
 		/++
-		++/
+		+/
 		void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
 			armos.graphics.Vertex[2] vertices;
 			vertices[0].x = x1;
@@ -507,7 +507,7 @@ class Renderer {
 		};
 		
 		/++
-		++/
+		+/
 		void drawRectangle(in float x, in float y, in float w, in float h){
 			armos.graphics.Vertex[4] vertices;
 			vertices[0].x = x;
@@ -550,7 +550,7 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void draw(
 			in armos.graphics.Mesh mesh,
 			armos.graphics.PolyRenderMode renderMode,
@@ -579,7 +579,7 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void draw(
 			in armos.graphics.Vertex[] vertices,
 			in armos.graphics.Normal[] normals,
@@ -658,19 +658,19 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void enableDepthTest(){
 			setDepthTest(true);
 		}
 		
 		/++
-		++/
+		+/
 		void disableDepthTest(){
 			setDepthTest(false);
 		}
 		
 		/++
-		++/
+		+/
 		void setDepthTest(bool b){
 			if(b){
 				glEnable(GL_DEPTH_TEST);
@@ -681,7 +681,7 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void blendMode(armos.graphics.BlendMode mode){
 			switch (mode) {
 				case BlendMode.Alpha:
@@ -702,13 +702,13 @@ class Renderer {
 		}
 		
 		/++
-		++/
+		+/
 		void enableFbo(){
 			_isUseFbo = true;
 		}
 		
 		/++
-		++/
+		+/
 		void disableFbo(){
 			_isUseFbo = false;
 		}
@@ -724,111 +724,111 @@ class Renderer {
 }
 
 /++
-++/
++/
 armos.graphics.Renderer* currentRenderer(){
 	return &armos.app.mainLoop.renderer;
 }
 
 /++
-++/
++/
 armos.graphics.Style currentStyle(){
 	return armos.graphics.currentRenderer.currentStyle;
 }
 
 /++
-++/
++/
 void setStyle(in armos.graphics.Style style){
 	currentRenderer.setStyle(style);
 }
 
 /++
-++/
++/
 void pushStyle(){
 	currentRenderer.pushStyle;
 }
 
 /++
-++/
++/
 void popStyle(){
 	currentRenderer.popStyle;
 }
 
 /++
-++/
++/
 void setBackground(const armos.types.Color color){
 	currentRenderer.setBackground(color);
 }
 
 /++
-++/
++/
 void setBackground(const float gray){
 	currentRenderer.setBackground(armos.types.Color(gray, gray, gray, 255));
 }
 
 /++
-++/
++/
 void setBackground(in float r, in float g, in float b, in float a = 255){
 	currentRenderer.setBackground(armos.types.Color(r, g, b, a));
 }
 
 /++
-++/
++/
 void setBackgroundAuto(const bool isAuto){
 	currentRenderer.setBackgroundAuto = isAuto;
 }
 
 /++
-++/
++/
 void setColor(in float r, in float g, in float b, in float a = 255){
 	currentRenderer.setColor(armos.types.Color(r, g, b, a));
 }
 
 /++
-++/
++/
 void setColor(const armos.types.Color color){
 	currentRenderer.setColor(color);
 }
 
 /++
-++/
++/
 void setColor(const float gray){
 	currentRenderer.setColor(armos.types.Color(gray, gray, gray, 255));
 }
 
 /++
-++/
++/
 void drawLine(T)(in T x1, in T y1, in T z1, in T x2, in T y2, in T z2){
 	import std.conv;
 	currentRenderer.drawLine(x1.to!float, y1.to!float, z1.to!float, x2.to!float, y2.to!float, z2.to!float);
 }
 
 /++
-++/
++/
 void drawLine(T)(in T x1, in T y1, in T x2, in T y2){
 	drawLine(x1, y1, 0, x2, y2, 0);
 }	
 
 /++
-++/
++/
 void drawLine(Vector)(Vector vec1, Vector vec2){
 	drawLine(vec1[0], vec1[1], vec1[2], vec2[0], vec2[1], vec2[2]);
 }
 
 /++
-++/
++/
 void drawRectangle(T)(in T x, in T y, in T w, in T h){
 	import std.conv;
 	currentRenderer.drawRectangle(x.to!float, y.to!float, w.to!float, h.to!float);
 }
 
 /++
-++/
++/
 void drawRectangle(Vector)(in Vector position, in Vector size){
 	drawRectangle(position[0], position[1], size[0], size[1]);
 }
 
 /++
-++/
++/
 void drawGridPlane(
 	in float stepSize, in int numberOfSteps,
 	in bool labels=false 
@@ -840,7 +840,7 @@ void drawGridPlane(
 }
 
 /++
-++/
++/
 void drawAxis(
 	in float size
 ){
@@ -856,7 +856,7 @@ void drawAxis(
 }
 
 /++
-++/
++/
 void drawGrid(
 	in float stepSize, in int numberOfSteps,
 	in bool labels=false, in bool x=true, in bool y=true, in bool z=true
@@ -883,115 +883,115 @@ void drawGrid(
 }
 
 /++
-++/
++/
 void popMatrix(){
 	currentRenderer.popMatrix();
 }
 
 /++
-++/
++/
 void pushMatrix(){
 	currentRenderer.pushMatrix();
 }
 
 /++
-++/
++/
 void translate(float x, float y, float z){
 	currentRenderer.translate(x, y, z);
 }
 
 /++
-++/
++/
 void translate(armos.math.Vector3f vec){
 	currentRenderer.translate(vec);
 }
 
 /++
-++/
++/
 void translate(armos.math.Vector3d vec){
 	currentRenderer.translate(vec[0], vec[1], vec[2]);
 }
 
 /++
-++/
++/
 void scale(float x, float y, float z){
 	currentRenderer.scale(x, y, z);
 }
 
 /++
-++/
++/
 void scale(float s){
 	currentRenderer.scale(s, s, s);
 }
 
 /++
-++/
++/
 void scale(armos.math.Vector3f vec){
 	currentRenderer.scale(vec);
 }
 
 /++
-++/
++/
 void rotate(float degrees, float vec_x, float vec_y, float vec_z){
 	currentRenderer.rotate(degrees, vec_x, vec_y, vec_z);
 }
 
 /++
-++/
++/
 void rotate(float degrees, armos.math.Vector3f vec){
 	currentRenderer.rotate(degrees, vec);
 }
 
 /++
-++/
++/
 void loadIdentity(){
 	currentRenderer.loadIdentity();
 }
 
 /++
-++/
++/
 void loadMatrix(Q)(Q matrix){
 	currentRenderer.loadMatrix(matrix);
 }
 
 /++
-++/
++/
 void multMatrix(Q)(Q matrix){
 	currentRenderer.multMatrix(matrix);
 }
 
 /++
-++/
++/
 void setLineWidth(float width){
 	currentRenderer.setLineWidth(width);
 }
 
 /++
-++/
++/
 void enableDepthTest(){
 	currentRenderer.enableDepthTest;
 }
 
 /++
-++/
++/
 void disableDepthTest(){
 	currentRenderer.disableDepthTest;
 }
 
 /++
-++/
++/
 void enableFbo(){
 	currentRenderer.enableFbo;
 }
 
 /++
-++/
++/
 void disableFbo(){
 	currentRenderer.disableFbo;
 }
 
 /++
-++/
++/
 void blendMode(armos.graphics.BlendMode mode){
 	currentRenderer.blendMode = mode;
 }

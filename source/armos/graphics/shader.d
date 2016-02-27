@@ -4,7 +4,7 @@ import armos.math.vector;
 import armos.math.matrix;
 
 /++
-++/
++/
 class Shader {
 	public{
 		this(){
@@ -18,14 +18,14 @@ class Shader {
 		
 		/++
 			Load the shader from shaderName
-		++/
+		+/
 		void load(string shaderName){
 			load(shaderName ~ ".vert", shaderName ~ ".frag");
 		}
 		
 		/++
 			Load the shader from path
-		++/
+		+/
 		void load(string vertexShaderSourcePath, string fragmentShaderSourcePath){
 			import std.stdio;
 			if(vertexShaderSourcePath != ""){
@@ -51,12 +51,12 @@ class Shader {
 		
 		/++
 			Return gl program id.
-		++/
+		+/
 		int id(){return _programID;}
 		
 		/++
 			Begin adapted process
-		++/
+		+/
 		void begin(){
 			int savedProgramID;
 			glGetIntegerv(GL_CURRENT_PROGRAM,&savedProgramID);
@@ -66,7 +66,7 @@ class Shader {
 		
 		/++
 			End adapted process
-		++/
+		+/
 		void end(){
 			import std.range;
 			glUseProgram(_savedProgramIDs[$-1]);
@@ -78,13 +78,13 @@ class Shader {
 		}
 		
 		/++
-		++/
+		+/
 		bool isLoaded(){
 			return _isLoaded;
 		}
 		
 		/++
-		++/
+		+/
 		int uniformLocation(in string name){
 			import std.string;
 			auto location = glGetUniformLocation(_programID, name.toStringz);

@@ -24,7 +24,7 @@ struct Normal{
 
 /++
 ポリゴンで構成された形状を表すclassです．
-++/
++/
 class Mesh {
 	public{
 		alias int IndexType;

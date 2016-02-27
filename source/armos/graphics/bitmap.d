@@ -40,7 +40,7 @@ struct Bitmap(T){
 			Set value to all pixels for the given index.
 			
 			全てのピクセルのindexで与えられた画素に値を代入します
-		++/
+		+/
 		void setAllPixels(int index, T level){
 			foreach (pixel; _data) {
 				pixel.element(index, level);
@@ -51,7 +51,7 @@ struct Bitmap(T){
 			Set value to the pixel for the given index and position.
 			
 			positionとindexで指定された画素に値を代入します．
-		++/
+		+/
 		void pixel(in int x, in int y, in int index, in T value){
 			_data[x+y*_size[0]].element(index, value);
 		};
@@ -60,7 +60,7 @@ struct Bitmap(T){
 			Return the pixel for the given position.
 			
 			positionで指定された座標のpixelを返します．
-		++/
+		+/
 		armos.graphics.Pixel!(T) pixel(in int x, in int y){
 			return _data[x+y*_size[0]];
 		};
@@ -69,7 +69,7 @@ struct Bitmap(T){
 			Set pixel to the pixel for the given position.
 			
 			positionで指定された座標のpixelにpixelを設定します．
-		++/
+		+/
 		void pixel(in int x, in int y, armos.graphics.Pixel!(T) pixel){
 			_data[x+y*_size[0]].element(pixel);
 		};
@@ -79,7 +79,7 @@ struct Bitmap(T){
 			Paste a arg bitmap into this for the given position.
 			
 			bitmapを指定した座標に貼り付けます．
-		++/
+		+/
 		void pasteInto(ref Bitmap!(T) targetBitmap, in int x, in int y){
 			for (int i = 0; i < size[0]; i++) {
 				for (int j = 0; j < size[1]; j++) {
@@ -90,7 +90,7 @@ struct Bitmap(T){
 		
 		/++
 			Return the bitmap size;
-		++/
+		+/
 		armos.math.Vector2i size()const{
 			return _size;
 		}
@@ -99,21 +99,21 @@ struct Bitmap(T){
 			Return width.
 			
 			bitmapの幅を返します．
-		++/
+		+/
 		int width()const{return _size[0];}
 		
 		/++
 			Return height.
 			
 			bitmapの高さを返します．
-		++/
+		+/
 		int height()const{return _size[1];}
 		
 		/++
 			Return the number of Elements.
 			
 			pixelの要素の数を返します．
-		++/
+		+/
 		int numElements(){
 			return armos.graphics.numColorFormatElements(_colorFormat);
 		}
@@ -122,7 +122,7 @@ struct Bitmap(T){
 			Generate a bitmap from the aligned pixels
 			
 			一次元配列からBitmapを生成します
-		++/
+		+/
 		void setFromAlignedPixels(T* pixels, int width, int height, armos.graphics.ColorFormat format){
 			allocate(width, height, format);
 			auto size = width * height;
@@ -136,7 +136,7 @@ struct Bitmap(T){
 		
 		/++
 			RとBのチャンネルを入れ替えます．
-		++/
+		+/
 		void swapRAndB(){
 			if(numElements < 3){assert(0);}
 			foreach (ref pixel; _data) {
@@ -149,7 +149,7 @@ struct Bitmap(T){
 		
 		/++
 			Bitmapのカラーフォーマットを返します．
-		++/
+		+/
 		armos.graphics.ColorFormat colorFormat()const{
 			return _colorFormat;
 		}

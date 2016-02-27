@@ -36,7 +36,7 @@ struct Character{
 /++
 Fontを読み込み，描画を行います．
 Deprecated: 現在動作しません．
-++/
++/
 class Font{
 	public{
 		this(){
@@ -50,7 +50,7 @@ class Font{
 		}
 		
 		/++
-		++/
+		+/
 		void load(
 			string fontName, int fontSize, 
 			bool isAntiAliased=false,
@@ -89,11 +89,11 @@ class Font{
 		}
 		
 		/++
-		++/
+		+/
 		void drawString(string drawnString, int x, int y)const{}
 		
 		/++
-		++/
+		+/
 		void drawStringAsShapes(string drawnString, int x, int y)const{}
 		
 	}//public
@@ -114,7 +114,7 @@ class Font{
 		armos.graphics.Texture _textureAtlas;
 		
 		/++
-		++/
+		+/
 		void loadEachCharacters(bool isAntiAliased){
 			int border = 1;
 			long areaSum=0;
@@ -170,7 +170,7 @@ class Font{
 		}
 		
 		/++
-		++/
+		+/
 		bool packInTexture(in long areaSum, in int border, armos.graphics.Bitmap!(char)[] expandedData){
 			import std.algorithm;
 			bool compareCharacters(in Character c1, in Character c2){
@@ -220,7 +220,7 @@ class Font{
 		}
 		
 		/++
-		++/
+		+/
 		armos.math.Vector2i calcAtlasSize(long areaSum, in Character[] sortedCharacter, int border){
 			import std.math;
 			bool packed = false;
@@ -253,7 +253,7 @@ class Font{
 		}
 		
 		/++
-		++/
+		+/
 		// string fontPathByName(string fontName){
 		// 	version(linux){
 		// 		import std.string;
@@ -271,11 +271,11 @@ class Font{
 /++
 Fontを読み込みます
 Deprecated: 現在動作しません．
-++/
++/
 class FontLoader{
 	public{
 		/++
-		++/
+		+/
 		void loadFont(
 			string fontName, int fontSize, 
 			bool isAntiAliased=false,

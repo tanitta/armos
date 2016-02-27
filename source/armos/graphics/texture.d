@@ -35,11 +35,11 @@ int nextPow2(int a){
 			rect.drawFill();
 		texture.end;
 	---
-++/
++/
 class Texture {
 	public{
 		/++
-		++/
+		+/
 		this(){
 			glEnable(GL_TEXTURE_2D);
 			glGenTextures(1 , cast(uint*)&_texID);
@@ -53,29 +53,29 @@ class Texture {
 			Return the texture size.
 			
 			textureのサイズを返します．
-		++/
+		+/
 		armos.math.Vector2i size(){return _size;}
 		
 		/++
-		++/
+		+/
 		int width(){
 			return size[0];
 		}
 		
 		/++
-		++/
+		+/
 		int height(){
 			return size[1];
 		}
 		
 		/++
 			Return gl texture id.
-		++/
+		+/
 		int id(){return _texID;}
 
 		/++
 			Begin to bind the texture.
-		++/
+		+/
 		void begin(){
 			glGetIntegerv(GL_TEXTURE_BINDING_2D, &_savedTexID);
 			glBindTexture(GL_TEXTURE_2D , _texID);
@@ -83,14 +83,14 @@ class Texture {
 
 		/++
 			End to bind the texture.
-		++/
+		+/
 		void end(){
 			glBindTexture(GL_TEXTURE_2D , _savedTexID);
 		}
 
 		/++
 			Resize texture.
-		++/
+		+/
 		void resize(in armos.math.Vector2i textureSize){
 			_size = textureSize;
 			allocate;
@@ -98,7 +98,7 @@ class Texture {
 		
 		/++
 			Return pixel of texture
-		++/
+		+/
 		ubyte pixel(){
 			assert(_bitsPtr!=null);
 			return 0x00;
@@ -106,7 +106,7 @@ class Texture {
 
 		/++
 			Set pixel of texture
-		++/
+		+/
 		void pixel(ubyte v){
 			assert(_bitsPtr!=null);
 		}
@@ -116,7 +116,7 @@ class Texture {
 			Params:
 				w = width
 				h = height
-		++/
+		+/
 		void allocate(in int w, in int h){
 			_size[0] = w;
 			_size[1] = h;
@@ -128,7 +128,7 @@ class Texture {
 			Params:
 				w = width
 				h = height
-		++/
+		+/
 		void allocate(in int w, in int h, armos.graphics.ColorFormat format){
 			_size[0] = w;
 			_size[1] = h;
@@ -140,7 +140,7 @@ class Texture {
 			Allocate texture
 			Params:
 				bitmap =
-		++/
+		+/
 		void allocate(armos.graphics.Bitmap!(char) bitmap){
 			import std.math;
 			if(bitmap.width != bitmap.height){
@@ -181,7 +181,7 @@ class Texture {
 				w    = width
 				h    = height
 				bits = image data
-		++/
+		+/
 		void allocate(ubyte[] bits, in int w, in int h, armos.graphics.ColorFormat format){
 			_size[0] = w;
 			_size[1] = h;
@@ -191,7 +191,7 @@ class Texture {
 		
 		/++
 			Allocate texture
-		++/
+		+/
 		void allocate(armos.graphics.ColorFormat format){
 			_format = format;
 			allocate();
@@ -199,7 +199,7 @@ class Texture {
 		
 		/++
 			Allocate texture
-		++/
+		+/
 		void allocate(){
 			GLuint internalFormat = armos.graphics.getGLInternalFormat(_format);
 			GLuint components= armos.graphics.numColorFormatElements(_format);
@@ -215,7 +215,7 @@ class Texture {
 		}
 		
 		/++
-		++/
+		+/
 		void setMinMagFilter(in TextureFilter minFilter, in TextureFilter magFilter){
 			begin;
 				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
@@ -224,7 +224,7 @@ class Texture {
 		}
 		
 		/++
-		++/
+		+/
 		void setMinMagFilter(in TextureFilter filter){
 			setMinMagFilter(filter, filter);
 		}
@@ -240,7 +240,7 @@ class Texture {
 }
 
 /++
-++/
++/
 enum TextureFilter{
 	Linear = GL_LINEAR,
 	Nearest = GL_NEAREST

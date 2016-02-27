@@ -7,52 +7,52 @@ import armos.app;
 
 /++
 armosで用いるWindowsの雛形となるinterfaceです．新たにWindowを実装する際はこのinterfaceを継承することでrunnerから実行できます．
-++/
++/
 interface Window{
 	public{
 		/++
 			Windowsが実行するイベントを表すプロパティです．
-		++/
+		+/
 		armos.events.CoreEvents events();
 		
 		/++
 			サイズを返すプロパティです．
-		++/
+		+/
 		armos.math.Vector2i size();
 		
 		/++
 			イベントが発生している場合，登録されたイベントを実行します
-		++/
+		+/
 		void pollEvents();
 		
 		/++
 			Windowを更新します．
-		++/
+		+/
 		void update();
 		
 		/++
 			Windowを閉じます．
-		++/
+		+/
 		void close();
 		
 		/++
 			Windowがフレームの最後に閉じる場合trueになります．
-		++/
+		+/
 		bool shouldClose();
 		
 		/++
 			Windowのアスペクト比を表します
-		++/
+		+/
 		float aspect();
 		
 		/++
 			Windowのタイトル文字列のプロパティです．
-		++/
+		+/
 		string name();
 		
 		/++
 			Windowのタイトル文字列のプロパティです．
-		++/
+		+/
 		void name(in string str);
 	}//public
 }
@@ -60,19 +60,19 @@ interface Window{
 mixin template BaseWindow(){
 	public{
 		/++
-		++/
+		+/
 		bool shouldClose(){return _shouldClose;}
 		
 		/++
-		++/
+		+/
 		string name(){return _name;}
 		
 		/++
-		++/
+		+/
 		void name(in string str){_name = str;}
 		
 		/++
-		++/
+		+/
 		void initEvents(armos.app.baseapp.BaseApp app){
 			_app = app;
 			_coreEvents= new armos.events.CoreEvents;
@@ -89,14 +89,14 @@ mixin template BaseWindow(){
 		}
 
 		/++
-		++/
+		+/
 		armos.events.CoreEvents events(){
 			assert(_coreEvents);
 			return _coreEvents;
 		}
 
 		/++
-		++/
+		+/
 		float aspect(){
 			if(size[1]==0){
 				return 0;
@@ -240,7 +240,7 @@ class GLFWWindow : Window{
 		/++
 			Params:
 			apprication = Windowとひも付けされるアプリケーションです．
-		++/
+		+/
 		this(ref armos.app.BaseApp apprication){
 			DerelictGL.load();
 			DerelictGLFW3.load();
@@ -266,7 +266,7 @@ class GLFWWindow : Window{
 		
 		/++
 			Windowのサイズを返します．
-		++/
+		+/
 		armos.math.Vector2i size(){
 			auto vec = armos.Vector2i();
 			glfwGetWindowSize(window, &vec[0], &vec[1]);
@@ -275,14 +275,14 @@ class GLFWWindow : Window{
 
 		/++
 			イベントが発生している場合，登録されたイベントを実行します
-		++/
+		+/
 		void pollEvents(){
 			glfwPollEvents();
 		}
 
 		/++
 			Windowを更新します．
-		++/
+		+/
 		void update(){
 			// glFlush();
 			// glFinish();
@@ -292,7 +292,7 @@ class GLFWWindow : Window{
 
 		/++
 			Windowを閉じます．
-		++/
+		+/
 		void close(){
 			_shouldClose = true;
 			glfwTerminate();
@@ -347,21 +347,21 @@ class GLFWWindow : Window{
 
 /++
 現在のWindowを返す関数です．
-++/
++/
 armos.app.Window currentWindow(){
 	return armos.app.mainLoop.window;
 }
 
 /++
 現在のWindowの大きさを返す関数です．
-++/
++/
 armos.math.Vector2i windowSize(){
 	return currentWindow.size;
 }
 
 /++
 現在のWindowのアスペクト比を返す関数です．
-++/
++/
 float windowAspect(){
 	return currentWindow.aspect;
 }

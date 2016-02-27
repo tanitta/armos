@@ -35,11 +35,11 @@ class TestApp : ar.BaseApp{
 }
 void main(){ar.run(new TestApp);}
 ---
-++/
++/
 class Gui {
 	public{
 		/++
-		++/
+		+/
 		this(){
 			_style = new Style;
 			_style.font = new armos.graphics.BitmapFont;
@@ -54,7 +54,7 @@ class Gui {
 		
 		/++
 			Listを自身に追加します．また自身を返すためメソッドチェインが可能です．
-		++/
+		+/
 		Gui add(List list){
 			_lists ~= list;
 			list.style = _style;
@@ -63,7 +63,7 @@ class Gui {
 		
 		/++
 			Guiの内部のウィジェットを再帰的に描画します．
-		++/
+		+/
 		void draw(){
 			armos.graphics.pushStyle;
 				armos.graphics.blendMode(armos.graphics.BlendMode.Alpha);
@@ -104,20 +104,20 @@ class Style {
 
 /++
 Guiの構成要素でWidgetを複数格納するclassです．
-++/
++/
 class List {
 	public{
 
 		/++
 			Widgetを追加します．また自身を返すためメソッドチェインが可能です．
-		++/
+		+/
 		List add(lazy Widget widget){
 			_widgets ~= widget;
 			return this;
 		}
 		
 		/++
-		++/
+		+/
 		void style(Style stl){
 			foreach (widget; _widgets) {
 				widget.style = stl;
@@ -126,7 +126,7 @@ class List {
 		
 		/++
 			Widgetを描画します．
-		++/
+		+/
 		void draw(in int posX){
 			int currentHeight= 0;
 			foreach (widget; _widgets) {
@@ -140,7 +140,7 @@ class List {
 		}
 		
 		/++
-		++/
+		+/
 		int width()const{
 			return _width;
 		}
@@ -154,41 +154,41 @@ class List {
 
 /++
 LabelやSlider等の基底クラスです．Listの構成要素となります．
-++/
++/
 class Widget {
 	public{
 		/++
 			描画を行います．
-		++/
+		+/
 		void draw(){};
 		
 		/++
 			Widgetの高さを返します．
-		++/
+		+/
 		int height(){return _height;}
 		
 		/++
-		++/
+		+/
 		void style(Style stl){_style = stl;}
 		
 		/++
 			Widgetの座標を返します．
-		++/
+		+/
 		void position(armos.math.Vector2i pos){_position = pos;}
 		
 		/++
 			マウスが動いた時に呼ばれるイベントハンドラです．
-		++/
+		+/
 		void mouseMoved(ref armos.events.MouseMovedEventArg message){}
 		
 		/++
 			マウスのボタンが離された時に呼ばれるイベントハンドラです．
-		++/
+		+/
 		void mouseReleased(ref armos.events.MouseReleasedEventArg message){}
 		
 		/++
 			マウスのボタンが押された時に呼ばれるイベントハンドラです．
-		++/
+		+/
 		void mousePressed(ref armos.events.MousePressedEventArg message){}
 	}//public
 
@@ -204,19 +204,19 @@ class Widget {
 
 /++
 文字列を表示するWidgetを継承したclassです．
-++/
++/
 class Label : Widget{
 	public{
 		/++
 			表示する文字列を指定して初期化を行います．
-		++/
+		+/
 		this(string str){
 			_str = str;
 			_height = 16;
 		};
 		
 		/++
-		++/
+		+/
 		void draw(){
 			armos.graphics.setColor(_style.colors["background"]);
 			armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
@@ -232,19 +232,19 @@ class Label : Widget{
 
 /++
 パーティションを表示するWidgetを継承したclassです．
-++/
++/
 class Partition : Widget{
 	public{
 		/++
 			初期化を行います．区切り文字を指定することもできます．
-		++/
+		+/
 		this(string str = "/"){
 			_str = str;
 			_height = 16;
 		};
 		
 		/++
-		++/
+		+/
 		void draw(){
 			armos.graphics.setColor(_style.colors["background"]);
 			armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
@@ -257,7 +257,7 @@ class Partition : Widget{
 		};
 		
 		/++
-		++/
+		+/
 		int height(){return _height;};
 	}//public
 
@@ -268,14 +268,14 @@ class Partition : Widget{
 
 /++
 値を操作するSliderを表す，Widgetを継承したclassです．
-++/
++/
 class Slider(T) : Widget{
 	import std.format:format;
 	import std.conv;
 	public{
 		/++
 			初期化を行います．Slider固有の名前と操作する値，その上限下限を設定します．
-		++/
+		+/
 		this(string name, ref T var, T min, T max){
 			_var = &var;
 			_varMin = min;
@@ -288,7 +288,7 @@ class Slider(T) : Widget{
 		};
 		
 		/++
-		++/
+		+/
 		void draw(){
 			armos.graphics.setColor(_style.colors["background"]);
 			armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
@@ -310,17 +310,17 @@ class Slider(T) : Widget{
 		};
 		
 		/++
-		++/
+		+/
 		int height(){return _height;};
 		
 		/++
-		++/
+		+/
 		void mousePressed(ref armos.events.MousePressedEventArg message){
 			_isPressing = isOnMouse(message.x, message.y);
 		}
 		
 		/++
-		++/
+		+/
 		void mouseMoved(ref armos.events.MouseMovedEventArg message){
 			if(_isPressing){
 				*_var = armos.math.map.map( cast(float)( message.x-_position[0]),
@@ -331,7 +331,7 @@ class Slider(T) : Widget{
 		}
 		
 		/++
-		++/
+		+/
 		void mouseReleased(ref armos.events.MouseReleasedEventArg message){
 			if(_isPressing){
 				*_var = armos.math.map.map( cast(float)( message.x-_position[0]),
