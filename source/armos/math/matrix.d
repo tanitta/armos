@@ -110,7 +110,7 @@ struct Matrix(T, int RowSize, int ColSize){
 	}
 	
 	static MatrixType zero(){
-		auto zeroMatrix = MatrixType;
+		auto zeroMatrix = MatrixType();
 		foreach (ref v; zeroMatrix.data) {
 			foreach (ref n; v.data) {
 				n = T( 0 );
