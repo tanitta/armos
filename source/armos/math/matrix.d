@@ -97,18 +97,58 @@ struct Matrix(T, int RowSize, int ColSize){
 		assert(matrix1 != matrix3);
 	}
 	unittest{
-		auto matrix1 = new Matrix!(double, 1, 2)(
+		auto matrix1 = Matrix!(double, 1, 2)(
 				[2.0, 1.0]
 				);
 		
-		auto matrix2 = new Matrix!(double, 2, 1)(
+		auto matrix2 = Matrix!(double, 2, 1)(
 				[2.0],
 				[1.0]
 				);
 		// assert(matrix1 != matrix2);
 	
 	}
+	
+	static MatrixType zero(){
+		auto zeroMatrix = MatrixType;
+		foreach (ref v; zeroMatrix.data) {
+			foreach (ref n; v.data) {
+				n = T( 0 );
+			}
+		}
+		return zeroMatrix;
+	}
+	unittest{
+		assert(
+			Matrix!(float, 3, 3).zero == Matrix!(float, 3, 3)(
+			[0, 0, 0],
+			[0, 0, 0],
+			[0, 0, 0]
+			)
+		);
+		
+	}
 
+	static if(rowSize == colSize){
+		static MatrixType identity(){
+			auto identityMatrix = MatrixType();
+			for (int i = 0; i < MatrixType.rowSize; i++) {
+				identityMatrix[i][i] = T(1);
+			}
+			return identityMatrix;
+		}
+	}
+	
+	unittest{
+		assert(
+			Matrix!(float, 3, 3).identity == Matrix!(float, 3, 3)(
+			[1, 0, 0],
+			[0, 1, 0],
+			[0, 0, 1]
+			)
+		);
+	}
+	
 	/++
 	+/
 	MatrixType opNeg()const{
