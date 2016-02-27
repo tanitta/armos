@@ -5,7 +5,7 @@ import std.math;
 
 /++
 	ベクトル計算を行うstructです
-++/
++/
 struct Vector(T, int Dimention){
 	alias Vector!(T, Dimention) VectorType;
 	
@@ -20,7 +20,7 @@ struct Vector(T, int Dimention){
 	
 	/++
 		Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
-	++/
+	+/
 	this(T[] arr ...){
 		if(arr.length == 0)
 			data[] = T(0);
@@ -31,13 +31,13 @@ struct Vector(T, int Dimention){
 	}
 
 	/++
-	++/
+	+/
 	pure T opIndex(in int index)const{
 		return data[index];
 	}
 
 	/++
-	++/
+	+/
 	ref T opIndex(in int index){
 		return data[index];
 	}
@@ -92,7 +92,7 @@ struct Vector(T, int Dimention){
 	}
 
 	/++
-	++/
+	+/
 	VectorType opAdd(in VectorType r)const{
 		auto result = VectorType();
 		result.data[] = data[] + r.data[];
@@ -109,7 +109,7 @@ struct Vector(T, int Dimention){
 	}
 
 	/++
-	++/
+	+/
 	VectorType opSub(in VectorType r)const{
 		auto result = VectorType();
 		result.data[] = data[] - r.data[];
@@ -121,7 +121,7 @@ struct Vector(T, int Dimention){
 	}
 
 	/++
-	++/
+	+/
 	VectorType opAdd(in T v)const{
 		auto result = VectorType();
 		result.data[] = data[] + v;
@@ -134,7 +134,7 @@ struct Vector(T, int Dimention){
 	}
 
 	/++
-	++/
+	+/
 	VectorType opSub(in T v)const{
 		auto result = VectorType();
 		result.data[] = data[] - v;
@@ -146,7 +146,7 @@ struct Vector(T, int Dimention){
 	}
 
 	/++
-	++/
+	+/
 	VectorType opMul(in T v)const{
 		auto result = VectorType();
 		result.data[] = data[] * v;
@@ -159,7 +159,7 @@ struct Vector(T, int Dimention){
 	}
 
 	/++
-	++/
+	+/
 	VectorType opDiv(in T v)const{
 		auto result = VectorType();
 		result.data[] = data[] / v;
@@ -171,7 +171,7 @@ struct Vector(T, int Dimention){
 	}
 	
 	/++
-	++/
+	+/
 	VectorType opMod(in T v)const{
 		auto result = VectorType();
 		result.data[] = data[] % v;
@@ -183,7 +183,7 @@ struct Vector(T, int Dimention){
 	}
 	
 	/++
-	++/
+	+/
 	VectorType opMul(in VectorType v)const{
 		auto result = VectorType();
 		result.data[] = data[] * v.data[];
@@ -196,7 +196,7 @@ struct Vector(T, int Dimention){
 	}
 	
 	/++
-	++/
+	+/
 	VectorType opDiv(in VectorType v)const{
 		auto result = VectorType();
 		result.data[] = data[] / v.data[];
@@ -209,7 +209,7 @@ struct Vector(T, int Dimention){
 	}
 	
 	/++
-	++/
+	+/
 	VectorType opMod(in VectorType v)const{
 		auto result = VectorType();
 		result.data[] = data[] % v.data[];
@@ -223,7 +223,7 @@ struct Vector(T, int Dimention){
 	
 	/++
 		Vectorのノルムを返します．
-	++/
+	+/
 	T norm()const{
 		import std.numeric : dotProduct;
 		T sumsq = dotProduct(data, data);
@@ -240,7 +240,7 @@ struct Vector(T, int Dimention){
 
 	/++
 		Vectorのドット積を返します．
-	++/
+	+/
 	T dotProduct(const VectorType v)const{
 		import std.numeric : dotProduct;
 		return dotProduct(data, v.data);
@@ -260,7 +260,7 @@ struct Vector(T, int Dimention){
 	/++
 		Vectorのベクトル積(クロス積，外積)を返します．
 		Dimentionが3以上の場合のみ使用できます．
-	++/
+	+/
 	static if (Dimention >= 3)
 	VectorType vectorProduct(VectorType[] arg ...)const{
 		if(arg.length != Dimention-2){
@@ -290,7 +290,7 @@ struct Vector(T, int Dimention){
 
 	/++
 		正規化したVectorを返します．
-	++/
+	+/
 	VectorType normalized()const{
 		return this/this.norm();
 	}
@@ -301,7 +301,7 @@ struct Vector(T, int Dimention){
 
 	/++
 		Vectorを正規化します．
-	++/
+	+/
 	void normalize(){
 		this.data[] /= this.norm();
 	}
@@ -313,7 +313,7 @@ struct Vector(T, int Dimention){
 	
 	/++
 		Vectorの要素を一次元配列で返します．
-	++/
+	+/
 	T[Dimention] array()const{
 		return data;
 	}
@@ -328,7 +328,7 @@ struct Vector(T, int Dimention){
 	
 	/++
 		Vectorを標準出力に渡します
-	++/
+	+/
 	void print()const{
 		import std.stdio;
 		for (int i = 0; i < Dimention ; i++) {
@@ -342,7 +342,7 @@ struct Vector(T, int Dimention){
 	
 	/++
 		自身を別の型のVectorへキャストしたものを返します．キャスト後の型は元のVectorと同じ次元である必要があります．
-	++/
+	+/
 	CastType opCast(CastType)()const{
 		auto vec = CastType();
 		if (vec.data.length != data.length) {

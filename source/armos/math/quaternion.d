@@ -11,7 +11,7 @@ struct Quaternion(T){
 	V4 vec = V4();
 	
 	/++
-	++/
+	+/
 	this(in T x, in T y, in T z, in T w){
 		this[0] = x;
 		this[1] = y;
@@ -20,7 +20,7 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	this(in T s, in V3 v){
 		this[0] = s;
 		this[1] = v[0];
@@ -29,7 +29,7 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	this( in V4 v){
 		this[0] = v[0];
 		this[1] = v[1];
@@ -38,13 +38,13 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	T opIndex(in int index)const{
 		return vec[index];
 	}
 	
 	/++
-	++/
+	+/
 	ref  T opIndex(in int index){
 		return vec[index];
 	}
@@ -57,7 +57,7 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	static Q zero(){
 		return Q(T( 0 ), T( 0 ), T( 0 ), T( 0 ));
 	}
@@ -70,7 +70,7 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	static Q unit(){
 		return Q(T( 1 ), T( 0 ), T( 0 ), T( 0 ));
 	}
@@ -83,7 +83,7 @@ struct Quaternion(T){
 	}
 
 	/++
-	++/
+	+/
 	Q opMul(in Q r_quat)const{
 		auto v_l = V3();
 		T s_l  = this[0];
@@ -121,7 +121,7 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	Q opNeg()const{
 		return Q(-this[0], -this[1], -this[2], -this[3]);
 	}
@@ -132,7 +132,7 @@ struct Quaternion(T){
 	}
 		
 	/++
-	++/
+	+/
 	Q opAdd(in Q q)const{
 		auto return_quat = Q();
 		return_quat.vec = vec + q.vec;
@@ -146,7 +146,7 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	Q opMul(in T r)const{
 		auto return_quat = Q();
 		return_quat.vec = vec * r;
@@ -159,7 +159,7 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	Q opDiv(in T r)const {
 		auto return_quat = Q();
 		return_quat.vec = vec / r;
@@ -173,7 +173,7 @@ struct Quaternion(T){
 	
 	/++
 		Quaternionのノルムを返します．
-	++/
+	+/
 	T norm()const {
 		return sqrt(this[0]^^2.0 + this[1]^^2.0 + this[2]^^2.0 + this[3]^^2.0);
 	}
@@ -183,7 +183,7 @@ struct Quaternion(T){
 	}
 	
 	/++
-	++/
+	+/
 	Q normalized()const {
 		return Q(vec.normalized);
 	}
@@ -194,7 +194,7 @@ struct Quaternion(T){
 	
 	/++
 		Quaternionの共役Quaternionを返します．
-	++/
+	+/
 	Q conjugate()const{
 		return Q(this[0], -this[1], -this[2], -this[3]);
 	}
@@ -206,7 +206,7 @@ struct Quaternion(T){
 	
 	/++
 		
-	++/
+	+/
 	Q inverse()const{
 		return conjugate/(this[0]^^2.0 + this[1]^^2.0 + this[2]^^2.0 + this[3]^^2.0);
 	}
@@ -247,7 +247,7 @@ struct Quaternion(T){
 		
 	/++
 		指定したベクトルを自身で回転させたベクトルを返します．
-	++/
+	+/
 	V3 rotatedVector(V3 vec)const {
 		if( norm^^2.0 < T.epsilon){
 			return vec;
@@ -275,7 +275,7 @@ struct Quaternion(T){
 		Params:
 		ang = 回転角
 		axis = 回転軸
-	++/
+	+/
 	static Q angleAxis(T ang, V3 axis){
 		auto halfAngle = ang*T(0.5);
 		return Q(cos(halfAngle), axis[0]*sin(halfAngle), axis[1]*sin(halfAngle), axis[2]*sin(halfAngle));

@@ -8,7 +8,7 @@ import armos.math;
 class BitmapFont {
 	public{
 		/++
-		++/
+		+/
 		this(){
 			_image = new armos.graphics.Image;
 		}
@@ -34,7 +34,7 @@ class BitmapFont {
 			x = 文字列を描画するX座標を指定します．
 			y = 文字列を描画するY座標を指定します．
 			z = 文字列を描画するZ座標を指定します．
-		++/
+		+/
 		void draw(in string str, in int x, in int y, in int z = 0){
 			if(str == ""){return;}
 			
@@ -60,28 +60,28 @@ class BitmapFont {
 		
 		/++
 			fontの横幅のプロパティです．
-		++/
+		+/
 		int width(){
 			return _size[0];
 		}
 		
 		/++
 			fontの横幅のプロパティです．
-		++/
+		+/
 		void width(int w){
 			_size[0] = w;
 		}
 		
 		/++
 			fontの縦幅のプロパティです．
-		++/
+		+/
 		int height(){
 			return _size[1];
 		}
 		
 		/++
 			fontの縦幅のプロパティです．
-		++/
+		+/
 		void height(int h){
 			_size[1] = h;
 		}

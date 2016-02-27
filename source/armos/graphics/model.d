@@ -2,7 +2,7 @@ module armos.graphics.model;
 
 /++
 	3Dモデルを読み込み，描画するclassです．
-++/
++/
 class Model {
 	public{
 		armos.graphics.Mesh[] meshes;
@@ -82,7 +82,7 @@ import std.array : array, Appender;
 
 /++
 Assimpによりmodelの読み込みを行います．
-++/
++/
 class AssimpModelLoader {
 	public{
 		~this(){

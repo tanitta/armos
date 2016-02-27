@@ -3,27 +3,27 @@ import armos.graphics;
 import armos.math;
 /++
 Cameraを表すClassです．Cameraで写したい処理をbegin()とend()の間に記述します．
-++/
++/
 class Camera{
 	public{
 		/++
 			projectionMatrixを取得します．
-		++/
+		+/
 		armos.math.Matrix4f projectionMatrix(){return _projectionMatrix;}
 
 		/++
 			Cameraの位置を表します．
-		++/
+		+/
 		armos.math.Vector3f position;
 
 		/++
 			Cameraが映す対象の位置を表します．
-		++/
+		+/
 		armos.math.Vector3f target;
 
 		/++
 			Cameraの方向を表します．
-		++/
+		+/
 		armos.math.Vector3f up = armos.math.Vector3f(0, 1, 0);
 
 		/**
@@ -33,17 +33,17 @@ class Camera{
 
 		/++
 			描画を行う最短距離です．
-		++/
+		+/
 		double nearDist = 0.1;
 
 		/++
 			描画を行う最長距離です．
-		++/
+		+/
 		double farDist = 10000;
 
 		/++
 			Cameraで表示する処理を開始します．
-		++/
+		+/
 		void begin(){
 			armos.math.Matrix4f lookAt = armos.graphics.lookAtViewMatrix(
 					position, 
@@ -71,7 +71,7 @@ class Camera{
 
 		/++
 			Cameraで表示する処理を終了します．
-		++/
+		+/
 		void end(){
 			armos.graphics.currentRenderer.unbind();
 		}

@@ -2,7 +2,7 @@ module armos.graphics.material;
 // import armos.types.color;
 /++
 材質を表すclassです．
-++/
++/
 class Material {
 	public{
 		

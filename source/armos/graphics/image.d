@@ -62,7 +62,7 @@ class Image {
 			Load image.
 
 			画像を読み込みます．
-		++/
+		+/
 		void load(string pathInDataDir){
 			import std.string;
 			FIBITMAP * freeImageBitmap = null;
@@ -147,7 +147,7 @@ class Image {
 			Draw image data which loaded in advance.
 
 			読み込んだ画像データを画面に描画します．
-		++/
+		+/
 		void draw(T)(in T x, in T y, in T z = T(0)){
 			drawCropped(x, y, z, 0, 0, bitmap.width, bitmap.height);
 		}
@@ -156,7 +156,7 @@ class Image {
 			Draw image data which loaded in advance.
 
 			読み込んだ画像データを画面に描画します．
-		++/
+		+/
 		void draw(T)(in T position)const{
 			static if(position.data.length == 2)
 				draw(position[0], position[1]);
@@ -170,33 +170,33 @@ class Image {
 			Return image size.
 
 			画像のサイズを返します．
-		++/
+		+/
 		armos.math.Vector2i size()const{return _size;}
 
 		/++
 			Return width.
 
 			画像の幅を返します．
-		++/
+		+/
 		int width()const{return _size[0];}
 
 		/++
 			Return height.
 
 			画像の高さを返します．
-		++/
+		+/
 		int height()const{return _size[1];}
 
 		/++
 			Return bitmap pointer.
 
 			画像のビットマップデータを返します．
-		++/
+		+/
 		armos.graphics.Bitmap!(char) bitmap(){return _bitmap;}
 
 		/++
 			Set bitmap
-		++/
+		+/
 		void bitmap(armos.graphics.Bitmap!(char) data){
 			_bitmap = data;
 			allocate();
@@ -207,7 +207,7 @@ class Image {
 			Generate a image from the aligned pixels
 
 			一次元配列からImageを生成します
-		++/
+		+/
 		void setFromAlignedPixels(T)(T* pixels, int width, int height, armos.graphics.ColorFormat format){
 			_bitmap.setFromAlignedPixels(cast(char*)pixels, width, height, format);
 			allocate;
@@ -216,7 +216,7 @@ class Image {
 
 		/++
 			与えられたbitmapを元にtextureとrectを生成します
-		++/
+		+/
 		void allocate(){
 			_texture = new armos.graphics.Texture;
 			_texture.allocate(_bitmap);
@@ -242,25 +242,25 @@ class Image {
 			Retun true if the image was loaded.
 
 			画像が読み込まれている場合trueを，そうでない場合はfalseを返します．
-		++/
+		+/
 		bool isLoaded(){
 			return _isLoaded;
 		}
 		
 		/++
-		++/
+		+/
 		armos.graphics.Texture texture(){
 			return _texture;
 		}
 		
 		/++
-		++/
+		+/
 		void setMinMagFilter(in armos.graphics.TextureFilter minFilter, in armos.graphics.TextureFilter magFilter){
 			_texture.setMinMagFilter(minFilter, magFilter);
 		}
 		
 		/++
-		++/
+		+/
 		void setMinMagFilter(in armos.graphics.TextureFilter filter){
 			_texture.setMinMagFilter(filter);
 		}
@@ -276,7 +276,7 @@ class Image {
 
 		/++
 			ImageのbitmapにfreeImageのbitmapを指定します．
-		++/
+		+/
 		void bitmap(FIBITMAP* freeImageBitmap, bool swapForLittleEndian = true){
 			FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(freeImageBitmap);
 

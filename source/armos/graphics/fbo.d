@@ -5,23 +5,23 @@ import armos.math.vector;
 
 /++
 	Frame Buffer Objectを表すclassです．
-++/
++/
 class Fbo{
 	public{
 		/++
-		++/
+		+/
 		this(){
 			this(armos.app.currentWindow.size);
 		}
 
 		/++
-		++/
+		+/
 		this(armos.math.Vector2i size){
 			this(size[0], size[1]);
 		}
 
 		/++
-		++/
+		+/
 		this(in int width, in int height){
 			glGenFramebuffers(1, cast(uint*)&fboID_);
 
@@ -57,7 +57,7 @@ class Fbo{
 
 		/++
 			FBOへの描画処理を開始します．
-		++/
+		+/
 		void begin(){
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFboID_);
 			glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
@@ -65,21 +65,21 @@ class Fbo{
 
 		/++
 			FBOへの描画処理を終了します．
-		++/
+		+/
 		void end(){
 			glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
 		}
 		
 		/++
 			FBOのIDを返します．
-		++/
+		+/
 		int id()const{
 			return fboID_;
 		}
 
 		/++
 			FBOを描画します．
-		++/
+		+/
 		void draw(){
 			_colorTexture.begin;
 			rect.drawFill();
@@ -90,7 +90,7 @@ class Fbo{
 			FBOをリサイズします．
 			Params:
 			size = リサイズ後のサイズ
-		++/
+		+/
 		void resize(in armos.math.Vector2i size){
 			begin;
 			rect.vertices[1].y = size[1];
