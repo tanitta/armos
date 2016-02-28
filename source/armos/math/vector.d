@@ -268,7 +268,7 @@ struct Vector(T, int Dimention){
 		}
 		auto return_vector = VectorType();
 		foreach (int i, ref T v; return_vector.data) {
-			auto matrix = new armos.math.Matrix!(T, Dimention, Dimention);
+			auto matrix = armos.math.Matrix!(T, Dimention, Dimention)();
 			auto element_vector = VectorType();
 			element_vector[i] = cast(T)1;
 			matrix.setRowVector(0, element_vector);
