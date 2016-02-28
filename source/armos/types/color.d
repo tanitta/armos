@@ -3,15 +3,16 @@ import armos.math;
 
 /++
 +/
-struct BaseColor(T){
-	alias C = BaseColor!(T);
+struct BaseColor(T, T Limit){
+	alias C = BaseColor!(T, Limit);
 	
 	public{
-		static if(is(T == char)){
-			enum T limit = 255;
-		}else static if(is(T == float)){
-			enum T limit = 1.0;
-		}
+		enum T limit = Limit;
+		// static if(is(T == char)){
+		// 	enum T limit = 255;
+		// }else static if(is(T == float)){
+		// 	enum T limit = 1.0;
+		// }
 		
 		T r = limit;
 		T g = limit;
@@ -103,7 +104,7 @@ struct BaseColor(T){
 			return this;
 		}
 		
-		F opCast(F)()const if(is(F == BaseColor!(typeof( F.r )))){
+		F opCast(F)()const if(is(F == BaseColor!(typeof( F.r ), F.limit))){
 			import std.conv:to;
 			F castedColor= F(0, 0, 0, 0);
 			float c = cast(float)castedColor.limit / cast(float)limit;
@@ -117,11 +118,11 @@ struct BaseColor(T){
 		unittest{
 			import std.stdio;
 			import std.math;
-			auto cColor = BaseColor!(char)(128, 0, 0, 255);
-			assert(approxEqual( ( cast(BaseColor!(float))cColor ).r, 128.0/255.0 ));
+			auto cColor = BaseColor!(char, 255)(128, 0, 0, 255);
+			assert(approxEqual( ( cast(BaseColor!(float, 1.0f))cColor ).r, 128.0/255.0 ));
 			
-			auto fColor = BaseColor!(float)(0.5, 0.0, 0.0, 1.0);
-			assert(approxEqual( ( cast(BaseColor!(char))cColor ).r, 128));
+			auto fColor = BaseColor!(float, 1.0f)(0.5, 0.0, 0.0, 1.0);
+			assert(approxEqual( ( cast(BaseColor!(char, 255))cColor ).r, 128));
 		}
 	}//public
 
@@ -131,27 +132,23 @@ struct BaseColor(T){
 
 /++
 色を表すstructです．1byteの色深度を持ちます．
+最小値は0，最大値は255です．
 +/
-alias BaseColor!(char) Color;
+alias BaseColor!(char, 255) Color;
+unittest{
+	assert(__traits(compiles, (){
+		auto color = Color();
+	}));
+}
 
 /++
 色を表すstructです．浮動小数点型で値を持ちます．
 
 最小値は0.0，最大値は1.0です．
 +/
-alias BaseColor!(float) FloatColor;
-// struct FloatColor{
-// 	mixin BaseColor!(FloatColor, float);
-// 	static const float limit = 1.0;
-// };
-
+alias BaseColor!(float, 1.0f) FloatColor;
 unittest{
-	auto color = Color();
-}
-unittest{
-	import std.stdio;
-	import std.conv:to;
-	auto color = Color(150, 2, 255);
-	// FloatColor fColor = color.to!FloatColor;
-	// color.hoge;
+	assert(__traits(compiles, (){
+		auto color = FloatColor();
+	}));
 }
