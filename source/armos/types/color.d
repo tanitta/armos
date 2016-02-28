@@ -108,11 +108,20 @@ struct BaseColor(T){
 			F castedColor= F(0, 0, 0, 0);
 			float c = cast(float)castedColor.limit / cast(float)limit;
 			alias CT = typeof(F.r);
-			castedColor.r = cast(CT)( cast(float)r/c );
-			castedColor.g = cast(CT)( cast(float)g/c );
-			castedColor.b = cast(CT)( cast(float)b/c );
-			castedColor.a = cast(CT)( cast(float)a/c );
+			castedColor.r = cast(CT)( cast(float)r*c );
+			castedColor.g = cast(CT)( cast(float)g*c );
+			castedColor.b = cast(CT)( cast(float)b*c );
+			castedColor.a = cast(CT)( cast(float)a*c );
 			return castedColor;
+		}
+		unittest{
+			import std.stdio;
+			import std.math;
+			auto cColor = BaseColor!(char)(128, 0, 0, 255);
+			assert(approxEqual( ( cast(BaseColor!(float))cColor ).r, 128.0/255.0 ));
+			
+			auto fColor = BaseColor!(float)(0.5, 0.0, 0.0, 1.0);
+			assert(approxEqual( ( cast(BaseColor!(char))cColor ).r, 128));
 		}
 	}//public
 
