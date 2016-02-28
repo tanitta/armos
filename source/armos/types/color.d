@@ -7,16 +7,19 @@ struct BaseColor(T, T Limit){
 	alias C = BaseColor!(T, Limit);
 	
 	public{
+		/// Upper limit of each channel.
 		enum T limit = Limit;
-		// static if(is(T == char)){
-		// 	enum T limit = 255;
-		// }else static if(is(T == float)){
-		// 	enum T limit = 1.0;
-		// }
 		
+		/// Red Channel.
 		T r = limit;
+		
+		/// Green Channel.
 		T g = limit;
+		
+		/// Blue Channel.
 		T b = limit; 
+		
+		/// Alpha Channel.
 		T a = limit;
 
 		/++
