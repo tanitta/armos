@@ -36,10 +36,10 @@ struct BaseColor(T, T Limit){
 		RGBAで色を指定します．透明度は省略可能です．
 		+/
 		this(float red, float green, float blue, float alpha = limit){
-			r = armos.math.clamp(cast(T)red, cast(T)0, limit);
-			g = armos.math.clamp(cast(T)green, cast(T)0, limit);
-			b = armos.math.clamp(cast(T)blue, cast(T)0, limit);
-			a = armos.math.clamp(cast(T)alpha, cast(T)0, limit);
+			r = armos.math.clamp(cast(T)red, T(0), limit);
+			g = armos.math.clamp(cast(T)green, T(0), limit);
+			b = armos.math.clamp(cast(T)blue, T(0), limit);
+			a = armos.math.clamp(cast(T)alpha, T(0), limit);
 		}
 
 		/++
