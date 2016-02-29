@@ -1,11 +1,14 @@
-import armos, std.stdio, std.math;
+import armos, std.stdio, std.math, std.conv;
 
 class TestApp : ar.BaseApp{
 	ar.Camera camera = new ar.Camera();
 	ar.Gui gui;
 	ar.Mesh mesh;
-	float f=128;
-	int i=128;
+	float f = 128;
+	int i = 128;
+	float c = 0;
+	float cX = 0;
+	float cY = 0;
 	
 	void setup(){
 		ar.blendMode(ar.BlendMode.Alpha);
@@ -27,9 +30,18 @@ class TestApp : ar.BaseApp{
 			.add(new ar.Slider!int("slider!int", i, 0, 255))
 			.add(new ar.Slider!float("slider!float", f, 0, 255))
 			.add(new ar.Partition)
+			.add(new ar.MovingGraph!float("x", cX, -2, 2))
+			.add(new ar.MovingGraphXY!float("x", cX, -2, 2, "y", cY, -2, 2))
+			.add(new ar.Partition)
 		);
 		
 		mesh = ar.boxPrimitive(ar.Vector3f(0, 0, 0), ar.Vector3f( 100, 10, 10 ));
+	}
+	
+	void update(){
+		c += 0.2;
+		cX = cos(c*f/128f);
+		cY = sin(c);
 	}
 	
 	void draw(){

@@ -177,6 +177,10 @@ class Widget {
 		void position(armos.math.Vector2i pos){_position = pos;}
 		
 		/++
+		+/
+		void update(ref armos.events.EventArg arg){}
+		
+		/++
 			マウスが動いた時に呼ばれるイベントハンドラです．
 		+/
 		void mouseMoved(ref armos.events.MouseMovedEventArg message){}
@@ -363,3 +367,159 @@ class Slider(T) : Widget{
 	}//private
 }//class Slider
 
+/++
++/
+class MovingGraph(T) : Widget{
+	import armos.graphics.mesh;
+	public{
+		this(in string name, ref T var, in T min, in T max){
+			_name = name;
+			_var = &var;
+			_varMin = min;
+			_varMax= max;
+			_height = 128;
+			_lines = new armos.graphics.Mesh();
+			_lines.primitiveMode = armos.graphics.PrimitiveMode.LineStrip;
+			foreach (int i, v; _buffer) {
+				v = _varMin;
+				_lines.addVertex(cast(float)i/cast(float)_bufferSize, v, 0);
+				_lines.addIndex(i);
+			}
+			armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
+		}
+		
+		void update(ref armos.events.EventArg arg){
+			for (int i = 0; i < _bufferSize -1; i++) {
+				_buffer[i] = _buffer[i+1];
+			}
+			_buffer[$-1] = *_var;
+		};
+		
+		void draw(){
+			armos.graphics.setColor(_style.colors["background"]);
+			armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*16);
+			
+			import std.format:format;
+			import std.conv;
+			string varString = "";
+			static if(__traits(isIntegral, *_var)){
+				varString = format("%d", *_var).to!string;
+			}else if(__traits(isFloating, *_var)){
+				varString = format("%f", *_var).to!string;
+			}
+			armos.graphics.setColor(_style.colors["font1"]);
+			_style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
+			
+			armos.graphics.setColor(_style.colors["base1"]);
+			armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*14);
+			
+			drawLine;
+		}
+	}//public
+
+	private{
+		string _name;
+		T* _var;
+		T _varMin;
+		T _varMax;
+		enum int _bufferSize = 30;
+		T[_bufferSize] _buffer;
+		armos.graphics.Mesh _lines;
+		
+		void drawLine(){
+			import std.conv;
+			armos.graphics.setColor(_style.colors["font1"]);
+			foreach (i, v; _buffer) {
+				auto x = armos.math.map.map( i.to!float, 0f, 30f, _style.font.width.to!float, _style.width.to!float);
+				auto y = armos.math.map.map( -v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
+				_lines.vertices[i].x = x;
+				_lines.vertices[i].y = y;
+				// y = armos.math.map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
+			}
+			_lines.drawWireFrame;
+		}
+	}//private
+}//class MovingGraph
+
+/++
++/
+class MovingGraphXY(T) : Widget{
+	import armos.graphics.mesh;
+	public{
+		this(in string nameX, ref T varX, in T minX, in T maxX, in string nameY, ref T varY, in T minY, in T maxY){
+			_nameX = nameX;
+			_nameY = nameY;
+			_varX = &varX;
+			_varY = &varY;
+			_varMin = armos.math.Vector!(T, 2)(minX, minY);
+			_varMax = armos.math.Vector!(T, 2)(maxX, maxY);
+			
+			_height = 128+16;
+			_lines = new armos.graphics.Mesh();
+			_lines.primitiveMode = armos.graphics.PrimitiveMode.LineStrip;
+			foreach (int i, v; _buffer) {
+				v = _varMin;
+				_lines.addVertex(0, 0, 0);
+				_lines.addIndex(i);
+			}
+			armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
+		}
+		
+		void update(ref armos.events.EventArg arg){
+			for (int i = 0; i < _bufferSize -1; i++) {
+				_buffer[i] = _buffer[i+1];
+			}
+			_buffer[$-1] = armos.math.Vector!(T, 2)(*_varX, *_varY);
+		};
+		
+		void draw(){
+			armos.graphics.setColor(_style.colors["background"]);
+			armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*18);
+			
+			import std.format:format;
+			import std.conv;
+			string varStringX = "";
+			string varStringY = "";
+			static if(__traits(isIntegral, T)){
+				varStringX = format("%d", *_varX).to!string;
+				varStringY = format("%d", *_varY).to!string;
+			}else if(__traits(isFloating, T)){
+				varStringX = format("%f", *_varX).to!string;
+				varStringY = format("%f", *_varY).to!string;
+			}
+			armos.graphics.setColor(_style.colors["font1"]);
+			_style.font.draw(_nameX ~ " : " ~ varStringX, _style.font.width, 0);
+			_style.font.draw(_nameY ~ " : " ~ varStringY, _style.font.width, _style.font.height);
+			
+			armos.graphics.setColor(_style.colors["base1"]);
+			armos.graphics.drawRectangle(_style.font.width, _style.font.height*2, _style.width - _style.font.width*2, _style.font.height*15);
+			
+			drawLine;
+		}
+	}//public
+
+	private{
+		string _nameX;
+		string _nameY;
+		T* _varX;
+		T* _varY;
+		armos.math.Vector!(T, 2) _varMin;
+		armos.math.Vector!(T, 2) _varMax;
+		enum int _bufferSize = 30;
+		armos.math.Vector!(T, 2)[_bufferSize] _buffer;
+		armos.graphics.Mesh _lines;
+		
+		void drawLine(){
+			import std.conv;
+			armos.graphics.setColor(_style.colors["font1"]);
+			foreach (i, v; _buffer) {
+				auto x = armos.math.map.map( v[0], _varMin[0], _varMax[0], _style.font.width.to!float, _style.width - _style.font.width);
+				auto y = armos.math.map.map(  - v[1], _varMin[1], _varMax[1], _style.font.height.to!float*2, _style.font.height.to!float*17);
+				_lines.vertices[i].x = x;
+				_lines.vertices[i].y = y;
+				// y = armos.math.map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
+			}
+			_lines.drawWireFrame;
+		}
+	}//private
+}//class MovingGraph
