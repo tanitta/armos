@@ -47,7 +47,7 @@ class Gui {
 			_style.colors["font1"] = Color(200, 200, 200);
 			_style.colors["font2"] = Color(105, 105, 105);
 			_style.colors["background"] = Color(40, 40, 40, 200);
-			_style.colors["base1"] = Color(105, 105, 105);
+			_style.colors["base1"] = Color(64, 64, 64);
 			_style.colors["base2"] = Color(150, 150, 150);
 			_style.width = 256;
 		}
