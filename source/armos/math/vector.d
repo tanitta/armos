@@ -9,7 +9,7 @@ import std.math;
 struct Vector(T, int Dimention){
 	alias Vector!(T, Dimention) VectorType;
 	
-	T[Dimention] data = T(0);
+	T[Dimention] data;
 	
 	/++
 	+/
@@ -23,11 +23,16 @@ struct Vector(T, int Dimention){
 	+/
 	this(T[] arr ...){
 		if(arr.length == 0)
-			data[] = T(0);
+			data[] = T.init;
 		else if(arr.length == Dimention)
 			data = arr;
 		else
 			assert(false);
+	}
+	unittest{
+		// auto v = Vector!(double, 2)();
+		// import std.stdio;
+		// assert(v[0] == double.init);
 	}
 
 	/++
@@ -266,10 +271,10 @@ struct Vector(T, int Dimention){
 		if(arg.length != Dimention-2){
 			assert(0);
 		}
-		auto return_vector = VectorType();
+		auto return_vector = VectorType.zero;
 		foreach (int i, ref T v; return_vector.data) {
 			auto matrix = armos.math.Matrix!(T, Dimention, Dimention)();
-			auto element_vector = VectorType();
+			auto element_vector = VectorType.zero;
 			element_vector[i] = cast(T)1;
 			matrix.setRowVector(0, element_vector);
 			matrix.setRowVector(1, this);

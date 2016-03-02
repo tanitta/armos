@@ -42,7 +42,7 @@ struct Matrix(T, int RowSize, int ColSize){
 		return cast(VectorType)data[index];
 	}
 	unittest{
-		auto matrix = Matrix2d();
+		auto matrix = Matrix2d.zero;
 		assert(matrix[0][0] == 0);
 	}
 	unittest{
@@ -131,7 +131,7 @@ struct Matrix(T, int RowSize, int ColSize){
 
 	static if(rowSize == colSize){
 		static MatrixType identity(){
-			auto identityMatrix = MatrixType();
+			auto identityMatrix = MatrixType.zero;
 			for (int i = 0; i < MatrixType.rowSize; i++) {
 				identityMatrix[i][i] = T(1);
 			}
@@ -174,9 +174,9 @@ struct Matrix(T, int RowSize, int ColSize){
 		return result;
 	}
 	unittest{
-		auto matrix1 = Matrix2d();
+		auto matrix1 = Matrix2d.zero;
 		matrix1[0][0] = 1.0;
-		auto matrix2 = Matrix2d();
+		auto matrix2 = Matrix2d.zero;
 		matrix2[0][0] = 2.0;
 		matrix2[0][1] = 1.0;
 		auto matrix3 = matrix1 + matrix2;
@@ -194,9 +194,9 @@ struct Matrix(T, int RowSize, int ColSize){
 		return result;
 	}
 	unittest{
-		auto matrix1 = Matrix2d();
+		auto matrix1 = Matrix2d.zero;
 		matrix1[0][0] = 1.0;
-		auto matrix2 = Matrix2d();
+		auto matrix2 = Matrix2d.zero;
 		matrix2[0][0] = 2.0;
 		matrix2[0][1] = 1.0;
 		auto matrix3 = matrix1 - matrix2;
@@ -215,7 +215,7 @@ struct Matrix(T, int RowSize, int ColSize){
 		return result;
 	}
 	unittest{
-		auto matrix1 = Matrix2d();
+		auto matrix1 = Matrix2d.zero;
 		auto matrix2 = matrix1 + 5.0;
 		auto matrix3 = 3.0 + matrix1;
 		assert(matrix2[1][0] == 5.0);
@@ -232,7 +232,7 @@ struct Matrix(T, int RowSize, int ColSize){
 		return result;
 	}
 	unittest{
-		auto matrix1 = Matrix2d();
+		auto matrix1 = Matrix2d.zero;
 		auto matrix2 = matrix1 - 3.0;
 		assert(matrix2[1][0] == -3.0);
 	}

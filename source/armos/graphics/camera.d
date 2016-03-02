@@ -14,12 +14,12 @@ class Camera{
 		/++
 			Cameraの位置を表します．
 		+/
-		armos.math.Vector3f position;
+		armos.math.Vector3f position = armos.math.Vector3f.zero;
 
 		/++
 			Cameraが映す対象の位置を表します．
 		+/
-		armos.math.Vector3f target;
+		armos.math.Vector3f target = armos.math.Vector3f.zero;
 
 		/++
 			Cameraの方向を表します．
