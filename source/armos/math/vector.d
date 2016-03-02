@@ -9,7 +9,7 @@ import std.math;
 struct Vector(T, int Dimention){
 	alias Vector!(T, Dimention) VectorType;
 	
-	T[Dimention] data;
+	T[Dimention] data = T.init;
 	
 	/++
 	+/
@@ -22,17 +22,13 @@ struct Vector(T, int Dimention){
 		Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
 	+/
 	this(T[] arr ...){
-		if(arr.length == 0)
-			data[] = T.init;
-		else if(arr.length == Dimention)
-			data = arr;
-		else
-			assert(false);
-	}
-	unittest{
-		// auto v = Vector!(double, 2)();
-		// import std.stdio;
-		// assert(v[0] == double.init);
+		if(arr.length != 0){
+			if(arr.length == Dimention){
+				data = arr;
+			}else{
+				assert(false);
+			}
+		}
 	}
 
 	/++

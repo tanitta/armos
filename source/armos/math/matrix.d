@@ -16,23 +16,19 @@ struct Matrix(T, int RowSize, int ColSize){
 	+/
 	enum int colSize = ColSize;
 
-	VectorType[RowSize] data;
+	VectorType[RowSize] data = VectorType();
 	
 	/++
 	+/
 	this(T[][] arr ...){
-		if(arr.length == 0){
-			foreach (ref var; data) {
-				var = VectorType();
+		if(arr.length != 0){
+			if(arr.length == RowSize){
+				foreach (int index, ref VectorType vector; data) {
+					vector = VectorType(arr[index]);
+				}
+			}else{
+				assert(0);
 			}
-			return;
-		}
-		if(arr.length == RowSize){
-			foreach (int index, ref VectorType vector; data) {
-				vector = VectorType(arr[index]);
-			}
-		}else{
-			assert(0);
 		}
 	}
 
