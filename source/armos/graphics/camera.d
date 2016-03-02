@@ -81,3 +81,36 @@ class Camera{
 		armos.math.Matrix4f _projectionMatrix;
 	}
 }
+
+/++
+	Deprecated:
++/
+class EasyCam : Camera{
+	public{
+		this(){
+			armos.events.addListener(armos.app.currentWindow.events.mouseMoved, this, &this.mouseMoved);
+			armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
+			armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+		}
+	}//public
+
+	private{
+		/++
+			マウスが動いた時に呼ばれるイベントハンドラです．
+		+/
+		void mouseMoved(ref armos.events.MouseMovedEventArg message){
+		}
+		
+		/++
+			マウスのボタンが離された時に呼ばれるイベントハンドラです．
+		+/
+		void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+		}
+		
+		/++
+			マウスのボタンが押された時に呼ばれるイベントハンドラです．
+		+/
+		void mousePressed(ref armos.events.MousePressedEventArg message){
+		}
+	}//private
+}//class EasyCam
