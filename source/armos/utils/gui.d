@@ -441,10 +441,10 @@ class MovingGraph(T) : Widget{
 	}//private
 }//class MovingGraph
 
+import armos.graphics.mesh;
 /++
 +/
 class MovingGraphXY(T) : Widget{
-	import armos.graphics.mesh;
 	public{
 		this(in string nameX, ref T varX, in T minX, in T maxX, in string nameY, ref T varY, in T minY, in T maxY){
 			_nameX = nameX;
@@ -523,3 +523,147 @@ class MovingGraphXY(T) : Widget{
 		}
 	}//private
 }//class MovingGraph
+
+/++
++/
+class Button : Widget{
+	public{
+		this(in string name, ref bool v){
+			_v = &v;
+			_name = name;
+			
+			armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
+			armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+			
+			_height = 32;
+		}
+		
+		/++
+		+/
+		int height(){ return _height; }
+		
+		/++
+		+/
+		void draw(){
+			armos.graphics.setColor(_style.colors["background"]);
+			armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
+			
+			armos.graphics.setColor(_style.colors["font1"]);
+			_style.font.draw(_name, _style.font.width, 0);
+			
+			if(*_v){
+				armos.graphics.setColor(_style.colors["base2"]);
+			}else{
+				armos.graphics.setColor(_style.colors["base1"]);
+			}
+			
+			armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+		}
+		
+		/++
+		+/
+		void mousePressed(ref armos.events.MousePressedEventArg message){
+			_isPressing = isOnMouse(message.x, message.y);
+			if(_isPressing){
+				*_v = true;
+			}
+		}
+		
+		/++
+		+/
+		void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+			*_v = false;
+			if(_isPressing){
+				_isPressing = false;
+			}
+		}
+	}//public
+
+	private{
+		bool* _v;
+		string _name;
+		bool _isPressing = false;
+		
+		bool isOnMouse(int x, int y){
+			int localX = x-_position[0];
+			int localY = y-_position[1];
+			if(_style.font.width<localX && localX<_style.font.width*3){
+				if(_style.font.height<localY && localY<_style.font.height*3){
+					return true;
+				}
+			}
+			return false;
+		}
+	}//private
+}//class Button
+
+
+/++
++/
+class ToggleButton : Widget{
+	public{
+		this(in string name, ref bool v){
+			_v = &v;
+			_name = name;
+			
+			armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
+			armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+			
+			_height = 32;
+		}
+		
+		/++
+		+/
+		int height(){ return _height; }
+		
+		/++
+		+/
+		void draw(){
+			armos.graphics.setColor(_style.colors["background"]);
+			armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
+			
+			armos.graphics.setColor(_style.colors["font1"]);
+			_style.font.draw(_name, _style.font.width, 0);
+			
+			if(*_v){
+				armos.graphics.setColor(_style.colors["base2"]);
+			}else{
+				armos.graphics.setColor(_style.colors["base1"]);
+			}
+			
+			armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+		}
+		
+		/++
+		+/
+		void mousePressed(ref armos.events.MousePressedEventArg message){
+			_isPressing = isOnMouse(message.x, message.y);
+		}
+		
+		/++
+		+/
+		void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+			if(_isPressing){
+				*_v = !(*_v);
+				_isPressing = false;
+			}
+		}
+	}//public
+
+	private{
+		bool* _v;
+		string _name;
+		bool _isPressing = false;
+		
+		bool isOnMouse(int x, int y){
+			int localX = x-_position[0];
+			int localY = y-_position[1];
+			if(_style.font.width<localX && localX<_style.font.width*3){
+				if(_style.font.height<localY && localY<_style.font.height*3){
+					return true;
+				}
+			}
+			return false;
+		}
+	}//private
+}//class ToggleButton

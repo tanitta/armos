@@ -9,6 +9,7 @@ class TestApp : ar.BaseApp{
 	float c = 0;
 	float cX = 0;
 	float cY = 0;
+	bool isFill = false;
 	
 	void setup(){
 		ar.blendMode(ar.BlendMode.Alpha);
@@ -32,6 +33,8 @@ class TestApp : ar.BaseApp{
 			.add(new ar.Partition)
 			.add(new ar.MovingGraph!float("x", cX, -2, 2))
 			.add(new ar.MovingGraphXY!float("x", cX, -2, 2, "y", cY, -2, 2))
+			.add(new ar.ToggleButton("isFill", isFill))
+			.add(new ar.ToggleButton("isFill", isFill))
 			.add(new ar.Partition)
 		);
 		
@@ -49,7 +52,11 @@ class TestApp : ar.BaseApp{
 		ar.pushMatrix;
 		ar.rotate(f, 1, 1, 1);
 			ar.setColor(i, 255-i, i*0.5);
-			mesh.drawWireFrame;
+			if(isFill){
+				mesh.drawFill;
+			}else{
+				mesh.drawWireFrame;
+			}
 		ar.popMatrix;
 		camera.end;
 		gui.draw;
