@@ -431,7 +431,7 @@ class MovingGraph(T) : Widget{
 			armos.graphics.setColor(_style.colors["font1"]);
 			foreach (i, v; _buffer) {
 				auto x = armos.math.map.map( i.to!float, 0f, 30f, _style.font.width.to!float, _style.width.to!float);
-				auto y = armos.math.map.map( -v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
+				auto y = armos.math.map.map( _varMax - v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
 				_lines.vertices[i].x = x;
 				_lines.vertices[i].y = y;
 				// y = armos.math.map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
