@@ -4,7 +4,7 @@ import armos.math;
 /++
 	行列を表すstructです．
 +/
-struct Matrix(T, int RowSize, int ColSize){
+struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSize > 0 && ColSize > 0){
 	alias Matrix!(T, RowSize, ColSize) MatrixType;
 	alias armos.math.Vector!(T, ColSize) VectorType;
 	

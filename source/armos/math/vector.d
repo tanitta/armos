@@ -6,7 +6,7 @@ import std.math;
 /++
 	ベクトル計算を行うstructです
 +/
-struct Vector(T, int Dimention){
+struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 	alias Vector!(T, Dimention) VectorType;
 	
 	T[Dimention] data = T.init;

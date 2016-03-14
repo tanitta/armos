@@ -4,7 +4,7 @@ import std.math;
 /++
 クオータニオンを表すstructです．
 +/
-struct Quaternion(T){
+struct Quaternion(T)if(__traits(isArithmetic, T)){
 	alias Quaternion!(T) Q;
 	alias V4 = armos.armos.math.Vector!(T, 4);
 	alias V3 = armos.armos.math.Vector!(T, 3);
