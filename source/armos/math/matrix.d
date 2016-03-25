@@ -235,6 +235,23 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 	
 	/++
 	+/
+	MatrixType opMul(in T v)const{
+		auto result = MatrixType();
+		foreach (int index, const VectorType var; data) {
+			result[index] = this[index]*v;
+		}
+		return result;
+	}
+	unittest{
+		auto matrix1 = Matrix2d.identity;
+		auto matrix2 = matrix1 * 2.0;
+		assert(matrix2[0][0] == 2.0);
+		auto matrix3 = 2.0 * matrix2;
+		assert(matrix3[1][1] == 4.0);
+	}
+	
+	/++
+	+/
 	MatrixType opMul(in MatrixType mat_r)const{
 		auto result = MatrixType();
 		for (int targetRow = 0; targetRow < data.length; targetRow++) {
