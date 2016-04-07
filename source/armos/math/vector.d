@@ -227,7 +227,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 	+/
 	T norm()const{
 		import std.numeric : dotProduct;
-		T sumsq = dotProduct(data, data);
+		immutable T sumsq = dotProduct(data, data);
 
 		static if( is(T == int ) )
 			return cast(int)sqrt(cast(float)sumsq);
@@ -242,7 +242,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 	/++
 		Vectorのドット積を返します．
 	+/
-	T dotProduct(const VectorType v)const{
+	T dotProduct(in VectorType v)const{
 		import std.numeric : dotProduct;
 		return dotProduct(data, v.data);
 	}
@@ -263,7 +263,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 		Dimentionが3以上の場合のみ使用できます．
 	+/
 	static if (Dimention >= 3)
-	VectorType vectorProduct(VectorType[] arg ...)const{
+	VectorType vectorProduct(in VectorType[] arg ...)const{
 		if(arg.length != Dimention-2){
 			assert(0);
 		}

@@ -8,6 +8,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 	alias Quaternion!(T) Q;
 	alias V4 = armos.armos.math.Vector!(T, 4);
 	alias V3 = armos.armos.math.Vector!(T, 3);
+	
 	V4 vec = V4();
 	
 	/++
@@ -97,8 +98,8 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 		v_r[1] = r_quat[2];
 		v_r[2] = r_quat[3];
 		
-		auto return_v = s_l*v_r + s_r*v_l + v_l.vectorProduct(v_r) ;
-		auto return_s = ( s_l*s_r ) - ( v_l.dotProduct(v_r) );
+		immutable return_v = s_l*v_r + s_r*v_l + v_l.vectorProduct(v_r) ;
+		immutable return_s = ( s_l*s_r ) - ( v_l.dotProduct(v_r) );
 		return Q(return_s, return_v[0], return_v[1], return_v[2]);
 	}
 	unittest{
@@ -248,7 +249,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 	/++
 		指定したベクトルを自身で回転させたベクトルを返します．
 	+/
-	V3 rotatedVector(V3 vec)const {
+	V3 rotatedVector(in V3 vec)const {
 		if( norm^^2.0 < T.epsilon){
 			return vec;
 		}else{
@@ -277,7 +278,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 		axis = 回転軸
 	+/
 	static Q angleAxis(T ang, V3 axis){
-		auto halfAngle = ang*T(0.5);
+		immutable halfAngle = ang*T(0.5);
 		return Q(cos(halfAngle), axis[0]*sin(halfAngle), axis[1]*sin(halfAngle), axis[2]*sin(halfAngle));
 	}
 	unittest{
@@ -305,7 +306,7 @@ to = tが1の時のQuaternion
 t = 
 +/
 Q slerp(Q, T)(in Q from, in Q to,  T t){
-	double omega, cos_omega, sin_omega, scale_from, scale_to;
+	T omega, cos_omega, sin_omega, scale_from, scale_to;
 
 	Q quatTo = to;
 	cos_omega = from.vec.dotProduct(to.vec);
