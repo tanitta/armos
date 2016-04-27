@@ -78,12 +78,13 @@ class Loop {
 
 	}//private
 }
-
+private Loop mainLoop_;
 Loop mainLoop() @property
 {
-	static __gshared Loop instance;
-	import std.concurrency : initOnce;
-	return initOnce!instance(new Loop);
+	return mainLoop_;
+	// static __gshared Loop instance;
+	// import std.concurrency : initOnce;
+	// return initOnce!instance(new Loop);
 }
 
 /++
@@ -93,6 +94,7 @@ Loop mainLoop() @property
 	app = 立ち上げるアプリケーションを指定します．
 +/
 void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app){
+	mainLoop_ = new Loop;
 	mainLoop.run!(WindowType)(app);
 }
 
