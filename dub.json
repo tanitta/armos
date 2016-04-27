@@ -9,8 +9,8 @@
 	"dependencies": {
 		"derelict-sdl2": ">=1.9.7", 
 		"derelict-assimp3": ">=1.0.1", 
-		"derelict-glfw3": ">=1.1.0", 
-		"derelict-gl3": ">=1.0.17" , 
+		"derelict-glfw3": ">=2.0.0", 
+		"derelict-gl3": ">=1.0.18" , 
 		"derelict-ft": ">=1.0.2" ,
 		"derelict-fi": ">=2.0.2" 
 	},
