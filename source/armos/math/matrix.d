@@ -35,7 +35,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 	/++
 	+/
 	pure VectorType opIndex(in int index)const{
-		return cast(VectorType)data[index];
+		return data[index];
 	}
 	unittest{
 		auto matrix = Matrix2d.zero;
@@ -52,7 +52,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 	/++
 	+/
 	ref VectorType opIndex(in int index){
-		return cast(VectorType)data[index];
+		return data[index];
 	}
 	unittest{
 		auto matrix = Matrix2d();
@@ -254,11 +254,12 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 	+/
 	MatrixType opMul(in MatrixType mat_r)const{
 		auto result = MatrixType();
-		for (int targetRow = 0; targetRow < data.length; targetRow++) {
-			for (int targetCol = 0; targetCol < data[0].data.length; targetCol++) {
-				T sum = cast(T)0;
-				for (int dim = 0; dim < mat_r.data.length; dim++) {
-					sum += this[targetRow][dim] * mat_r[dim][targetCol];
+		immutable mat_r_size = mat_r.rowSize;
+		for (int targetRow = 0; targetRow < RowSize; targetRow++) {
+			for (int targetCol = 0; targetCol < ColSize; targetCol++) {
+				T sum = T(0);
+				for (int dim = 0; dim < mat_r_size; dim++) {
+					sum += data[targetRow][dim] * mat_r[dim][targetCol];
 				}
 				result[targetRow][targetCol] = sum;
 			}
@@ -292,9 +293,9 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 	VectorType opMul(in VectorType vec_r)const{
 		auto result = VectorType();
 		for (int targetRow = 0; targetRow < data.length; targetRow++) {
-			T sum = cast(T)0;
-			for (int dim = 0; dim < rowSize; dim++) {
-				sum += this[targetRow][dim] * vec_r[dim];
+			T sum = T(0);
+			foreach (elem; (data[targetRow] * vec_r).data) {
+				sum += elem;
 			}
 			result[targetRow] = sum;
 		}
@@ -336,9 +337,9 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 	static if(RowSize == 3 && ColSize == 3 && ( is(T == double) || is(T == float) )){
 		MatrixType inverse(){
 			MatrixType mat = MatrixType(
-				[this[1][1]*this[2][2]-this[1][2]*this[2][1], this[0][2]*this[2][1]-this[0][1]*this[2][2], this[0][1]*this[1][2]-this[0][2]*this[1][1]],
-				[this[1][2]*this[2][0]-this[1][0]*this[2][2], this[0][0]*this[2][2]-this[0][2]*this[2][0], this[0][2]*this[1][0]-this[0][0]*this[1][2]],
-				[this[1][0]*this[2][1]-this[1][1]*this[2][0], this[0][1]*this[2][0]-this[0][0]*this[2][1], this[0][0]*this[1][1]-this[0][1]*this[1][0]]
+				[data[1][1]*data[2][2]-data[1][2]*data[2][1], data[0][2]*data[2][1]-data[0][1]*data[2][2], data[0][1]*data[1][2]-data[0][2]*data[1][1]],
+				[data[1][2]*data[2][0]-data[1][0]*data[2][2], data[0][0]*data[2][2]-data[0][2]*data[2][0], data[0][2]*data[1][0]-data[0][0]*data[1][2]],
+				[data[1][0]*data[2][1]-data[1][1]*data[2][0], data[0][1]*data[2][0]-data[0][0]*data[2][1], data[0][0]*data[1][1]-data[0][1]*data[1][0]]
 			);
 			return mat/determinant;
 		}
@@ -383,7 +384,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 	/++
 	+/
 	void setRowVector(in int row, in VectorType vec){
-		this[row] = cast(VectorType)vec;
+		this[row] = vec;
 	}
 	unittest{
 		auto matrix = Matrix2f();
@@ -435,33 +436,44 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 		assert( mat44.setMatrix(mat33, 0, 1) == mat44A );
 	}
 
-	
-	/++
-	+/
-	T determinant()const{
-		import std.stdio;
-		T sum = T(0);
-		for (int i = 0; i < RowSize; i++) {
-			T v = T(1);
-			for (int j = 0; j < RowSize; j++) {
-				if (i+j>=RowSize) {
-					v *= this[i+j-RowSize][j];
-				}else{
-					v *= this[i+j][j];
-				}
-			}
-			sum +=v;
-			v = T(1);
-			for (int j = 0; j < RowSize; j++) {
-				if (i-j<0) {
-					v *= this[i-j+RowSize][j];
-				}else{
-					v *= this[i-j][j];
-				}
-			}
-			sum -=v;
+	static if(RowSize == 3 && ColSize == 3 && ( is(T == double) || is(T == float) )){
+		T determinant()const{
+			return 
+				data[0][0] * data[1][1] * data[2][2] -
+				data[0][0] * data[2][1] * data[1][2] -
+				data[1][0] * data[0][1] * data[2][2] +
+				data[1][0] * data[2][1] * data[0][2] +
+				data[2][0] * data[0][1] * data[1][2] -
+				data[2][0] * data[1][1] * data[0][2];
 		}
-		return sum;
+	}else{
+		/++
+		+/
+		T determinant()const{
+			import std.stdio;
+			T sum = T(0);
+			for (int i = 0; i < RowSize; i++) {
+				T v = T(1);
+				for (int j = 0; j < RowSize; j++) {
+					if (i+j>=RowSize) {
+						v *= this[i+j-RowSize][j];
+					}else{
+						v *= this[i+j][j];
+					}
+				}
+				sum +=v;
+				v = T(1);
+				for (int j = 0; j < RowSize; j++) {
+					if (i-j<0) {
+						v *= this[i-j+RowSize][j];
+					}else{
+						v *= this[i-j][j];
+					}
+				}
+				sum -=v;
+			}
+			return sum;
+		}
 	}
 	unittest{
 		// auto matrix = Matrix3f(

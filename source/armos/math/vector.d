@@ -21,15 +21,14 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 	/++
 		Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
 	+/
-	this(T[] arr ...){
+	this(T[] arr ...)in{
+		assert(arr.length == 0 || arr.length == Dimention);
+	}body{
 		if(arr.length != 0){
-			if(arr.length == Dimention){
-				data = arr;
-			}else{
-				assert(false);
-			}
+			data = arr;
 		}
 	}
+	
 
 	/++
 	+/
@@ -70,12 +69,16 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 	
 	/++
 	+/
-	static zero(){
+	enum VectorType zero = (){
 		auto v =  VectorType();
-		for (int i = 0; i < Dimention; i++) {
-			v[i] = T(0);
-		}
+		v.data[] = T(0);
 		return v;
+	}();
+	unittest{
+		auto vec = Vector3d.zero;
+		assert(vec[0] == 0);
+		assert(vec[1] == 0);
+		assert(vec[2] == 0);
 	}
 
 	/++
@@ -263,15 +266,14 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 		Dimentionが3以上の場合のみ使用できます．
 	+/
 	static if (Dimention >= 3)
-	VectorType vectorProduct(in VectorType[] arg ...)const{
-		if(arg.length != Dimention-2){
-			assert(0);
-		}
+	VectorType vectorProduct(in VectorType[] arg ...)const in{
+		assert(arg.length == Dimention-2);
+	}body{
 		auto return_vector = VectorType.zero;
 		foreach (int i, ref T v; return_vector.data) {
 			auto matrix = armos.math.Matrix!(T, Dimention, Dimention)();
 			auto element_vector = VectorType.zero;
-			element_vector[i] = cast(T)1;
+			element_vector[i] = T(1);
 			matrix.setRowVector(0, element_vector);
 			matrix.setRowVector(1, this);
 			for (int j = 2; j < Dimention; j++) {

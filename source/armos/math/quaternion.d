@@ -14,28 +14,28 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 	/++
 	+/
 	this(in T x, in T y, in T z, in T w){
-		this[0] = x;
-		this[1] = y;
-		this[2] = z;
-		this[3] = w;
+		vec[0] = x;
+		vec[1] = y;
+		vec[2] = z;
+		vec[3] = w;
 	}
 	
 	/++
 	+/
 	this(in T s, in V3 v){
-		this[0] = s;
-		this[1] = v[0];
-		this[2] = v[1];
-		this[3] = v[2];
+		vec[0] = s;
+		vec[1] = v[0];
+		vec[2] = v[1];
+		vec[3] = v[2];
 	}
 	
 	/++
 	+/
 	this( in V4 v){
-		this[0] = v[0];
-		this[1] = v[1];
-		this[2] = v[2];
-		this[3] = v[3];
+		vec[0] = v[0];
+		vec[1] = v[1];
+		vec[2] = v[2];
+		vec[3] = v[3];
 	}
 	
 	/++
@@ -86,17 +86,11 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 	/++
 	+/
 	Q opMul(in Q r_quat)const{
-		auto v_l = V3();
-		T s_l  = this[0];
-		v_l[0] = this[1];
-		v_l[1] = this[2];
-		v_l[2] = this[3];
+		immutable T s_l  = this[0];
+		immutable v_l = V3(this[1], this[2], this[3]);
 		
-		auto v_r = V3();
-		T s_r  = r_quat[0];
-		v_r[0] = r_quat[1];
-		v_r[1] = r_quat[2];
-		v_r[2] = r_quat[3];
+		immutable T s_r  = r_quat[0];
+		immutable v_r = V3(r_quat[1], r_quat[2], r_quat[3],);
 		
 		immutable return_v = s_l*v_r + s_r*v_l + v_l.vectorProduct(v_r) ;
 		immutable return_s = ( s_l*s_r ) - ( v_l.dotProduct(v_r) );
