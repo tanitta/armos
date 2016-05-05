@@ -86,30 +86,50 @@ class Camera{
 	Deprecated:
 +/
 class EasyCam : Camera{
+	alias N = float;
+	alias Q = Quaternion!(N);
+	alias V3 = Vector!(N, 3);
+	alias V4 = Vector!(N, 4);
+	alias M33 = Matrix!(N, 3, 3);
+	alias M44 = Matrix!(N, 4, 4);
+	
 	public{
 		this(){
 			armos.events.addListener(armos.app.currentWindow.events.mouseMoved, this, &this.mouseMoved);
 			armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
 			armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+			
+			reset;
+		}
+		
+		void reset(){
+			_down = Q.unit;
+			_now = Q.unit;
+			_rotation = M44.identity;
+			_translation = M44.identity;
+			_translationDelta = M44.identity;
+			_isDrag = false;
+			_radiusTranslation = N(1);
+			_radius = N(1);
 		}
 	}//public
 
 	private{
-		/++
-			マウスが動いた時に呼ばれるイベントハンドラです．
-		+/
+		Q _down;
+		Q _now;
+		M44 _rotation;
+		M44 _translation;
+		M44 _translationDelta;
+		bool _isDrag;
+		N _radiusTranslation;
+		N _radius;
+
 		void mouseMoved(ref armos.events.MouseMovedEventArg message){
 		}
 		
-		/++
-			マウスのボタンが離された時に呼ばれるイベントハンドラです．
-		+/
 		void mouseReleased(ref armos.events.MouseReleasedEventArg message){
 		}
 		
-		/++
-			マウスのボタンが押された時に呼ばれるイベントハンドラです．
-		+/
 		void mousePressed(ref armos.events.MousePressedEventArg message){
 		}
 	}//private
