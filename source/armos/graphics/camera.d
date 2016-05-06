@@ -98,6 +98,7 @@ class EasyCam : Camera{
 			armos.events.addListener(armos.app.currentWindow.events.mouseMoved, this, &this.mouseMoved);
 			armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
 			armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+			armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
 			
 			reset;
 		}
@@ -111,6 +112,10 @@ class EasyCam : Camera{
 			_isDrag = false;
 			_radiusTranslation = N(1);
 			_radius = N(1);
+			
+			_oldMousePosition = V3.zero;
+			_currentMousePosition = V3.zero;
+			_mouseMovingDirection = V3.zero;
 		}
 	}//public
 
@@ -123,14 +128,32 @@ class EasyCam : Camera{
 		bool _isDrag;
 		N _radiusTranslation;
 		N _radius;
+		
+		V3 _oldMousePosition;
+		V3 _currentMousePosition;
+		V3 _mouseMovingDirection;
 
 		void mouseMoved(ref armos.events.MouseMovedEventArg message){
+			_currentMousePosition = V3(message.x, message.y, 0);
+			
 		}
 		
 		void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+			_isDrag = false;
 		}
 		
 		void mousePressed(ref armos.events.MousePressedEventArg message){
+			_isDrag = true;
+		}
+		
+		void update(ref armos.events.EventArg arg){
+			_oldMousePosition = _currentMousePosition;
+			_mouseMovingDirection = _currentMousePosition - _oldMousePosition;
 		}
 	}//private
 }//class EasyCam
+unittest{
+	assert(__traits(compiles, (){
+		auto cam = new EasyCam;
+	}));
+}
