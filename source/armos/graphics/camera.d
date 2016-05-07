@@ -83,7 +83,7 @@ class Camera{
 }
 
 /++
-	Deprecated:
+	Deprecated: WIP
 +/
 class EasyCam : Camera{
 	alias N = float;
