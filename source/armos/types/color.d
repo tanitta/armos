@@ -68,16 +68,21 @@ struct BaseColor(T, T Limit){
 
 		/++
 		色をHSBで指定します．
+		Params: 
+			hue = [0, 255]
+			saturation = [0, 255]
+			value = [0, 255]
 		+/
-		C hsb(in T hue, in T saturation, in T value){
+		C hsb(Hue, Saturation, Value)(in Hue hue, in Saturation saturation, in Value value)if(__traits(isArithmetic, Hue, Saturation, Value)){
 			import std.math;
-			float castedLimit = cast(float)limit;
-			float h = cast(float)hue*360.0/castedLimit;
-			int hi = cast(int)( floor(h / 60.0f) % 6 );
-			auto f  = (h / 60.0f) - floor(h / 60.0f);
-			auto p  = round(value * (1.0f - (saturation / castedLimit)));
-			auto q  = round(value * (1.0f - (saturation / castedLimit) * f));
-			auto t  = round(value * (1.0f - (saturation / castedLimit) * (1.0f - f)));
+			import std.conv;
+			immutable float castedLimit = limit.to!float;
+			immutable float h = hue.to!float*360.0f/castedLimit;
+			immutable int hi = ( floor(h / 60.0f) % 6 ).to!int;
+			immutable f  = (h / 60.0f) - floor(h / 60.0f);
+			immutable p  = round(value * (1.0f - (saturation / castedLimit)));
+			immutable q  = round(value * (1.0f - (saturation / castedLimit) * f));
+			immutable t  = round(value * (1.0f - (saturation / castedLimit) * (1.0f - f)));
 			float red, green, blue;
 			switch (hi) {
 				case 0:
@@ -101,10 +106,33 @@ struct BaseColor(T, T Limit){
 				default:
 					break;
 			}
-			r = cast(T)red;
-			g = cast(T)green;
-			b = cast(T)blue;
+			
+			r = red.to!T;
+			g = green.to!T;
+			b = blue.to!T;
 			return this;
+		}
+		unittest{
+			import std.conv;
+			auto cColor = BaseColor!(char, 255)(128, 0, 0, 255);
+			cColor.hsb(0, 255, 255);
+			assert(cColor.r.to!int == 255);
+			assert(cColor.g.to!int == 0);
+			assert(cColor.b.to!int == 0);
+			
+			cColor.hsb(255, 255, 255);
+			assert(cColor.r.to!int == 255);
+			assert(cColor.g.to!int == 0);
+			assert(cColor.b.to!int == 0);
+			// import std.stdio;
+			// cColor.r.to!int.writeln;
+			// cColor.g.to!int.writeln;
+			// cColor.b.to!int.writeln;
+			
+			cColor.hsb(255.0/3.0, 255.0, 255.0);
+			assert(cColor.r.to!int == 0);
+			assert(cColor.g.to!int == 255);
+			assert(cColor.b.to!int == 0);
 		}
 		
 		F opCast(F)()const if(is(F == BaseColor!(typeof( F.r ), F.limit))){
