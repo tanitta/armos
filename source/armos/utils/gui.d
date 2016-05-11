@@ -111,7 +111,7 @@ class List {
 		/++
 			Widgetを追加します．また自身を返すためメソッドチェインが可能です．
 		+/
-		List add(lazy Widget widget){
+		List add(Widget widget){
 			_widgets ~= widget;
 			return this;
 		}
