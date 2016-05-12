@@ -165,7 +165,7 @@ class Widget {
 		/++
 			Widgetの高さを返します．
 		+/
-		int height(){return _height;}
+		int height()const{return _height;}
 		
 		/++
 		+/
@@ -260,9 +260,6 @@ class Partition : Widget{
 			_style.font.draw(str, 0, 0);
 		};
 		
-		/++
-		+/
-		int height(){return _height;};
 	}//public
 
 	private{
@@ -306,16 +303,12 @@ class Slider(T) : Widget{
 			armos.graphics.setColor(_style.colors["font1"]);
 			_style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
 			
-			int currentValueAsSliderPosition = armos.math.map.map( cast(float)( *_var ), _varMin.to!float, _varMax.to!float, 0.0, _style.width.to!float - _style.font.width.to!float*2.0).to!int;
+			immutable int currentValueAsSliderPosition = armos.math.map.map( ( *_var ).to!float, _varMin.to!float, _varMax.to!float, 0.0, _style.width.to!float - _style.font.width.to!float*2.0).to!int;
 			armos.graphics.setColor(_style.colors["base1"]);
 			armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*2);
 			armos.graphics.setColor(_style.colors["base2"]);
-			armos.graphics.drawRectangle(_style.font.width, _style.font.height, cast(int)currentValueAsSliderPosition, _style.font.height*2);
+			armos.graphics.drawRectangle(_style.font.width, _style.font.height, currentValueAsSliderPosition.to!int, _style.font.height*2);
 		};
-		
-		/++
-		+/
-		int height(){return _height;};
 		
 		/++
 		+/
@@ -327,7 +320,8 @@ class Slider(T) : Widget{
 		+/
 		void mouseMoved(ref armos.events.MouseMovedEventArg message){
 			if(_isPressing){
-				*_var = armos.math.map.map( cast(float)( message.x-_position[0]),
+				*_var = armos.math.map.map( 
+						( message.x-_position[0]).to!float,
 						_style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
 						_varMin.to!float, _varMax.to!float
 						, true).to!T;
@@ -338,7 +332,8 @@ class Slider(T) : Widget{
 		+/
 		void mouseReleased(ref armos.events.MouseReleasedEventArg message){
 			if(_isPressing){
-				*_var = armos.math.map.map( cast(float)( message.x-_position[0]),
+				*_var = armos.math.map.map( 
+						( message.x-_position[0]).to!float,
 						_style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
 						_varMin.to!float, _varMax.to!float
 						, true).to!T;
@@ -355,8 +350,8 @@ class Slider(T) : Widget{
 		bool _isPressing = false;
 		
 		bool isOnMouse(int x, int y){
-			int localX = x-_position[0];
-			int localY = y-_position[1];
+			immutable int localX = x-_position[0];
+			immutable int localY = y-_position[1];
 			if(_style.font.width<localX && localX<_style.width - _style.font.width){
 				if(_style.font.height<localY && localY<_height - _style.font.height){
 					return true;
@@ -371,6 +366,7 @@ class Slider(T) : Widget{
 +/
 class MovingGraph(T) : Widget{
 	import armos.graphics.mesh;
+	import std.conv;
 	public{
 		this(in string name, ref T var, in T min, in T max){
 			_name = name;
@@ -382,7 +378,7 @@ class MovingGraph(T) : Widget{
 			_lines.primitiveMode = armos.graphics.PrimitiveMode.LineStrip;
 			foreach (int i, v; _buffer) {
 				v = _varMin;
-				_lines.addVertex(cast(float)i/cast(float)_bufferSize, v, 0);
+				_lines.addVertex(i.to!float/_bufferSize.to!float, v, 0);
 				_lines.addIndex(i);
 			}
 			armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
@@ -430,8 +426,8 @@ class MovingGraph(T) : Widget{
 			import std.conv;
 			armos.graphics.setColor(_style.colors["font1"]);
 			foreach (i, v; _buffer) {
-				auto x = armos.math.map.map( i.to!float, 0f, 30f, _style.font.width.to!float, _style.width.to!float);
-				auto y = armos.math.map.map( _varMax - v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
+				immutable x = armos.math.map.map( i.to!float, 0f, 30f, _style.font.width.to!float, _style.width.to!float);
+				immutable y = armos.math.map.map( _varMax - v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
 				_lines.vertices[i].x = x;
 				_lines.vertices[i].y = y;
 				// y = armos.math.map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
@@ -513,8 +509,8 @@ class MovingGraphXY(T) : Widget{
 			import std.conv;
 			armos.graphics.setColor(_style.colors["font1"]);
 			foreach (i, v; _buffer) {
-				auto x = armos.math.map.map( v[0], _varMin[0], _varMax[0], _style.font.width.to!float, _style.width - _style.font.width);
-				auto y = armos.math.map.map(  - v[1], _varMin[1], _varMax[1], _style.font.height.to!float*2, _style.font.height.to!float*17);
+				immutable x = armos.math.map.map( v[0], _varMin[0], _varMax[0], _style.font.width.to!float, _style.width - _style.font.width);
+				immutable y = armos.math.map.map(  - v[1], _varMin[1], _varMax[1], _style.font.height.to!float*2, _style.font.height.to!float*17);
 				_lines.vertices[i].x = x;
 				_lines.vertices[i].y = y;
 				// y = armos.math.map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
@@ -537,10 +533,6 @@ class Button : Widget{
 			
 			_height = 32;
 		}
-		
-		/++
-		+/
-		int height(){ return _height; }
 		
 		/++
 		+/
@@ -584,9 +576,9 @@ class Button : Widget{
 		string _name;
 		bool _isPressing = false;
 		
-		bool isOnMouse(int x, int y){
-			int localX = x-_position[0];
-			int localY = y-_position[1];
+		bool isOnMouse(in int x, in int y){
+			immutable int localX = x-_position[0];
+			immutable int localY = y-_position[1];
 			if(_style.font.width<localX && localX<_style.font.width*3){
 				if(_style.font.height<localY && localY<_style.font.height*3){
 					return true;
@@ -611,10 +603,6 @@ class ToggleButton : Widget{
 			
 			_height = 32;
 		}
-		
-		/++
-		+/
-		int height(){ return _height; }
 		
 		/++
 		+/
@@ -655,9 +643,9 @@ class ToggleButton : Widget{
 		string _name;
 		bool _isPressing = false;
 		
-		bool isOnMouse(int x, int y){
-			int localX = x-_position[0];
-			int localY = y-_position[1];
+		bool isOnMouse(in int x, in int y){
+			immutable int localX = x-_position[0];
+			immutable int localY = y-_position[1];
 			if(_style.font.width<localX && localX<_style.font.width*3){
 				if(_style.font.height<localY && localY<_style.font.height*3){
 					return true;
