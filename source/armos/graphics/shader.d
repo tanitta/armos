@@ -19,14 +19,14 @@ class Shader {
 		/++
 			Load the shader from shaderName
 		+/
-		void load(string shaderName){
+		void load(in string shaderName){
 			load(shaderName ~ ".vert", shaderName ~ ".frag");
 		}
 		
 		/++
 			Load the shader from path
 		+/
-		void load(string vertexShaderSourcePath, string fragmentShaderSourcePath){
+		void load(in string vertexShaderSourcePath, in string fragmentShaderSourcePath){
 			import std.stdio;
 			if(vertexShaderSourcePath != ""){
 				"load vertex shader".writeln;
@@ -52,7 +52,7 @@ class Shader {
 		/++
 			Return gl program id.
 		+/
-		int id(){return _programID;}
+		int id()const{return _programID;}
 		
 		/++
 			Begin adapted process
@@ -79,7 +79,7 @@ class Shader {
 		
 		/++
 		+/
-		bool isLoaded(){
+		bool isLoaded()const{
 			return _isLoaded;
 		}
 		
@@ -87,7 +87,7 @@ class Shader {
 		+/
 		int uniformLocation(in string name){
 			import std.string;
-			auto location = glGetUniformLocation(_programID, name.toStringz);
+			immutable location = glGetUniformLocation(_programID, name.toStringz);
 			assert(location != -1, "Could not find uniform \"" ~ name ~ "\"");
 			return location;
 		}
@@ -173,9 +173,9 @@ class Shader {
 		
 		/++
 		+/
-		int attribLocation(in string name){
+		int attribLocation(in string name)const{
 			import std.string;
-			auto location = glGetAttribLocation(_programID, name.toStringz);
+			immutable location = glGetAttribLocation(_programID, name.toStringz);
 			assert(location != -1, "Could not find attribute \"" ~ name ~ "\"");
 			return location;
 		}
@@ -281,8 +281,8 @@ class Shader {
 		int[] _savedProgramIDs;
 		bool _isLoaded = false;
 		
-		string loadedSource(string path){
-			auto absolutePath = armos.utils.absolutePath(path);
+		string loadedSource(in string path)const{
+			immutable absolutePath = armos.utils.absolutePath(path);
 			import std.file;
 			return readText(absolutePath);
 		}
@@ -296,7 +296,7 @@ class Shader {
 			glAttachShader(_programID, shaderID);
 		}
 		
-		void compile(int id, string source){
+		void compile(in int id, in string source){
 			const char* sourcePtr = source.ptr;
 			const int sourceLength = cast(int)source.length;
 			
@@ -315,7 +315,7 @@ class Shader {
 			}
 		}
 		
-		string logShader(int id){
+		string logShader(in int id)const{
 			int strLength;
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &strLength);
 			char[] log = new char[strLength];
@@ -370,12 +370,12 @@ private template glFunctionString(T, size_t DimC, size_t DimR = 1){
 	
 	public{
 		static if(DimR == 1){
-			string glFunctionString(string functionString){
+			string glFunctionString(in string functionString){
 				return glFunctionNameString(functionString) ~ "(location, " ~ args ~ ");";
 			}
 		}
 
-		string glFunctionNameString(string functionString){
+		string glFunctionNameString(in string functionString){
 			return functionString ~ suffix;
 		}
 	}//public
