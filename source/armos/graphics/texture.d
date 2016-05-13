@@ -2,13 +2,6 @@ module armos.graphics.texture;
 import derelict.opengl3.gl;
 import armos.math.vector;
 
-int nextPow2(int a){
-	// from nehe.gamedev.net lesson 43
-	int rval=1;
-	while(rval<a) rval<<=1;
-	return rval;
-}
-
 /++
 	openGLのtextureを表すクラスです．
 	初期化後，allocateして利用します．
@@ -54,24 +47,24 @@ class Texture {
 			
 			textureのサイズを返します．
 		+/
-		armos.math.Vector2i size(){return _size;}
+		armos.math.Vector2i size()const{return _size;}
 		
 		/++
 		+/
-		int width(){
+		int width()const{
 			return size[0];
 		}
 		
 		/++
 		+/
-		int height(){
+		int height()const{
 			return size[1];
 		}
 		
 		/++
 			Return gl texture id.
 		+/
-		int id(){return _texID;}
+		int id()const{return _texID;}
 
 		/++
 			Begin to bind the texture.
@@ -98,6 +91,7 @@ class Texture {
 		
 		/++
 			Return pixel of texture
+			Deprecated:
 		+/
 		ubyte pixel(){
 			assert(_bitsPtr!=null);
@@ -107,7 +101,7 @@ class Texture {
 		/++
 			Set pixel of texture
 		+/
-		void pixel(ubyte v){
+		void pixel(in ubyte v){
 			assert(_bitsPtr!=null);
 		}
 		
@@ -182,7 +176,7 @@ class Texture {
 				h    = height
 				bits = image data
 		+/
-		void allocate(ubyte[] bits, in int w, in int h, armos.graphics.ColorFormat format){
+		void allocate(ubyte[] bits, in int w, in int h, in armos.graphics.ColorFormat format){
 			_size[0] = w;
 			_size[1] = h;
 			_bitsPtr = bits.ptr;
@@ -192,7 +186,7 @@ class Texture {
 		/++
 			Allocate texture
 		+/
-		void allocate(armos.graphics.ColorFormat format){
+		void allocate(in armos.graphics.ColorFormat format){
 			_format = format;
 			allocate();
 		}
