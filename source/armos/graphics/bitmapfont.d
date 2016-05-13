@@ -135,8 +135,8 @@ class BitmapFont {
 		}
 
 		void drawCharacter(in char character, in int x, in int y){
-			int textureX = character%16*width;
-			int textureY = character/16*height;
+			immutable int textureX = character%16*width;
+			immutable int textureY = character/16*height;
 			_image.drawCropped(x*width, y*height, textureX, textureY, textureX+width, textureY+height);
 
 		}
