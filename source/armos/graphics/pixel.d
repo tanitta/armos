@@ -15,7 +15,7 @@ enum ColorFormat{
 /++
 カラーフォーマットのパラメータの数を返します．
 +/
-int numColorFormatElements(ColorFormat ColorFormat){
+int numColorFormatElements(in ColorFormat ColorFormat){
 	int num;
 	switch (ColorFormat) {
 		case ColorFormat.Gray:
@@ -48,7 +48,7 @@ import derelict.opengl3.gl;
 /++
 ColorFormatを元にGLで用いられる定数を返します
 +/
-GLuint getGLInternalFormat(ColorFormat format){
+GLuint getGLInternalFormat(in ColorFormat format){
 	GLuint num;
 	switch(format){
 		case ColorFormat.Gray:
@@ -86,14 +86,14 @@ struct Pixel(T){
 	public{
 		/++
 		+/
-		this(ColorFormat colorType){
+		this(in ColorFormat colorType){
 			_colorType = colorType;
 			_elements = new T[](numColorFormatElements(colorType));
 		}
 
 		/++
 		+/
-		void element(Pixel!(T) px){
+		void element(in Pixel!(T) px){
 			for (int i = 0; i < _elements.length; i++) {
 				_elements[i] = px.element(i);
 			}
@@ -102,7 +102,7 @@ struct Pixel(T){
 		
 		/++
 		+/
-		void element(int index, T level)
+		void element(in int index, in T level)
 		in{
 			assert(index>=0);
 			assert(index<_elements.length);
@@ -112,7 +112,7 @@ struct Pixel(T){
 		
 		/++
 		+/
-		T element(int index)
+		T element(in int index)const
 		in{
 			assert(index>=0);
 			assert(index<_elements.length);
@@ -122,7 +122,7 @@ struct Pixel(T){
 		
 		/++
 		+/
-		int numElements(){
+		int numElements()const{
 			return numColorFormatElements(_colorType);
 		}
 	}
