@@ -90,6 +90,19 @@ struct Pixel(T){
 			_colorType = colorType;
 			_elements = new T[](numColorFormatElements(colorType));
 		}
+		unittest{
+			assert(__traits(compiles, (){
+				auto p = Pixel!float(ColorFormat.RGB);
+			}));
+			
+			assert(__traits(compiles, (){
+				const p = Pixel!float(ColorFormat.RGB);
+			}));
+			
+			assert(!__traits(compiles, (){
+				immutable p = Pixel!float(ColorFormat.RGB);
+			}));
+		}
 
 		/++
 		+/
@@ -119,11 +132,24 @@ struct Pixel(T){
 		}body{
 			return _elements[index];
 		}
+		unittest{
+			auto p = Pixel!float(ColorFormat.RGB);
+			p.element(0, 1.0f);
+			p.element(1, 0.5f);
+			p.element(2, 0.1f);
+			assert(p.element(0) == 1.0f);
+			assert(p.element(1) == 0.5f);
+			assert(p.element(2) == 0.1f);
+		}
 		
 		/++
 		+/
 		int numElements()const{
 			return numColorFormatElements(_colorType);
+		}
+		unittest{
+			auto p = Pixel!float(ColorFormat.RGB);
+			assert(p.numElements == 3);
 		}
 	}
 	
