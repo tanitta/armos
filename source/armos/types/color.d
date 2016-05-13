@@ -25,7 +25,7 @@ struct BaseColor(T, T Limit){
 		/++
 		16進数のカラーコードで色を指定します．
 		+/
-		this(int hexColor, float alpha = limit){
+		this(in int hexColor, in float alpha = limit){
 			r = (hexColor >> 16) & 0xff;
 			g = (hexColor >> 8) & 0xff;
 			b = (hexColor >> 0) & 0xff;
@@ -35,7 +35,7 @@ struct BaseColor(T, T Limit){
 		/++
 		RGBAで色を指定します．透明度は省略可能です．
 		+/
-		this(float red, float green, float blue, float alpha = limit){
+		this(in float red, in float green, in float blue, in float alpha = limit){
 			r = armos.math.clamp(cast(T)red, T(0), limit);
 			g = armos.math.clamp(cast(T)green, T(0), limit);
 			b = armos.math.clamp(cast(T)blue, T(0), limit);
@@ -45,25 +45,46 @@ struct BaseColor(T, T Limit){
 		/++
 		色の加算を行います．
 		+/
-		C opAdd(C color){
-			C result = C();
-			result.r = cast(T)( this.r * this.a + color.r * color.a );
-			result.g = cast(T)( this.g * this.a + color.g * color.a );
-			result.b = cast(T)( this.b * this.a + color.b * color.a );
-			// result.a = cast(T)( this.a + color.a );
+		C opAdd(in C color)const{
+			import std.conv;
+			
+			C result;
+			float alphaPercentageL = this.a.to!float/limit.to!float;
+			float alphaPercentageR = color.a.to!float/color.limit.to!float;
+			import std.math;
+			
+			result.r = fmax(fmin( this.r.to!float * alphaPercentageL + color.r.to!float * alphaPercentageR, this.limit), float(0)).to!T;
+			result.g = fmax(fmin( this.g.to!float * alphaPercentageL + color.g.to!float * alphaPercentageR, this.limit), float(0)).to!T;
+			result.b = fmax(fmin( this.b.to!float * alphaPercentageL + color.b.to!float * alphaPercentageR, this.limit), float(0)).to!T;
 			return result;
+		}
+		unittest{
+			alias C = BaseColor!(char, 255);
+			immutable colorL = C(128, 64, 0, 255);
+			immutable colorR = C(128, 0, 64, 255);
+			assert(colorL + colorR == C(255, 64, 64, 255));
 		}
 
 		/++
 		色の減算を行います．
 		+/
-		C opSub(C color){
-			C result = C();
-			result.r = cast(T)( this.r * this.a - color.r * color.a );
-			result.g = cast(T)( this.g * this.a - color.g * color.a );
-			result.b = cast(T)( this.b * this.a - color.b * color.a );
-			// result.a = cast(T)( this.a - color.a );
+		C opSub(in C color)const{
+			import std.conv;
+			C result;
+			float alphaPercentageL = this.a.to!float/limit.to!float;
+			float alphaPercentageR = color.a.to!float/color.limit.to!float;
+			import std.math;
+			
+			result.r = fmax(fmin( this.r.to!float * alphaPercentageL - color.r.to!float * alphaPercentageR, this.limit), float(0)).to!T;
+			result.g = fmax(fmin( this.g.to!float * alphaPercentageL - color.g.to!float * alphaPercentageR, this.limit), float(0)).to!T;
+			result.b = fmax(fmin( this.b.to!float * alphaPercentageL - color.b.to!float * alphaPercentageR, this.limit), float(0)).to!T;
 			return result;
+		}
+		unittest{
+			alias C = BaseColor!(char, 255);
+			immutable colorL = C(128, 64, 64, 255);
+			immutable colorR = C(128, 0, 32, 255);
+			assert(colorL - colorR == C(0, 64, 32, 255));
 		}
 
 		/++
