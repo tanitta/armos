@@ -68,21 +68,21 @@ class BitmapFont {
 		/++
 			fontの横幅のプロパティです．
 		+/
-		void width(int w){
+		void width(in int w){
 			_size[0] = w;
 		}
 		
 		/++
 			fontの縦幅のプロパティです．
 		+/
-		int height(){
+		int height()const{
 			return _size[1];
 		}
 		
 		/++
 			fontの縦幅のプロパティです．
 		+/
-		void height(int h){
+		void height(in int h){
 			_size[1] = h;
 		}
 		
