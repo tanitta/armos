@@ -66,7 +66,7 @@ class Mesh {
 		}
 		
 		/// meshの描画モードを指定します．
-		void primitiveMode(armos.graphics.PrimitiveMode mode){
+		void primitiveMode(in armos.graphics.PrimitiveMode mode){
 			primitiveMode_ = mode;
 		}
 
@@ -158,7 +158,7 @@ class Mesh {
 		/++
 			頂点インデックスを追加します．
 		+/
-		void addIndex(IndexType index){
+		void addIndex(in IndexType index){
 			indices ~= index;
 			isIndicesChanged = true;
 			isFaceDirty = true;
@@ -178,7 +178,7 @@ class Mesh {
 			Params:
 			renderMode = 面，線，点のどれを描画するか指定します．
 		+/
-		void draw(armos.graphics.PolyRenderMode renderMode){
+		void draw(in armos.graphics.PolyRenderMode renderMode){
 			armos.graphics.currentRenderer.draw(this, renderMode, false, false, false);
 		};
 
