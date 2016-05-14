@@ -114,7 +114,7 @@ struct Bitmap(T){
 			
 			pixelの要素の数を返します．
 		+/
-		int numElements(){
+		int numElements()const{
 			return armos.graphics.numColorFormatElements(_colorFormat);
 		}
 		
