@@ -9,7 +9,7 @@ class Camera{
 		/++
 			projectionMatrixを取得します．
 		+/
-		armos.math.Matrix4f projectionMatrix(){return _projectionMatrix;}
+		armos.math.Matrix4f projectionMatrix()const{return _projectionMatrix;}
 
 		/++
 			Cameraの位置を表します．
