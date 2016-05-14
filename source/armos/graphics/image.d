@@ -243,7 +243,7 @@ class Image {
 
 			画像が読み込まれている場合trueを，そうでない場合はfalseを返します．
 		+/
-		bool isLoaded(){
+		bool isLoaded()const{
 			return _isLoaded;
 		}
 		
