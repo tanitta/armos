@@ -13,7 +13,7 @@ class Model {
 
 			読み込み時にmeshはmaterial毎に分割されます．
 		+/
-		void load(string pathInDataDir){
+		void load(in string pathInDataDir){
 			meshes = (new AssimpModelLoader).load(pathInDataDir).meshes;
 			materials = (new AssimpModelLoader).load(pathInDataDir).materials;
 		}
@@ -21,14 +21,14 @@ class Model {
 		/++
 			読み込まれたmeshの数を返します．
 		+/
-		size_t numMeshes(){
+		size_t numMeshes()const{
 			return meshes.length;
 		}
 		
 		/++
 			読み込まれたmaterialの数を返します．
 		+/
-		size_t numMaterials(){
+		size_t numMaterials()const{
 			return materials.length;
 		}
 			
@@ -37,7 +37,7 @@ class Model {
 			Params:
 			renderMode = 面，線，点のどれを描画するか指定します．
 		+/
-		void draw(armos.graphics.PolyRenderMode renderMode){
+		void draw(in armos.graphics.PolyRenderMode renderMode){
 			foreach (mesh; meshes) {
 				mesh.material.begin;
 				armos.graphics.pushStyle;
@@ -90,7 +90,7 @@ class AssimpModelLoader {
 		}
 
 		/// modelを読み込みそれを返します．
-		Model load(string pathInDataDir){
+		Model load(in string pathInDataDir){
 			import std.string;
 			_modelfilepath = armos.utils.absolutePath(pathInDataDir);
 
@@ -132,7 +132,7 @@ class AssimpModelLoader {
 	private{
 		
 		///
-		void loadScene(string fileName){
+		void loadScene(in string fileName){
 			auto f = File(fileName, "r");
 
 			char[] str;
@@ -141,7 +141,7 @@ class AssimpModelLoader {
 			}
 
 			aiPropertyStore* store = aiCreatePropertyStore();
-			uint flags = aiProcess_CalcTangentSpace
+			immutable uint flags = aiProcess_CalcTangentSpace
 				| aiProcess_Triangulate
 				| aiProcess_JoinIdenticalVertices
 				| aiProcess_SortByPType;
@@ -208,7 +208,7 @@ class AssimpModelLoader {
 				auto image = new armos.graphics.Image;
 				
 				import std.path;
-				string textureFileName = fromAiString( aiPath );
+				immutable string textureFileName = fromAiString( aiPath );
 				image.load(buildPath( dirName(_modelfilepath), textureFileName ));
 				
 				mat.texture = image.texture;
@@ -256,7 +256,7 @@ class AssimpModelLoader {
 			}).array;
 			
 			foreach(f; mesh.mFaces[0 .. mesh.mNumFaces]) {
-				int numVertices =  f.mNumIndices;
+				immutable int numVertices =  f.mNumIndices;
 				foreach(i; f.mIndices[0 .. numVertices]){
 					convertedMesh.addIndex(i);
 				}
