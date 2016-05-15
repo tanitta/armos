@@ -19,6 +19,13 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 		vec[2] = z;
 		vec[3] = w;
 	}
+	unittest{
+		alias T = double;
+		alias Q = Quaternion!T;
+		assert(__traits(compiles, {
+			Q q = Q(T(1), T(2), T(3), T(4));
+		}));
+	}
 	
 	/++
 	+/
@@ -28,14 +35,44 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 		vec[2] = v[1];
 		vec[3] = v[2];
 	}
+	unittest{
+		alias T = double;
+		alias Q = Quaternion!T;
+		alias V3 = Vector!(T, 3);
+		assert(__traits(compiles, {
+			Q q = Q(T(1), V3(2, 3, 4));
+		}));
+	}
 	
 	/++
 	+/
-	this( in V4 v){
+	this(in V3 v){
+		this(T(1), v);
+	}
+	unittest{
+		alias T = double;
+		alias Q = Quaternion!T;
+		alias V3 = Vector!(T, 3);
+		assert(__traits(compiles, {
+			Q q = Q(V3(2, 3, 4));
+		}));
+	}
+	
+	/++
+	+/
+	this(in V4 v){
 		vec[0] = v[0];
 		vec[1] = v[1];
 		vec[2] = v[2];
 		vec[3] = v[3];
+	}
+	unittest{
+		alias T = double;
+		alias Q = Quaternion!T;
+		alias V4 = Vector!(T, 4);
+		assert(__traits(compiles, {
+			Q q = Q(V4(1, 2, 3, 4));
+		}));
 	}
 	
 	/++
@@ -247,7 +284,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 		if( norm^^2.0 < T.epsilon){
 			return vec;
 		}else{
-			auto temp_quat = Q(1, vec[0], vec[1], vec[2]);
+			auto temp_quat = Q(vec);
 			auto return_quat= this*temp_quat*this.inverse;
 			auto return_vector = V3(return_quat[1], return_quat[2], return_quat[3]);
 			return return_vector;
