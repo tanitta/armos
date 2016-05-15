@@ -303,6 +303,31 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 	}
 	
 	/++
+		指定したベクトルを自身の逆方向に回転させたベクトルを返します．
+	+/
+	V3 rotatedVectorInversely(in V3 vec)const {
+		if( norm^^2.0 < T.epsilon){
+			return vec;
+		}else{
+			auto temp_quat = Q(vec);
+			auto return_quat= this.inverse*temp_quat*this;
+			auto return_vector = V3(return_quat[1], return_quat[2], return_quat[3]);
+			return return_vector;
+		}
+	}
+	unittest{
+		auto v = armos.math.Vector3d(1, 0, 0);
+		double ang = PI*0.5*0.5;
+		auto q  = Quaternion!(double)(cos(ang), 0*sin(ang), 0*sin(ang), 1*sin(ang));
+		auto vR = q.rotatedVectorInversely(v);
+		auto vA = armos.math.Vector3d(0, -1, 0);
+		
+		foreach (int i, value; vR.data) {
+			assert( approxEqual(value, vA[i]) );
+		}
+	}
+	
+	/++
 		指定した軸で自身を回転させます．
 		Params:
 		ang = 回転角
