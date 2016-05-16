@@ -240,7 +240,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 		
 	+/
 	Q inverse()const{
-		return conjugate/(this[0]^^2.0 + this[1]^^2.0 + this[2]^^2.0 + this[3]^^2.0);
+		return conjugate/(this[0]^^T(2.0) + this[1]^^T(2.0) + this[2]^^T(2.0) + this[3]^^T(2.0));
 	}
 	unittest{
 		auto q  = Quaternion!(double)(1, 0, 1, 0);
