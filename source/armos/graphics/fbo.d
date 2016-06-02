@@ -16,7 +16,7 @@ class Fbo{
 
 		/++
 		+/
-		this(armos.math.Vector2i size){
+		this(in armos.math.Vector2i size){
 			this(size[0], size[1]);
 		}
 
