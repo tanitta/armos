@@ -2,6 +2,10 @@ English/[日本語](https://github.com/tanitta/armos/blob/master/README.ja.md)
 
 armos
 ====
+
+[![Dub version](https://img.shields.io/dub/v/armos.svg)](https://code.dlang.org/packages/armos)
+
+
 armos is a free and open source library for creative coding in D programming language.
 
 

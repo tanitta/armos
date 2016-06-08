@@ -2,6 +2,9 @@
 
 armos
 ====
+
+[![Dub version](https://img.shields.io/dub/v/armos.svg)](https://code.dlang.org/packages/armos)
+
 D言語によるクリエイティブコーディングのためのオープンソースライブラリです．
 
 
