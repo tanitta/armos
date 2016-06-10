@@ -6,55 +6,55 @@ import derelict.opengl3.gl;
 /++
 +/
 class Vao {
-	public{
-		
-		/++
-		+/
-		this(){
-			glGenVertexArrays(1, cast(uint*)&_id);
-		}
-		
-		~this(){
-			glDeleteVertexArrays(1, cast(uint*)&_id);
-		}
-		
-		/++
-		+/
-		void begin(){
-			int savedID;
-			glGetIntegerv(GL_VERTEX_ARRAY_BINDING,&savedID);
-			_savedIDs ~= savedID;
-			
-			glBindVertexArray(_id);
-			import std.stdio;
-			"Vao:begin".writeln;
-			_id.writeln;
-		}
-		
-		/++
-		+/
-		void end(){
-			import std.stdio;
-			"Vao:end".writeln;
-			_savedIDs[1-$].writeln;
-			import std.range;
-			glBindVertexArray(_savedIDs[$-1]);
-			if (_savedIDs.length == 0) {
-				assert(0, "stack is empty");
-			}else{
-				_savedIDs.popBack;
-			}
-		}
-		
-		/++
-		+/
-		void set(Buffer buffer){
-			buffer.vao = this;
-		}
-	}//public
+    public{
 
-	private{
-		int _id;
-		int[] _savedIDs;
-	}//private
+        /++
+            +/
+            this(){
+                glGenVertexArrays(1, cast(uint*)&_id);
+            }
+
+        ~this(){
+            glDeleteVertexArrays(1, cast(uint*)&_id);
+        }
+
+        /++
+            +/
+            void begin(){
+                int savedID;
+                glGetIntegerv(GL_VERTEX_ARRAY_BINDING,&savedID);
+                _savedIDs ~= savedID;
+
+                glBindVertexArray(_id);
+                import std.stdio;
+                "Vao:begin".writeln;
+                _id.writeln;
+            }
+
+        /++
+            +/
+            void end(){
+                import std.stdio;
+                "Vao:end".writeln;
+                _savedIDs[1-$].writeln;
+                import std.range;
+                glBindVertexArray(_savedIDs[$-1]);
+                if (_savedIDs.length == 0) {
+                    assert(0, "stack is empty");
+                }else{
+                    _savedIDs.popBack;
+                }
+            }
+
+        /++
+            +/
+            void set(Buffer buffer){
+                buffer.vao = this;
+            }
+    }//public
+
+    private{
+        int _id;
+        int[] _savedIDs;
+    }//private
 }//class Vao

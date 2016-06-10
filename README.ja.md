@@ -13,21 +13,21 @@ D言語によるクリエイティブコーディングのためのオープン�
 ```
 import armos;
 class TestApp : ar.BaseApp{
-	ar.Mesh line = new ar.Mesh;
-	
-	void setup(){
-		ar.setLineWidth(2);
-		line.primitiveMode = ar.PrimitiveMode.LineStrip;
-	}
-	
-	void draw(){
-		line.drawWireFrame;
-	}
-	
-	void mouseMoved(int x, int y, int button){
-		line.addVertex(x, y, 0);
-		line.addIndex(cast(int)line.numVertices-1);
-	}
+    ar.Mesh line = new ar.Mesh;
+
+    void setup(){
+        ar.setLineWidth(2);
+        line.primitiveMode = ar.PrimitiveMode.LineStrip;
+    }
+
+    void draw(){
+        line.drawWireFrame;
+    }
+
+    void mouseMoved(int x, int y, int button){
+        line.addVertex(x, y, 0);
+        line.addIndex(cast(int)line.numVertices-1);
+    }
 }
 
 void main(){ar.run(new TestApp);}
