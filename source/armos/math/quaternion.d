@@ -6,8 +6,8 @@ import std.math;
 +/
 struct Quaternion(T)if(__traits(isArithmetic, T)){
     alias Quaternion!(T) Q;
-    alias V4 = armos.armos.math.Vector!(T, 4);
-    alias V3 = armos.armos.math.Vector!(T, 3);
+    alias V4 = armos.math.Vector!(T, 4);
+    alias V3 = armos.math.Vector!(T, 3);
 
     V4 vec = V4();
 
