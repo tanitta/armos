@@ -222,7 +222,7 @@ class Label : Widget{
 
         /++
         +/
-        void draw(){
+        override void draw(){
             armos.graphics.setColor(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
             armos.graphics.setColor(_style.colors["font1"]);
@@ -250,7 +250,7 @@ class Partition : Widget{
 
         /++
         +/
-        void draw(){
+        override void draw(){
             armos.graphics.setColor(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
             armos.graphics.setColor(_style.colors["font2"]);
@@ -291,7 +291,7 @@ class Slider(T) : Widget{
 
         /++
         +/
-        void draw(){
+        override void draw(){
             armos.graphics.setColor(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
@@ -392,7 +392,7 @@ class MovingGraph(T) : Widget{
             _buffer[$-1] = *_var;
         };
 
-        void draw(){
+        override void draw(){
             armos.graphics.setColor(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*16);
 
@@ -469,7 +469,7 @@ class MovingGraphXY(T) : Widget{
             _buffer[$-1] = armos.math.Vector!(T, 2)(*_varX, *_varY);
         };
 
-        void draw(){
+        override void draw(){
             armos.graphics.setColor(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*18);
 
@@ -537,7 +537,7 @@ class Button : Widget{
 
         /++
         +/
-        void draw(){
+        override void draw(){
             armos.graphics.setColor(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
@@ -555,7 +555,7 @@ class Button : Widget{
 
         /++
         +/
-        void mousePressed(ref armos.events.MousePressedEventArg message){
+        override void mousePressed(ref armos.events.MousePressedEventArg message){
             _isPressing = isOnMouse(message.x, message.y);
             if(_isPressing){
                 *_v = true;
@@ -564,7 +564,7 @@ class Button : Widget{
 
         /++
         +/
-        void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+        override void mouseReleased(ref armos.events.MouseReleasedEventArg message){
             *_v = false;
             if(_isPressing){
                 _isPressing = false;
@@ -607,7 +607,7 @@ class ToggleButton : Widget{
 
         /++
         +/
-        void draw(){
+        override void draw(){
             armos.graphics.setColor(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
@@ -625,13 +625,13 @@ class ToggleButton : Widget{
 
         /++
         +/
-        void mousePressed(ref armos.events.MousePressedEventArg message){
+        override void mousePressed(ref armos.events.MousePressedEventArg message){
             _isPressing = isOnMouse(message.x, message.y);
         }
 
         /++
         +/
-        void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+        override void mouseReleased(ref armos.events.MouseReleasedEventArg message){
             if(_isPressing){
                 *_v = !(*_v);
                 _isPressing = false;

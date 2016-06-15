@@ -206,13 +206,17 @@ unittest{
         alias armos.app.BaseApp.draw draw;
         alias armos.app.BaseApp.keyPressed keyPressed;
 
-        void setup(){
+        override void setup(){
+            
             executedSetup = true;
         }
-        void update(){}
-        void draw(){}
+        override void update(){}
+        
+        override void draw(){}
+        
 
-        void keyPressed(int key) {
+        override void keyPressed(int key) {
+            
             char str_key = cast(char)key;
             pressedKey = key;
         }
