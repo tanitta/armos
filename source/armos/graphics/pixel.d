@@ -1,6 +1,6 @@
 module armos.graphics.pixel;
 /++
-カラーフォーマットを表します．
+    カラーフォーマットを表します．
 +/
 enum ColorFormat{
     Gray, 
@@ -13,7 +13,7 @@ enum ColorFormat{
 }
 
 /++
-カラーフォーマットのパラメータの数を返します．
+    カラーフォーマットのパラメータの数を返します．
 +/
 int numColorFormatElements(in ColorFormat ColorFormat){
     int num;
@@ -46,7 +46,7 @@ int numColorFormatElements(in ColorFormat ColorFormat){
 
 import derelict.opengl3.gl;
 /++
-ColorFormatを元にGLで用いられる定数を返します
+    ColorFormatを元にGLで用いられる定数を返します
 +/
 GLuint getGLInternalFormat(in ColorFormat format){
     GLuint num;
@@ -80,7 +80,7 @@ GLuint getGLInternalFormat(in ColorFormat format){
 }
 
 /++
-画素を表すstructです．
+    画素を表すstructです．
 +/
 struct Pixel(T){
     public{

@@ -39,46 +39,46 @@ void main(){ar.run(new TestApp);}
 class Gui {
     public{
         /++
-            +/
-            this(){
-                _style = new Style;
-                _style.font = new armos.graphics.BitmapFont;
-                _style.font.load("font.png", 8, 8);
-                _style.colors["font1"] = Color(200, 200, 200);
-                _style.colors["font2"] = Color(105, 105, 105);
-                _style.colors["background"] = Color(40, 40, 40, 200);
-                _style.colors["base1"] = Color(64, 64, 64);
-                _style.colors["base2"] = Color(150, 150, 150);
-                _style.width = 256;
-            }
+        +/
+        this(){
+            _style = new Style;
+            _style.font = new armos.graphics.BitmapFont;
+            _style.font.load("font.png", 8, 8);
+            _style.colors["font1"] = Color(200, 200, 200);
+            _style.colors["font2"] = Color(105, 105, 105);
+            _style.colors["background"] = Color(40, 40, 40, 200);
+            _style.colors["base1"] = Color(64, 64, 64);
+            _style.colors["base2"] = Color(150, 150, 150);
+            _style.width = 256;
+        }
 
         /++
             Listを自身に追加します．また自身を返すためメソッドチェインが可能です．
-            +/
-            Gui add(List list){
-                _lists ~= list;
-                list.style = _style;
-                return this;
-            };
+        +/
+        Gui add(List list){
+            _lists ~= list;
+            list.style = _style;
+            return this;
+        };
 
         /++
             Guiの内部のウィジェットを再帰的に描画します．
-            +/
-            void draw(){
-                armos.graphics.pushStyle;
-                armos.graphics.blendMode(armos.graphics.BlendMode.Alpha);
-                armos.graphics.disableDepthTest;
+        +/
+        void draw(){
+            armos.graphics.pushStyle;
+            armos.graphics.blendMode(armos.graphics.BlendMode.Alpha);
+            armos.graphics.disableDepthTest;
 
-                int currentWidth = 0;
-                foreach (list; _lists) {
-                    armos.graphics.pushMatrix;
-                    armos.graphics.translate(currentWidth, 0, 0);
-                    list.draw(currentWidth);
-                    armos.graphics.popMatrix;
-                    currentWidth += list.width + _style.font.width;
-                }
-                armos.graphics.popStyle;
+            int currentWidth = 0;
+            foreach (list; _lists) {
+                armos.graphics.pushMatrix;
+                armos.graphics.translate(currentWidth, 0, 0);
+                list.draw(currentWidth);
+                armos.graphics.popMatrix;
+                currentWidth += list.width + _style.font.width;
             }
+            armos.graphics.popStyle;
+        }
 
     }//public
 
@@ -110,40 +110,40 @@ class List {
 
         /++
             Widgetを追加します．また自身を返すためメソッドチェインが可能です．
-            +/
-            List add(Widget widget){
-                _widgets ~= widget;
-                return this;
-            }
+        +/
+        List add(Widget widget){
+            _widgets ~= widget;
+            return this;
+        }
 
         /++
-            +/
-            void style(Style stl){
-                foreach (widget; _widgets) {
-                    widget.style = stl;
-                }
+        +/
+        void style(Style stl){
+            foreach (widget; _widgets) {
+                widget.style = stl;
             }
+        }
 
         /++
             Widgetを描画します．
-            +/
-            void draw(in int posX){
-                int currentHeight= 0;
-                foreach (widget; _widgets) {
-                    armos.graphics.pushMatrix;
-                    armos.graphics.translate(0, currentHeight, 0);
-                    widget.position = armos.math.Vector2i(posX, currentHeight);
-                    widget.draw();
-                    armos.graphics.popMatrix;
-                    currentHeight += widget.height;
-                }
+        +/
+        void draw(in int posX){
+            int currentHeight= 0;
+            foreach (widget; _widgets) {
+                armos.graphics.pushMatrix;
+                armos.graphics.translate(0, currentHeight, 0);
+                widget.position = armos.math.Vector2i(posX, currentHeight);
+                widget.draw();
+                armos.graphics.popMatrix;
+                currentHeight += widget.height;
             }
+        }
 
         /++
-            +/
-            int width()const{
-                return _width;
-            }
+        +/
+        int width()const{
+            return _width;
+        }
     }//public
 
     private{
@@ -159,41 +159,41 @@ class Widget {
     public{
         /++
             描画を行います．
-            +/
-            void draw(){};
+        +/
+        void draw(){};
 
         /++
             Widgetの高さを返します．
-            +/
-            int height()const{return _height;}
+        +/
+        int height()const{return _height;}
 
         /++
-            +/
-            void style(Style stl){_style = stl;}
+        +/
+        void style(Style stl){_style = stl;}
 
         /++
             Widgetの座標を返します．
-            +/
-            void position(armos.math.Vector2i pos){_position = pos;}
+        +/
+        void position(armos.math.Vector2i pos){_position = pos;}
 
         /++
-            +/
-            void update(ref armos.events.EventArg arg){}
+        +/
+        void update(ref armos.events.EventArg arg){}
 
         /++
             マウスが動いた時に呼ばれるイベントハンドラです．
-            +/
-            void mouseMoved(ref armos.events.MouseMovedEventArg message){}
+        +/
+        void mouseMoved(ref armos.events.MouseMovedEventArg message){}
 
         /++
             マウスのボタンが離された時に呼ばれるイベントハンドラです．
-            +/
-            void mouseReleased(ref armos.events.MouseReleasedEventArg message){}
+        +/
+        void mouseReleased(ref armos.events.MouseReleasedEventArg message){}
 
         /++
             マウスのボタンが押された時に呼ばれるイベントハンドラです．
-            +/
-            void mousePressed(ref armos.events.MousePressedEventArg message){}
+        +/
+        void mousePressed(ref armos.events.MousePressedEventArg message){}
     }//public
 
     private{
@@ -213,20 +213,20 @@ class Label : Widget{
     public{
         /++
             表示する文字列を指定して初期化を行います．
-            +/
-            this(string str){
-                _str = str;
-                _height = 16;
-            };
+        +/
+        this(string str){
+            _str = str;
+            _height = 16;
+        };
 
         /++
-            +/
-            void draw(){
-                armos.graphics.setColor(_style.colors["background"]);
-                armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
-                armos.graphics.setColor(_style.colors["font1"]);
-                _style.font.draw(_str, _style.font.width, 0);
-            };
+        +/
+        void draw(){
+            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
+            armos.graphics.setColor(_style.colors["font1"]);
+            _style.font.draw(_str, _style.font.width, 0);
+        };
     }//public
 
     private{
@@ -241,24 +241,24 @@ class Partition : Widget{
     public{
         /++
             初期化を行います．区切り文字を指定することもできます．
-            +/
-            this(string str = "/"){
-                _str = str;
-                _height = 16;
-            };
+        +/
+        this(string str = "/"){
+            _str = str;
+            _height = 16;
+        };
 
         /++
-            +/
-            void draw(){
-                armos.graphics.setColor(_style.colors["background"]);
-                armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
-                armos.graphics.setColor(_style.colors["font2"]);
-                string str;
-                for (int i = 0; i < _style.width/_style.font.width/_str.length; i++) {
-                    str ~= _str;
-                }
-                _style.font.draw(str, 0, 0);
-            };
+        +/
+        void draw(){
+            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
+            armos.graphics.setColor(_style.colors["font2"]);
+            string str;
+            for (int i = 0; i < _style.width/_style.font.width/_str.length; i++) {
+                str ~= _str;
+            }
+            _style.font.draw(str, 0, 0);
+        };
 
     }//public
 
@@ -276,70 +276,70 @@ class Slider(T) : Widget{
     public{
         /++
             初期化を行います．Slider固有の名前と操作する値，その上限下限を設定します．
-            +/
-            this(string name, ref T var, T min, T max){
-                _var = &var;
-                _varMin = min;
-                _varMax = max;
-                _name = name;
-                _height = 32;
-                armos.events.addListener(armos.app.currentWindow.events.mouseMoved, this, &this.mouseMoved);
-                armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
-                armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
-            };
+        +/
+        this(string name, ref T var, T min, T max){
+            _var = &var;
+            _varMin = min;
+            _varMax = max;
+            _name = name;
+            _height = 32;
+            armos.events.addListener(armos.app.currentWindow.events.mouseMoved, this, &this.mouseMoved);
+            armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
+            armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+        };
 
         /++
-            +/
-            void draw(){
-                armos.graphics.setColor(_style.colors["background"]);
-                armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
+        +/
+        void draw(){
+            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
-                string varString = "";
-                static if(__traits(isIntegral, *_var)){
-                    varString = format("%d", *_var).to!string;
-                }else if(__traits(isFloating, *_var)){
-                    varString = format("%f", *_var).to!string;
-                }
-                armos.graphics.setColor(_style.colors["font1"]);
-                _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
-
-                immutable int currentValueAsSliderPosition = armos.math.map.map( ( *_var ).to!float, _varMin.to!float, _varMax.to!float, 0.0, _style.width.to!float - _style.font.width.to!float*2.0).to!int;
-                armos.graphics.setColor(_style.colors["base1"]);
-                armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*2);
-                armos.graphics.setColor(_style.colors["base2"]);
-                armos.graphics.drawRectangle(_style.font.width, _style.font.height, currentValueAsSliderPosition.to!int, _style.font.height*2);
-            };
-
-        /++
-            +/
-            void mousePressed(ref armos.events.MousePressedEventArg message){
-                _isPressing = isOnMouse(message.x, message.y);
+            string varString = "";
+            static if(__traits(isIntegral, *_var)){
+                varString = format("%d", *_var).to!string;
+            }else if(__traits(isFloating, *_var)){
+                varString = format("%f", *_var).to!string;
             }
+            armos.graphics.setColor(_style.colors["font1"]);
+            _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
+
+            immutable int currentValueAsSliderPosition = armos.math.map.map( ( *_var ).to!float, _varMin.to!float, _varMax.to!float, 0.0, _style.width.to!float - _style.font.width.to!float*2.0).to!int;
+            armos.graphics.setColor(_style.colors["base1"]);
+            armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*2);
+            armos.graphics.setColor(_style.colors["base2"]);
+            armos.graphics.drawRectangle(_style.font.width, _style.font.height, currentValueAsSliderPosition.to!int, _style.font.height*2);
+        };
 
         /++
-            +/
-            void mouseMoved(ref armos.events.MouseMovedEventArg message){
-                if(_isPressing){
-                    *_var = armos.math.map.map( 
-                            ( message.x-_position[0]).to!float,
-                            _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
-                            _varMin.to!float, _varMax.to!float
-                            , true).to!T;
-                }
-            }
+        +/
+        void mousePressed(ref armos.events.MousePressedEventArg message){
+            _isPressing = isOnMouse(message.x, message.y);
+        }
 
         /++
-            +/
-            void mouseReleased(ref armos.events.MouseReleasedEventArg message){
-                if(_isPressing){
-                    *_var = armos.math.map.map( 
-                            ( message.x-_position[0]).to!float,
-                            _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
-                            _varMin.to!float, _varMax.to!float
-                            , true).to!T;
-                    _isPressing = false;
-                }
+        +/
+        void mouseMoved(ref armos.events.MouseMovedEventArg message){
+            if(_isPressing){
+                *_var = armos.math.map.map( 
+                        ( message.x-_position[0]).to!float,
+                        _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
+                        _varMin.to!float, _varMax.to!float
+                        , true).to!T;
             }
+        }
+
+        /++
+        +/
+        void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+            if(_isPressing){
+                *_var = armos.math.map.map( 
+                        ( message.x-_position[0]).to!float,
+                        _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
+                        _varMin.to!float, _varMax.to!float
+                        , true).to!T;
+                _isPressing = false;
+            }
+        }
     }//public
 
     private{
@@ -535,40 +535,40 @@ class Button : Widget{
         }
 
         /++
-            +/
-            void draw(){
-                armos.graphics.setColor(_style.colors["background"]);
-                armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
+        +/
+        void draw(){
+            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
-                armos.graphics.setColor(_style.colors["font1"]);
-                _style.font.draw(_name, _style.font.width, 0);
+            armos.graphics.setColor(_style.colors["font1"]);
+            _style.font.draw(_name, _style.font.width, 0);
 
-                if(*_v){
-                    armos.graphics.setColor(_style.colors["base2"]);
-                }else{
-                    armos.graphics.setColor(_style.colors["base1"]);
-                }
-
-                armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+            if(*_v){
+                armos.graphics.setColor(_style.colors["base2"]);
+            }else{
+                armos.graphics.setColor(_style.colors["base1"]);
             }
+
+            armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+        }
 
         /++
-            +/
-            void mousePressed(ref armos.events.MousePressedEventArg message){
-                _isPressing = isOnMouse(message.x, message.y);
-                if(_isPressing){
-                    *_v = true;
-                }
+        +/
+        void mousePressed(ref armos.events.MousePressedEventArg message){
+            _isPressing = isOnMouse(message.x, message.y);
+            if(_isPressing){
+                *_v = true;
             }
+        }
 
         /++
-            +/
-            void mouseReleased(ref armos.events.MouseReleasedEventArg message){
-                *_v = false;
-                if(_isPressing){
-                    _isPressing = false;
-                }
+        +/
+        void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+            *_v = false;
+            if(_isPressing){
+                _isPressing = false;
             }
+        }
     }//public
 
     private{
@@ -605,37 +605,37 @@ class ToggleButton : Widget{
         }
 
         /++
-            +/
-            void draw(){
-                armos.graphics.setColor(_style.colors["background"]);
-                armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
+        +/
+        void draw(){
+            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
-                armos.graphics.setColor(_style.colors["font1"]);
-                _style.font.draw(_name, _style.font.width, 0);
+            armos.graphics.setColor(_style.colors["font1"]);
+            _style.font.draw(_name, _style.font.width, 0);
 
-                if(*_v){
-                    armos.graphics.setColor(_style.colors["base2"]);
-                }else{
-                    armos.graphics.setColor(_style.colors["base1"]);
-                }
-
-                armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+            if(*_v){
+                armos.graphics.setColor(_style.colors["base2"]);
+            }else{
+                armos.graphics.setColor(_style.colors["base1"]);
             }
+
+            armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+        }
 
         /++
-            +/
-            void mousePressed(ref armos.events.MousePressedEventArg message){
-                _isPressing = isOnMouse(message.x, message.y);
-            }
+        +/
+        void mousePressed(ref armos.events.MousePressedEventArg message){
+            _isPressing = isOnMouse(message.x, message.y);
+        }
 
         /++
-            +/
-            void mouseReleased(ref armos.events.MouseReleasedEventArg message){
-                if(_isPressing){
-                    *_v = !(*_v);
-                    _isPressing = false;
-                }
+        +/
+        void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+            if(_isPressing){
+                *_v = !(*_v);
+                _isPressing = false;
             }
+        }
     }//public
 
     private{

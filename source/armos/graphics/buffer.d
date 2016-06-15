@@ -10,74 +10,74 @@ class Buffer {
 
         /++
             BufferTypeを指定して初期化します．
-            +/
-            this(in BufferType bufferType){
-                glGenBuffers(1, cast(uint*)&_id);
-                _bufferType = bufferType;
-            }
+        +/
+        this(in BufferType bufferType){
+            glGenBuffers(1, cast(uint*)&_id);
+            _bufferType = bufferType;
+        }
 
         ~this(){
             glDeleteBuffers(1, cast(uint*)&_id);
         }
 
         /++
-            +/
-            void begin(){
-                if(hasVao){
-                    _rootVao.begin;
-                }
-
-                int savedID;
-                glGetIntegerv(bindingEnum(_bufferType), &savedID);
-                _savedIDs ~= savedID;
-                glBindBuffer(_bufferType, _id);
+        +/
+        void begin(){
+            if(hasVao){
+                _rootVao.begin;
             }
+
+            int savedID;
+            glGetIntegerv(bindingEnum(_bufferType), &savedID);
+            _savedIDs ~= savedID;
+            glBindBuffer(_bufferType, _id);
+        }
 
         /++
-            +/
-            void end(){
-                import std.range;
-                glBindBuffer(_bufferType, _savedIDs[$-1]);
-                if (_savedIDs.length == 0) {
-                    assert(0, "stack is empty");
-                }else{
-                    _savedIDs.popBack;
-                }
-
-                if(hasVao){
-                    _rootVao.end;
-                }
+        +/
+        void end(){
+            import std.range;
+            glBindBuffer(_bufferType, _savedIDs[$-1]);
+            if (_savedIDs.length == 0) {
+                assert(0, "stack is empty");
+            }else{
+                _savedIDs.popBack;
             }
+
+            if(hasVao){
+                _rootVao.end;
+            }
+        }
 
         /++
-            +/
-            void set(Array)(Array array, in BufferUsageFrequency freq, in BufferUsageNature nature){
-                begin;
-                import std.stdio;
-                auto size = array.length * array[0].sizeof;
-                // size.writeln;
-                glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
-                glVertexAttribPointer(0, 3, GL_FLOAT, GLfloat.sizeof * 2, 0, null);
-                // glEnableVertexAttribArray(0);
+        +/
+        void set(Array)(Array array, in BufferUsageFrequency freq, in BufferUsageNature nature){
+            begin;
+            import std.stdio;
+            auto size = array.length * array[0].sizeof;
+            // size.writeln;
+            glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
+            glVertexAttribPointer(0, 3, GL_FLOAT, GLfloat.sizeof * 2, 0, null);
+            // glEnableVertexAttribArray(0);
 
-                int size1;
-                glGetBufferParameteriv(_bufferType, GL_BUFFER_SIZE, &size1);
-                size1.writeln;
-                "".writeln;
-                end;
-            }
-
-        /++
-            +/
-            void vao(Vao o){
-                _rootVao = o;
-            }
+            int size1;
+            glGetBufferParameteriv(_bufferType, GL_BUFFER_SIZE, &size1);
+            size1.writeln;
+            "".writeln;
+            end;
+        }
 
         /++
-            +/
-            bool hasVao(){
-                return (_rootVao !is null);
-            }
+        +/
+        void vao(Vao o){
+            _rootVao = o;
+        }
+
+        /++
+        +/
+        bool hasVao(){
+            return (_rootVao !is null);
+        }
 
     }//public
 
@@ -159,7 +159,7 @@ private GLenum bindingEnum(in BufferType bufferType){
 }
 
 /++
-Bufferの更新頻度を表すenumです．
+    Bufferの更新頻度を表すenumです．
 +/
 enum BufferUsageFrequency{
     Stream,  /// 読み込みも書き込みも一度のみ
@@ -168,7 +168,7 @@ enum BufferUsageFrequency{
 }
 
 /++
-Bufferの読み書きの方法を表すenumです．
+    Bufferの読み書きの方法を表すenumです．
 +/
 enum BufferUsageNature{
     Draw, /// アプリケーション側から書き込まれ，OpenGLが描画のために読み込む
@@ -191,6 +191,7 @@ private static GLenum[BufferUsageNature][BufferUsageFrequency] usageEnumsTable()
     enums[BufferUsageFrequency.Dynamic][BufferUsageNature.Copy] = GL_DYNAMIC_COPY;
     return enums;
 };
+
 static unittest{
     static assert(usageEnumsTable[BufferUsageFrequency.Static][BufferUsageNature.Draw] == GL_STATIC_DRAW);
 }

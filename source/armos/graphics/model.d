@@ -12,62 +12,62 @@ class Model {
             モデルを読み込みます．
 
             読み込み時にmeshはmaterial毎に分割されます．
-            +/
-            void load(in string pathInDataDir){
-                meshes = (new AssimpModelLoader).load(pathInDataDir).meshes;
-                materials = (new AssimpModelLoader).load(pathInDataDir).materials;
-            }
+        +/
+        void load(in string pathInDataDir){
+            meshes = (new AssimpModelLoader).load(pathInDataDir).meshes;
+            materials = (new AssimpModelLoader).load(pathInDataDir).materials;
+        }
 
         /++
             読み込まれたmeshの数を返します．
-            +/
-            size_t numMeshes()const{
-                return meshes.length;
-            }
+        +/
+        size_t numMeshes()const{
+            return meshes.length;
+        }
 
         /++
             読み込まれたmaterialの数を返します．
-            +/
-            size_t numMaterials()const{
-                return materials.length;
-            }
+        +/
+        size_t numMaterials()const{
+            return materials.length;
+        }
 
         /++
             modelを描画します．
             Params:
             renderMode = 面，線，点のどれを描画するか指定します．
-            +/
-            void draw(in armos.graphics.PolyRenderMode renderMode){
-                foreach (mesh; meshes) {
-                    mesh.material.begin;
-                    armos.graphics.pushStyle;
-                    armos.graphics.setColor = mesh.material.diffuse;
-                    armos.graphics.currentRenderer.draw(mesh, renderMode, false, false, false);
-                    armos.graphics.popStyle;
-                    mesh.material.end;
-                }
-            };
+        +/
+        void draw(in armos.graphics.PolyRenderMode renderMode){
+            foreach (mesh; meshes) {
+                mesh.material.begin;
+                armos.graphics.pushStyle;
+                armos.graphics.setColor = mesh.material.diffuse;
+                armos.graphics.currentRenderer.draw(mesh, renderMode, false, false, false);
+                armos.graphics.popStyle;
+                mesh.material.end;
+            }
+        };
 
         /++
             modelをワイヤフレームで描画します．
-            +/
-            void drawWireFrame(){
-                draw(armos.graphics.PolyRenderMode.WireFrame);
-            };
+        +/
+        void drawWireFrame(){
+            draw(armos.graphics.PolyRenderMode.WireFrame);
+        };
 
         /++
             modelの頂点を点で描画します．
-            +/
-            void drawVertices(){
-                draw(armos.graphics.PolyRenderMode.Points);
-            };
+        +/
+        void drawVertices(){
+            draw(armos.graphics.PolyRenderMode.Points);
+        };
 
         /++
             meshの面を塗りつぶして描画します．
-            +/
-            void drawFill(){
-                draw(armos.graphics.PolyRenderMode.Fill);
-            };
+        +/
+        void drawFill(){
+            draw(armos.graphics.PolyRenderMode.Fill);
+        };
 
     }//public
 
@@ -81,7 +81,7 @@ import std.algorithm : map;
 import std.array : array, Appender;
 
 /++
-Assimpによりmodelの読み込みを行います．
+    Assimpによりmodelの読み込みを行います．
 +/
 class AssimpModelLoader {
     public{
@@ -129,6 +129,7 @@ class AssimpModelLoader {
 
 
     }//public 
+    
     private{
 
         ///

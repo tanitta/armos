@@ -13,34 +13,34 @@ class Loop {
         armos.app.BaseApp* application;
 
         /++
-            +/
-            this(){
-                fpscounter = new armos.utils.FpsCounter;
-            }
+        +/
+        this(){
+            fpscounter = new armos.utils.FpsCounter;
+        }
 
         /++
             イベントループに入ります．
             Params:
             app = 更新されるアプリケーションです．
-            +/
-            void run(WindowType)(ref armos.app.BaseApp app){
-                createWindow!(WindowType)(app);
-                loop();
-            };
+        +/
+        void run(WindowType)(ref armos.app.BaseApp app){
+            createWindow!(WindowType)(app);
+            loop();
+        };
 
         /++
             現在のFPS(Frame Per Second)の使用率を返します．
-            +/
-            double fpsUseRate(){
-                return fpscounter.fpsUseRate;
-            }
+        +/
+        double fpsUseRate(){
+            return fpscounter.fpsUseRate;
+        }
 
         /++
             FPS(Frame Per Second)を指定します．
-            +/
-            void targetFps(double fps){
-                fpscounter.targetFps = fps;
-            }
+        +/
+        void targetFps(double fps){
+            fpscounter.targetFps = fps;
+        }
     }//public
 
     private{
@@ -88,10 +88,10 @@ Loop mainLoop() @property
 }
 
 /++
-armosのアプリケーションを実行します．
-Params:
-WindowType = 立ち上げるWindowの型を指定します．省略可能です．
-app = 立ち上げるアプリケーションを指定します．
+    armosのアプリケーションを実行します．
+    Params:
+    WindowType = 立ち上げるWindowの型を指定します．省略可能です．
+    app = 立ち上げるアプリケーションを指定します．
 +/
 void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app){
     mainLoop_ = new Loop;
@@ -99,14 +99,14 @@ void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app){
 }
 
 /++
-現在のFPS(Frame Per Second)の使用率を返します．
+    現在のFPS(Frame Per Second)の使用率を返します．
 +/
 double fpsUseRate(){
     return mainLoop.fpsUseRate;
 }
 
 /++
-FPS(Frame Per Second)を指定します．
+    FPS(Frame Per Second)を指定します．
 +/
 void targetFps(double fps){
     mainLoop.targetFps(fps);

@@ -12,18 +12,18 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     T[Dimention] data = T.init;
 
     /++
-        +/
-        enum int dimention = Dimention;
+    +/
+    enum int dimention = Dimention;
     unittest{
         static assert(Vector!(float, 3).dimention == 3);
     }
 
     /++
         Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
-        +/
-        this(T[] arr ...)in{
-            assert(arr.length == 0 || arr.length == Dimention);
-        }body{
+    +/
+    this(T[] arr ...)in{
+        assert(arr.length == 0 || arr.length == Dimention);
+    }body{
             if(arr.length != 0){
                 data = arr;
             }
@@ -31,16 +31,16 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
 
     /++
-        +/
-        pure T opIndex(in int index)const{
-            return data[index];
-        }
+    +/
+    pure T opIndex(in int index)const{
+        return data[index];
+    }
 
     /++
-        +/
-        ref T opIndex(in int index){
-            return data[index];
-        }
+    +/
+    ref T opIndex(in int index){
+        return data[index];
+    }
     unittest{
         auto vec = Vector3d(1, 2, 3);
         assert(vec[0] == 1.0);
@@ -68,12 +68,12 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        +/
-        enum VectorType zero = (){
-            auto v =  VectorType();
-            v.data[] = T(0);
-            return v;
-        }();
+    +/
+    enum VectorType zero = (){
+        auto v =  VectorType();
+        v.data[] = T(0);
+        return v;
+    }();
     unittest{
         auto vec = Vector3d.zero;
         assert(vec[0] == 0);
@@ -82,12 +82,12 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        +/
-        VectorType opNeg()const{
-            auto result = VectorType();
-            result.data[] = -data[];
-            return result;
-        };
+    +/
+    VectorType opNeg()const{
+        auto result = VectorType();
+        result.data[] = -data[];
+        return result;
+    };
     unittest{
         auto vec1 = Vector3d();
         vec1[0] = 1.5;
@@ -96,12 +96,12 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        +/
-        VectorType opAdd(in VectorType r)const{
-            auto result = VectorType();
-            result.data[] = data[] + r.data[];
-            return result;
-        }
+    +/
+    VectorType opAdd(in VectorType r)const{
+        auto result = VectorType();
+        result.data[] = data[] + r.data[];
+        return result;
+    }
     unittest{
         auto vec1 = Vector3d();
         vec1[0] = 1.5;
@@ -113,24 +113,24 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        +/
-        VectorType opSub(in VectorType r)const{
-            auto result = VectorType();
-            result.data[] = data[] - r.data[];
-            return result;
-        }
+    +/
+    VectorType opSub(in VectorType r)const{
+        auto result = VectorType();
+        result.data[] = data[] - r.data[];
+        return result;
+    }
     unittest{
         auto result = Vector3d(3, 2, 1) - Vector3d(1, 2, 3);
         assert(result == Vector3d(2, 0, -2));
     }
 
     /++
-        +/
-        VectorType opAdd(in T v)const{
-            auto result = VectorType();
-            result.data[] = data[] + v;
-            return result;
-        }
+    +/
+    VectorType opAdd(in T v)const{
+        auto result = VectorType();
+        result.data[] = data[] + v;
+        return result;
+    }
     unittest{
         auto result = Vector3d(3.0, 2.0, 1.0);
         assert(result+2.0 == Vector3d(5.0, 4.0, 3.0));
@@ -138,24 +138,24 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        +/
-        VectorType opSub(in T v)const{
-            auto result = VectorType();
-            result.data[] = data[] - v;
-            return result;
-        }
+    +/
+    VectorType opSub(in T v)const{
+        auto result = VectorType();
+        result.data[] = data[] - v;
+        return result;
+    }
     unittest{
         auto result = Vector3d(3.0, 2.0, 1.0);
         assert(result-2.0 == Vector3d(1.0, 0.0, -1.0));
     }
 
     /++
-        +/
-        VectorType opMul(in T v)const{
-            auto result = VectorType();
-            result.data[] = data[] * v;
-            return result;
-        }
+    +/
+    VectorType opMul(in T v)const{
+        auto result = VectorType();
+        result.data[] = data[] * v;
+        return result;
+    }
     unittest{
         auto result = Vector3d(3.0, 2.0, 1.0);
         assert(result*2.0 == Vector3d(6.0, 4.0, 2.0));
@@ -163,36 +163,36 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        +/
-        VectorType opDiv(in T v)const{
-            auto result = VectorType();
-            result.data[] = data[] / v;
-            return result;
-        }
+    +/
+    VectorType opDiv(in T v)const{
+        auto result = VectorType();
+        result.data[] = data[] / v;
+        return result;
+    }
     unittest{
         auto result = Vector3d(3.0, 2.0, 1.0);
         assert(result/2.0 == Vector3d(1.5, 1.0, 0.5));
     }
 
     /++
-        +/
-        VectorType opMod(in T v)const{
-            auto result = VectorType();
-            result.data[] = data[] % v;
-            return result;
-        }
+    +/
+    VectorType opMod(in T v)const{
+        auto result = VectorType();
+        result.data[] = data[] % v;
+        return result;
+    }
     unittest{
         auto result = Vector3d(4.0, 2.0, 1.0);
         assert(result%2.0 == Vector3d(0.0, 0.0, 1.0));
     }
 
     /++
-        +/
-        VectorType opMul(in VectorType v)const{
-            auto result = VectorType();
-            result.data[] = data[] * v.data[];
-            return result;
-        }
+    +/
+    VectorType opMul(in VectorType v)const{
+        auto result = VectorType();
+        result.data[] = data[] * v.data[];
+        return result;
+    }
     unittest{
         auto vec1 = Vector3d(3.0, 2.0, 1.0);
         auto vec2 = Vector3d(2.0, 1.0, 0.0);
@@ -200,12 +200,12 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        +/
-        VectorType opDiv(in VectorType v)const{
-            auto result = VectorType();
-            result.data[] = data[] / v.data[];
-            return result;
-        }
+    +/
+    VectorType opDiv(in VectorType v)const{
+        auto result = VectorType();
+        result.data[] = data[] / v.data[];
+        return result;
+    }
     unittest{
         auto vec1 = Vector3d(4.0, 2.0, 1.0);
         auto vec2 = Vector3d(2.0, 1.0, 1.0);
@@ -213,12 +213,12 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        +/
-        VectorType opMod(in VectorType v)const{
-            auto result = VectorType();
-            result.data[] = data[] % v.data[];
-            return result;
-        }
+    +/
+    VectorType opMod(in VectorType v)const{
+        auto result = VectorType();
+        result.data[] = data[] % v.data[];
+        return result;
+    }
     unittest{
         auto vec1 = Vector3d(3.0, 2.0, 1.0);
         auto vec2 = Vector3d(2.0, 1.0, 1.0);
@@ -227,16 +227,16 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
     /++
         Vectorのノルムを返します．
-        +/
-        T norm()const{
-            import std.numeric : dotProduct;
-            immutable T sumsq = dotProduct(data, data);
+    +/
+    T norm()const{
+        import std.numeric : dotProduct;
+        immutable T sumsq = dotProduct(data, data);
 
-            static if( is(T == int ) )
-                return cast(int)sqrt(cast(float)sumsq);
-            else
-                return sqrt(sumsq);
-        }
+        static if( is(T == int ) )
+            return cast(int)sqrt(cast(float)sumsq);
+        else
+            return sqrt(sumsq);
+    }
     unittest{
         auto result = Vector3d(3.0, 2.0, 1.0);
         assert(result.norm() == ( 3.0^^2.0+2.0^^2.0+1.0^^2.0 )^^0.5);
@@ -244,11 +244,11 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
     /++
         Vectorのドット積を返します．
-        +/
-        T dotProduct(in VectorType v)const{
-            import std.numeric : dotProduct;
-            return dotProduct(data, v.data);
-        }
+    +/
+    T dotProduct(in VectorType v)const{
+        import std.numeric : dotProduct;
+        return dotProduct(data, v.data);
+    }
     unittest{
         auto vec1 = Vector3d(3.0, 2.0, 1.0);
         auto vec2 = Vector3d(2.0, 1.0, 2.0);
@@ -264,8 +264,8 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
         Vectorのベクトル積(クロス積，外積)を返します．
         Dimentionが3以上の場合のみ使用できます．
-        +/
-        static if (Dimention >= 3)
+    +/
+    static if (Dimention >= 3)
         VectorType vectorProduct(in VectorType[] arg ...)const in{
             assert(arg.length == Dimention-2);
         }body{
@@ -293,10 +293,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
     /++
         正規化したVectorを返します．
-        +/
-        VectorType normalized()const{
-            return this/this.norm();
-        }
+    +/
+    VectorType normalized()const{
+        return this/this.norm();
+    }
     unittest{
         auto vec1 = Vector3d(3.0, 2.0, 1.0);
         assert(vec1.normalized().norm() == 1.0);
@@ -304,10 +304,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
     /++
         Vectorを正規化します．
-        +/
-        void normalize(){
-            this.data[] /= this.norm();
-        }
+    +/
+    void normalize(){
+        this.data[] /= this.norm();
+    }
     unittest{
         auto vec1 = Vector3d(3.0, 2.0, 1.0);
         vec1.normalize();
@@ -316,10 +316,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
     /++
         Vectorの要素を一次元配列で返します．
-        +/
-        T[Dimention] array()const{
-            return data;
-        }
+    +/
+    T[Dimention] array()const{
+        return data;
+    }
     unittest{
         auto vector = Vector3f(1, 2, 3);
         float[3] array = vector.array;
@@ -331,32 +331,32 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
     /++
         Vectorを標準出力に渡します
-        +/
-        void print()const{
-            import std.stdio;
-            for (int i = 0; i < Dimention ; i++) {
-                static if( is(T == int ) )
-                    writef("%d\t", data[i]);
-                else
-                    writef("%f\t", data[i]);
-            }
-            writef("\n");
+    +/
+    void print()const{
+        import std.stdio;
+        for (int i = 0; i < Dimention ; i++) {
+            static if( is(T == int ) )
+                writef("%d\t", data[i]);
+            else
+                writef("%f\t", data[i]);
         }
+        writef("\n");
+    }
 
     /++
         自身を別の型のVectorへキャストしたものを返します．キャスト後の型は元のVectorと同じ次元である必要があります．
-        +/
-        CastType opCast(CastType)()const{
-            auto vec = CastType();
-            if (vec.data.length != data.length) {
-                assert(0);
-            }else{
-                foreach (int index, const T var; data) {
-                    vec.data[index] = cast( typeof( vec.data[0] ) )data[index];
-                }
-                return vec;
+    +/
+    CastType opCast(CastType)()const{
+        auto vec = CastType();
+        if (vec.data.length != data.length) {
+            assert(0);
+        }else{
+            foreach (int index, const T var; data) {
+                vec.data[index] = cast( typeof( vec.data[0] ) )data[index];
             }
+            return vec;
         }
+    }
     unittest{
         auto vec_f = Vector3f(2.5, 0, 0);
         auto vec_i = Vector3i(0, 0, 0);

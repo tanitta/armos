@@ -8,23 +8,23 @@ class Camera{
     public{
         /++
             projectionMatrixを取得します．
-            +/
-            armos.math.Matrix4f projectionMatrix()const{return _projectionMatrix;}
+        +/
+        armos.math.Matrix4f projectionMatrix()const{return _projectionMatrix;}
 
         /++
             Cameraの位置を表します．
-            +/
-            armos.math.Vector3f position = armos.math.Vector3f.zero;
+        +/
+        armos.math.Vector3f position = armos.math.Vector3f.zero;
 
         /++
             Cameraが映す対象の位置を表します．
-            +/
-            armos.math.Vector3f target = armos.math.Vector3f.zero;
+        +/
+        armos.math.Vector3f target = armos.math.Vector3f.zero;
 
         /++
             Cameraの方向を表します．
-            +/
-            armos.math.Vector3f up = armos.math.Vector3f(0, 1, 0);
+        +/
+        armos.math.Vector3f up = armos.math.Vector3f(0, 1, 0);
 
         /**
           Cameraの視野角を表します．単位はdegreeです．
@@ -33,48 +33,48 @@ class Camera{
 
         /++
             描画を行う最短距離です．
-            +/
-            double nearDist = 0.1;
+        +/
+        double nearDist = 0.1;
 
         /++
             描画を行う最長距離です．
-            +/
-            double farDist = 10000;
+        +/
+        double farDist = 10000;
 
         /++
             Cameraで表示する処理を開始します．
-            +/
-            void begin(){
-                armos.math.Matrix4f lookAt = armos.graphics.lookAtViewMatrix(
-                        position, 
-                        target, 
-                        up
-                        );
+        +/
+        void begin(){
+            armos.math.Matrix4f lookAt = armos.graphics.lookAtViewMatrix(
+                    position, 
+                    target, 
+                    up
+                    );
 
-                armos.math.Matrix4f persp =  armos.graphics.perspectiveMatrix(
-                        fov,
-                        armos.app.windowAspect,
-                        nearDist,
-                        farDist
-                        );
+            armos.math.Matrix4f persp =  armos.graphics.perspectiveMatrix(
+                    fov,
+                    armos.app.windowAspect,
+                    nearDist,
+                    farDist
+                    );
 
-                // armos.math.Matrix4f vFlip = armos.math.Matrix4f(
-                // 	[1,  0, 0, 0                       ],
-                // 	[0, -1, 0, armos.app.windowSize[1] ],
-                // 	[0, 0,  1, 0                       ],
-                // 	[0, 0,  0, 1                       ],
-                // );
+            // armos.math.Matrix4f vFlip = armos.math.Matrix4f(
+            // 	[1,  0, 0, 0                       ],
+            // 	[0, -1, 0, armos.app.windowSize[1] ],
+            // 	[0, 0,  1, 0                       ],
+            // 	[0, 0,  0, 1                       ],
+            // );
 
-                _projectionMatrix = persp*lookAt;
-                armos.graphics.currentRenderer.bind(_projectionMatrix);
-            }
+            _projectionMatrix = persp*lookAt;
+            armos.graphics.currentRenderer.bind(_projectionMatrix);
+        }
 
         /++
             Cameraで表示する処理を終了します．
-            +/
-            void end(){
-                armos.graphics.currentRenderer.unbind();
-            }
+        +/
+        void end(){
+            armos.graphics.currentRenderer.unbind();
+        }
     }
 
     private{
@@ -83,7 +83,7 @@ class Camera{
 }
 
 /++
-Deprecated: WIP
+    Deprecated: WIP
 +/
 class EasyCam : Camera{
     alias N = float;

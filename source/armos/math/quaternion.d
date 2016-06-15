@@ -12,13 +12,13 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     V4 vec = V4();
 
     /++
-        +/
-        this(in T x, in T y, in T z, in T w){
-            vec[0] = x;
-            vec[1] = y;
-            vec[2] = z;
-            vec[3] = w;
-        }
+    +/
+    this(in T x, in T y, in T z, in T w){
+        vec[0] = x;
+        vec[1] = y;
+        vec[2] = z;
+        vec[3] = w;
+    }
     unittest{
         alias T = double;
         alias Q = Quaternion!T;
@@ -28,13 +28,13 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        this(in T s, in V3 v){
-            vec[0] = s;
-            vec[1] = v[0];
-            vec[2] = v[1];
-            vec[3] = v[2];
-        }
+    +/
+    this(in T s, in V3 v){
+        vec[0] = s;
+        vec[1] = v[0];
+        vec[2] = v[1];
+        vec[3] = v[2];
+    }
     unittest{
         alias T = double;
         alias Q = Quaternion!T;
@@ -45,10 +45,10 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        this(in V3 v){
-            this(T(1), v);
-        }
+    +/
+    this(in V3 v){
+        this(T(1), v);
+    }
     unittest{
         alias T = double;
         alias Q = Quaternion!T;
@@ -59,13 +59,13 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        this(in V4 v){
-            vec[0] = v[0];
-            vec[1] = v[1];
-            vec[2] = v[2];
-            vec[3] = v[3];
-        }
+    +/
+    this(in V4 v){
+        vec[0] = v[0];
+        vec[1] = v[1];
+        vec[2] = v[2];
+        vec[3] = v[3];
+    }
     unittest{
         alias T = double;
         alias Q = Quaternion!T;
@@ -76,16 +76,16 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        T opIndex(in int index)const{
-            return vec[index];
-        }
+    +/
+    T opIndex(in int index)const{
+        return vec[index];
+    }
 
     /++
-        +/
-        ref  T opIndex(in int index){
-            return vec[index];
-        }
+    +/
+    ref  T opIndex(in int index){
+        return vec[index];
+    }
     unittest{
         Quaternion!(double) q = Quaternion!(double)(1, 2, 3, 4);
         assert(q[0]==1);
@@ -95,10 +95,10 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        static Q zero(){
-            return Q(T( 0 ), T( 0 ), T( 0 ), T( 0 ));
-        }
+    +/
+    static Q zero(){
+        return Q(T( 0 ), T( 0 ), T( 0 ), T( 0 ));
+    }
     unittest{
         auto e = Quaternion!(double).zero;
         assert(e[0]==0);
@@ -108,10 +108,10 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        static Q unit(){
-            return Q(T( 1 ), T( 0 ), T( 0 ), T( 0 ));
-        }
+    +/
+    static Q unit(){
+        return Q(T( 1 ), T( 0 ), T( 0 ), T( 0 ));
+    }
     unittest{
         auto e = Quaternion!(double).unit;
         assert(e[0]==1);
@@ -121,18 +121,18 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        Q opMul(in Q r_quat)const{
-            immutable T s_l  = this[0];
-            immutable v_l = V3(this[1], this[2], this[3]);
+    +/
+    Q opMul(in Q r_quat)const{
+        immutable T s_l  = this[0];
+        immutable v_l = V3(this[1], this[2], this[3]);
 
-            immutable T s_r  = r_quat[0];
-            immutable v_r = V3(r_quat[1], r_quat[2], r_quat[3],);
+        immutable T s_r  = r_quat[0];
+        immutable v_r = V3(r_quat[1], r_quat[2], r_quat[3],);
 
-            immutable return_v = s_l*v_r + s_r*v_l + v_l.vectorProduct(v_r) ;
-            immutable return_s = ( s_l*s_r ) - ( v_l.dotProduct(v_r) );
-            return Q(return_s, return_v[0], return_v[1], return_v[2]);
-        }
+        immutable return_v = s_l*v_r + s_r*v_l + v_l.vectorProduct(v_r) ;
+        immutable return_s = ( s_l*s_r ) - ( v_l.dotProduct(v_r) );
+        return Q(return_s, return_v[0], return_v[1], return_v[2]);
+    }
     unittest{
         Quaternion!(double) q1      = Quaternion!(double)(1, 0, 0, 0);
         Quaternion!(double) q2      = Quaternion!(double)(1, 0, 0, 0);
@@ -153,10 +153,10 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        Q opNeg()const{
-            return Q(-this[0], -this[1], -this[2], -this[3]);
-        }
+    +/
+    Q opNeg()const{
+        return Q(-this[0], -this[1], -this[2], -this[3]);
+    }
     unittest{
         Quaternion!(double) q = Quaternion!(double)(1, 1, 1, 1);
         Quaternion!(double) a = Quaternion!(double)(-1, -1, -1, -1);
@@ -164,12 +164,12 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        Q opAdd(in Q q)const{
-            auto return_quat = Q();
-            return_quat.vec = vec + q.vec;
-            return return_quat;
-        }
+    +/
+    Q opAdd(in Q q)const{
+        auto return_quat = Q();
+        return_quat.vec = vec + q.vec;
+        return return_quat;
+    }
     unittest{
         auto q1 = Quaternion!(double)(1, 2, 3, 4);
         auto q2 = Quaternion!(double)(2, 3, 4, 5);
@@ -178,12 +178,12 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        Q opMul(in T r)const{
-            auto return_quat = Q();
-            return_quat.vec = vec * r;
-            return return_quat;
-        }
+    +/
+    Q opMul(in T r)const{
+        auto return_quat = Q();
+        return_quat.vec = vec * r;
+        return return_quat;
+    }
     unittest{
         auto q = Quaternion!(double)(1, 2, 3, 4);
         auto qA = Quaternion!(double)(3, 6, 9, 12);
@@ -191,12 +191,12 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     }
 
     /++
-        +/
-        Q opDiv(in T r)const {
-            auto return_quat = Q();
-            return_quat.vec = vec / r;
-            return return_quat;
-        }
+    +/
+    Q opDiv(in T r)const {
+        auto return_quat = Q();
+        return_quat.vec = vec / r;
+        return return_quat;
+    }
     unittest{
         auto q = Quaternion!(double)(3, 6, 9, 12);
         auto qA = Quaternion!(double)(1, 2, 3, 4);
@@ -205,20 +205,20 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 
     /++
         Quaternionのノルムを返します．
-        +/
-        T norm()const {
-            return sqrt(this[0]^^2.0 + this[1]^^2.0 + this[2]^^2.0 + this[3]^^2.0);
-        }
+    +/
+    T norm()const {
+        return sqrt(this[0]^^2.0 + this[1]^^2.0 + this[2]^^2.0 + this[3]^^2.0);
+    }
     unittest{
         auto q = Quaternion!(double)(1, 2, 3, 4);
         assert(q.norm == sqrt(30.0));
     }
 
     /++
-        +/
-        Q normalized()const {
-            return Q(vec.normalized);
-        }
+    +/
+    Q normalized()const {
+        return Q(vec.normalized);
+    }
     unittest{
         // auto q = Quaternion!(double)(1, 2, 3, 4);
         // assert(q.norm == sqrt(30.0));
@@ -226,10 +226,10 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 
     /++
         Quaternionの共役Quaternionを返します．
-        +/
-        Q conjugate()const{
-            return Q(this[0], -this[1], -this[2], -this[3]);
-        }
+    +/
+    Q conjugate()const{
+        return Q(this[0], -this[1], -this[2], -this[3]);
+    }
     unittest{
         auto q  = Quaternion!(double)(1, 2, 3, 4);
         auto qA = Quaternion!(double)(1, -2, -3, -4);
@@ -238,10 +238,10 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 
     /++
 
-        +/
-        Q inverse()const{
-            return conjugate/(this[0]^^T(2.0) + this[1]^^T(2.0) + this[2]^^T(2.0) + this[3]^^T(2.0));
-        }
+    +/
+    Q inverse()const{
+        return conjugate/(this[0]^^T(2.0) + this[1]^^T(2.0) + this[2]^^T(2.0) + this[3]^^T(2.0));
+    }
     unittest{
         auto q  = Quaternion!(double)(1, 0, 1, 0);
         auto qR = q.inverse;
@@ -254,42 +254,42 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 
     /++
         自身の回転行列(4x4)を返します．
-        +/
-        armos.math.Matrix!(T, 4, 4) matrix44()const{
-            return armos.math.Matrix!(T, 4, 4)(
-                    [this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2]),               0],
-                    [2.0*(this[1]*this[2]+this[0]*this[3]),               this[0]^^2.0-this[1]^^2.0+this[2]^^2.0-this[3]^^2.0, 2.0*(this[2]*this[3]-this[0]*this[1]),               0],
-                    [2.0*(this[1]*this[3]-this[0]*this[2]),               2.0*(this[2]*this[3]+this[0]*this[1]),               this[0]^^2.0-this[1]^^2.0-this[2]^^2.0+this[3]^^2.0, 0],
-                    [0,                                                   0,                                                   0,                                                   1]
-                    );
-        }
+    +/
+    armos.math.Matrix!(T, 4, 4) matrix44()const{
+        return armos.math.Matrix!(T, 4, 4)(
+                [this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2]),               0],
+                [2.0*(this[1]*this[2]+this[0]*this[3]),               this[0]^^2.0-this[1]^^2.0+this[2]^^2.0-this[3]^^2.0, 2.0*(this[2]*this[3]-this[0]*this[1]),               0],
+                [2.0*(this[1]*this[3]-this[0]*this[2]),               2.0*(this[2]*this[3]+this[0]*this[1]),               this[0]^^2.0-this[1]^^2.0-this[2]^^2.0+this[3]^^2.0, 0],
+                [0,                                                   0,                                                   0,                                                   1]
+                );
+    }
     unittest{
     }
 
     /++
         自身の回転行列(3x3)を返します．
-        +/
-        armos.math.Matrix!(T, 3, 3) matrix33()const{
-            return armos.math.Matrix!(T, 3, 3)(
-                    [this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2])              ],
-                    [2.0*(this[1]*this[2]+this[0]*this[3]),               this[0]^^2.0-this[1]^^2.0+this[2]^^2.0-this[3]^^2.0, 2.0*(this[2]*this[3]-this[0]*this[1])              ],
-                    [2.0*(this[1]*this[3]-this[0]*this[2]),               2.0*(this[2]*this[3]+this[0]*this[1]),               this[0]^^2.0-this[1]^^2.0-this[2]^^2.0+this[3]^^2.0]
-                    );
-        }
+    +/
+    armos.math.Matrix!(T, 3, 3) matrix33()const{
+        return armos.math.Matrix!(T, 3, 3)(
+                [this[0]^^2.0+this[1]^^2.0-this[2]^^2.0-this[3]^^2.0, 2.0*(this[1]*this[2]-this[0]*this[3]),               2.0*(this[1]*this[3]+this[0]*this[2])              ],
+                [2.0*(this[1]*this[2]+this[0]*this[3]),               this[0]^^2.0-this[1]^^2.0+this[2]^^2.0-this[3]^^2.0, 2.0*(this[2]*this[3]-this[0]*this[1])              ],
+                [2.0*(this[1]*this[3]-this[0]*this[2]),               2.0*(this[2]*this[3]+this[0]*this[1]),               this[0]^^2.0-this[1]^^2.0-this[2]^^2.0+this[3]^^2.0]
+                );
+    }
 
     /++
         指定したベクトルを自身で回転させたベクトルを返します．
-        +/
-        V3 rotatedVector(in V3 vec)const {
-            if( norm^^2.0 < T.epsilon){
-                return vec;
-            }else{
-                auto temp_quat = Q(vec);
-                auto return_quat= this*temp_quat*this.inverse;
-                auto return_vector = V3(return_quat[1], return_quat[2], return_quat[3]);
-                return return_vector;
-            }
+    +/
+    V3 rotatedVector(in V3 vec)const {
+        if( norm^^2.0 < T.epsilon){
+            return vec;
+        }else{
+            auto temp_quat = Q(vec);
+            auto return_quat= this*temp_quat*this.inverse;
+            auto return_vector = V3(return_quat[1], return_quat[2], return_quat[3]);
+            return return_vector;
         }
+    }
     unittest{
         auto v = armos.math.Vector3d(1, 0, 0);
         double ang = PI*0.5*0.5;
@@ -304,17 +304,17 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 
     /++
         指定したベクトルを自身の逆方向に回転させたベクトルを返します．
-        +/
-        V3 rotatedVectorInversely(in V3 vec)const {
-            if( norm^^2.0 < T.epsilon){
-                return vec;
-            }else{
-                auto temp_quat = Q(vec);
-                auto return_quat= this.inverse*temp_quat*this;
-                auto return_vector = V3(return_quat[1], return_quat[2], return_quat[3]);
-                return return_vector;
-            }
+    +/
+    V3 rotatedVectorInversely(in V3 vec)const {
+        if( norm^^2.0 < T.epsilon){
+            return vec;
+        }else{
+            auto temp_quat = Q(vec);
+            auto return_quat= this.inverse*temp_quat*this;
+            auto return_vector = V3(return_quat[1], return_quat[2], return_quat[3]);
+            return return_vector;
         }
+    }
     unittest{
         auto v = armos.math.Vector3d(1, 0, 0);
         double ang = PI*0.5*0.5;
@@ -332,11 +332,11 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         Params:
         ang = 回転角
         axis = 回転軸
-        +/
-        static Q angleAxis(T ang, V3 axis){
-            immutable halfAngle = ang*T(0.5);
-            return Q(cos(halfAngle), axis[0]*sin(halfAngle), axis[1]*sin(halfAngle), axis[2]*sin(halfAngle));
-        }
+    +/
+    static Q angleAxis(T ang, V3 axis){
+        immutable halfAngle = ang*T(0.5);
+        return Q(cos(halfAngle), axis[0]*sin(halfAngle), axis[1]*sin(halfAngle), axis[2]*sin(halfAngle));
+    }
     unittest{
         auto v = armos.math.Vector3d(1, 0, 0);
         auto q = Quaternion!(double).angleAxis(PI*0.5, armos.math.Vector3d(0, 0, 1));
