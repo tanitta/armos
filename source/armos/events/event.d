@@ -35,7 +35,7 @@ class Event(ArgumentType) {
     event = 登録先のイベントを表します．
     listenerFunc = 登録されるイベントを表します．
 +/
-void addListener(EventType, ListenerClass, FunctionType)(ref EventType event, ref ListenerClass listener, FunctionType listenerFunc){
+void addListener(EventType, ListenerClass, FunctionType)(ref EventType event, auto ref ListenerClass listener, FunctionType listenerFunc){
     event.remove(listenerFunc);
     event.add(listenerFunc);
 };
