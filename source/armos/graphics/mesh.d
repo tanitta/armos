@@ -1,5 +1,7 @@
 module armos.graphics.mesh;
 import armos.types;
+static import armos.math;
+static import armos.graphics;
 
 /++
     テクスチャ座標を表すstructです．

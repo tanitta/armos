@@ -1,4 +1,6 @@
 module armos.graphics.image;
+
+static import armos.graphics;
 /++
     画像のファイルフォーマットを表します
 +/
@@ -68,6 +70,7 @@ class Image {
             FIBITMAP * freeImageBitmap = null;
             _bitmap = armos.graphics.Bitmap!(char)();
 
+            static import armos.utils;
             string fileName = armos.utils.absolutePath(pathInDataDir);
 
             FREE_IMAGE_FORMAT freeImageFormat = FIF_UNKNOWN;

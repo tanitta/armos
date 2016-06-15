@@ -282,6 +282,7 @@ class Shader {
         bool _isLoaded = false;
 
         string loadedSource(in string path)const{
+            static import armos.utils;
             immutable absolutePath = armos.utils.absolutePath(path);
             import std.file;
             return readText(absolutePath);

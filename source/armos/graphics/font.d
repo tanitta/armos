@@ -1,6 +1,7 @@
 module armos.graphics.font;
 import armos.graphics;
 import derelict.freetype.ft;
+static import armos.math;
 
 /++
     読み込まれる文字を表します．

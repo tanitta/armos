@@ -1,6 +1,7 @@
 module armos.graphics.texture;
 import derelict.opengl3.gl;
 import armos.math.vector;
+static import armos.graphics;
 
 /++
     openGLのtextureを表すクラスです．

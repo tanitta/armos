@@ -11,6 +11,7 @@ class Fbo{
         /++
         +/
         this(){
+            static import armos.app;
             this(armos.app.currentWindow.size);
         }
 

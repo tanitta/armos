@@ -193,6 +193,7 @@ class SDLWindow : Window{
                     break;
 
                 case SDL_WINDOWEVENT_SIZE_CHANGED:
+                    static import armos.graphics;
                     armos.graphics.currentRenderer.resize();
                     import std.stdio;
                     "resize".writeln;
@@ -332,6 +333,7 @@ class GLFWWindow : Window{
         }
 
         static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
+            static import armos.graphics;
             armos.graphics.currentRenderer.resize();
         }
 

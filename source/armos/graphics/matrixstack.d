@@ -2,6 +2,7 @@ module armos.graphics.matrixstack;
 import armos.app;
 import armos.types;
 import std.array;
+static import armos.math;
 
 /++
 RendererでのMatrixを管理するclassです．

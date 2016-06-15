@@ -40,13 +40,13 @@ class FpsCounter {
         void adjust(){
             immutable MonoTime after = MonoTime.currTime;
             immutable def = ( after - _timer );
-            if( def.fracSec.hnsecs < _targetTime){
-                Thread.sleep( dur!("hnsecs")( _targetTime - def.fracSec.hnsecs ) );
+            if( def.split.hnsecs < _targetTime){
+                Thread.sleep( dur!("hnsecs")( _targetTime - def.split.hnsecs ) );
             }
             immutable after2 = MonoTime.currTime;
             immutable def2 = after2 - _timer;
-            _currentFps = 1.0/def2.fracSec.hnsecs.to!double*10000000.0;
-            _fpsUseRate = def.fracSec.hnsecs.to!double/_targetTime.to!double;
+            _currentFps = 1.0/def2.split.hnsecs.to!double*10000000.0;
+            _fpsUseRate = def.split.hnsecs.to!double/_targetTime.to!double;
         }
     }
 

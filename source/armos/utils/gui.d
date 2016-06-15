@@ -3,6 +3,7 @@ import armos.graphics;
 import armos.types.color;
 import armos.app;
 import armos.math;
+static import armos.events;
 
 /++
 値にアクセスするGuiを表すclassです．

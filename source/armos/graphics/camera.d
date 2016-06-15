@@ -1,6 +1,7 @@
 module armos.graphics.camera;
 import armos.graphics;
 import armos.math;
+static import armos.events;
 /++
 Cameraを表すClassです．Cameraで写したい処理をbegin()とend()の間に記述します．
 +/
@@ -85,6 +86,8 @@ class Camera{
 /++
     Deprecated: WIP
 +/
+static import armos.app;
+static import armos.events;
 class EasyCam : Camera{
     alias N = float;
     alias Q = Quaternion!(N);

@@ -1,5 +1,9 @@
 module armos.graphics.model;
 
+static import armos.graphics;
+static import armos.math;
+static import armos.types;
+
 /++
 3Dモデルを読み込み，描画するclassです．
 +/
@@ -92,6 +96,7 @@ class AssimpModelLoader {
         /// modelを読み込みそれを返します．
         Model load(in string pathInDataDir){
             import std.string;
+            static import armos.utils;
             _modelfilepath = armos.utils.absolutePath(pathInDataDir);
 
             import derelict.assimp3.assimp;
