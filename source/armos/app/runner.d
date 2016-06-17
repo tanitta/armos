@@ -1,8 +1,8 @@
 module armos.app.runner;
-import armos.app;
-import armos.utils;
-import armos.events;
-import armos.graphics;
+static import armos.app;
+static import armos.utils;
+static import armos.events;
+static import armos.graphics;
 /++
 armosのアプリケーションの更新を行うclassです．
 +/
@@ -63,7 +63,7 @@ class Loop {
                 fpscounter.newFrame();
                 isLoop = !window.shouldClose;
             }
-
+            window.events().notifyExit();
             window.close();
         }
 

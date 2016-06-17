@@ -1,6 +1,6 @@
 module armos.app.baseapp;
-import armos.events;
-import armos.math;
+static import armos.events;
+static import armos.math;
 
 /++
 armosの中心となるクラスです．プロジェクトを作成する際はこのクラスを継承して処理を記述していきます．

@@ -1,9 +1,9 @@
 module armos.app.basewindow;
 
 import derelict.opengl3.gl;
-import armos.events;
-import armos.math;
-import armos.app;
+static import armos.events;
+static import armos.math;
+static import armos.app;
 
 /++
 armosで用いるWindowsの雛形となるinterfaceです．新たにWindowを実装する際はこのinterfaceを継承することでrunnerから実行できます．
@@ -86,6 +86,7 @@ mixin template BaseWindow(){
             armos.events.addListener(_coreEvents.mouseDragged, app, &app.mouseDragged);
             armos.events.addListener(_coreEvents.mouseReleased, app, &app.mouseReleased);
             armos.events.addListener(_coreEvents.mousePressed, app, &app.mousePressed);
+            armos.events.addListener(_coreEvents.exit, app, &app.exit);
         }
 
         /++
