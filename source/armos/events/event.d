@@ -1,6 +1,6 @@
 module armos.events.event;
 import core.sync.mutex;
-import std.array;
+static import std.array;
 
 /++
 +/

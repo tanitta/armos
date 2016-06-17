@@ -1,8 +1,8 @@
 module armos.utils.gui;
-import armos.graphics;
-import armos.types.color;
-import armos.app;
-import armos.math;
+static import armos.graphics;
+static import armos.types.color;
+static import armos.app;
+static import armos.math;
 static import armos.events;
 
 /++
@@ -45,11 +45,11 @@ class Gui {
             _style = new Style;
             _style.font = new armos.graphics.BitmapFont;
             _style.font.load("font.png", 8, 8);
-            _style.colors["font1"] = Color(200, 200, 200);
-            _style.colors["font2"] = Color(105, 105, 105);
-            _style.colors["background"] = Color(40, 40, 40, 200);
-            _style.colors["base1"] = Color(64, 64, 64);
-            _style.colors["base2"] = Color(150, 150, 150);
+            _style.colors["font1"] = armos.types.Color(200, 200, 200);
+            _style.colors["font2"] = armos.types.Color(105, 105, 105);
+            _style.colors["background"] = armos.types.Color(40, 40, 40, 200);
+            _style.colors["base1"] = armos.types.Color(64, 64, 64);
+            _style.colors["base2"] = armos.types.Color(150, 150, 150);
             _style.width = 256;
         }
 
