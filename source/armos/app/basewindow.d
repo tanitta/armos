@@ -139,12 +139,12 @@ class SDLWindow : Window{
         window = SDL_CreateWindow(
                 cast(char*)_name,
                 SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                800, 600,
+                config.width, config.height,
                 SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE
                 );
 
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, config.glVersionMajor);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, config.glVersionMinor);
 
         glcontext = SDL_GL_CreateContext(window);
 
