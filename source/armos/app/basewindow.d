@@ -266,10 +266,10 @@ class GLFWWindow : Window{
 
             glfwMakeContextCurrent(window);
 
-            if(config.glVersion < 3.1){
-                DerelictGL.reload();
-            }else{
+            if(config.glVersion >= 3.2){
                 DerelictGL3.reload();
+            }else{
+                DerelictGL.reload();
             }
 
             initEvents(apprication);
@@ -359,9 +359,6 @@ class GLFWWindow : Window{
             writefln("Renderer: %s",   to!string(glGetString(GL_RENDERER)));
             writefln("Version:  %s",   to!string(glGetString(GL_VERSION)));
             writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-            // writefln("Context");
-            // writefln("Major:     %s\n", glGetIntegerv(GL_MAJOR_VERSION, window).to!string);
-            // writefln("Minor:     %s\n", glGetIntegerv(GL_MINOR_VERSION, window).to!string);
         };
 
         void initGLFWEvents(){
