@@ -22,7 +22,7 @@ class WindowConfig {
         float glVersion()const{return _glVersionMajor.to!float + _glVersionMinor.to!float*0.1f;}
         void glVersion(T)(in T v)if(__traits(isFloating, T)){
             _glVersionMajor = v.to!int;
-            _glVersionMinor = ((v-_glVersionMajor.to!float)*10).to!int;
+            _glVersionMinor = ((v*10.0).to!int%10).to!int;
         }
         
         void glVersionMajor(in int versionMajor){_glVersionMajor = versionMajor;}
@@ -40,8 +40,8 @@ class WindowConfig {
 // WindowConfig should be able to handle float version.
 unittest{
     auto config = new WindowConfig;
-    config.glVersion = 2.1;
-    assert(config.glVersionMajor == 2);
-    assert(config.glVersionMinor == 1);
-    assert(config.glVersion == 2.1);
+    config.glVersion = 3.3;
+    assert(config.glVersionMajor == 3);
+    assert(config.glVersionMinor == 3);
+    assert(config.glVersion == 3.3f);
 }
