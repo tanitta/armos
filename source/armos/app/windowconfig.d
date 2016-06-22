@@ -22,7 +22,7 @@ class WindowConfig {
         float glVersion()const{return _glVersionMajor.to!float + _glVersionMinor.to!float*0.1f;}
         void glVersion(T)(in T v)if(__traits(isFloating, T)){
             _glVersionMajor = v.to!int;
-            _glVersionMinor = (v%_glVersionMajor).to!int;
+            _glVersionMinor = ((v-_glVersionMajor.to!float)*10).to!int;
         }
         
         void glVersionMajor(in int versionMajor){_glVersionMajor = versionMajor;}

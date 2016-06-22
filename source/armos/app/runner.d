@@ -3,6 +3,7 @@ static import armos.app;
 static import armos.utils;
 static import armos.events;
 static import armos.graphics;
+
 /++
 armosのアプリケーションの更新を行うclassです．
 +/

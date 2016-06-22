@@ -249,21 +249,36 @@ class GLFWWindow : Window{
 
             if( !glfwInit() ){}
 
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+            import std.stdio;
+            config.glVersionMajor.writeln;
+            config.glVersionMinor.writeln;
+            
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, config.glVersionMajor);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, config.glVersionMinor);
+            
+            if(config.glVersion >= 3.2){
+                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+                glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            }
 
-            window = glfwCreateWindow(640, 480, cast(char*)_name, null, null);
+            window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, null);
             if(!window){close;}
 
             glfwMakeContextCurrent(window);
 
-            DerelictGL.reload();
+            if(config.glVersion < 3.1){
+                DerelictGL.reload();
+            }else{
+                DerelictGL3.reload();
+            }
 
             initEvents(apprication);
             initGLFWEvents();
 
             glfwSwapInterval(0);
             glfwSwapBuffers(window);
+            
+            writeVersion;
         }
 
         /++
@@ -344,6 +359,9 @@ class GLFWWindow : Window{
             writefln("Renderer: %s",   to!string(glGetString(GL_RENDERER)));
             writefln("Version:  %s",   to!string(glGetString(GL_VERSION)));
             writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+            // writefln("Context");
+            // writefln("Major:     %s\n", glGetIntegerv(GL_MAJOR_VERSION, window).to!string);
+            // writefln("Minor:     %s\n", glGetIntegerv(GL_MINOR_VERSION, window).to!string);
         };
 
         void initGLFWEvents(){
