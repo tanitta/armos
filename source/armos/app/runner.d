@@ -23,8 +23,8 @@ class Loop {
             Params:
             app = 更新されるアプリケーションです．
         +/
-        void run(WindowType)(ref armos.app.BaseApp app){
-            createWindow!(WindowType)(app);
+        void run(WindowType)(armos.app.BaseApp app, armos.app.WindowConfig config){
+            createWindow!(WindowType)(app, config);
             loop();
         };
 
@@ -47,8 +47,8 @@ class Loop {
         bool isLoop = true;
         armos.utils.FpsCounter fpscounter;
 
-        void createWindow(WindowType)(ref armos.app.BaseApp app){
-            window = new WindowType(app);
+        void createWindow(WindowType)(armos.app.BaseApp app, armos.app.WindowConfig config){
+            window = new WindowType(app, config);
             renderer = new armos.graphics.Renderer;
             application = &app;
             assert(window);
@@ -93,9 +93,17 @@ Loop mainLoop() @property
     WindowType = 立ち上げるWindowの型を指定します．省略可能です．
     app = 立ち上げるアプリケーションを指定します．
 +/
-void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app){
+void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app, armos.app.WindowConfig config = null){
     mainLoop_ = new Loop;
-    mainLoop.run!(WindowType)(app);
+    if(!config){
+        config = new armos.app.WindowConfig();
+        with(config){
+            glVersion = 3.0;
+            width = 640;
+            height = 480;
+        }
+    }
+    mainLoop.run!(WindowType)(app, config);
 }
 
 /++

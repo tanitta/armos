@@ -1,6 +1,7 @@
 module armos.app.windowconfig;
 
 static import armos.math;
+import std.conv;
 
 /++
 +/
@@ -14,25 +15,12 @@ class WindowConfig {
         
         armos.Vector2i position()const{return _position;}
         void position(in armos.Vector2i p){_position = p;}
-    }//public
-
-    private{
-        int _height;
-        int _width;
-        armos.Vector2i _position;
-    }//private
-}//interface WindowConfig
-
-/++
-+/
-import std.conv;
-class GLFWWindowConfig : WindowConfig{
-    public{
+        
         int glVersionMajor()const{return _glVersionMajor;}
         int glVersionMinor()const{return _glVersionMinor;}
         
         float glVersion()const{return _glVersionMajor.to!float + _glVersionMinor.to!float*0.1f;}
-        void glVersion(in float v){
+        void glVersion(T)(in T v)if(__traits(isFloating, T)){
             _glVersionMajor = v.to!int;
             _glVersionMinor = (v%_glVersionMajor).to!int;
         }
@@ -42,13 +30,16 @@ class GLFWWindowConfig : WindowConfig{
     }//public
 
     private{
+        int _height;
+        int _width;
+        armos.Vector2i _position;
         int _glVersionMajor = 3;
         int _glVersionMinor = 2;
     }//private
-}//class GLFWWindowConfig
+}//interface WindowConfig
 // WindowConfig should be able to handle float version.
 unittest{
-    auto config = new GLFWWindowConfig;
+    auto config = new WindowConfig;
     config.glVersion = 2.1;
     assert(config.glVersionMajor == 2);
     assert(config.glVersionMinor == 1);

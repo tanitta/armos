@@ -131,7 +131,7 @@ class SDLWindow : Window{
     private SDL_Window* window;
     private SDL_GLContext glcontext;
 
-    this(ref armos.app.BaseApp apprication){
+    this(armos.app.BaseApp apprication, armos.app.WindowConfig config){
         DerelictGL.load();
         DerelictSDL2.load();
 
@@ -243,7 +243,7 @@ class GLFWWindow : Window{
             Params:
             apprication = Windowとひも付けされるアプリケーションです．
         +/
-        this(ref armos.app.BaseApp apprication){
+        this(armos.app.BaseApp apprication, armos.app.WindowConfig config){
             DerelictGL.load();
             DerelictGLFW3.load();
 
@@ -337,6 +337,14 @@ class GLFWWindow : Window{
             static import armos.graphics;
             armos.graphics.currentRenderer.resize();
         }
+        
+        void writeVersion(){
+            import std.stdio, std.conv;
+            writefln("Vendor:   %s",   to!string(glGetString(GL_VENDOR)));
+            writefln("Renderer: %s",   to!string(glGetString(GL_RENDERER)));
+            writefln("Version:  %s",   to!string(glGetString(GL_VERSION)));
+            writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+        };
 
         void initGLFWEvents(){
             // glfwSetKeyCallback(window, &keyCallbackFunction);
