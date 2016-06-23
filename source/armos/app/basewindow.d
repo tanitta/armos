@@ -249,10 +249,6 @@ class GLFWWindow : Window{
 
             if( !glfwInit() ){}
 
-            import std.stdio;
-            config.glVersionMajor.writeln;
-            config.glVersionMinor.writeln;
-            
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, config.glVersionMajor);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, config.glVersionMinor);
             
