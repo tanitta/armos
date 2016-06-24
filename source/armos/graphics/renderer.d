@@ -199,7 +199,7 @@ class Renderer {
         /++
         +/
         void bind(armos.math.Matrix4f projectionMatrix){
-            glMatrixMode(GL_PROJECTION);
+            matrixMode(MatrixMode.Projection)
             pushMatrix();
             glLoadMatrixf(projectionMatrix.array.ptr);
         }
@@ -207,7 +207,7 @@ class Renderer {
         /++
         +/
         void unbind(){
-            glMatrixMode(GL_PROJECTION);
+            matrixMode(MatrixMode.Projection)
             popMatrix();
         }
 
@@ -447,13 +447,13 @@ class Renderer {
                     armos.math.Vector3f(0, 1, 0)
                     );
 
-            glMatrixMode(GL_PROJECTION);
+            matrixMode(MatrixMode.Projection)
             glLoadIdentity();
 
             glLoadMatrixf((persp*lookAt).array.ptr);
             glScalef(1, -1, 1);
             glTranslatef(0, -viewH, 0);
-            glMatrixMode(GL_MODELVIEW);
+            matrixMode(MatrixMode.Projection)
         }
 
         /++
@@ -584,81 +584,65 @@ class Renderer {
         /++
         +/
         void draw(
-                in armos.graphics.Vertex[] vertices,
-                in armos.graphics.Normal[] normals,
-                in armos.types.FloatColor[] colors,
-                in armos.graphics.TexCoord[] texCoords,
-                in int[] indices,
-                in armos.graphics.PrimitiveMode primitiveMode, 
-                armos.graphics.PolyRenderMode renderMode,
-                bool useColors,
-                bool useTextures,
-                bool useNormals
-                ){
-
-                glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
-                //add vertices to GL
-                if(vertices.length){
-                    glEnableClientState(GL_VERTEX_ARRAY);
-                    glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
-                }
-
-                //add normals to GL
-                if(normals.length && useNormals){
-                    glEnableClientState(GL_NORMAL_ARRAY);
-                    glNormalPointer(GL_FLOAT, 0, normals.ptr);
-                }
-
-                //add colors to GL
-                if(colors.length && useColors){
-                    glEnableClientState(GL_COLOR_ARRAY);
-                    glColorPointer(4, GL_FLOAT, armos.types.FloatColor.sizeof, colors.ptr);
-                }
-
-                //add texchoords to gl
-                if(texCoords.length){
-                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                    glTexCoordPointer(2, GL_FLOAT, 0, texCoords.ptr);
-                    // foreach (texCoord; mesh.texCoords ) {
-                    // 	glTexCoord2f(texCoord.u , texCoord.v);
-                    // }
-                }
-                // 	if(texturelocationsenabled.size() == 0){
-                // 		glenableclientstate(gl_texture_coord_array);
-                // 		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-                // 	}else{
-                // 		set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-                // 		for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-                // 			glActiveTexture(GL_TEXTURE0+*textureLocation);
-                // 			glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-                // 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                // 			glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-                // 		}
-                // 		glActiveTexture(GL_TEXTURE0);
-                // 		glClientActiveTexture(GL_TEXTURE0);
-                // 	}
-
-                //add indicees to GL
-
-
-                if(indices.length){
-                    glDrawElements(
-                            armos.graphics.getGLPrimitiveMode(primitiveMode),
-                            cast(int)indices.length,
-                            GL_UNSIGNED_INT,
-                            indices.ptr
-                            );
-                }
-
-                glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
-
-                if(vertices.length){
-                    glDisableClientState(GL_VERTEX_ARRAY);
-                }
-                if(texCoords.length){
-                    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-                }
+            in armos.graphics.Vertex[] vertices,
+            in armos.graphics.Normal[] normals,
+            in armos.types.FloatColor[] colors,
+            in armos.graphics.TexCoord[] texCoords,
+            in int[] indices,
+            in armos.graphics.PrimitiveMode primitiveMode, 
+            armos.graphics.PolyRenderMode renderMode,
+            bool useColors,
+            bool useTextures,
+            bool useNormals
+        ){
+            glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
+            
+            //add vertices to GL
+            if(vertices.length){
+                glEnableClientState(GL_VERTEX_ARRAY);
+                glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
             }
+
+            //add normals to GL
+            if(normals.length && useNormals){
+                glEnableClientState(GL_NORMAL_ARRAY);
+                glNormalPointer(GL_FLOAT, 0, normals.ptr);
+            }
+
+            //add colors to GL
+            if(colors.length && useColors){
+                glEnableClientState(GL_COLOR_ARRAY);
+                glColorPointer(4, GL_FLOAT, armos.types.FloatColor.sizeof, colors.ptr);
+            }
+
+            //add texchoords to gl
+            if(texCoords.length){
+                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                glTexCoordPointer(2, GL_FLOAT, 0, texCoords.ptr);
+                // foreach (texCoord; mesh.texCoords ) {
+                // 	glTexCoord2f(texCoord.u , texCoord.v);
+                // }
+            }
+
+            //add indicees to GL
+            if(indices.length){
+                glDrawElements(
+                        armos.graphics.getGLPrimitiveMode(primitiveMode),
+                        cast(int)indices.length,
+                        GL_UNSIGNED_INT,
+                        indices.ptr
+                        );
+            }
+
+            glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
+
+            if(vertices.length){
+                glDisableClientState(GL_VERTEX_ARRAY);
+            }
+            if(texCoords.length){
+                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+            }
+        }
 
         /++
         +/
@@ -720,8 +704,12 @@ class Renderer {
     private{
         armos.graphics.Fbo _fbo;
         bool _isUseFbo = true;
-        auto _currentStyle = armos.graphics.Style();
+        
+        armos.graphics.Style _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
+        
+        armos.graphics.Shader _currentShader;
+        
         bool _isBackgroundAuto = true;
     }//private
 }
