@@ -20,22 +20,31 @@ class Shader {
             Load the shader from shaderName
         +/
         void load(in string shaderName){
-            load(shaderName ~ ".vert", shaderName ~ ".frag");
+            loadFiles(shaderName ~ ".vert", shaderName ~ ".frag");
         }
 
         /++
             Load the shader from path
         +/
-        void load(in string vertexShaderSourcePath, in string fragmentShaderSourcePath){
+        void loadFiles(in string vertexShaderSourcePath, in string fragmentShaderSourcePath){
+            loadSources(vertexShaderSourcePath.loadedSource, fragmentShaderSourcePath.loadedSource);
+        }
+        
+        /++
+            Load the shader from sources 
+        +/
+        void loadSources(in string vertexShaderSource, in string fragmentShaderSource){
             import std.stdio;
-            if(vertexShaderSourcePath != ""){
+            
+            if(vertexShaderSource != ""){
                 "load vertex shader".writeln;
-                loadShader(_vertexID, vertexShaderSourcePath, GL_VERTEX_SHADER);
+                loadShaderSource(vertexShaderSource, GL_VERTEX_SHADER);
             }
             "\n".writeln;
-            if(fragmentShaderSourcePath != ""){
+            
+            if(fragmentShaderSource != ""){
                 "load fragment shader".writeln;
-                loadShader(_fragmentID, fragmentShaderSourcePath, GL_FRAGMENT_SHADER);
+                loadShaderSource(fragmentShaderSource, GL_FRAGMENT_SHADER);
             }
 
             glLinkProgram(_programID);
@@ -275,24 +284,20 @@ class Shader {
     }//public
 
     private{
-        int _vertexID;
-        int _fragmentID;
         int _programID;
         int[] _savedProgramIDs;
         bool _isLoaded = false;
 
-        string loadedSource(in string path)const{
-            static import armos.utils;
-            immutable absolutePath = armos.utils.absolutePath(path);
-            import std.file;
-            return readText(absolutePath);
-        }
 
-        void loadShader(ref int shaderID, string shaderPath, GLuint shaderType){
-            shaderID = glCreateShader(shaderType);
+        void loadShaderFile(in string shaderPath, GLuint shaderType){
+            auto shaderSource = loadedSource(shaderPath);
+            loadShaderSource(shaderSource, shaderType);
+        }
+        
+        void loadShaderSource(in string shaderSource, GLuint shaderType){
+            int shaderID = glCreateShader(shaderType);
             scope(exit) glDeleteShader(shaderID);
 
-            auto shaderSource = loadedSource(shaderPath);
             compile(shaderID, shaderSource);
             glAttachShader(_programID, shaderID);
         }
@@ -431,6 +436,15 @@ private template glFunctionString(T, size_t DimC, size_t DimR = 1){
         // 	return false;
         // }
     }//private
+}
+
+private{
+    string loadedSource(in string path){
+        static import armos.utils;
+        immutable absolutePath = armos.utils.absolutePath(path);
+        import std.file;
+        return readText(absolutePath);
+    }
 }
 
 static unittest{
