@@ -23,9 +23,7 @@ class Buffer {
         /++
         +/
         void begin(){
-            if(hasVao){
-                _rootVao.begin;
-            }
+            if(hasVao) _rootVao.begin;
 
             int savedID;
             glGetIntegerv(bindingEnum(_bufferType), &savedID);
@@ -53,17 +51,9 @@ class Buffer {
         +/
         void set(Array)(Array array, in BufferUsageFrequency freq, in BufferUsageNature nature){
             begin;
-            import std.stdio;
             auto size = array.length * array[0].sizeof;
-            // size.writeln;
             glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
             glVertexAttribPointer(0, 3, GL_FLOAT, GLfloat.sizeof * 2, 0, null);
-            // glEnableVertexAttribArray(0);
-
-            int size1;
-            glGetBufferParameteriv(_bufferType, GL_BUFFER_SIZE, &size1);
-            size1.writeln;
-            "".writeln;
             end;
         }
 

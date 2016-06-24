@@ -24,19 +24,12 @@ class Vao {
             int savedID;
             glGetIntegerv(GL_VERTEX_ARRAY_BINDING,&savedID);
             _savedIDs ~= savedID;
-
             glBindVertexArray(_id);
-            import std.stdio;
-            "Vao:begin".writeln;
-            _id.writeln;
         }
 
         /++
         +/
         void end(){
-            import std.stdio;
-            "Vao:end".writeln;
-            _savedIDs[1-$].writeln;
             import std.range;
             glBindVertexArray(_savedIDs[$-1]);
             if (_savedIDs.length == 0) {
