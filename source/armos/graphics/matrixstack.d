@@ -9,77 +9,67 @@ RendererでのMatrixを管理するclassです．
 Deprecated: 現在使用されていません．
 +/
 class MatrixStack {
-    private{
-        armos.types.Rectangle[] viewportHistory;
-        armos.math.Matrix4f[] viewportMatrixStack;
-        armos.math.Matrix4f[] modelViewMatrixStack;
-        armos.math.Matrix4f[] projectionMatrixStack;
-        armos.math.Matrix4f[] textureMatrixStack;
-
-        armos.types.Rectangle currentViewport_ = armos.types.Rectangle();
-        armos.math.Matrix4f currentViewportMatrix_ = armos.math.Matrix4f();
-        armos.math.Matrix4f currentModelViewMatrix_ = armos.math.Matrix4f();
-        armos.math.Matrix4f currentProjectionMatrix_ = armos.math.Matrix4f();
-        armos.math.Matrix4f currentTextureMatrix_ = armos.math.Matrix4f();
-
-        armos.math.Matrix4f modelViewProjectionMatrix = armos.math.Matrix4f();
-    }
-
-    armos.app.Window  currentWindow_;
+    armos.app.Window  _currentWindow;
 
     this(armos.app.Window window){
-        currentWindow_ = window;
+        _currentWindow = window;
     }
 
     armos.types.Rectangle currentViewport(){
-        return currentViewport_;
+        return _currentViewport;
     }
 
     void pushViewportMatrix(armos.math.Matrix4f matrix){
-        viewportMatrixStack ~= matrix;
+        _viewportMatrixStack ~= matrix;
     }
+    
     void pushModelViewMatrix(armos.math.Matrix4f matrix){
-        modelViewMatrixStack ~= matrix;
+        _modelViewMatrixStack ~= matrix;
     }
+    
     void pushProjectionMatrix(armos.math.Matrix4f matrix){
-        projectionMatrixStack ~= matrix;
+        _projectionMatrixStack ~= matrix;
     }
+    
     void pushTextureMatrix(armos.math.Matrix4f matrix){
-        textureMatrixStack ~= matrix;
+        _textureMatrixStack ~= matrix;
     }
 
     void popViewportMatrix(){
-        viewportMatrixStack.popBack;
+        _viewportMatrixStack.popBack;
     }
+    
     void popModelViewMatrix(){
-        modelViewMatrixStack.popBack;
+        _modelViewMatrixStack.popBack;
     }
+    
     void popProjectionMatrix(){
-        projectionMatrixStack.popBack;
+        _projectionMatrixStack.popBack;
     }
+    
     void popTextureMatrix(){
-        textureMatrixStack.popBack;
+        _textureMatrixStack.popBack;
     }
 
-    void loadModelViewMatrix(armos.math.Matrix4f matrix){
-        currentModelViewMatrix_ = matrix;
+    void loadModelViewMatrix(in armos.math.Matrix4f matrix){
+        _currentModelViewMatrix = matrix;
 
-        // modelViewProjectionMatrix = modelViewMatrix * orientedProjectionMatrix;
+        // _modelViewProjectionMatrix = modelViewMatrix * orientedProjectionMatrix;
     }
 
-    void loadProjectionMatrix(armos.math.Matrix4f matrix){
-        currentProjectionMatrix_= matrix;
+    void loadProjectionMatrix(in armos.math.Matrix4f matrix){
+        _currentProjectionMatrix = matrix;
         updatedRelatedMatrices();
     }
 
     void loadTextureMatrix(armos.math.Matrix4f matrix){
-        currentTextureMatrix_= matrix;
+        _currentTextureMatrix= matrix;
     }
 
     void updatedRelatedMatrices(){}
 
     armos.math.Vector2f renderSurfaceSize(){
-        return cast(armos.math.Vector2f)currentWindow_.size();
+        return cast(armos.math.Vector2f)_currentWindow.size();
     }
 
     void viewport(float x, float y, float width, float height, bool vflip){
@@ -104,4 +94,20 @@ class MatrixStack {
     }
 
     void push(armos.math.Matrix4f){}
+    
+    private{
+        armos.types.Rectangle[] _viewportHistory;
+        armos.math.Matrix4f[]   _viewportMatrixStack;
+        armos.math.Matrix4f[]   _modelViewMatrixStack;
+        armos.math.Matrix4f[]   _projectionMatrixStack;
+        armos.math.Matrix4f[]   _textureMatrixStack;
+
+        armos.types.Rectangle   _currentViewport         = armos.types.Rectangle();
+        armos.math.Matrix4f     _currentViewportMatrix   = armos.math.Matrix4f();
+        armos.math.Matrix4f     _currentModelViewMatrix  = armos.math.Matrix4f();
+        armos.math.Matrix4f     _currentProjectionMatrix = armos.math.Matrix4f();
+        armos.math.Matrix4f     _currentTextureMatrix    = armos.math.Matrix4f();
+
+        armos.math.Matrix4f _modelViewProjectionMatrix = armos.math.Matrix4f();
+    }
 }
