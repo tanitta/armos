@@ -199,7 +199,7 @@ class Renderer {
         /++
         +/
         void bind(armos.math.Matrix4f projectionMatrix){
-            matrixMode(MatrixMode.Projection)
+            matrixMode(MatrixMode.Projection);
             pushMatrix();
             glLoadMatrixf(projectionMatrix.array.ptr);
         }
@@ -207,7 +207,7 @@ class Renderer {
         /++
         +/
         void unbind(){
-            matrixMode(MatrixMode.Projection)
+            matrixMode(MatrixMode.Projection);
             popMatrix();
         }
 
@@ -447,13 +447,13 @@ class Renderer {
                     armos.math.Vector3f(0, 1, 0)
                     );
 
-            matrixMode(MatrixMode.Projection)
+            matrixMode(MatrixMode.Projection);
             glLoadIdentity();
 
             glLoadMatrixf((persp*lookAt).array.ptr);
             glScalef(1, -1, 1);
             glTranslatef(0, -viewH, 0);
-            matrixMode(MatrixMode.Projection)
+            matrixMode(MatrixMode.Projection);
         }
 
         /++
