@@ -419,7 +419,7 @@ class Renderer {
 
         /++
         +/
-        void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
+        void setupScreenPerspective(in float width = -1, in float height = -1, in float fov = 60, in float nearDist = 0, in float farDist = 0){
             float viewW, viewH;
             if(width<0 || height<0){
                 viewW = armos.app.windowSize[0];
@@ -436,17 +436,16 @@ class Renderer {
             float dist = eyeY / theTan;
             float aspect = viewW / viewH;
             //
-            if(nearDist == 0) nearDist = dist / 10.0f;
-            if(farDist == 0) farDist = dist * 10.0f;
+            immutable near = (nearDist==0)?dist / 10.0f:nearDist;
+            immutable far  = (farDist==0)?dist * 10.0f:farDist;
 
-
-            armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, nearDist, farDist);
+            armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, near, far);
 
             armos.math.Matrix4f lookAt = lookAtViewMatrix(
-                    armos.math.Vector3f(eyeX, eyeY, dist),
-                    armos.math.Vector3f(eyeX, eyeY, 0),
-                    armos.math.Vector3f(0, 1, 0)
-                    );
+                armos.math.Vector3f(eyeX, eyeY, dist),
+                armos.math.Vector3f(eyeX, eyeY, 0),
+                armos.math.Vector3f(0, 1, 0)
+            );
 
             matrixMode(MatrixMode.Projection);
             glLoadIdentity();
@@ -557,10 +556,10 @@ class Renderer {
         +/
         void draw(
                 in armos.graphics.Mesh mesh,
-                armos.graphics.PolyRenderMode renderMode,
-                bool useColors,
-                bool useTextures,
-                bool useNormals
+                in armos.graphics.PolyRenderMode renderMode,
+                in bool useColors,
+                in bool useTextures,
+                in bool useNormals
                 ){
                 draw(
                         mesh.vertices,
@@ -591,10 +590,10 @@ class Renderer {
             in armos.graphics.TexCoord[] texCoords,
             in int[] indices,
             in armos.graphics.PrimitiveMode primitiveMode, 
-            armos.graphics.PolyRenderMode renderMode,
-            bool useColors,
-            bool useTextures,
-            bool useNormals
+            in armos.graphics.PolyRenderMode renderMode,
+            in bool useColors,
+            in bool useTextures,
+            in bool useNormals
         ){
             glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
             
