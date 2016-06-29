@@ -93,11 +93,9 @@ class MatrixStack {
     //     return currentViewport;
     // }
 
-    void push(armos.math.Matrix4f){}
-    
     private{
-        armos.types.Rectangle[] _viewportHistory;
-        armos.math.Matrix4f[]   _viewportMatrixStack;
+        // armos.types.Rectangle[] _viewportHistory;
+        // armos.math.Matrix4f[]   _viewportMatrixStack;
         armos.math.Matrix4f[]   _modelViewMatrixStack;
         armos.math.Matrix4f[]   _projectionMatrixStack;
         armos.math.Matrix4f[]   _textureMatrixStack;
