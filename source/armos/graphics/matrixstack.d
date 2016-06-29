@@ -4,6 +4,8 @@ import armos.types;
 import std.array;
 static import armos.math;
 
+private alias M4 = armos.math.Matrix4f;
+
 /++
 RendererでのMatrixを管理するclassです．
 Deprecated: 現在使用されていません．
@@ -19,20 +21,31 @@ class MatrixStack {
     //     return _currentViewport;
     // }
 
-    // void pushViewportMatrix(armos.math.Matrix4f matrix){
+    // void pushViewportMatrix(M4 matrix){
     //     _viewportMatrixStack ~= matrix;
     // }
-    
-    void pushModelViewMatrix(armos.math.Matrix4f matrix){
-        _modelViewMatrixStack ~= matrix;
+    M4 currentModelViewMatrix()const{
+        return _currentModelViewMatrix;
     }
     
-    void pushProjectionMatrix(armos.math.Matrix4f matrix){
-        _projectionMatrixStack ~= matrix;
+    M4 currentProjectionMatrix()const{
+        return _currentProjectionMatrix;
     }
     
-    void pushTextureMatrix(armos.math.Matrix4f matrix){
-        _textureMatrixStack ~= matrix;
+    M4 currentTextureMatrix()const{
+        return _currentTextureMatrix;
+    }
+    
+    void pushModelViewMatrix(in M4 matrix){
+        pushMatrix(matrix, _modelViewMatrixStack, _currentModelViewMatrix);
+    }
+    
+    void pushProjectionMatrix(in M4 matrix){
+        pushMatrix(matrix, _projectionMatrixStack, _currentProjectionMatrix);
+    }
+    
+    void pushTextureMatrix(in M4 matrix){
+        pushMatrix(matrix, _textureMatrixStack, _currentTextureMatrix);
     }
 
     // void popViewportMatrix(){
@@ -40,30 +53,27 @@ class MatrixStack {
     // }
     
     void popModelViewMatrix(){
-        _modelViewMatrixStack.popBack;
+        popMatrix(_modelViewMatrixStack, _currentModelViewMatrix);
     }
     
     void popProjectionMatrix(){
-        _projectionMatrixStack.popBack;
+        popMatrix(_projectionMatrixStack, _currentProjectionMatrix);
     }
     
     void popTextureMatrix(){
-        _textureMatrixStack.popBack;
+        popMatrix(_textureMatrixStack, _currentTextureMatrix);
     }
 
-    void loadModelViewMatrix(in armos.math.Matrix4f matrix){
-        _currentModelViewMatrix = matrix;
-
-        // _modelViewProjectionMatrix = modelViewMatrix * orientedProjectionMatrix;
+    void loadModelViewMatrix(in M4 matrix){
+        loadMatrix(matrix, _modelViewMatrixStack, _currentModelViewMatrix);
     }
 
-    void loadProjectionMatrix(in armos.math.Matrix4f matrix){
-        _currentProjectionMatrix = matrix;
-        updatedRelatedMatrices();
+    void loadProjectionMatrix(in M4 matrix){
+        loadMatrix(matrix, _projectionMatrixStack, _currentProjectionMatrix);
     }
 
-    void loadTextureMatrix(armos.math.Matrix4f matrix){
-        _currentTextureMatrix= matrix;
+    void loadTextureMatrix(in M4 matrix){
+        loadMatrix(matrix, _textureMatrixStack, _currentTextureMatrix);
     }
 
     void updatedRelatedMatrices(){}
@@ -92,20 +102,87 @@ class MatrixStack {
     // armos.types.Rectangle nativeViewport(){
     //     return currentViewport;
     // }
+    
+    
 
     private{
         // armos.types.Rectangle[] _viewportHistory;
-        // armos.math.Matrix4f[]   _viewportMatrixStack;
-        armos.math.Matrix4f[]   _modelViewMatrixStack;
-        armos.math.Matrix4f[]   _projectionMatrixStack;
-        armos.math.Matrix4f[]   _textureMatrixStack;
+        // M4[]   _viewportMatrixStack;
+        M4[]   _modelViewMatrixStack;
+        M4[]   _projectionMatrixStack;
+        M4[]   _textureMatrixStack;
 
         // armos.types.Rectangle   _currentViewport         = armos.types.Rectangle();
-        // armos.math.Matrix4f     _currentViewportMatrix   = armos.math.Matrix4f();
-        armos.math.Matrix4f     _currentModelViewMatrix  = armos.math.Matrix4f();
-        armos.math.Matrix4f     _currentProjectionMatrix = armos.math.Matrix4f();
-        armos.math.Matrix4f     _currentTextureMatrix    = armos.math.Matrix4f();
+        // M4     _currentViewportMatrix   = armos.math.Matrix4f();
+        M4     _currentModelViewMatrix  = armos.math.Matrix4f();
+        M4     _currentProjectionMatrix = armos.math.Matrix4f();
+        M4     _currentTextureMatrix    = armos.math.Matrix4f();
 
-        armos.math.Matrix4f _modelViewProjectionMatrix = armos.math.Matrix4f();
+        M4 _modelViewProjectionMatrix = armos.math.Matrix4f();
+        
     }
+}
+
+private{
+    M4 updatedCurrentMatrix(in armos.math.Matrix4f[] stack){
+        import std.algorithm;
+        return M4.identity.reduce!"a*b"(stack);
+    }
+    
+    void pushMatrix(in M4 matrix, ref armos.math.Matrix4f[] stack, ref armos.math.Matrix4f currentMatrix){
+        stack ~= matrix;
+        currentMatrix = stack.updatedCurrentMatrix;
+    }
+    
+    void popMatrix(ref M4[] stack, ref armos.math.Matrix4f currentMatrix){
+        stack.popBack;
+        currentMatrix = stack.updatedCurrentMatrix;
+    }
+    
+    void loadMatrix(in M4 matrix, ref armos.math.Matrix4f[] stack, ref armos.math.Matrix4f currentMatrix){
+        stack = [];
+        currentMatrix = matrix;
+    }
+}
+unittest{
+    immutable m1 = M4(
+            [1, 0, 0, 10], 
+            [0, 1, 0, 0], 
+            [0, 0, 1, 0], 
+            [0, 0, 0, 1], 
+    );
+        
+    immutable m2 = M4(
+            [1, 0, 0, 0], 
+            [0, 1, 0, 20], 
+            [0, 0, 1, 0], 
+            [0, 0, 0, 1], 
+    );
+    
+    immutable m3 = M4(
+            [1, 0, 0, 0], 
+            [0, 1, 0, 0], 
+            [0, 0, 1, 30], 
+            [0, 0, 0, 1], 
+    );
+    
+    auto matrixStack = new MatrixStack;
+    
+    matrixStack.pushModelViewMatrix(m1);
+    assert(matrixStack.currentModelViewMatrix == m1);
+    
+    matrixStack.pushModelViewMatrix(m2);
+    assert(matrixStack.currentModelViewMatrix == m1*m2);
+    
+    matrixStack.popModelViewMatrix;
+    assert(matrixStack.currentModelViewMatrix == m1);
+    
+    matrixStack.pushModelViewMatrix(m3);
+    assert(matrixStack.currentModelViewMatrix == m1*m3);
+    
+    matrixStack.pushModelViewMatrix(m2);
+    assert(matrixStack.currentModelViewMatrix == m1*m3*m2);
+    
+    matrixStack.loadModelViewMatrix(m2);
+    assert(matrixStack.currentModelViewMatrix == m2);
 }
