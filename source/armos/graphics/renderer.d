@@ -181,6 +181,7 @@ class Renderer {
         /++
         +/
         this(){
+            _matrixStack = new armos.graphics.MatrixStack();
             _fbo = new armos.graphics.Fbo;
         }
 
@@ -704,6 +705,8 @@ class Renderer {
     private{
         armos.graphics.Fbo _fbo;
         bool _isUseFbo = true;
+        
+        armos.graphics.MatrixStack _matrixStack;
         
         armos.graphics.Style _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
