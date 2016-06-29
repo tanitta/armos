@@ -9,19 +9,19 @@ RendererでのMatrixを管理するclassです．
 Deprecated: 現在使用されていません．
 +/
 class MatrixStack {
-    armos.app.Window  _currentWindow;
+    // armos.app.Window  _currentWindow;
+    //
+    // this(armos.app.Window window){
+    //     _currentWindow = window;
+    // }
+    //
+    // armos.types.Rectangle currentViewport(){
+    //     return _currentViewport;
+    // }
 
-    this(armos.app.Window window){
-        _currentWindow = window;
-    }
-
-    armos.types.Rectangle currentViewport(){
-        return _currentViewport;
-    }
-
-    void pushViewportMatrix(armos.math.Matrix4f matrix){
-        _viewportMatrixStack ~= matrix;
-    }
+    // void pushViewportMatrix(armos.math.Matrix4f matrix){
+    //     _viewportMatrixStack ~= matrix;
+    // }
     
     void pushModelViewMatrix(armos.math.Matrix4f matrix){
         _modelViewMatrixStack ~= matrix;
@@ -35,9 +35,9 @@ class MatrixStack {
         _textureMatrixStack ~= matrix;
     }
 
-    void popViewportMatrix(){
-        _viewportMatrixStack.popBack;
-    }
+    // void popViewportMatrix(){
+    //     _viewportMatrixStack.popBack;
+    // }
     
     void popModelViewMatrix(){
         _modelViewMatrixStack.popBack;
@@ -68,30 +68,30 @@ class MatrixStack {
 
     void updatedRelatedMatrices(){}
 
-    armos.math.Vector2f renderSurfaceSize(){
-        return cast(armos.math.Vector2f)_currentWindow.size();
-    }
+    // armos.math.Vector2f renderSurfaceSize(){
+    //     return cast(armos.math.Vector2f)_currentWindow.size();
+    // }
 
-    void viewport(float x, float y, float width, float height, bool vflip){
-        auto position = armos.math.Vector2f(x, y);
-        auto size = armos.math.Vector2f(width, height);
-        if(width < 0 || height < 0){
-            size = renderSurfaceSize();
-            // width = getRenderSurfaceWidth();
-            // height = getRenderSurfaceHeight();
-            // vflip = isVFlipped();
-        }
+    // void viewport(float x, float y, float width, float height, bool vflip){
+    //     auto position = armos.math.Vector2f(x, y);
+    //     auto size = armos.math.Vector2f(width, height);
+    //     if(width < 0 || height < 0){
+    //         size = renderSurfaceSize();
+    //         // width = getRenderSurfaceWidth();
+    //         // height = getRenderSurfaceHeight();
+    //         // vflip = isVFlipped();
+    //     }
+    //
+    //     if (vflip){
+    //         position[1] = renderSurfaceSize[1] - (y + height);
+    //     }
+    //
+    //     currentViewport.set(position, size);
+    // };
 
-        if (vflip){
-            position[1] = renderSurfaceSize[1] - (y + height);
-        }
-
-        currentViewport.set(position, size);
-    };
-
-    armos.types.Rectangle nativeViewport(){
-        return currentViewport;
-    }
+    // armos.types.Rectangle nativeViewport(){
+    //     return currentViewport;
+    // }
 
     void push(armos.math.Matrix4f){}
     
@@ -102,8 +102,8 @@ class MatrixStack {
         armos.math.Matrix4f[]   _projectionMatrixStack;
         armos.math.Matrix4f[]   _textureMatrixStack;
 
-        armos.types.Rectangle   _currentViewport         = armos.types.Rectangle();
-        armos.math.Matrix4f     _currentViewportMatrix   = armos.math.Matrix4f();
+        // armos.types.Rectangle   _currentViewport         = armos.types.Rectangle();
+        // armos.math.Matrix4f     _currentViewportMatrix   = armos.math.Matrix4f();
         armos.math.Matrix4f     _currentModelViewMatrix  = armos.math.Matrix4f();
         armos.math.Matrix4f     _currentProjectionMatrix = armos.math.Matrix4f();
         armos.math.Matrix4f     _currentTextureMatrix    = armos.math.Matrix4f();
