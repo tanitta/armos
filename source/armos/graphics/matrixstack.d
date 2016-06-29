@@ -147,6 +147,7 @@ private{
         currentMatrix = matrix;
     }
 }
+
 unittest{
     immutable m1 = M4(
             [1, 0, 0, 10], 
@@ -188,4 +189,36 @@ unittest{
     
     matrixStack.loadModelViewMatrix(m2);
     assert(matrixStack.modelViewMatrix == m2);
+}
+
+unittest{
+    immutable m1 = M4(
+            [1, 0, 0, 10], 
+            [0, 1, 0, 0], 
+            [0, 0, 1, 0], 
+            [0, 0, 0, 1], 
+    );
+        
+    immutable m2 = M4(
+            [1, 0, 0, 0], 
+            [0, 1, 0, 20], 
+            [0, 0, 1, 0], 
+            [0, 0, 0, 1], 
+    );
+    
+    auto matrixStack = new MatrixStack;
+    
+    matrixStack.pushModelViewMatrix(m1);
+    assert(matrixStack.modelViewMatrix == m1);
+    
+    matrixStack.pushProjectionMatrix(m2);
+    assert(matrixStack.projectionMatrix == m2);
+    
+    assert(matrixStack.modelViewProjectionMatrix == m2*m1);
+    
+    matrixStack.popProjectionMatrix;
+    assert(matrixStack.modelViewProjectionMatrix == m1);
+    
+    matrixStack.popModelViewMatrix;
+    assert(matrixStack.modelViewProjectionMatrix == M4.identity);
 }
