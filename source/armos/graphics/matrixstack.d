@@ -24,6 +24,10 @@ class MatrixStack {
     // void pushViewportMatrix(M4 matrix){
     //     _viewportMatrixStack ~= matrix;
     // }
+    M4 modelViewProjectionMatrix()const{
+        return projectionMatrix*modelViewMatrix;
+    }
+    
     M4 modelViewMatrix()const{
         return _currentModelViewMatrix;
     }
@@ -118,7 +122,6 @@ class MatrixStack {
         M4     _currentProjectionMatrix = armos.math.Matrix4f();
         M4     _currentTextureMatrix    = armos.math.Matrix4f();
 
-        M4 _modelViewProjectionMatrix = armos.math.Matrix4f();
         
     }
 }
