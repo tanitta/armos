@@ -24,15 +24,15 @@ class MatrixStack {
     // void pushViewportMatrix(M4 matrix){
     //     _viewportMatrixStack ~= matrix;
     // }
-    M4 currentModelViewMatrix()const{
+    M4 modelViewMatrix()const{
         return _currentModelViewMatrix;
     }
     
-    M4 currentProjectionMatrix()const{
+    M4 projectionMatrix()const{
         return _currentProjectionMatrix;
     }
     
-    M4 currentTextureMatrix()const{
+    M4 textureMatrix()const{
         return _currentTextureMatrix;
     }
     
@@ -169,20 +169,20 @@ unittest{
     auto matrixStack = new MatrixStack;
     
     matrixStack.pushModelViewMatrix(m1);
-    assert(matrixStack.currentModelViewMatrix == m1);
+    assert(matrixStack.modelViewMatrix == m1);
     
     matrixStack.pushModelViewMatrix(m2);
-    assert(matrixStack.currentModelViewMatrix == m1*m2);
+    assert(matrixStack.modelViewMatrix == m1*m2);
     
     matrixStack.popModelViewMatrix;
-    assert(matrixStack.currentModelViewMatrix == m1);
+    assert(matrixStack.modelViewMatrix == m1);
     
     matrixStack.pushModelViewMatrix(m3);
-    assert(matrixStack.currentModelViewMatrix == m1*m3);
+    assert(matrixStack.modelViewMatrix == m1*m3);
     
     matrixStack.pushModelViewMatrix(m2);
-    assert(matrixStack.currentModelViewMatrix == m1*m3*m2);
+    assert(matrixStack.modelViewMatrix == m1*m3*m2);
     
     matrixStack.loadModelViewMatrix(m2);
-    assert(matrixStack.currentModelViewMatrix == m2);
+    assert(matrixStack.modelViewMatrix == m2);
 }
