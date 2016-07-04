@@ -15,6 +15,10 @@ class Shader {
             _programID = glCreateProgram();
             glDeleteProgram(_programID);
         }
+        
+        string log()const{
+            return _log;
+        }
 
         /++
             Load the shader from shaderName
@@ -37,13 +41,12 @@ class Shader {
             import std.stdio;
             
             if(vertexShaderSource != ""){
-                "load vertex shader".writeln;
+                addLog("load vertex shader");
                 loadShaderSource(vertexShaderSource, GL_VERTEX_SHADER);
             }
-            "\n".writeln;
             
             if(fragmentShaderSource != ""){
-                "load fragment shader".writeln;
+                addLog("load fragment shader");
                 loadShaderSource(fragmentShaderSource, GL_FRAGMENT_SHADER);
             }
 
@@ -51,8 +54,9 @@ class Shader {
 
             int isLinked;
             glGetProgramiv(_programID, GL_LINK_STATUS, &isLinked);
+            import colorize;
             if (isLinked == GL_FALSE) {
-                "link error".writeln;
+                addLog("link error".color(fg.red));
             }else{
                 _isLoaded = true;
             }
@@ -287,7 +291,11 @@ class Shader {
         int _programID;
         int[] _savedProgramIDs;
         bool _isLoaded = false;
+        string _log;
 
+        void addLog(in string str){
+            _log ~= str ~ "\n";
+        }
 
         void loadShaderFile(in string shaderPath, GLuint shaderType){
             auto shaderSource = loadedSource(shaderPath);
@@ -312,12 +320,12 @@ class Shader {
             int isCompiled;
             glGetShaderiv(id, GL_COMPILE_STATUS, &isCompiled);
 
-            import std.stdio;
+            import colorize;
             if (isCompiled == GL_FALSE) {
-                "compile error".writeln;
-                logShader(id).writeln;
+                addLog("compile error".color(fg.red));
+                addLog(logShader(id));
             }else{
-                "compile success".writeln;
+                addLog("compile success".color(fg.green));
             }
         }
 
@@ -326,7 +334,9 @@ class Shader {
             glGetShaderiv(id, GL_INFO_LOG_LENGTH, &strLength);
             char[] log = new char[strLength];
             glGetShaderInfoLog(id, strLength, null, log.ptr);
-            return cast(string)log;
+            import std.string;
+            import std.conv;
+            return log.to!string[0..$-1].strip;
         }
 
         int attribDim(in string name)

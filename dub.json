@@ -11,6 +11,7 @@
 		"derelict-glfw3": ">=2.0.0", 
 		"derelict-gl3": ">=1.0.18" , 
 		"derelict-ft": ">=1.0.2" ,
-		"derelict-fi": ">=2.0.2" 
+		"derelict-fi": ">=2.0.2" , 
+        "colorize": "~>1.0.5"
 	},
 }
