@@ -462,5 +462,4 @@ static unittest{
     assert( glFunctionString!(float, 3)("glUniform") == "glUniform3f(location, v[0], v[1], v[2]);" );
     assert( glFunctionString!(float[], 3, 3).glFunctionNameString("glUniform") == "glUniformMatrix3fv" );
     assert( glFunctionString!(float[], 2, 3).glFunctionNameString("glUniform") == "glUniformMatrix2x3fv" );
-    assert( glFunctionString!(float[], 3, 3).glFunctionNameString("glUniform") == "glUniformMatrix3fv" );
 }
