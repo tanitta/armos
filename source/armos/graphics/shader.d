@@ -334,9 +334,8 @@ class Shader {
             glGetShaderiv(id, GL_INFO_LOG_LENGTH, &strLength);
             char[] log = new char[strLength];
             glGetShaderInfoLog(id, strLength, null, log.ptr);
-            import std.string;
-            import std.conv;
-            return log.to!string[0..$-1].strip;
+            import std.string; import std.conv;
+            return log.ptr.fromStringz.to!string.chomp;
         }
 
         int attribDim(in string name)
