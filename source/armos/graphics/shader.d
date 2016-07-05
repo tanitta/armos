@@ -38,8 +38,6 @@ class Shader {
             Load the shader from sources 
         +/
         void loadSources(in string vertexShaderSource, in string fragmentShaderSource){
-            import std.stdio;
-            
             if(vertexShaderSource != ""){
                 addLog("load vertex shader");
                 loadShaderSource(vertexShaderSource, GL_VERTEX_SHADER);
