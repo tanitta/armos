@@ -340,43 +340,42 @@ class Shader {
 
         int attribDim(in string name)
         out(dim){assert(dim>0);}
-            body{
-                int dim = 0;
-                if(_isLoaded){
-                    begin;{
-                        int location = attribLocation(name);
-                        if(location != -1){
-                            int maxLength;
-                            glGetProgramiv(_programID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength);
+        body{
+            int dim = 0;
+            if(_isLoaded){
+                begin;scope(exit)end;
+                int location = attribLocation(name);
+                if(location != -1){
+                    int maxLength;
+                    glGetProgramiv(_programID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength);
 
-                            uint type = GL_ZERO;
-                            char[100] nameBuf;
-                            int l;
-                            int s;
+                    uint type = GL_ZERO;
+                    char[100] nameBuf;
+                    int l;
+                    int s;
 
-                            glGetActiveAttrib(
-                                    _programID, location, maxLength,
-                                    &l, &s, &type, nameBuf.ptr 
-                                    );
+                    glGetActiveAttrib(
+                        _programID, location, maxLength,
+                        &l, &s, &type, nameBuf.ptr 
+                    );
 
-                            switch (type) {
-                                case GL_FLOAT:
-                                    dim = 1;
-                                    break;
-                                case GL_FLOAT_VEC2:
-                                    dim = 2;
-                                    break;
-                                case GL_FLOAT_VEC3:
-                                    dim = 3;
-                                    break;
-                                default:
-                                    dim = 0;
-                            }
-                        }
-                    }end;
+                    switch (type) {
+                        case GL_FLOAT:
+                            dim = 1;
+                            break;
+                        case GL_FLOAT_VEC2:
+                            dim = 2;
+                            break;
+                        case GL_FLOAT_VEC3:
+                            dim = 3;
+                            break;
+                        default:
+                            dim = 0;
+                    }
                 }
-                return dim;
             }
+            return dim;
+        }
     }//private
 }//class Shader
 
