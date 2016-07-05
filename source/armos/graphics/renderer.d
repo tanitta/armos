@@ -139,11 +139,11 @@ armos.math.Matrix4f frustumMatrix(in double left, in double right, in double bot
     double D = -2.0*zFar*zNear/(zFar-zNear);
 
     return armos.math.Matrix4f(
-            [2.0*zNear/(right-left), 0.0,                    A,    0.0 ],
-            [0.0,                    2.0*zNear/(top-bottom), B,    0.0 ],
-            [0.0,                    0.0,                    C,    D   ],
-            [0.0,                    0.0,                    -1.0, 0.0 ]
-            );
+        [2.0*zNear/(right-left), 0.0,                    A,    0.0 ],
+        [0.0,                    2.0*zNear/(top-bottom), B,    0.0 ],
+        [0.0,                    0.0,                    C,    D   ],
+        [0.0,                    0.0,                    -1.0, 0.0 ]
+    );
 }
 
 /++
@@ -166,11 +166,11 @@ armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.V
     armos.math.Vector3f yaxis = zaxis.vectorProduct(xaxis);
 
     return armos.math.Matrix4f(
-            [xaxis[0], xaxis[1], xaxis[2], -xaxis.dotProduct(eye)],
-            [yaxis[0], yaxis[1], yaxis[2], -yaxis.dotProduct(eye)],
-            [zaxis[0], zaxis[1], zaxis[2], -zaxis.dotProduct(eye)],
-            [0,        0,        0,                             1]
-            );
+        [xaxis[0], xaxis[1], xaxis[2], -xaxis.dotProduct(eye)],
+        [yaxis[0], yaxis[1], yaxis[2], -yaxis.dotProduct(eye)],
+        [zaxis[0], zaxis[1], zaxis[2], -zaxis.dotProduct(eye)],
+        [0,        0,        0,                             1]
+    );
 };
 
 /++
@@ -539,41 +539,41 @@ class Renderer {
                 renderMode = armos.graphics.PolyRenderMode.WireFrame;
             }
             draw(
-                    vertices,
-                    null,
-                    null,
-                    texCoords,
-                    indices, 
-                    armos.graphics.PrimitiveMode.TriangleStrip, 
-                    renderMode,
-                    true,
-                    false,
-                    false
-                );
+                vertices,
+                null,
+                null,
+                texCoords,
+                indices, 
+                armos.graphics.PrimitiveMode.TriangleStrip, 
+                renderMode,
+                true,
+                false,
+                false
+            );
         }
 
         /++
         +/
         void draw(
-                in armos.graphics.Mesh mesh,
-                in armos.graphics.PolyRenderMode renderMode,
-                in bool useColors,
-                in bool useTextures,
-                in bool useNormals
-                ){
-                draw(
-                        mesh.vertices,
-                        mesh.normals,
-                        mesh.colors, 
-                        mesh.texCoords,
-                        mesh.indices, 
-                        mesh.primitiveMode,
-                        renderMode,
-                        useColors,
-                        useTextures,
-                        useNormals
-                    );
-            }
+            in armos.graphics.Mesh mesh,
+            in armos.graphics.PolyRenderMode renderMode,
+            in bool useColors,
+            in bool useTextures,
+            in bool useNormals
+        ){
+            draw(
+                mesh.vertices,
+                mesh.normals,
+                mesh.colors, 
+                mesh.texCoords,
+                mesh.indices, 
+                mesh.primitiveMode,
+                renderMode,
+                useColors,
+                useTextures,
+                useNormals
+            );
+        }
 
         /++
             deprecated:
@@ -627,11 +627,11 @@ class Renderer {
             //add indicees to GL
             if(indices.length){
                 glDrawElements(
-                        armos.graphics.getGLPrimitiveMode(primitiveMode),
-                        cast(int)indices.length,
-                        GL_UNSIGNED_INT,
-                        indices.ptr
-                        );
+                    armos.graphics.getGLPrimitiveMode(primitiveMode),
+                    cast(int)indices.length,
+                    GL_UNSIGNED_INT,
+                    indices.ptr
+                );
             }
 
             glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
@@ -711,6 +711,7 @@ class Renderer {
         armos.graphics.Style[] _styleStack;
         
         armos.graphics.Shader _currentShader;
+        armos.graphics.Material _currentMaterial;
         
         bool _isBackgroundAuto = true;
     }//private
