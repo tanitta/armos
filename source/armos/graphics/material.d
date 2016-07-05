@@ -1,10 +1,27 @@
 module armos.graphics.material;
-// import armos.types.color;
+static import armos.types;
+static import armos.graphics;
+
 /++
 材質を表すclassです．
 +/
 class Material {
     public{
+        ///
+        this(){
+            this(defaultVertesShaderSource, defaultFragmentShaderSource);
+        }
+        
+        ///
+        this(in string vertexShaderSource, in string fragmentShaderSource){
+            _shader = new armos.graphics.Shader;
+            _shader.loadSources(vertexShaderSource, fragmentShaderSource);
+        }
+        
+        ///
+        this(armos.graphics.Shader s){
+            _shader = s;
+        }
 
         ///
         void begin(){
@@ -23,10 +40,12 @@ class Material {
         ///
         void diffuse(in armos.types.Color d){ _diffuse = d; }
 
+        ///
         void diffuse(T)(in T r, in T g, in T b, in T a = T( armos.graphics.Color.limit )){ 
             _diffuse = armos.graphics.Color(r, g, b, a); 
         }
 
+        ///
         armos.types.Color diffuse()const{return _diffuse; }
 
         ///
@@ -43,6 +62,7 @@ class Material {
         ///
         void ambient(in armos.types.Color a){ _ambient = a; }
 
+        ///
         void ambient(T)(in T r, in T g, in T b, in T a = T( armos.graphics.Color.limit )){
             _ambient = armos.graphics.Color(r, g, b, a); 
         }
@@ -52,14 +72,25 @@ class Material {
 
         ///
         void texture(armos.graphics.Texture tex){ _texture = tex; }
+        
+        ///
         armos.graphics.Texture texture(){return _texture;}
-
+        
+        ///
+        armos.graphics.Shader shader(){
+            return _shader;
+        }
+        
+        ///
+        void shader(armos.graphics.Shader s){
+            _shader = s;
+        }
+        
         ///
         void loadImage(in string pathInDataDir){
             auto image = new armos.graphics.Image();
             image.load(pathInDataDir);
         }
-
     }//public
 
     private{
@@ -67,5 +98,33 @@ class Material {
         armos.types.Color _specular;
         armos.types.Color _ambient;
         armos.graphics.Texture _texture;
+        armos.graphics.Shader _shader;
     }//private
 }//class Material
+
+private immutable string defaultVertesShaderSource = q{
+#version 330
+
+in vec3 position;
+in vec3 v_color;
+
+uniform mat4 mpv;
+varying vec3 f_color;
+
+void main(void) {
+    gl_Position = mpv * vec4(position, 1.0);
+    f_color = v_color;
+}
+};
+
+private immutable string defaultFragmentShaderSource = q{
+#version 330
+    
+uniform float fade;
+varying vec3 f_color;
+uniform vec4 vec_test;
+
+void main(void) {
+    gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, fade)*vec_test;
+}
+};
