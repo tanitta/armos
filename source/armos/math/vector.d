@@ -7,15 +7,19 @@ import std.math;
 ベクトル計算を行うstructです
 +/
 struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
-    alias Vector!(T, Dimention) VectorType;
+    private alias Vector!(T, Dimention) VectorType;
 
     T[Dimention] data = T.init;
 
-    /++
-    +/
+    ///
     enum int dimention = Dimention;
     unittest{
         static assert(Vector!(float, 3).dimention == 3);
+    }
+    
+    alias elementType = T;
+    unittest{
+        static assert(is(Vector!(float, 3).elementType == float));
     }
 
     /++

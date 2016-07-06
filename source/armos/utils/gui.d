@@ -223,9 +223,9 @@ class Label : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
-            armos.graphics.setColor(_style.colors["font1"]);
+            armos.graphics.color(_style.colors["font1"]);
             _style.font.draw(_str, _style.font.width, 0);
         };
     }//public
@@ -251,9 +251,9 @@ class Partition : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
-            armos.graphics.setColor(_style.colors["font2"]);
+            armos.graphics.color(_style.colors["font2"]);
             string str;
             for (int i = 0; i < _style.width/_style.font.width/_str.length; i++) {
                 str ~= _str;
@@ -292,7 +292,7 @@ class Slider(T) : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
             string varString = "";
@@ -301,13 +301,13 @@ class Slider(T) : Widget{
             }else if(__traits(isFloating, *_var)){
                 varString = format("%f", *_var).to!string;
             }
-            armos.graphics.setColor(_style.colors["font1"]);
+            armos.graphics.color(_style.colors["font1"]);
             _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
 
             immutable int currentValueAsSliderPosition = armos.math.map.map( ( *_var ).to!float, _varMin.to!float, _varMax.to!float, 0.0, _style.width.to!float - _style.font.width.to!float*2.0).to!int;
-            armos.graphics.setColor(_style.colors["base1"]);
+            armos.graphics.color(_style.colors["base1"]);
             armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*2);
-            armos.graphics.setColor(_style.colors["base2"]);
+            armos.graphics.color(_style.colors["base2"]);
             armos.graphics.drawRectangle(_style.font.width, _style.font.height, currentValueAsSliderPosition.to!int, _style.font.height*2);
         };
 
@@ -393,7 +393,7 @@ class MovingGraph(T) : Widget{
         };
 
         override void draw(){
-            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*16);
 
             import std.format:format;
@@ -404,10 +404,10 @@ class MovingGraph(T) : Widget{
             }else if(__traits(isFloating, *_var)){
                 varString = format("%f", *_var).to!string;
             }
-            armos.graphics.setColor(_style.colors["font1"]);
+            armos.graphics.color(_style.colors["font1"]);
             _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
 
-            armos.graphics.setColor(_style.colors["base1"]);
+            armos.graphics.color(_style.colors["base1"]);
             armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*14);
 
             drawLine;
@@ -425,7 +425,7 @@ class MovingGraph(T) : Widget{
 
         void drawLine(){
             import std.conv;
-            armos.graphics.setColor(_style.colors["font1"]);
+            armos.graphics.color(_style.colors["font1"]);
             foreach (i, v; _buffer) {
                 immutable x = armos.math.map.map( i.to!float, 0f, 30f, _style.font.width.to!float, _style.width.to!float);
                 immutable y = armos.math.map.map( _varMax - v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
@@ -470,7 +470,7 @@ class MovingGraphXY(T) : Widget{
         };
 
         override void draw(){
-            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*18);
 
             import std.format:format;
@@ -484,11 +484,11 @@ class MovingGraphXY(T) : Widget{
                 varStringX = format("%f", *_varX).to!string;
                 varStringY = format("%f", *_varY).to!string;
             }
-            armos.graphics.setColor(_style.colors["font1"]);
+            armos.graphics.color(_style.colors["font1"]);
             _style.font.draw(_nameX ~ " : " ~ varStringX, _style.font.width, 0);
             _style.font.draw(_nameY ~ " : " ~ varStringY, _style.font.width, _style.font.height);
 
-            armos.graphics.setColor(_style.colors["base1"]);
+            armos.graphics.color(_style.colors["base1"]);
             armos.graphics.drawRectangle(_style.font.width, _style.font.height*2, _style.width - _style.font.width*2, _style.font.height*15);
 
             drawLine;
@@ -508,7 +508,7 @@ class MovingGraphXY(T) : Widget{
 
         void drawLine(){
             import std.conv;
-            armos.graphics.setColor(_style.colors["font1"]);
+            armos.graphics.color(_style.colors["font1"]);
             foreach (i, v; _buffer) {
                 immutable x = armos.math.map.map( v[0], _varMin[0], _varMax[0], _style.font.width.to!float, _style.width - _style.font.width);
                 immutable y = armos.math.map.map(  - v[1], _varMin[1], _varMax[1], _style.font.height.to!float*2, _style.font.height.to!float*17);
@@ -538,16 +538,16 @@ class Button : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
-            armos.graphics.setColor(_style.colors["font1"]);
+            armos.graphics.color(_style.colors["font1"]);
             _style.font.draw(_name, _style.font.width, 0);
 
             if(*_v){
-                armos.graphics.setColor(_style.colors["base2"]);
+                armos.graphics.color(_style.colors["base2"]);
             }else{
-                armos.graphics.setColor(_style.colors["base1"]);
+                armos.graphics.color(_style.colors["base1"]);
             }
 
             armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
@@ -608,16 +608,16 @@ class ToggleButton : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.setColor(_style.colors["background"]);
+            armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
-            armos.graphics.setColor(_style.colors["font1"]);
+            armos.graphics.color(_style.colors["font1"]);
             _style.font.draw(_name, _style.font.width, 0);
 
             if(*_v){
-                armos.graphics.setColor(_style.colors["base2"]);
+                armos.graphics.color(_style.colors["base2"]);
             }else{
-                armos.graphics.setColor(_style.colors["base1"]);
+                armos.graphics.color(_style.colors["base1"]);
             }
 
             armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);

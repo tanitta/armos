@@ -45,7 +45,7 @@ class Model {
             foreach (mesh; meshes) {
                 mesh.material.begin;
                 armos.graphics.pushStyle;
-                armos.graphics.setColor = mesh.material.diffuse;
+                armos.graphics.color = mesh.material.diffuse;
                 armos.graphics.currentRenderer.draw(mesh, renderMode, false, false, false);
                 armos.graphics.popStyle;
                 mesh.material.end;

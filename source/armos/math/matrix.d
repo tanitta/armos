@@ -7,6 +7,11 @@ import armos.math;
 struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSize > 0 && ColSize > 0){
     alias Matrix!(T, RowSize, ColSize) MatrixType;
     alias armos.math.Vector!(T, ColSize) VectorType;
+    
+    alias elementType = T;
+    unittest{
+        static assert(is(Matrix!(float, 3, 3).elementType == float));
+    }
 
     /++
     +/
