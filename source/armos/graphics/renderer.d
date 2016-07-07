@@ -499,41 +499,13 @@ void blendMode(armos.graphics.BlendMode mode){
 +/
 class Renderer {
     public{
-
         /++
         +/
         this(){
             _matrixStack = new armos.graphics.MatrixStack();
             _fbo = new armos.graphics.Fbo;
         }
-
-        /++
-        +/
-        void matrixMode(MatrixMode mode){
-            glMatrixMode(getGLMatrixMode(mode));
-        }
-
-        /++
-        +/
-        ref armos.graphics.Style currentStyle(){
-            return _currentStyle;
-        };
-
-        /++
-        +/
-        void bind(armos.math.Matrix4f projectionMatrix){
-            matrixMode(MatrixMode.Projection);
-            pushMatrix();
-            loadMatrix(projectionMatrix);
-        }
-
-        /++
-        +/
-        void unbind(){
-            matrixMode(MatrixMode.Projection);
-            popMatrix();
-        }
-
+        
         /++
         +/
         void isBackgrounding(bool b){
@@ -582,6 +554,12 @@ class Renderer {
 
         /++
         +/
+        ref armos.graphics.Style currentStyle(){
+            return _currentStyle;
+        };
+
+        /++
+        +/
         void pushStyle(){
             _styleStack ~= _currentStyle;
         }
@@ -598,18 +576,47 @@ class Renderer {
                 style(_currentStyle);
             }
         }
+        
+        /++
+        +/
+        void matrixMode(MatrixMode mode){
+            glMatrixMode(getGLMatrixMode(mode));
+        }
+
+
+        /++
+        +/
+        void bind(armos.math.Matrix4f projectionMatrix){
+            matrixMode(MatrixMode.Projection);
+            pushMatrix();
+            loadMatrix(projectionMatrix);
+            
+            // TODO
+            _matrixStack.pushProjectionMatrix;
+            _matrixStack.loadProjectionMatrix(projectionMatrix);
+        }
+
+        /++
+        +/
+        void unbind(){
+            matrixMode(MatrixMode.Projection);
+            popMatrix();
+            
+            // TODO
+            _matrixStack.popProjectionMatrix;
+        }
 
         /++
         +/
         void pushMatrix(){
             glPushMatrix();
-        };
+        }
 
         /++
         +/
         void popMatrix(){
             glPopMatrix();
-        };
+        }
 
         /++
         +/
@@ -619,37 +626,25 @@ class Renderer {
 
         /++
         +/
-        void loadMatrix(M)(in M matrix)
-            in{
-                assert(M.rowSize<=4);
-                assert(M.colSize<=4);
-                assert(M.rowSize==M.colSize);
-            }body{
-                static if(M.rowSize == 4){
-                    static if(is(M == armos.math.Matrix!(double, 4, 4))){
-                        glLoadMatrixd(matrix.array.ptr);
-                    }else if(is(M == armos.math.Matrix!(float, 4, 4))){
-                        glLoadMatrixf(matrix.array.ptr);
-                    }else{assert(false);}
-                }else{assert(false);}
-            }
+        void loadMatrix(M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
+            manipulateGlMatrix!("glLoadMatrix")(matrix);
+        }
 
         /++
         +/
-        void multMatrix(M)(in M matrix)
-            in{
-                assert(M.rowSize<=4);
-                assert(M.colSize<=4);
-                assert(M.rowSize==M.colSize);
-            }body{
-                static if(M.rowSize == 4){
-                    static if(is(M == armos.math.Matrix!(double, 4, 4))){
-                        glMultMatrixd(matrix.array.ptr);
-                    }else if(is(M == armos.math.Matrix!(float, 4, 4))){
-                        glMultMatrixf(matrix.array.ptr);
-                    }else{assert(false);}
-                }else{assert(false);}
-            }
+        void multMatrix(M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
+            manipulateGlMatrix!("glMultMatrix")(matrix);
+        }
+        
+        private void manipulateGlMatrix(string FuncNamePre, M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
+            static if(is(M.elementType == double)){
+                mixin("alias F = " ~ FuncNamePre ~ "d;");
+                F(matrix.array.ptr);
+            }else if(is(M.elementType == float)){
+                mixin("alias F = " ~ FuncNamePre ~ "f;");
+                F(matrix.array.ptr);
+            }else{assert(false);}
+        }
 
         /++
         +/
