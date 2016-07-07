@@ -8,6 +8,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     alias Matrix!(T, RowSize, ColSize) MatrixType;
     alias armos.math.Vector!(T, ColSize) VectorType;
     
+    
     alias elementType = T;
     unittest{
         static assert(is(Matrix!(float, 3, 3).elementType == float));
@@ -20,6 +21,15 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     /++
     +/
     enum int colSize = ColSize;
+    
+    /++
+    +/
+    static if(RowSize == ColSize){
+        enum int size = RowSize;
+    }
+    unittest{
+        static assert(Matrix!(float, 3, 3).size == 3);
+    }
 
     VectorType[RowSize] data = VectorType();
 
@@ -549,6 +559,13 @@ alias Matrix!(float, 4, 4) Matrix4f;
 alias Matrix!(double, 2, 2) Matrix2d;
 alias Matrix!(double, 3, 3) Matrix3d;
 alias Matrix!(double, 4, 4) Matrix4d;
+
+template SquareMatrix(T, int D){
+    alias SquareMatrix = Matrix!(T, D, D);
+}
+unittest{
+    static assert(isSquareMatrix!(SquareMatrix!(float, 4)));
+}
 
 /++
 +/
