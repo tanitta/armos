@@ -40,7 +40,6 @@ class MatrixStack {
         return _textureMatrixStack.updatedCurrentMatrix * _currentTextureMatrix;
     }
     
-    // TODO change to no arg
     void pushModelViewMatrix(){
         pushMatrix(_currentModelViewMatrix, _modelViewMatrixStack);
     }
@@ -53,7 +52,6 @@ class MatrixStack {
         pushMatrix(_currentTextureMatrix, _textureMatrixStack);
     }
     
-    // TODO : Mult
     void multModelViewMatrix(in M4 matrix){
         _currentModelViewMatrix.multMatrix(matrix);
     }
@@ -226,7 +224,6 @@ unittest{
     
     auto matrixStack = new MatrixStack;
     
-    //TODO
     matrixStack.pushModelViewMatrix;
     matrixStack.pushProjectionMatrix;
     

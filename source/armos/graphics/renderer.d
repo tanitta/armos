@@ -609,18 +609,21 @@ class Renderer {
         /++
         +/
         void pushMatrix(){
+            // TODO
             glPushMatrix();
         }
 
         /++
         +/
         void popMatrix(){
+            // TODO
             glPopMatrix();
         }
 
         /++
         +/
         void loadIdentity(){
+            // TODO
             glLoadIdentity();
         }
 
