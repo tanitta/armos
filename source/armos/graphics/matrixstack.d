@@ -40,27 +40,15 @@ class MatrixStack {
         return _textureMatrixStack.updatedCurrentMatrix * _currentTextureMatrix;
     }
     
-    void pushModelViewMatrix(){
-        pushMatrix(_currentModelViewMatrix, _modelViewMatrixStack);
-    }
-    
-    void pushModelViewMatrix(in M4 newMatrix){
+    void pushModelViewMatrix(in M4 newMatrix = M4.identity){
         pushMatrix(_currentModelViewMatrix, _modelViewMatrixStack, newMatrix);
     }
     
-    void pushProjectionMatrix(){
-        pushMatrix(_currentProjectionMatrix, _projectionMatrixStack);
-    }
-    
-    void pushProjectionMatrix(in M4 newMatrix){
+    void pushProjectionMatrix(in M4 newMatrix = M4.identity){
         pushMatrix(_currentProjectionMatrix, _projectionMatrixStack, newMatrix);
     }
     
-    void pushTextureMatrix(){
-        pushMatrix(_currentTextureMatrix, _textureMatrixStack);
-    }
-    
-    void pushTextureMatrix(in M4 newMatrix){
+    void pushTextureMatrix(in M4 newMatrix = M4.identity){
         pushMatrix(_currentTextureMatrix, _textureMatrixStack, newMatrix);
     }
     
