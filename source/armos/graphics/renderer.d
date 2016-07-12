@@ -754,7 +754,7 @@ class Renderer {
         +/
         void translate(V)(in V vec)if(armos.math.isVector!(V)){
             //TODO
-            glTranslatef(vec[0], vec[1], vec[2]);
+            translate(vec[0], vec[1], vec[2]);
         };
 
         /++
@@ -775,18 +775,16 @@ class Renderer {
 
         /++
         +/
-        
-        void rotate(T, V)(in T degrees, in V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
-            //TODO
-            rotate(degrees, vec[0], vec[1], vec[2]);
-        }
-
-        /++
-        +/
         void rotate(T)(in T degrees, in T vecX, in T vecY, in T vecZ)if(__traits(isArithmetic, T)){
             //TODO
             import std.conv;
             glRotatef(degrees.to!float, vecX.to!float, vecY.to!float, vecZ.to!float);
+        }
+        
+        ///
+        void rotate(T, V)(in T degrees, in V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
+            //TODO
+            rotate(degrees, vec[0], vec[1], vec[2]);
         }
 
         /++
