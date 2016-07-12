@@ -44,12 +44,24 @@ class MatrixStack {
         pushMatrix(_currentModelViewMatrix, _modelViewMatrixStack);
     }
     
+    void pushModelViewMatrix(in M4 newMatrix){
+        pushMatrix(_currentModelViewMatrix, _modelViewMatrixStack, newMatrix);
+    }
+    
     void pushProjectionMatrix(){
         pushMatrix(_currentProjectionMatrix, _projectionMatrixStack);
     }
     
+    void pushProjectionMatrix(in M4 newMatrix){
+        pushMatrix(_currentProjectionMatrix, _projectionMatrixStack, newMatrix);
+    }
+    
     void pushTextureMatrix(){
         pushMatrix(_currentTextureMatrix, _textureMatrixStack);
+    }
+    
+    void pushTextureMatrix(in M4 newMatrix){
+        pushMatrix(_currentTextureMatrix, _textureMatrixStack, newMatrix);
     }
     
     void multModelViewMatrix(in M4 matrix){
@@ -144,9 +156,9 @@ private{
         return M4.identity.reduce!"a*b"(stack);
     }
     
-    void pushMatrix(ref armos.math.Matrix4f currentMatrix, ref armos.math.Matrix4f[] stack){
+    void pushMatrix(ref armos.math.Matrix4f currentMatrix, ref armos.math.Matrix4f[] stack, in M4 newMatrix = M4.identity){
         stack ~= currentMatrix;
-        currentMatrix = armos.math.Matrix4f.identity;
+        currentMatrix = newMatrix;
     }
     
     void popMatrix(ref M4[] stack, ref armos.math.Matrix4f currentMatrix){
