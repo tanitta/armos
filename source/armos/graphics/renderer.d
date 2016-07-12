@@ -301,7 +301,8 @@ void pushMatrix(){
 }
 
 ///
-M translationMatrix(T, M = armos.math.Matrix!(T, 4, 4))(in T x, in T y, in T z){
+M translationMatrix(T, M = armos.math.Matrix!(T, 4, 4))(in T x, in T y, in T z)
+if(armos.math.isMatrix!(M) && __traits(isArithmetic, T) && M.rowSize == 4){
     import std.conv;
     auto t = M.identity;
     t[0][M.colSize-1] = x.to!(M.elementType);
@@ -360,7 +361,8 @@ void translate(armos.math.Vector3d vec){
 }
 
 ///
-M scalingMatrix(T, M = armos.math.Matrix!(T, 4, 4))(in T x, in T y, in T z){
+M scalingMatrix(T, M = armos.math.Matrix!(T, 4, 4))(in T x, in T y, in T z)
+if(armos.math.isMatrix!(M) && __traits(isArithmetic, T) && M.rowSize == 4){
     import std.conv;
     auto t = M.identity;
     t[0][0] = x.to!(M.elementType);
@@ -423,7 +425,8 @@ void scale(armos.math.Vector3f vec){
 }
 
 ///
-M4 rotationMatrix(T, M4 = armos.math.Matrix!(T, 4, 4))(in T degrees, in T x, in T y, in T z){
+M4 rotationMatrix(T, M4 = armos.math.Matrix!(T, 4, 4))(in T degrees, in T x, in T y, in T z)
+if(armos.math.isMatrix!(M4) && __traits(isArithmetic, T) && M4.rowSize == 4){
     import std.conv;
     import std.math;
     alias E = M4.elementType;
