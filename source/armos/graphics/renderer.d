@@ -301,15 +301,35 @@ void pushMatrix(){
 }
 
 ///
-M translate(M, T)(in M matrix, in T x, in T y, in T z)
-if(armos.math.isMatrix!(M) && __traits(isArithmetic, T) && M.rowSize == 4){
+M translationMatrix(T, M = armos.math.Matrix!(T, 4, 4))(in T x, in T y, in T z){
     import std.conv;
     auto t = M.identity;
     t[0][M.colSize-1] = x.to!(M.elementType);
     t[1][M.colSize-1] = y.to!(M.elementType);
     t[2][M.colSize-1] = z.to!(M.elementType);
-    return matrix * t;
+    return t;
 }
+
+unittest{
+    alias M = armos.math.Matrix4f;
+    M m = translationMatrix(2f, 3f, 4f);
+    immutable ans = M(
+            [1, 0, 0, 2], 
+            [0, 1, 0, 3], 
+            [0, 0, 1, 4], 
+            [0, 0, 0, 1], 
+            );
+    assert(m == ans);
+}
+
+///
+M translate(M, T)(in M matrix, in T x, in T y, in T z)
+if(armos.math.isMatrix!(M) && __traits(isArithmetic, T) && M.rowSize == 4){
+    import std.conv;
+    alias E = M.elementType;
+    return matrix * translationMatrix(x.to!E, y.to!E, z.to!E);
+}
+
 unittest{
     alias M = armos.math.Matrix4d;
     immutable ans = M(
@@ -318,7 +338,7 @@ unittest{
             [0, 0, 1, 4], 
             [0, 0, 0, 1], 
             );
-    assert(M.identity.translate(2, 3, 4) == ans);
+    assert(M.identity.translate(2.0, 3.0, 4.0) == ans);
 }
 
 /++
@@ -340,6 +360,28 @@ void translate(armos.math.Vector3d vec){
 }
 
 ///
+M scalingMatrix(T, M = armos.math.Matrix!(T, 4, 4))(in T x, in T y, in T z){
+    import std.conv;
+    auto t = M.identity;
+    t[0][0] = x.to!(M.elementType);
+    t[1][1] = y.to!(M.elementType);
+    t[2][2] = z.to!(M.elementType);
+    return t;
+}
+
+unittest{
+    alias M = armos.math.Matrix4d;
+    M m = scalingMatrix(2.0, 3.0, 4.0);
+    immutable ans = M(
+            [2, 0, 0, 0], 
+            [0, 3, 0, 0], 
+            [0, 0, 4, 0], 
+            [0, 0, 0, 1], 
+            );
+    assert(m == ans);
+}
+
+///
 M scale(M, T)(in M matrix, in T x, in T y, in T z)
 if(
     armos.math.isMatrix!(M) && 
@@ -347,12 +389,10 @@ if(
     M.rowSize == 4
 ){
     import std.conv;
-    auto t = M.identity;
-    t[0][0] = x.to!(M.elementType);
-    t[1][1] = y.to!(M.elementType);
-    t[2][2] = z.to!(M.elementType);
-    return matrix * t;
+    alias E = M.elementType;
+    return matrix * scalingMatrix(x.to!E, y.to!E, z.to!E);
 }
+
 unittest{
     alias M = armos.math.Matrix4d;
     immutable ans = M(
@@ -383,8 +423,7 @@ void scale(armos.math.Vector3f vec){
 }
 
 ///
-M4 rotate(M4, T)(in M4 matrix, in T degrees, in T x, in T y, in T z)
-if(armos.math.isMatrix!(M4) && __traits(isArithmetic, T) && M4.rowSize == 4){
+M4 rotationMatrix(T, M4 = armos.math.Matrix!(T, 4, 4))(in T degrees, in T x, in T y, in T z){
     import std.conv;
     import std.math;
     alias E = M4.elementType;
@@ -398,8 +437,34 @@ if(armos.math.isMatrix!(M4) && __traits(isArithmetic, T) && M4.rowSize == 4){
     );
     immutable m = M3.identity + sin(d)*r + (1-cos(d))*r*r;
     immutable t = M4.identity.setMatrix(m);
-    return matrix * t;
+    return t;
 }
+
+unittest{
+    alias M = armos.math.Matrix4d;
+    immutable m = rotationMatrix(PI, 0.0, 1.0, 0.0);
+    immutable ans = M(
+            [-1, 0, 0, 0], 
+            [0, 1, 0, 0], 
+            [0, 0, -1, 0], 
+            [0, 0, 0, 1], 
+            );
+    import std.math;
+    foreach (int i, ref r; m.data) {
+        foreach (int j, ref c; r.data) {
+            assert(approxEqual(c, ans[i][j]));
+        }
+    }
+}
+
+///
+M rotate(M, T)(in M matrix, in T degrees, in T x, in T y, in T z)
+if(armos.math.isMatrix!(M) && __traits(isArithmetic, T) && M.rowSize == 4){
+    import std.conv;
+    alias E = M.elementType;
+    return matrix * rotationMatrix(degrees.to!E, x.to!E, y.to!E, z.to!E);
+}
+
 unittest{
     alias M = armos.math.Matrix4d;
     immutable ans = M(
@@ -652,6 +717,8 @@ class Renderer {
         /++
         +/
         void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
+            //TODO
+            // _matrixStack.multModelViewMatrix();
             import std.conv;
             glTranslatef(x.to!float, y.to!float, z.to!float);
         }
@@ -659,12 +726,14 @@ class Renderer {
         /++
         +/
         void translate(V)(in V vec)if(armos.math.isVector!(V)){
+            //TODO
             glTranslatef(vec[0], vec[1], vec[2]);
         };
 
         /++
         +/
         void scale(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
+            //TODO
             import std.conv;
             glScalef(x.to!float, y.to!float, z.to!float);
         }
@@ -673,6 +742,7 @@ class Renderer {
         +/
         
         void scale(V)(in V vec)if(armos.math.isVector!(V)){
+            //TODO
             scale(vec[0], vec[1], vec[2]);
         }
 
@@ -680,12 +750,14 @@ class Renderer {
         +/
         
         void rotate(T, V)(in T degrees, in V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
+            //TODO
             rotate(degrees, vec[0], vec[1], vec[2]);
         }
 
         /++
         +/
         void rotate(T)(in T degrees, in T vecX, in T vecY, in T vecZ)if(__traits(isArithmetic, T)){
+            //TODO
             import std.conv;
             glRotatef(degrees.to!float, vecX.to!float, vecY.to!float, vecZ.to!float);
         }
