@@ -744,24 +744,24 @@ class Renderer {
         /++
         +/
         void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
-            //TODO
-            // _matrixStack.multModelViewMatrix();
             import std.conv;
+            _matrixStack.multModelViewMatrix(translationMatrix!(float)(x, y, z));
+            //TODO remove
             glTranslatef(x.to!float, y.to!float, z.to!float);
         }
 
         /++
         +/
         void translate(V)(in V vec)if(armos.math.isVector!(V)){
-            //TODO
             translate(vec[0], vec[1], vec[2]);
         };
 
         /++
         +/
         void scale(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
-            //TODO
             import std.conv;
+            _matrixStack.multModelViewMatrix(scalingMatrix!(float)(x, y, z));
+            //TODO remove
             glScalef(x.to!float, y.to!float, z.to!float);
         }
 
@@ -769,21 +769,20 @@ class Renderer {
         +/
         
         void scale(V)(in V vec)if(armos.math.isVector!(V)){
-            //TODO
             scale(vec[0], vec[1], vec[2]);
         }
 
         /++
         +/
         void rotate(T)(in T degrees, in T vecX, in T vecY, in T vecZ)if(__traits(isArithmetic, T)){
-            //TODO
             import std.conv;
+            _matrixStack.multModelViewMatrix(rotationMatrix!(float)(degrees, vecX, vecY, vecZ));
+            //TODO remove
             glRotatef(degrees.to!float, vecX.to!float, vecY.to!float, vecZ.to!float);
         }
         
         ///
         void rotate(T, V)(in T degrees, in V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
-            //TODO
             rotate(degrees, vec[0], vec[1], vec[2]);
         }
 
