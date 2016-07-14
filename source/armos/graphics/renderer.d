@@ -974,6 +974,7 @@ class Renderer {
 
         /++
         +/
+        // TODO use material shader
         void draw(
             in armos.graphics.Mesh mesh,
             in armos.graphics.PolyRenderMode renderMode,
