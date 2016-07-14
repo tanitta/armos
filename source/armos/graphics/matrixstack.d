@@ -210,6 +210,6 @@ package mixin template MatrixStackManipulator(string Name){
     }
     
     private{
-        mixin("armos.graphics.MatrixStack _" ~ Name.toLower ~ "MatrixStack;");
+        mixin("armos.graphics.MatrixStack _" ~ Name.toLower ~ "MatrixStack = new armos.graphics.MatrixStack();");
     }
 }
