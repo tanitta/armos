@@ -599,8 +599,6 @@ class Renderer {
         /++
         +/
         this(){
-            //TODO
-            // _matrixStack = new armos.graphics.MatrixStack();
             _fbo = new armos.graphics.Fbo;
         }
         
@@ -760,8 +758,7 @@ class Renderer {
         +/
         void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
             import std.conv;
-            //TODO
-            // _matrixStack.multModelViewMatrix(translationMatrix!(float)(x, y, z));
+            _modelMatrixStack.mult(translationMatrix!(float)(x, y, z));
             //TODO remove
             glTranslatef(x.to!float, y.to!float, z.to!float);
         }
@@ -776,8 +773,7 @@ class Renderer {
         +/
         void scale(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
             import std.conv;
-            //TODO
-            // _matrixStack.multModelViewMatrix(scalingMatrix!(float)(x, y, z));
+            _modelMatrixStack.mult(scalingMatrix!(float)(x, y, z));
             //TODO remove
             glScalef(x.to!float, y.to!float, z.to!float);
         }
@@ -793,8 +789,7 @@ class Renderer {
         +/
         void rotate(T)(in T degrees, in T vecX, in T vecY, in T vecZ)if(__traits(isArithmetic, T)){
             import std.conv;
-            //TODO
-            // _matrixStack.multModelViewMatrix(rotationMatrix!(float)(degrees, vecX, vecY, vecZ));
+            _modelMatrixStack.mult(rotationMatrix!(float)(degrees, vecX, vecY, vecZ));
             //TODO remove
             glRotatef(degrees.to!float, vecX.to!float, vecY.to!float, vecZ.to!float);
         }
