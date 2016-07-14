@@ -582,45 +582,15 @@ void blendMode(armos.graphics.BlendMode mode){
     currentRenderer.blendMode = mode;
 }
 
-// //TODO pushModelViewMatrix
-// ///
-// void pushModelViewMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
-//     currentRenderer._matrixStack.pushModelViewMatrix(newMatrix);
-// }
-//
-// //TODO popModelViewMatrix
-// ///
-// void popModelViewMatrix(){
-//     currentRenderer._matrixStack.popModelViewMatrix;
-// }
-//
-// //TODO pushProjectionMatrix
-// ///
-// void pushProjectionMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
-//     currentRenderer._matrixStack.pushProjectionMatrix(newMatrix);
-// }
-//
-// //TODO popProjectionMatrix
-// ///
-// void popProjectionMatrix(){
-//     currentRenderer._matrixStack.popProjectionMatrix;
-// }
-//
-// //TODO pushTextureMatrix
-// ///
-// void pushTextureMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
-//     currentRenderer._matrixStack.pushTextureMatrix(newMatrix);
-// }
-//
-// //TODO popTextureMatrix
-// ///
-// void popTextureMatrix(){
-//     currentRenderer._matrixStack.popTextureMatrix;
-// }
-
 private mixin template MatrixStackManipulator(string Name){
-    import std.string;
     public{
+        import std.string;
+        mixin("
+        armos.math.Matrix4f " ~ Name.toLower ~ "Matrix()const{
+          return _" ~ Name.toLower ~ "MatrixStack.matrix;
+        }
+        ");
+        
         ///
         mixin("
         void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
