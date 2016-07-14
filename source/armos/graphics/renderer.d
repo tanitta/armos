@@ -582,14 +582,91 @@ void blendMode(armos.graphics.BlendMode mode){
     currentRenderer.blendMode = mode;
 }
 
+// //TODO pushModelViewMatrix
+// ///
+// void pushModelViewMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
+//     currentRenderer._matrixStack.pushModelViewMatrix(newMatrix);
+// }
+//
+// //TODO popModelViewMatrix
+// ///
+// void popModelViewMatrix(){
+//     currentRenderer._matrixStack.popModelViewMatrix;
+// }
+//
+// //TODO pushProjectionMatrix
+// ///
+// void pushProjectionMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
+//     currentRenderer._matrixStack.pushProjectionMatrix(newMatrix);
+// }
+//
+// //TODO popProjectionMatrix
+// ///
+// void popProjectionMatrix(){
+//     currentRenderer._matrixStack.popProjectionMatrix;
+// }
+//
+// //TODO pushTextureMatrix
+// ///
+// void pushTextureMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
+//     currentRenderer._matrixStack.pushTextureMatrix(newMatrix);
+// }
+//
+// //TODO popTextureMatrix
+// ///
+// void popTextureMatrix(){
+//     currentRenderer._matrixStack.popTextureMatrix;
+// }
+
+private mixin template MatrixStackManipulator(string Name){
+    import std.string;
+    public{
+        ///
+        mixin("
+        void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
+            _" ~ Name.toLower ~ "MatrixStack.push(newMatrix);
+        }
+        ");
+
+        ///
+        mixin( "
+        void pop" ~ Name ~ "Matrix(){
+            _" ~ Name.toLower ~ "MatrixStack.pop;
+        }
+        ");
+
+        ///
+        mixin("
+        void mult" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+          _" ~ Name.toLower ~ "MatrixStack.mult(matrix);
+        }
+        ");
+
+        ///
+        mixin( "
+        void load" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+            _" ~ Name.toLower ~ "MatrixStack.load(matrix);
+        }
+        ");
+    }
+    
+    private{
+        mixin("armos.graphics.MatrixStack _" ~ Name.toLower ~ "MatrixStack;");
+    }
+}
+
 /++
 +/
 class Renderer {
     public{
+        mixin MatrixStackManipulator!("Model");
+        mixin MatrixStackManipulator!("View");
+        mixin MatrixStackManipulator!("Projection");
         /++
         +/
         this(){
-            _matrixStack = new armos.graphics.MatrixStack();
+            //TODO
+            // _matrixStack = new armos.graphics.MatrixStack();
             _fbo = new armos.graphics.Fbo;
         }
         
@@ -675,14 +752,6 @@ class Renderer {
             glMatrixMode(getGLMatrixMode(mode));
         }
 
-        //TODO pushModelViewMatrix
-        //TODO popModelViewMatrix
-        
-        //TODO pushProjectionMatrix
-        //TODO popProjectionMatrix
-        
-        //TODO pushTextureMatrix
-        //TODO popTextureMatrix
 
         /++
         +/
@@ -692,8 +761,9 @@ class Renderer {
             pushMatrix();
             loadMatrix(projectionMatrix);
             
-            _matrixStack.pushProjectionMatrix;
-            _matrixStack.loadProjectionMatrix(projectionMatrix);
+            //TODO
+            // _matrixStack.pushProjectionMatrix;
+            // _matrixStack.loadProjectionMatrix(projectionMatrix);
         }
 
         /++
@@ -703,7 +773,8 @@ class Renderer {
             matrixMode(MatrixMode.Projection);
             popMatrix();
             
-            _matrixStack.popProjectionMatrix;
+            //TODO
+            // _matrixStack.popProjectionMatrix;
         }
 
         /++
@@ -755,7 +826,8 @@ class Renderer {
         +/
         void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
             import std.conv;
-            _matrixStack.multModelViewMatrix(translationMatrix!(float)(x, y, z));
+            //TODO
+            // _matrixStack.multModelViewMatrix(translationMatrix!(float)(x, y, z));
             //TODO remove
             glTranslatef(x.to!float, y.to!float, z.to!float);
         }
@@ -770,7 +842,8 @@ class Renderer {
         +/
         void scale(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
             import std.conv;
-            _matrixStack.multModelViewMatrix(scalingMatrix!(float)(x, y, z));
+            //TODO
+            // _matrixStack.multModelViewMatrix(scalingMatrix!(float)(x, y, z));
             //TODO remove
             glScalef(x.to!float, y.to!float, z.to!float);
         }
@@ -786,7 +859,8 @@ class Renderer {
         +/
         void rotate(T)(in T degrees, in T vecX, in T vecY, in T vecZ)if(__traits(isArithmetic, T)){
             import std.conv;
-            _matrixStack.multModelViewMatrix(rotationMatrix!(float)(degrees, vecX, vecY, vecZ));
+            //TODO
+            // _matrixStack.multModelViewMatrix(rotationMatrix!(float)(degrees, vecX, vecY, vecZ));
             //TODO remove
             glRotatef(degrees.to!float, vecX.to!float, vecY.to!float, vecZ.to!float);
         }
@@ -1107,7 +1181,6 @@ class Renderer {
         armos.graphics.Fbo _fbo;
         bool _isUseFbo = true;
         
-        armos.graphics.MatrixStack _matrixStack;
         
         armos.graphics.Style _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;

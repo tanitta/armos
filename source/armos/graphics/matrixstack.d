@@ -10,158 +10,47 @@ private alias M4 = armos.math.Matrix4f;
 RendererでのMatrixを管理するclassです．
 Deprecated: 現在使用されていません．
 +/
+
+/++
++/
 class MatrixStack {
-    // armos.app.Window  _currentWindow;
-    //
-    // this(armos.app.Window window){
-    //     _currentWindow = window;
-    // }
-    //
-    // armos.types.Rectangle currentViewport(){
-    //     return _currentViewport;
-    // }
-
-    // void pushViewportMatrix(M4 matrix){
-    //     _viewportMatrixStack ~= matrix;
-    // }
-    M4 modelViewProjectionMatrix()const{
-        return projectionMatrix*modelViewMatrix;
-    }
-    
-    M4 modelViewMatrix()const{
-        return _modelViewMatrixStack.updatedCurrentMatrix * _currentModelViewMatrix;
-    }
-    
-    M4 projectionMatrix()const{
-        return _projectionMatrixStack.updatedCurrentMatrix * _currentProjectionMatrix;
-    }
-    
-    M4 textureMatrix()const{
-        return _textureMatrixStack.updatedCurrentMatrix * _currentTextureMatrix;
-    }
-    
-    void pushModelViewMatrix(in M4 newMatrix = M4.identity){
-        pushMatrix(_currentModelViewMatrix, _modelViewMatrixStack, newMatrix);
-    }
-    
-    void pushProjectionMatrix(in M4 newMatrix = M4.identity){
-        pushMatrix(_currentProjectionMatrix, _projectionMatrixStack, newMatrix);
-    }
-    
-    void pushTextureMatrix(in M4 newMatrix = M4.identity){
-        pushMatrix(_currentTextureMatrix, _textureMatrixStack, newMatrix);
-    }
-    
-    void multModelViewMatrix(in M4 matrix){
-        _currentModelViewMatrix.multMatrix(matrix);
-    }
-    
-    void multProjectionMatrix(in M4 matrix){
-        _currentProjectionMatrix.multMatrix(matrix);
-    }
-    
-    void multTextureMatrix(in M4 matrix){
-        _currentTextureMatrix.multMatrix(matrix);
-    }
-
-    // void popViewportMatrix(){
-    //     _viewportMatrixStack.popBack;
-    // }
-    
-    void popModelViewMatrix(){
-        popMatrix(_modelViewMatrixStack, _currentModelViewMatrix);
-    }
-    
-    void popProjectionMatrix(){
-        popMatrix(_projectionMatrixStack, _currentProjectionMatrix);
-    }
-    
-    void popTextureMatrix(){
-        popMatrix(_textureMatrixStack, _currentTextureMatrix);
-    }
-
-    void loadModelViewMatrix(in M4 matrix){
-        loadMatrix(matrix, _modelViewMatrixStack, _currentModelViewMatrix);
-    }
-
-    void loadProjectionMatrix(in M4 matrix){
-        loadMatrix(matrix, _projectionMatrixStack, _currentProjectionMatrix);
-    }
-
-    void loadTextureMatrix(in M4 matrix){
-        loadMatrix(matrix, _textureMatrixStack, _currentTextureMatrix);
-    }
-
-    void updatedRelatedMatrices(){}
-
-    // armos.math.Vector2f renderSurfaceSize(){
-    //     return cast(armos.math.Vector2f)_currentWindow.size();
-    // }
-
-    // void viewport(float x, float y, float width, float height, bool vflip){
-    //     auto position = armos.math.Vector2f(x, y);
-    //     auto size = armos.math.Vector2f(width, height);
-    //     if(width < 0 || height < 0){
-    //         size = renderSurfaceSize();
-    //         // width = getRenderSurfaceWidth();
-    //         // height = getRenderSurfaceHeight();
-    //         // vflip = isVFlipped();
-    //     }
-    //
-    //     if (vflip){
-    //         position[1] = renderSurfaceSize[1] - (y + height);
-    //     }
-    //
-    //     currentViewport.set(position, size);
-    // };
-
-    // armos.types.Rectangle nativeViewport(){
-    //     return currentViewport;
-    // }
-    
-    
+    public{
+        M4 matrix()const{
+            return _stackedMatrix * _currentMatrix;
+        }
+        
+        void push(in M4 newMatrix = M4.identity){
+            _matrices ~= _currentMatrix;
+            updateStackedMatrix;
+            _currentMatrix = newMatrix;
+        }
+        
+        void pop(){
+            _currentMatrix = _matrices[$-1];
+            _matrices.popBack;
+            updateStackedMatrix;
+        }
+        
+        void load(in M4 matrix){
+            _currentMatrix = matrix;
+        }
+        
+        void mult(in M4 matrix){
+            _currentMatrix = _currentMatrix * matrix;
+        }
+    }//public
 
     private{
-        // armos.types.Rectangle[] _viewportHistory;
-        // M4[]   _viewportMatrixStack;
-        M4[]   _modelViewMatrixStack;
-        M4[]   _projectionMatrixStack;
-        M4[]   _textureMatrixStack;
-
-        // armos.types.Rectangle   _currentViewport         = armos.types.Rectangle();
-        // M4     _currentViewportMatrix   = armos.math.Matrix4f();
-        M4     _currentModelViewMatrix  = armos.math.Matrix4f.identity;
-        M4     _currentProjectionMatrix = armos.math.Matrix4f.identity;
-        M4     _currentTextureMatrix    = armos.math.Matrix4f.identity;
-
+        M4[] _matrices;
+        M4   _currentMatrix = armos.math.Matrix4f.identity;
+        M4   _stackedMatrix;
         
-    }
-}
-
-private{
-    M4 updatedCurrentMatrix(in armos.math.Matrix4f[] stack){
-        import std.algorithm;
-        return M4.identity.reduce!"a*b"(stack);
-    }
-    
-    void pushMatrix(ref armos.math.Matrix4f currentMatrix, ref armos.math.Matrix4f[] stack, in M4 newMatrix = M4.identity){
-        stack ~= currentMatrix;
-        currentMatrix = newMatrix;
-    }
-    
-    void popMatrix(ref M4[] stack, ref armos.math.Matrix4f currentMatrix){
-        currentMatrix = stack.updatedCurrentMatrix;
-        stack.popBack;
-    }
-    
-    void loadMatrix(in M4 matrix, ref armos.math.Matrix4f[] stack, ref armos.math.Matrix4f currentMatrix){
-        currentMatrix = matrix;
-    }
-    
-    void multMatrix(ref armos.math.Matrix4f currentMatrix, in M4 matrix){
-        currentMatrix = currentMatrix * matrix;
-    }
-}
+        void updateStackedMatrix(){
+            import std.algorithm;
+            _stackedMatrix = M4.identity.reduce!"a*b"(_matrices);
+        }
+    }//private
+}//class MatrixStack
 
 unittest{
     immutable m1 = M4(
@@ -187,24 +76,24 @@ unittest{
     
     auto matrixStack = new MatrixStack;
     
-    matrixStack.pushModelViewMatrix;
-    matrixStack.multModelViewMatrix(m1);
-    assert(matrixStack.modelViewMatrix == m1);
-    matrixStack.multModelViewMatrix(m2);
-    assert(matrixStack.modelViewMatrix == m1*m2);
-    matrixStack.pushModelViewMatrix;
-    matrixStack.multModelViewMatrix(m2);
-    assert(matrixStack.modelViewMatrix == m1*m2*m2);
-    matrixStack.popModelViewMatrix;
+    matrixStack.push;
+    matrixStack.mult(m1);
+    assert(matrixStack.matrix == m1);
+    matrixStack.mult(m2);
+    assert(matrixStack.matrix== m1*m2);
+    matrixStack.push;
+    matrixStack.mult(m2);
+    assert(matrixStack.matrix == m1*m2*m2);
+    matrixStack.pop;
     
-    assert(matrixStack.modelViewMatrix == m1*m2);
+    assert(matrixStack.matrix == m1*m2);
     
-    matrixStack.multModelViewMatrix(m3);
-    assert(matrixStack.modelViewMatrix == m1*m2*m3);
-    matrixStack.pushModelViewMatrix();
-    assert(matrixStack.modelViewMatrix == m1*m2*m3);
-    matrixStack.popModelViewMatrix();
-    assert(matrixStack.modelViewMatrix == m1*m2*m3);
+    matrixStack.mult(m3);
+    assert(matrixStack.matrix == m1*m2*m3);
+    matrixStack.push();
+    assert(matrixStack.matrix == m1*m2*m3);
+    matrixStack.pop();
+    assert(matrixStack.matrix == m1*m2*m3);
 }
 
 unittest{
@@ -224,20 +113,20 @@ unittest{
     
     auto matrixStack = new MatrixStack;
     
-    matrixStack.pushModelViewMatrix;
-    matrixStack.pushProjectionMatrix;
+    matrixStack.push;
+    matrixStack.push;
     
-    matrixStack.multModelViewMatrix(m1);
-    assert(matrixStack.modelViewMatrix == m1);
+    matrixStack.mult(m1);
+    assert(matrixStack.matrix == m1);
     
-    matrixStack.multProjectionMatrix(m2);
-    assert(matrixStack.projectionMatrix == m2);
+    matrixStack.mult(m2);
+    assert(matrixStack.matrix == m1*m2);
     
-    assert(matrixStack.modelViewProjectionMatrix == m2*m1);
-    
-    matrixStack.popProjectionMatrix;
-    assert(matrixStack.modelViewProjectionMatrix == m1);
-    
-    matrixStack.popModelViewMatrix;
-    assert(matrixStack.modelViewProjectionMatrix == M4.identity);
+    // assert(matrixStack.modelViewProjectionMatrix == m2*m1);
+    //
+    // matrixStack.popProjectionMatrix;
+    // assert(matrixStack.modelViewProjectionMatrix == m1);
+    //
+    // matrixStack.popModelViewMatrix;
+    // assert(matrixStack.modelViewProjectionMatrix == M4.identity);
 }
