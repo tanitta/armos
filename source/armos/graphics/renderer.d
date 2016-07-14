@@ -582,100 +582,20 @@ void blendMode(armos.graphics.BlendMode mode){
     currentRenderer.blendMode = mode;
 }
 
-private mixin template MatrixStackFunction(string Name){
-    public{
-        import std.string;
-        mixin("
-        armos.math.Matrix4f " ~ Name.toLower ~ "Matrix(){
-          return currentRenderer." ~ Name.toLower ~ "Matrix;
-        }
-        ");
-        
-        ///
-        mixin("
-        void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
-            currentRenderer.push" ~ Name ~ "Matrix(newMatrix);
-        }
-        ");
 
-        ///
-        mixin( "
-        void pop" ~ Name ~ "Matrix(){
-            currentRenderer.pop" ~ Name ~ "Matrix;
-        }
-        ");
+mixin armos.graphics.matrixstack.MatrixStackFunction!("Model");
+mixin armos.graphics.matrixstack.MatrixStackFunction!("View");
+mixin armos.graphics.matrixstack.MatrixStackFunction!("Projection");
 
-        ///
-        mixin("
-        void mult" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
-            currentRenderer.mult" ~ Name ~ "Matrix(matrix);
-        }
-        ");
-
-        ///
-        mixin( "
-        void load" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
-            currentRenderer.load" ~ Name ~ "Matrix(matrix);
-        }
-        ");
-
-    }
-}
-
-mixin MatrixStackFunction!("Model");
-mixin MatrixStackFunction!("View");
-mixin MatrixStackFunction!("Projection");
-
-private mixin template MatrixStackManipulator(string Name){
-    public{
-        import std.string;
-        mixin("
-        armos.math.Matrix4f " ~ Name.toLower ~ "Matrix()const{
-          return _" ~ Name.toLower ~ "MatrixStack.matrix;
-        }
-        ");
-        
-        ///
-        mixin("
-        void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
-            _" ~ Name.toLower ~ "MatrixStack.push(newMatrix);
-        }
-        ");
-
-        ///
-        mixin( "
-        void pop" ~ Name ~ "Matrix(){
-            _" ~ Name.toLower ~ "MatrixStack.pop;
-        }
-        ");
-
-        ///
-        mixin("
-        void mult" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
-          _" ~ Name.toLower ~ "MatrixStack.mult(matrix);
-        }
-        ");
-
-        ///
-        mixin( "
-        void load" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
-            _" ~ Name.toLower ~ "MatrixStack.load(matrix);
-        }
-        ");
-    }
-    
-    private{
-        mixin("armos.graphics.MatrixStack _" ~ Name.toLower ~ "MatrixStack;");
-    }
-}
 
 /++
 +/
 class Renderer {
     public{
-        mixin MatrixStackManipulator!("Model");
-        mixin MatrixStackManipulator!("View");
-        mixin MatrixStackManipulator!("Projection");
+        mixin armos.graphics.matrixstack.MatrixStackManipulator!("Model");
+        mixin armos.graphics.matrixstack.MatrixStackManipulator!("View");
+        mixin armos.graphics.matrixstack.MatrixStackManipulator!("Projection");
+        
         /++
         +/
         this(){

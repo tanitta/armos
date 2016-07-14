@@ -130,3 +130,86 @@ unittest{
     // matrixStack.popModelViewMatrix;
     // assert(matrixStack.modelViewProjectionMatrix == M4.identity);
 }
+
+package mixin template MatrixStackFunction(string Name){
+    public{
+        import std.string;
+        mixin("
+        armos.math.Matrix4f " ~ Name.toLower ~ "Matrix(){
+          return currentRenderer." ~ Name.toLower ~ "Matrix;
+        }
+        ");
+        
+        ///
+        mixin("
+        void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
+            currentRenderer.push" ~ Name ~ "Matrix(newMatrix);
+        }
+        ");
+
+        ///
+        mixin( "
+        void pop" ~ Name ~ "Matrix(){
+            currentRenderer.pop" ~ Name ~ "Matrix;
+        }
+        ");
+
+        ///
+        mixin("
+        void mult" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+            currentRenderer.mult" ~ Name ~ "Matrix(matrix);
+        }
+        ");
+
+        ///
+        mixin( "
+        void load" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+            currentRenderer.load" ~ Name ~ "Matrix(matrix);
+        }
+        ");
+
+    }
+}
+
+package mixin template MatrixStackManipulator(string Name){
+    public{
+        import std.string;
+        mixin("
+        armos.math.Matrix4f " ~ Name.toLower ~ "Matrix()const{
+          return _" ~ Name.toLower ~ "MatrixStack.matrix;
+        }
+        ");
+        
+        ///
+        mixin("
+        void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
+            _" ~ Name.toLower ~ "MatrixStack.push(newMatrix);
+        }
+        ");
+
+        ///
+        mixin( "
+        void pop" ~ Name ~ "Matrix(){
+            _" ~ Name.toLower ~ "MatrixStack.pop;
+        }
+        ");
+
+        ///
+        mixin("
+        void mult" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+          _" ~ Name.toLower ~ "MatrixStack.mult(matrix);
+        }
+        ");
+
+        ///
+        mixin( "
+        void load" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+            _" ~ Name.toLower ~ "MatrixStack.load(matrix);
+        }
+        ");
+    }
+    
+    private{
+        mixin("armos.graphics.MatrixStack _" ~ Name.toLower ~ "MatrixStack;");
+    }
+}
