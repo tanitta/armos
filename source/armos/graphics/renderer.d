@@ -675,26 +675,34 @@ class Renderer {
             glMatrixMode(getGLMatrixMode(mode));
         }
 
+        //TODO pushModelViewMatrix
+        //TODO popModelViewMatrix
+        
+        //TODO pushProjectionMatrix
+        //TODO popProjectionMatrix
+        
+        //TODO pushTextureMatrix
+        //TODO popTextureMatrix
 
         /++
         +/
+        //TODO replace pushProjectionMatrix
         void bind(armos.math.Matrix4f projectionMatrix){
             matrixMode(MatrixMode.Projection);
             pushMatrix();
             loadMatrix(projectionMatrix);
             
-            // TODO
             _matrixStack.pushProjectionMatrix;
             _matrixStack.loadProjectionMatrix(projectionMatrix);
         }
 
         /++
         +/
+        //TODO replace popProjectionMatrix
         void unbind(){
             matrixMode(MatrixMode.Projection);
             popMatrix();
             
-            // TODO
             _matrixStack.popProjectionMatrix;
         }
 
@@ -721,12 +729,14 @@ class Renderer {
 
         /++
         +/
+        //TODO remove
         void loadMatrix(M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
             manipulateGlMatrix!("glLoadMatrix")(matrix);
         }
 
         /++
         +/
+        //TODO remove
         void multMatrix(M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
             manipulateGlMatrix!("glMultMatrix")(matrix);
         }
