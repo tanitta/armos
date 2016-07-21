@@ -587,14 +587,45 @@ mixin armos.graphics.matrixstack.MatrixStackFunction!("Model");
 mixin armos.graphics.matrixstack.MatrixStackFunction!("View");
 mixin armos.graphics.matrixstack.MatrixStackFunction!("Projection");
 
+/++
++/
+private struct ScopedMatrixStack{
+    public{
+        this(armos.graphics.MatrixStack matrixStack, in armos.math.Matrix4f matrix){
+            _matrixStack = matrixStack;
+            _matrixStack.push(matrix);
+        }
+        
+        ~this(){
+            _matrixStack.pop;
+        }
+    }//public
+
+    private{
+        armos.graphics.MatrixStack _matrixStack;
+    }//private
+}//struct ScopedMatrixStack
+
+ScopedMatrixStack scopedModelMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
+    return ScopedMatrixStack(currentRenderer._modelMatrixStack, matrix);
+}
+
+ScopedMatrixStack scopedViewMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
+    return ScopedMatrixStack(currentRenderer._viewMatrixStack, matrix);
+}
+
+ScopedMatrixStack scopedProjectionMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
+    return ScopedMatrixStack(currentRenderer._projectionMatrixStack, matrix);
+}
 
 /++
 +/
 class Renderer {
+    mixin armos.graphics.matrixstack.MatrixStackManipulator!("Model");
+    mixin armos.graphics.matrixstack.MatrixStackManipulator!("View");
+    mixin armos.graphics.matrixstack.MatrixStackManipulator!("Projection");
+    
     public{
-        mixin armos.graphics.matrixstack.MatrixStackManipulator!("Model");
-        mixin armos.graphics.matrixstack.MatrixStackManipulator!("View");
-        mixin armos.graphics.matrixstack.MatrixStackManipulator!("Projection");
         
         /++
         +/
@@ -974,7 +1005,6 @@ class Renderer {
 
         /++
         +/
-        // TODO use material shader
         void draw(
             in armos.graphics.Mesh mesh,
             in armos.graphics.PolyRenderMode renderMode,
@@ -1065,6 +1095,13 @@ class Renderer {
             if(texCoords.length){
                 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
             }
+        }
+        
+        // TODO use material shader
+        ///
+        void drawWidhShader(){
+            // _currentShader.begin();
+            // _currentShader.end();
         }
 
         /++
