@@ -1099,9 +1099,10 @@ class Renderer {
         
         // TODO use material shader
         ///
-        void drawWidhShader(){
-            // _currentShader.begin();
-            // _currentShader.end();
+        void drawWidhShader(armos.graphics.Mesh){
+            // auto s = armos.graphics.scopedShader(_currentShader);
+            import armos.graphics.scopes;
+            auto m = armos.graphics.scoped(_currentMaterial);
         }
 
         /++
