@@ -459,3 +459,25 @@ static unittest{
     assert( glFunctionString!(float[], 3, 3).glFunctionNameString("glUniform") == "glUniformMatrix3fv" );
     assert( glFunctionString!(float[], 2, 3).glFunctionNameString("glUniform") == "glUniformMatrix2x3fv" );
 }
+
+/++
++/
+struct ScopedShader {
+    public{
+        this(Shader s){
+            _s = s;
+            _s.begin;
+        }
+        ~this(){
+            _s.end;
+        }
+    }//public
+
+    private{
+        Shader _s;
+    }//private
+}//struct ScopedShader
+
+ScopedShader scopedShader(Shader s = new Shader()){
+    return ScopedShader(s);
+}
