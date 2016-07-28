@@ -252,7 +252,8 @@ class GLFWWindow : Window{
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, config.glVersionMajor);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, config.glVersionMinor);
             
-            if(config.glVersion >= 3.2){
+            import armos.utils.semver;
+            if(config.glVersion >= SemVer("3.2.0")){
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
                 glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             }
@@ -262,7 +263,7 @@ class GLFWWindow : Window{
 
             glfwMakeContextCurrent(window);
 
-            if(config.glVersion >= 3.2){
+            if(config.glVersion >= SemVer("3.2.0")){
                 DerelictGL3.reload();
             }else{
                 DerelictGL.reload();
