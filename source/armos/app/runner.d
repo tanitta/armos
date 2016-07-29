@@ -99,7 +99,8 @@ void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app, armos.app.Win
     if(!config){
         config = new armos.app.WindowConfig();
         with(config){
-            glVersion = 3.0;
+            import armos.utils.semver;
+            glVersion = SemVer(3, 0, 0);
             width = 640;
             height = 480;
         }
