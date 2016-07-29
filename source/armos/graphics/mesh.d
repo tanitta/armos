@@ -19,7 +19,6 @@ class Mesh {
         armos.types.FloatColor[] colors;
         armos.math.Vector4f[] texCoords;
         IndexType[] indices;
-        armos.graphics.Material material;
 
         /// テクスチャ座標の数を表します．
         size_t numTexCoords()const{
