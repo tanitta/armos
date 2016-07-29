@@ -166,11 +166,11 @@ class AssimpModelLoader {
             import std.range;
             auto model = new Model;
             model.materials = scene.mMaterials[0 .. scene.mNumMaterials]
-                                   .map!(m => createMaterial(m))
+                                   .map!(m => createdMaterial(m))
                                    .array;
 
             model.meshes    = scene.mMeshes[0 .. scene.mNumMeshes]
-                                   .map!(m => createMesh(m))
+                                   .map!(m => createdMesh(m))
                                    .array;
             
             model.entities  = scene.mMeshes[0 .. scene.mNumMeshes]
@@ -184,7 +184,7 @@ class AssimpModelLoader {
             return model;
         }
 
-        armos.graphics.Material createMaterial(const(aiMaterial)* material) const {
+        armos.graphics.Material createdMaterial(const(aiMaterial)* material) const {
             aiString aiName;
             aiGetMaterialString(material, AI_MATKEY_NAME, 0, 0, &aiName);
             auto name = fromAiString(aiName);
@@ -226,7 +226,7 @@ class AssimpModelLoader {
             return mat;
         }
 
-        armos.graphics.Mesh createMesh(const(aiMesh)* mesh) const {
+        armos.graphics.Mesh createdMesh(const(aiMesh)* mesh) const {
         // armos.graphics.Mesh createMesh(const(aiMesh)* mesh, armos.graphics.Material[] materials) const {
             auto name = fromAiString(mesh.mName);
 
