@@ -31,14 +31,14 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         static assert(Matrix!(float, 3, 3).size == 3);
     }
 
-    VectorType[RowSize] data = VectorType();
+    VectorType[RowSize] elements = VectorType();
 
     /++
     +/
     this(T[][] arr ...){
         if(arr.length != 0){
             if(arr.length == RowSize){
-                foreach (int index, ref VectorType vector; data) {
+                foreach (int index, ref VectorType vector; elements) {
                     vector = VectorType(arr[index]);
                 }
             }else{
@@ -50,7 +50,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     /++
     +/
     pure VectorType opIndex(in int index)const{
-        return data[index];
+        return elements[index];
     }
     unittest{
         auto matrix = Matrix2d.zero;
@@ -67,7 +67,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     /++
     +/
     ref VectorType opIndex(in int index){
-        return data[index];
+        return elements[index];
     }
     unittest{
         auto matrix = Matrix2d();
@@ -78,8 +78,8 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     // const bool opEquals(Object mat){
     // 	// if(this.rowSize != (cast(MatrixType)mat_tmp).rowSize){return false;}
     // 	// if(this.colSize != (cast(MatrixType)mat_tmp).colSize){return false;}
-    // 	foreach (int index, VectorType vec; (cast(MatrixType)mat).data) {
-    // 		if(vec != this.data[index]){
+    // 	foreach (int index, VectorType vec; (cast(MatrixType)mat).elements) {
+    // 		if(vec != this.elements[index]){
     // 			return false;
     // 		}
     // 	}
@@ -122,8 +122,8 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
     static MatrixType zero(){
         auto zeroMatrix = MatrixType();
-        foreach (ref v; zeroMatrix.data) {
-            foreach (ref n; v.data) {
+        foreach (ref v; zeroMatrix.elements) {
+            foreach (ref n; v.elements) {
                 n = T( 0 );
             }
         }
@@ -164,7 +164,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     +/
     MatrixType opNeg()const{
         auto result = MatrixType();
-        foreach (int index, ref var; result.data) {
+        foreach (int index, ref var; result.elements) {
             var = -this[index];
         }
         return result;
@@ -179,7 +179,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     +/
     MatrixType opAdd(in MatrixType r)const{
         auto result = MatrixType();
-        foreach (int index, const VectorType var; r.data) {
+        foreach (int index, const VectorType var; r.elements) {
             result[index] = this[index] + var;
         }
         return result;
@@ -199,7 +199,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     +/
     MatrixType opSub(in MatrixType r)const{
         auto result = MatrixType();
-        foreach (int index, const VectorType var; r.data) {
+        foreach (int index, const VectorType var; r.elements) {
             result[index] = this[index] - var;
         }
         return result;
@@ -220,7 +220,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     +/
     MatrixType opAdd(in T v)const{
         auto result = MatrixType();
-        foreach (int index, const VectorType var; data) {
+        foreach (int index, const VectorType var; elements) {
             result[index] = this[index]+v;
         }
         return result;
@@ -237,7 +237,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     +/
     MatrixType opSub(in T v)const{
         auto result = MatrixType();
-        foreach (int index, const VectorType var; data) {
+        foreach (int index, const VectorType var; elements) {
             result[index] = this[index]-v;
         }
         return result;
@@ -252,7 +252,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     +/
     MatrixType opMul(in T v)const{
         auto result = MatrixType();
-        foreach (int index, const VectorType var; data) {
+        foreach (int index, const VectorType var; elements) {
             result[index] = this[index]*v;
         }
         return result;
@@ -274,7 +274,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
             for (int targetCol = 0; targetCol < ColSize; targetCol++) {
                 T sum = T(0);
                 for (int dim = 0; dim < mat_r_size; dim++) {
-                    sum += data[targetRow][dim] * mat_r[dim][targetCol];
+                    sum += elements[targetRow][dim] * mat_r[dim][targetCol];
                 }
                 result[targetRow][targetCol] = sum;
             }
@@ -307,9 +307,9 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     +/
     VectorType opMul(in VectorType vec_r)const{
         auto result = VectorType();
-        for (int targetRow = 0; targetRow < data.length; targetRow++) {
+        for (int targetRow = 0; targetRow < elements.length; targetRow++) {
             T sum = T(0);
-            foreach (elem; (data[targetRow] * vec_r).data) {
+            foreach (elem; (elements[targetRow] * vec_r).elements) {
                 sum += elem;
             }
             result[targetRow] = sum;
@@ -329,7 +329,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
     MatrixType opDiv(in T v)const{
         auto result = MatrixType();
-        foreach (int index, const VectorType var; data) {
+        foreach (int index, const VectorType var; elements) {
             result[index] = this[index]/v;
         }
         return result;
@@ -352,9 +352,9 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     static if(RowSize == 3 && ColSize == 3 && ( is(T == double) || is(T == float) )){
         MatrixType inverse(){
             MatrixType mat = MatrixType(
-                    [data[1][1]*data[2][2]-data[1][2]*data[2][1], data[0][2]*data[2][1]-data[0][1]*data[2][2], data[0][1]*data[1][2]-data[0][2]*data[1][1]],
-                    [data[1][2]*data[2][0]-data[1][0]*data[2][2], data[0][0]*data[2][2]-data[0][2]*data[2][0], data[0][2]*data[1][0]-data[0][0]*data[1][2]],
-                    [data[1][0]*data[2][1]-data[1][1]*data[2][0], data[0][1]*data[2][0]-data[0][0]*data[2][1], data[0][0]*data[1][1]-data[0][1]*data[1][0]]
+                    [elements[1][1]*elements[2][2]-elements[1][2]*elements[2][1], elements[0][2]*elements[2][1]-elements[0][1]*elements[2][2], elements[0][1]*elements[1][2]-elements[0][2]*elements[1][1]],
+                    [elements[1][2]*elements[2][0]-elements[1][0]*elements[2][2], elements[0][0]*elements[2][2]-elements[0][2]*elements[2][0], elements[0][2]*elements[1][0]-elements[0][0]*elements[1][2]],
+                    [elements[1][0]*elements[2][1]-elements[1][1]*elements[2][0], elements[0][1]*elements[2][0]-elements[0][0]*elements[2][1], elements[0][0]*elements[1][1]-elements[0][1]*elements[1][0]]
                     );
             return mat/determinant;
         }
@@ -379,7 +379,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     /++
     +/
     void setColumnVector(in int column, in VectorType vec){
-        foreach (int i , ref VectorType v; data) {
+        foreach (int i , ref VectorType v; elements) {
             v[column] = vec[i];
         }
     }
@@ -454,12 +454,12 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     static if(RowSize == 3 && ColSize == 3 && ( is(T == double) || is(T == float) )){
         T determinant()const{
             return 
-                data[0][0] * data[1][1] * data[2][2] -
-                data[0][0] * data[2][1] * data[1][2] -
-                data[1][0] * data[0][1] * data[2][2] +
-                data[1][0] * data[2][1] * data[0][2] +
-                data[2][0] * data[0][1] * data[1][2] -
-                data[2][0] * data[1][1] * data[0][2];
+                elements[0][0] * elements[1][1] * elements[2][2] -
+                elements[0][0] * elements[2][1] * elements[1][2] -
+                elements[1][0] * elements[0][1] * elements[2][2] +
+                elements[1][0] * elements[2][1] * elements[0][2] +
+                elements[2][0] * elements[0][1] * elements[1][2] -
+                elements[2][0] * elements[1][1] * elements[0][2];
         }
     }else{
         /++
@@ -515,7 +515,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         T[RowSize*ColSize] tmp;
         for (int i = 0; i < RowSize ; i++) {
             for (int j = 0; j < ColSize ; j++) {
-                tmp[i+j*RowSize] = data[i][j];
+                tmp[i+j*RowSize] = elements[i][j];
             }
         }
         return tmp;
@@ -535,7 +535,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         import std.stdio;
         for (int i = 0; i < RowSize ; i++) {
             for (int j = 0; j < ColSize ; j++) {
-                writef("%f\t", data[i][j]);
+                writef("%f\t", elements[i][j]);
             }
             writef("\n");
         }
