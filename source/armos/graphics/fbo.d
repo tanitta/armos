@@ -94,10 +94,10 @@ class Fbo{
         +/
         void resize(in armos.math.Vector2i size){
             begin;
-            rect.vertices[1].y = size[1];
-            rect.vertices[2].x = size[0];
-            rect.vertices[3].y = size[1];
-            rect.vertices[3].x = size[0];
+            rect.vertices[1][1] = size[1];
+            rect.vertices[2][0] = size[0];
+            rect.vertices[3][1] = size[1];
+            rect.vertices[3][0] = size[0];
             _colorTexture.resize(size);
             _depthTexture.resize(size);
             end;

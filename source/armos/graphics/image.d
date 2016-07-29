@@ -1,6 +1,7 @@
 module armos.graphics.image;
 
 static import armos.graphics;
+import armos.math;
 /++
     画像のファイルフォーマットを表します
 +/
@@ -113,29 +114,16 @@ class Image {
                 in T endX, in T endY
                 ){
             if(_isLoaded){
-                _rect.texCoords[0].u = cast(float)startY/_texture.height;
-                _rect.texCoords[0].v = cast(float)startX/_texture.width;
+                import std.conv;
+                _rect.texCoords[0] = Vector4f(startY.to!float/_texture.height, startX.to!float/_texture.width, 0, 1);
+                _rect.texCoords[1] = Vector4f(endY.to!float/_texture.height,   startX.to!float/_texture.width, 0, 1);
+                _rect.texCoords[2] = Vector4f(startY.to!float/_texture.height, endX.to!float/_texture.width,   0, 1);
+                _rect.texCoords[3] = Vector4f(endY.to!float/_texture.height,   endX.to!float/_texture.width,   0, 1);
 
-                _rect.texCoords[1].u = cast(float)endY/_texture.height;
-                _rect.texCoords[1].v = cast(float)startX/_texture.width;
-
-                _rect.texCoords[2].u = cast(float)startY/_texture.height;
-                _rect.texCoords[2].v = cast(float)endX/_texture.width;
-
-                _rect.texCoords[3].u = cast(float)endY/_texture.height;
-                _rect.texCoords[3].v = cast(float)endX/_texture.width;
-
-                _rect.vertices[0].x = cast(float)0.0;
-                _rect.vertices[0].y = cast(float)0.0;
-
-                _rect.vertices[1].x = cast(float)0.0;
-                _rect.vertices[1].y = cast(float)endY-startY;
-
-                _rect.vertices[2].x = cast(float)endX-startX;
-                _rect.vertices[2].y = cast(float)0.0;
-
-                _rect.vertices[3].x = cast(float)endX-startX;
-                _rect.vertices[3].y = cast(float)endY-startY;
+                _rect.vertices[0] = Vector4f(0f,          0f,          0f, 1f);
+                _rect.vertices[1] = Vector4f(0f,          endY-startY, 0f, 1f);
+                _rect.vertices[2] = Vector4f(endX-startX, 0f,          0f, 1f);
+                _rect.vertices[3] = Vector4f(endX-startX, endY-startY, 0f, 1f);
 
                 armos.graphics.pushMatrix;
                 armos.graphics.translate(x, y, z);

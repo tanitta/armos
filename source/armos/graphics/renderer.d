@@ -896,16 +896,12 @@ class Renderer {
         /++
         +/
         void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
-            armos.graphics.Vertex[2] vertices;
-            vertices[0].x = x1;
-            vertices[0].y = y1;
-            vertices[0].z = z1;
-            vertices[1].x = x2;
-            vertices[1].y = y2;
-            vertices[1].z = z2;
+            armos.math.Vector4f[2] vertices;
+            vertices[0] = armos.math.Vector4f(x1, y1, z1, 1f);
+            vertices[1] = armos.math.Vector4f(x2, y2, z2, 1f);
 
             glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
+            glVertexPointer(4, GL_FLOAT, 0, vertices.ptr);
             glDrawArrays(GL_LINES, 0, 2);
             glDisableClientState(GL_VERTEX_ARRAY);
         };
@@ -913,24 +909,13 @@ class Renderer {
         /++
         +/
         void drawRectangle(in float x, in float y, in float w, in float h){
-            armos.graphics.Vertex[4] vertices;
-            vertices[0].x = x;
-            vertices[0].y = y;
-            vertices[0].z = 0;
+            armos.math.Vector4f[4] vertices;
+            vertices[0] = armos.math.Vector4f(x, y, 0f, 1f);
+            vertices[1] = armos.math.Vector4f(x, y+h, 0f, 1f);
+            vertices[2] = armos.math.Vector4f(x+w, y, 0f, 1f);
+            vertices[3] = armos.math.Vector4f(x+w, y+h, 0f, 1f);
 
-            vertices[1].x = x;
-            vertices[1].y = y+h;
-            vertices[1].z = 0;
-
-            vertices[2].x = x+w;
-            vertices[2].y = y;
-            vertices[2].z = 0;
-
-            vertices[3].x = x+w;
-            vertices[3].y = y+h;
-            vertices[3].z = 0;
-
-            armos.graphics.TexCoord[] texCoords;
+            armos.math.Vector4f[] texCoords;
             int[4] indices = [0, 1, 2, 3];
 
             armos.graphics.PolyRenderMode renderMode;
@@ -985,10 +970,10 @@ class Renderer {
         /++
         +/
         void draw(
-            in armos.graphics.Vertex[] vertices,
-            in armos.graphics.Normal[] normals,
+            in armos.math.Vector4f[] vertices,
+            in armos.math.Vector3f[] normals,
             in armos.types.FloatColor[] colors,
-            in armos.graphics.TexCoord[] texCoords,
+            in armos.math.Vector4f[] texCoords,
             in int[] indices,
             in armos.graphics.PrimitiveMode primitiveMode, 
             in armos.graphics.PolyRenderMode renderMode,
@@ -998,16 +983,20 @@ class Renderer {
         ){
             glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
             
+            import std.algorithm;
+            import std.array;
             //add vertices to GL
             if(vertices.length){
                 glEnableClientState(GL_VERTEX_ARRAY);
-                glVertexPointer(3, GL_FLOAT, 0, vertices.ptr);
+                auto p = vertices.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
+                glVertexPointer(4, GL_FLOAT, 0, p);
             }
 
             //add normals to GL
             if(normals.length && useNormals){
                 glEnableClientState(GL_NORMAL_ARRAY);
-                glNormalPointer(GL_FLOAT, 0, normals.ptr);
+                auto p = normals.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
+                glNormalPointer(GL_FLOAT, 0, p);
             }
 
             //add colors to GL
@@ -1019,10 +1008,8 @@ class Renderer {
             //add texchoords to gl
             if(texCoords.length){
                 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                glTexCoordPointer(2, GL_FLOAT, 0, texCoords.ptr);
-                // foreach (texCoord; mesh.texCoords ) {
-                // 	glTexCoord2f(texCoord.u , texCoord.v);
-                // }
+                auto p = texCoords.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
+                glTexCoordPointer(4, GL_FLOAT, 0, p);
             }
 
             //add indicees to GL

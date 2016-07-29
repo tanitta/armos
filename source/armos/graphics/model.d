@@ -245,20 +245,11 @@ class AssimpModelLoader {
 
 
             for (int i = 0; i < mesh.mNumVertices; i++) {
-                auto texCoord = armos.graphics.TexCoord();
-                texCoord.u = mesh.mTextureCoords[0][i].x;
-                texCoord.v =  mesh.mTextureCoords[0][i].y;
-                // texCoord.u.writeln;
-                // texCoord.v.writeln;
-                convertedMesh.texCoords ~= texCoord;
+                convertedMesh.texCoords ~= armos.math.Vector4f(mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y, 0f, 1f);
             }
 
             convertedMesh.vertices = vertices.map!((armos.math.Vector3f vec){
-                    auto vert = armos.graphics.Vertex();
-                    vert.x = vec[0];
-                    vert.y = vec[1];
-                    vert.z = vec[2];
-                    return vert;
+                    return armos.math.Vector4f(vec[0], vec[1], vec[2], 1f);
                     }).array;
 
             foreach(f; mesh.mFaces[0 .. mesh.mNumFaces]) {

@@ -4,27 +4,6 @@ static import armos.math;
 static import armos.graphics;
 
 /++
-    テクスチャ座標を表すstructです．
-+/
-struct TexCoord{
-    float u, v;
-}
-
-/++
-    頂点座標を表すstructです．
-+/
-struct Vertex{
-    float x, y, z;
-}
-
-/++
-    法線ベクトルを表すstructです．
-+/
-struct Normal{
-    float x, y, z;
-}
-
-/++
     ポリゴンで構成された形状を表すclassです．
 +/
 class Mesh {
@@ -35,10 +14,10 @@ class Mesh {
         bool isFaceDirty= false;
         bool isIndicesChanged = false;
 
-        Vertex[] vertices;
-        Normal[] normals;
+        armos.math.Vector4f[] vertices;
+        armos.math.Vector3f[] normals;
         armos.types.FloatColor[] colors;
-        TexCoord[] texCoords;
+        armos.math.Vector4f[] texCoords;
         IndexType[] indices;
         armos.graphics.Material material;
 
@@ -83,11 +62,7 @@ class Mesh {
             テクスチャ座標を追加します．
         +/
         void addTexCoord(in float u, in float v){
-            // glTexCoord2d(x, y);
-            auto texCoord = TexCoord();
-            texCoord.u = u;
-            texCoord.v = v;
-            texCoords ~= texCoord;
+            texCoords ~= armos.math.Vector4f(u, v, 0f, 1f);
         }
 
         /++
@@ -112,13 +87,8 @@ class Mesh {
         /++
             頂点座標を追加します．
         +/
-        void addVertex(const armos.math.Vector3f vec){
-            // vertices ~= [cast(armos.math.Vector3f)vec];
-            auto vertex = Vertex();
-            vertex.x = vec[0];
-            vertex.y = vec[1];
-            vertex.z = vec[2];
-            vertices ~= vertex;
+        void addVertex(in armos.math.Vector3f vec){
+            vertices ~= armos.math.Vector4f(vec[0], vec[1], vec[2], 1);
             isVertsChanged = true;
             isFaceDirty = true;
         };
@@ -127,7 +97,7 @@ class Mesh {
             mesh.addVertex(armos.math.Vector3f(0, 1, 2));
             mesh.addVertex(armos.math.Vector3f(3, 4, 5));
             mesh.addVertex(armos.math.Vector3f(6, 7, 8));
-            assert(mesh.vertices[1].y == 4.0);
+            assert(mesh.vertices[1][1] == 4.0);
             assert(mesh.isFaceDirty);
             assert(mesh.isVertsChanged);
         }
@@ -142,12 +112,8 @@ class Mesh {
         /++
             法線ベクトルを追加します．
         +/
-        void addNormal(const armos.math.Vector3f vec){
-            auto normal = Normal();
-            normal.x = vec[0];
-            normal.y = vec[1];
-            normal.z = vec[2];
-            normals ~= normal;
+        void addNormal(in armos.math.Vector3f vec){
+            normals ~= vec;
         }
 
         /++

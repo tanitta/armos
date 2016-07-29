@@ -429,8 +429,8 @@ class MovingGraph(T) : Widget{
             foreach (i, v; _buffer) {
                 immutable x = armos.math.map.map( i.to!float, 0f, 30f, _style.font.width.to!float, _style.width.to!float);
                 immutable y = armos.math.map.map( _varMax - v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
-                _lines.vertices[i].x = x;
-                _lines.vertices[i].y = y;
+                _lines.vertices[i][0] = x;
+                _lines.vertices[i][1] = y;
                 // y = armos.math.map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
             }
             _lines.drawWireFrame;
