@@ -20,4 +20,4 @@ public import armos.graphics.bitmapfont;
 public import armos.graphics.material;
 public import armos.graphics.entity;
 public import armos.graphics.model;
-public import armos.graphics.scopes;
+public import armos.graphics.bundle;
