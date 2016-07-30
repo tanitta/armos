@@ -68,25 +68,6 @@ class Mesh {
         }
 
         /++
-            テクスチャ座標を追加します．
-        +/
-        void addTexCoord(in armos.math.Vector2f vec, armos.graphics.Texture texture){
-            texture.begin;
-            // addTexCoord(vec[0], vec[1]);
-            texture.end;
-        }
-
-        /++
-            テクスチャ座標を追加します．
-            Deprecated: 現在動作しません．
-        +/
-        void addTexCoord(in float x, in float y, armos.graphics.Texture texture){
-            texture.begin;
-            // glTexCoord2d(x, y);
-            texture.end;
-        }
-
-        /++
             頂点座標を追加します．
         +/
         void addVertex(in armos.math.Vector3f vec){
