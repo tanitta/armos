@@ -22,22 +22,22 @@ class Mesh {
         armos.graphics.Material material;
 
         /// テクスチャ座標の数を表します．
-        ulong numTexCoords()const{
+        size_t numTexCoords()const{
             return texCoords.length;
         }
 
         /// 頂点座標の数を表します．
-        ulong numVertices()const{
+        size_t numVertices()const{
             return vertices.length;
         }
 
         /// 法線ベクトルの数を表します．
-        ulong numNormals()const{
+        size_t numNormals()const{
             return normals.length;
         }
 
         /// 頂点インデックスの数を表します．
-        ulong numIndices()const{
+        size_t numIndices()const{
             return indices.length;
         }
 
