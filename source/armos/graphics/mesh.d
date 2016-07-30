@@ -14,10 +14,14 @@ class Mesh {
         bool isFaceDirty= false;
         bool isIndicesChanged = false;
 
-        armos.math.Vector4f[] vertices;
-        armos.math.Vector3f[] normals;
+        armos.math.Vector4f[]    vertices;
+        armos.math.Vector3f[]    normals;
+        armos.math.Vector3f[]    tangents;
+        armos.math.Vector4f[]    texCoords0;
+        armos.math.Vector4f[]    texCoords1;
+        alias texCoords0         texCoords; 
         armos.types.FloatColor[] colors;
-        armos.math.Vector4f[] texCoords;
+        
         IndexType[] indices;
 
         /// テクスチャ座標の数を表します．
