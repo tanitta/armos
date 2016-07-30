@@ -10,8 +10,8 @@ class Mesh {
     public{
         alias int IndexType;
 
-        bool isVertsChanged = false;
-        bool isFaceDirty= false;
+        bool isVertsChanged   = false;
+        bool isFaceDirty      = false;
         bool isIndicesChanged = false;
 
         armos.math.Vector4f[]    vertices;
@@ -21,8 +21,7 @@ class Mesh {
         armos.math.Vector4f[]    texCoords1;
         alias texCoords0         texCoords; 
         armos.types.FloatColor[] colors;
-        
-        IndexType[] indices;
+        IndexType[]              indices;
 
         /// テクスチャ座標の数を表します．
         size_t numTexCoords()const{
