@@ -1053,15 +1053,13 @@ class Renderer {
             //add vertices to GL
             if(vertices.length){
                 glEnableClientState(GL_VERTEX_ARRAY);
-                auto p = vertices.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
-                glVertexPointer(4, GL_FLOAT, 0, p);
+                glVertexPointer(4, GL_FLOAT, 0, vertices.ptr);
             }
 
             //add normals to GL
             if(normals.length && useNormals){
                 glEnableClientState(GL_NORMAL_ARRAY);
-                auto p = normals.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
-                glNormalPointer(GL_FLOAT, 0, p);
+                glNormalPointer(GL_FLOAT, 0, normals.ptr);
             }
 
             //add colors to GL
@@ -1073,8 +1071,7 @@ class Renderer {
             //add texchoords to gl
             if(texCoords.length){
                 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                auto p = texCoords.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
-                glTexCoordPointer(4, GL_FLOAT, 0, p);
+                glTexCoordPointer(4, GL_FLOAT, 0, texCoords.ptr);
             }
 
             //add indicees to GL
