@@ -117,7 +117,7 @@ class Shader {
                     begin;
                     int location = uniformLocation(name);
                     if(location != -1){
-                        mixin(glFunctionString!(typeof(v[0]), v.data.length)("glUniform"));
+                        mixin(glFunctionString!(typeof(v[0]), v.elements.length)("glUniform"));
                     }
                     end;
                 }
@@ -266,7 +266,7 @@ class Shader {
                 begin;{
                     int location = attribLocation(name);
                     if(location != -1){
-                        mixin(glFunctionString!(typeof(v[0]), v.data.length)("glVertexAttrib"));
+                        mixin(glFunctionString!(typeof(v[0]), v.elements.length)("glVertexAttrib"));
                     }
                 }end;
             }
