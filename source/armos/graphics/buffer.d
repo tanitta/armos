@@ -2,6 +2,7 @@ module armos.graphics.buffer;
 
 import derelict.opengl3.gl;
 import armos.graphics.vao;
+import armos.math;
 
 /++
 +/
@@ -49,13 +50,41 @@ class Buffer {
 
         /++
         +/
-        void set(Array)(Array array, in BufferUsageFrequency freq, in BufferUsageNature nature){
+        Buffer array(T)(T[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
             begin;
             auto size = array.length * array[0].sizeof;
             glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
-            glVertexAttribPointer(0, 3, GL_FLOAT, GLfloat.sizeof * 2, 0, null);
+            glVertexAttribPointer(0,
+                                  3,
+                                  GL_FLOAT,
+                                  GL_FALSE,
+                                  0,
+                                  null,
+                                  );
             end;
+            return this;
         }
+        
+        ///
+        Buffer array(V)(V[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(isVector!V){
+            begin;
+            import std.algorithm;
+            V.elementType[] raw = array.map!(v => v.elements).fold!"a~b";
+            immutable size = raw.length * V.elementType.sizeof;
+            glBufferData(_bufferType, size, raw.ptr, usageEnum(freq, nature));
+            import std.stdio;
+            V.dimention.writeln;
+            raw.length.writeln;
+            glVertexAttribPointer(0,
+                                  V.dimention,
+                                  GL_FLOAT,
+                                  GL_FALSE,
+                                  0,
+                                  null);
+            end;
+            return this;
+        }
+        
 
         /++
         +/
