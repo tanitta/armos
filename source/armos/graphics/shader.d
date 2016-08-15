@@ -356,6 +356,8 @@ class Shader {
                         _programID, location, maxLength,
                         &l, &s, &type, nameBuf.ptr 
                     );
+                    import std.stdio;
+                    type.writeln;
 
                     switch (type) {
                         case GL_FLOAT:
@@ -366,6 +368,9 @@ class Shader {
                             break;
                         case GL_FLOAT_VEC3:
                             dim = 3;
+                            break;
+                        case GL_FLOAT_VEC4:
+                            dim = 4;
                             break;
                         default:
                             dim = 0;
