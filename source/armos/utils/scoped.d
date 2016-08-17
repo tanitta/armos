@@ -18,6 +18,6 @@ struct Scoped(T){
     }//private
 }//struct ScopedShader
 
-Scoped!T scoped(T)(T t = new T()){
+Scoped!T scoped(T)(T t){
     return Scoped!T(t);
 }
