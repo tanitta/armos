@@ -187,7 +187,6 @@ class Shader {
         int attribLocation(in string name)const{
             import std.string;
             immutable location = glGetAttribLocation(_programID, name.toStringz);
-            assert(location != -1, "Could not find attribute \"" ~ name ~ "\"");
             return location;
         }
 
@@ -209,6 +208,8 @@ class Shader {
                     if(location != -1){
                         _attribNames[name] = true;
                         mixin(glFunctionString!(typeof(v[0]), v.length)("glVertexAttrib"));
+                    }else{
+                        addLog("Could not find attribute \"" ~ name ~ "\"");
                     }
                 }end;
             }
@@ -235,6 +236,8 @@ class Shader {
                         int dim = attribDim(name);
                         _attribNames[name] = true;
                         glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, v[0].ptr);
+                    }else{
+                        addLog("Could not find attribute \"" ~ name ~ "\"");
                     }
                 }end;
             }
@@ -251,6 +254,8 @@ class Shader {
                         int dim = attribDim(name);
                         _attribNames[name] = true;
                         glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, null);
+                    }else{
+                        addLog("Could not find attribute \"" ~ name ~ "\"");
                     }
                 }end;
             }
@@ -271,6 +276,8 @@ class Shader {
                     if(location != -1){
                         _attribNames[name] = true;
                         mixin(glFunctionString!(typeof(v[0]), v.elements.length)("glVertexAttrib"));
+                    }else{
+                        addLog("Could not find attribute \"" ~ name ~ "\"");
                     }
                 }end;
             }
