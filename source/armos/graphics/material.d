@@ -105,26 +105,28 @@ class Material {
 private immutable string defaultVertesShaderSource = q{
 #version 330
 
-in vec3 position;
-in vec3 v_color;
+in vec4 vertex;
+in vec3 normal;
+in vec3 tangent;
+in vec4 texCoord0;
+in vec4 texCoord1;
+in vec4 color;
 
 uniform mat4 mpv;
-varying vec3 f_color;
+varying vec4 f_color;
 
 void main(void) {
-    gl_Position = mpv * vec4(position, 1.0);
-    f_color = v_color;
+    gl_Position = mpv * vertex;
+    f_color = color;
 }
 };
 
 private immutable string defaultFragmentShaderSource = q{
 #version 330
     
-uniform float fade;
-varying vec3 f_color;
-uniform vec4 vec_test;
+varying vec4 f_color;
 
 void main(void) {
-    gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, fade)*vec_test;
+    gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, 1);
 }
 };

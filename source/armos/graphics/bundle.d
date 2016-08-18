@@ -21,11 +21,14 @@ class Bundle {
             _shader = shader;
             _bufferMesh = bufferMesh;
             
-            //TODO bind attribs to shader.
-            //e.g.
-            // attribs["vertices"].begin;
-            // _shader.setAttrib("coord");
-            // attribs["vertices"].end;
+            _bufferMesh.vao.begin();
+            import std.algorithm;
+            _bufferMesh.attribs.keys.filter!(key => key!="index").each!((key){
+                _bufferMesh.attribs[key].begin;
+                _shader.setAttrib(key);
+                _bufferMesh.attribs[key].end;
+            });
+            _bufferMesh.vao.end();
         }
         
         ///
@@ -54,8 +57,17 @@ class Bundle {
         
         ///
         void draw(){
-            auto scopedVao    = scoped(_bufferMesh.vao);
-            auto scopedShader = scoped(_shader);
+            const scopedVao    = scoped(_bufferMesh.vao);
+            const scopedShader = scoped(_shader);
+            const iboScope     = scoped(_bufferMesh.attribs["index"]);
+            _shader.enableAttribs();
+                int elements;
+                import derelict.opengl3.gl;
+                glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
+                import std.conv;
+                immutable int size = (elements/GLushort.sizeof).to!int;
+                glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, null);
+            _shader.disableAttribs();
         }
     }//public
 

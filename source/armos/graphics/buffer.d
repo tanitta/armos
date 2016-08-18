@@ -51,6 +51,7 @@ class Buffer {
         /++
         +/
         Buffer array(T)(T[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
+            if(array.length == 0)return this;
             begin;
             auto size = array.length * array[0].sizeof;
             glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
@@ -67,6 +68,7 @@ class Buffer {
         
         ///
         Buffer array(V)(V[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(isVector!V){
+            if(array.length == 0)return this;
             begin;
             import std.algorithm;
             V.elementType[] raw = array.map!(v => v.elements).fold!"a~b";

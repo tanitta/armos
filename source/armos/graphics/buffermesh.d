@@ -12,18 +12,18 @@ class BufferMesh {
         this(Mesh mesh, in BufferUsageFrequency freq, in BufferUsageNature nature){
             _vao    = new armos.graphics.Vao;
             _vao.begin();
-                attribs["vertices"]   = (new Buffer(BufferType.Array)).array(mesh.vertices, freq, nature);
-                attribs["normals"]    = (new Buffer(BufferType.Array)).array(mesh.normals, freq, nature);
-                attribs["tangents"]   = (new Buffer(BufferType.Array)).array(mesh.tangents, freq, nature);
-                attribs["texCoords0"] = (new Buffer(BufferType.Array)).array(mesh.texCoords0, freq, nature);
-                attribs["texCoords1"] = (new Buffer(BufferType.Array)).array(mesh.texCoords1, freq, nature);
+                attribs["vertex"]   = (new Buffer(BufferType.Array)).array(mesh.vertices, freq, nature);
+                attribs["normal"]    = (new Buffer(BufferType.Array)).array(mesh.normals, freq, nature);
+                attribs["tangent"]   = (new Buffer(BufferType.Array)).array(mesh.tangents, freq, nature);
+                attribs["texCoord0"] = (new Buffer(BufferType.Array)).array(mesh.texCoords0, freq, nature);
+                attribs["texCoord1"] = (new Buffer(BufferType.Array)).array(mesh.texCoords1, freq, nature);
                 import std.algorithm;
                 import std.array;
                 import armos.types.color;
-                attribs["colors"]     = (new Buffer(BufferType.Array)).array(mesh.colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
+                attribs["color"]     = (new Buffer(BufferType.Array)).array(mesh.colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
             _vao.end();
             
-            attribs["indices"]    = (new Buffer(BufferType.ElementArray)).array(mesh.indices, freq, nature);
+            attribs["index"]    = (new Buffer(BufferType.ElementArray)).array(mesh.indices, freq, nature);
         }
         
         ///
