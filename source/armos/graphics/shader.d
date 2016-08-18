@@ -207,6 +207,7 @@ class Shader {
                 begin;{
                     int location = attribLocation(name);
                     if(location != -1){
+                        _attribNames[name] = true;
                         mixin(glFunctionString!(typeof(v[0]), v.length)("glVertexAttrib"));
                     }
                 }end;
@@ -232,6 +233,7 @@ class Shader {
                     int location = attribLocation(name);
                     if(location != -1){
                         int dim = attribDim(name);
+                        _attribNames[name] = true;
                         glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, v[0].ptr);
                     }
                 }end;
@@ -247,6 +249,7 @@ class Shader {
                     int location = attribLocation(name);
                     if(location != -1){
                         int dim = attribDim(name);
+                        _attribNames[name] = true;
                         glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, null);
                     }
                 }end;
@@ -266,6 +269,7 @@ class Shader {
                 begin;{
                     int location = attribLocation(name);
                     if(location != -1){
+                        _attribNames[name] = true;
                         mixin(glFunctionString!(typeof(v[0]), v.elements.length)("glVertexAttrib"));
                     }
                 }end;
@@ -283,11 +287,28 @@ class Shader {
         void disableAttrib(in string name){
             glDisableVertexAttribArray(attribLocation(name));
         }
+        
+        ///
+        void enableAttribs(){
+            import std.algorithm;
+            _attribNames.keys.each!(attribName => enableAttrib(attribName));
+        }
+
+        ///
+        void disableAttribs(){
+            import std.algorithm;
+            _attribNames.keys.each!(attribName => disableAttrib(attribName));
+        }
+        
+        string[] attribNames()const{
+            return _attribNames.keys;
+        }
     }//public
 
     private{
         int _programID;
         int[] _savedProgramIDs;
+        bool[string] _attribNames;
         bool _isLoaded = false;
         string _log;
 
@@ -356,8 +377,6 @@ class Shader {
                         _programID, location, maxLength,
                         &l, &s, &type, nameBuf.ptr 
                     );
-                    import std.stdio;
-                    type.writeln;
 
                     switch (type) {
                         case GL_FLOAT:
