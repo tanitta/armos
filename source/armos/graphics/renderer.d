@@ -630,6 +630,7 @@ class Renderer {
         /++
         +/
         this(){
+            _bufferMesh = new armos.graphics.BufferMesh;
             _fbo = new armos.graphics.Fbo;
         }
         
@@ -1151,6 +1152,7 @@ class Renderer {
         
         armos.graphics.Shader _currentShader;
         armos.graphics.Material _currentMaterial;
+        armos.graphics.BufferMesh _bufferMesh;
         
         bool _isBackgrounding = true;
     }//private

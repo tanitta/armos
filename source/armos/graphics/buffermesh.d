@@ -10,20 +10,30 @@ class BufferMesh {
     public{
         ///
         this(Mesh mesh, in BufferUsageFrequency freq, in BufferUsageNature nature){
-            _vao    = new armos.graphics.Vao;
+            this();
             _vao.begin();
-                attribs["vertex"]   = (new Buffer(BufferType.Array)).array(mesh.vertices, freq, nature);
-                attribs["normal"]    = (new Buffer(BufferType.Array)).array(mesh.normals, freq, nature);
-                attribs["tangent"]   = (new Buffer(BufferType.Array)).array(mesh.tangents, freq, nature);
-                attribs["texCoord0"] = (new Buffer(BufferType.Array)).array(mesh.texCoords0, freq, nature);
-                attribs["texCoord1"] = (new Buffer(BufferType.Array)).array(mesh.texCoords1, freq, nature);
+                attribs["vertex"].array(mesh.vertices, freq, nature);
+                attribs["normal"].array(mesh.normals, freq, nature);
+                attribs["tangent"].array(mesh.tangents, freq, nature);
+                attribs["texCoord0"].array(mesh.texCoords0, freq, nature);
+                attribs["texCoord1"].array(mesh.texCoords1, freq, nature);
                 import std.algorithm;
                 import std.array;
                 import armos.types.color;
-                attribs["color"]     = (new Buffer(BufferType.Array)).array(mesh.colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
+                attribs["color"].array(mesh.colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
             _vao.end();
-            
-            attribs["index"]    = (new Buffer(BufferType.ElementArray)).array(mesh.indices, 0, freq, nature);
+            attribs["index"].array(mesh.indices, 0, freq, nature);
+        }
+        
+        this(){
+            _vao    = new armos.graphics.Vao;
+            attribs["vertex"]    = new Buffer(BufferType.Array);
+            attribs["normal"]    = new Buffer(BufferType.Array);
+            attribs["tangent"]   = new Buffer(BufferType.Array);
+            attribs["texCoord0"] = new Buffer(BufferType.Array);
+            attribs["texCoord1"] = new Buffer(BufferType.Array);
+            attribs["color"]     = new Buffer(BufferType.Array);
+            attribs["index"]    = new Buffer(BufferType.ElementArray);
         }
         
         ///
