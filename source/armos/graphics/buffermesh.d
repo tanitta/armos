@@ -23,7 +23,7 @@ class BufferMesh {
                 attribs["color"]     = (new Buffer(BufferType.Array)).array(mesh.colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
             _vao.end();
             
-            attribs["index"]    = (new Buffer(BufferType.ElementArray)).array(mesh.indices, freq, nature);
+            attribs["index"]    = (new Buffer(BufferType.ElementArray)).array(mesh.indices, 0, freq, nature);
         }
         
         ///

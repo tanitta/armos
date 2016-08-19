@@ -50,13 +50,14 @@ class Buffer {
 
         /++
         +/
-        Buffer array(T)(T[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
+        Buffer array(T)(T[] array, in size_t count, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
             if(array.length == 0)return this;
             begin;
             auto size = array.length * array[0].sizeof;
             glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
+            import std.conv;
             glVertexAttribPointer(0,
-                                  3,
+                                  count.to!int,
                                   GL_FLOAT,
                                   GL_FALSE,
                                   0,
@@ -72,17 +73,7 @@ class Buffer {
             begin;
             import std.algorithm;
             V.elementType[] raw = array.map!(v => v.elements).fold!"a~b";
-            immutable size = raw.length * V.elementType.sizeof;
-            glBufferData(_bufferType, size, raw.ptr, usageEnum(freq, nature));
-            import std.stdio;
-            V.dimention.writeln;
-            raw.length.writeln;
-            glVertexAttribPointer(0,
-                                  V.dimention,
-                                  GL_FLOAT,
-                                  GL_FALSE,
-                                  0,
-                                  null);
+            this.array(raw, V.dimention, freq, nature);
             end;
             return this;
         }
