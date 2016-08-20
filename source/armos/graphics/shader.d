@@ -99,7 +99,7 @@ class Shader {
         int uniformLocation(in string name){
             import std.string;
             immutable location = glGetUniformLocation(_programID, name.toStringz);
-            assert(location != -1, "Could not find uniform \"" ~ name ~ "\"");
+            // assert(location != -1, "Could not find uniform \"" ~ name ~ "\"");
             return location;
         }
 

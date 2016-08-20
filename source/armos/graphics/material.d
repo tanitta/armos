@@ -105,6 +105,11 @@ class Material {
 private immutable string defaultVertesShaderSource = q{
 #version 330
 
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewProjectionMatrix;
+uniform mat4 textureMatrix;
+
 in vec4 vertex;
 in vec3 normal;
 in vec3 tangent;
@@ -112,19 +117,25 @@ in vec4 texCoord0;
 in vec4 texCoord1;
 in vec4 color;
 
-uniform mat4 mpv;
-varying vec4 f_color;
+out vec4 f_color;
+out vec2 outtexCoord0;
+out vec2 outtexCoord1;
 
 void main(void) {
-    gl_Position = mpv * vertex;
-    f_color = color;
+    gl_Position = modelViewProjectionMatrix * vertex;
+    // f_color = color;
+    f_color = vec4(1, 1, 1, 1);
+    outtexCoord0 = (textureMatrix * texCoord0).xy;
+    outtexCoord1 = (textureMatrix * texCoord1).xy;
 }
 };
 
 private immutable string defaultFragmentShaderSource = q{
 #version 330
     
-varying vec4 f_color;
+in vec4 f_color;
+in vec2 outtexCoord0;
+in vec2 outtexCoord1;
 
 void main(void) {
     gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, 1);

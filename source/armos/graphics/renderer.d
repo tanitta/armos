@@ -632,6 +632,7 @@ class Renderer {
         this(){
             _bufferMesh = new armos.graphics.BufferMesh;
             _fbo = new armos.graphics.Fbo;
+            _shader = (new armos.graphics.Material).shader;
         }
         
         /++
@@ -933,6 +934,11 @@ class Renderer {
 
             viewport();
             setupScreenPerspective();
+            
+            //TODO setup Shader;
+            armos.math.Matrix4f mpv = scalingMatrix(1f, 1f, 1f);
+            _shader.setUniform("modelViewProjectionMatrix", mpv);
+            _shader.setUniform("textureMatrix", armos.math.Matrix4f.identity);
 
             if( _isBackgrounding ){
                 fillBackground(currentStyle.backgroundColor );
@@ -962,14 +968,20 @@ class Renderer {
         /++
         +/
         void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
-            armos.math.Vector4f[2] vertices;
-            vertices[0] = armos.math.Vector4f(x1, y1, z1, 1f);
-            vertices[1] = armos.math.Vector4f(x2, y2, z2, 1f);
-
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(4, GL_FLOAT, 0, vertices.ptr);
-            glDrawArrays(GL_LINES, 0, 2);
-            glDisableClientState(GL_VERTEX_ARRAY);
+            armos.math.Vector4f[2] vertices = [
+                armos.math.Vector4f(x1, y1, z1, 1f), 
+                armos.math.Vector4f(x2, y2, z2, 1f)
+            ];
+            import armos.utils.scoped;
+            const scopedVao    = scoped(_bufferMesh.vao);
+            _bufferMesh.attribs["vertex"].array(vertices, armos.graphics.BufferUsageFrequency.Static, armos.graphics.BufferUsageNature.Draw);
+            _bufferMesh.attribs["vertex"].begin;
+            _shader.setAttrib("vertex");
+            _bufferMesh.attribs["vertex"].end;
+            const scopedShader = scoped(_shader);
+            _shader.enableAttrib("vertex");
+            glDrawArrays(GL_LINES, 0, vertices.length);
+            _shader.disableAttrib("vertex");
         };
 
         /++
@@ -1150,7 +1162,7 @@ class Renderer {
         armos.graphics.Style _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
         
-        armos.graphics.Shader _currentShader;
+        armos.graphics.Shader _shader;
         armos.graphics.Material _currentMaterial;
         armos.graphics.BufferMesh _bufferMesh;
         
