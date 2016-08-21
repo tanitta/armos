@@ -24,7 +24,7 @@ class TestApp : ar.app.BaseApp{
         _rad += 0.01f;
         
         import std.math;
-        _sourceM.position(ar.math.Vector3f(sin(_rad), 0f, cos(_rad))*10f);
+        _source.position(ar.math.Vector3f(sin(_rad), 0f, cos(_rad))*10f);
     }
 
     override void draw(){}
