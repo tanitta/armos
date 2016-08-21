@@ -60,7 +60,7 @@ class BaseApp{
         Params:
         message = キーボードの状態が格納されたメッセージです．
     +/
-    void keyPressed(ref armos.events.KeyPressedEventArg message) {
+    void keyPressed(ref armos.events.KeyPressedEventArg message){
         keyPressed(message.key);
     }
 
@@ -77,7 +77,7 @@ class BaseApp{
         Params:
         message = キーボードの状態が格納されたメッセージです．
     +/
-    void keyReleased(ref armos.events.KeyReleasedEventArg message) {
+    void keyReleased(ref armos.events.KeyReleasedEventArg message){
         keyReleased(message.key);
     }
 
