@@ -14,8 +14,8 @@ class WindowConfig {
         int width()const{return _width;}
         void width(in int h){_width = h;}
         
-        armos.Vector2i position()const{return _position;}
-        void position(in armos.Vector2i p){_position = p;}
+        armos.math.Vector2i position()const{return _position;}
+        void position(in armos.math.Vector2i p){_position = p;}
         
         int glVersionMajor()const{return _glVersion.major;}
         int glVersionMinor()const{return _glVersion.minor;}
@@ -42,7 +42,7 @@ class WindowConfig {
     private{
         int _height;
         int _width;
-        armos.Vector2i _position;
+        armos.math.Vector2i _position;
         SemVer _glVersion = SemVer(3, 2, 0);
     }//private
 }//interface WindowConfig
