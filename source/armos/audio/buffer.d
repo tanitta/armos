@@ -1,6 +1,10 @@
 module armos.audio.buffer;
 
 import derelict.openal.al;
+import derelict.ogg.ogg;
+import derelict.vorbis.vorbis;
+import derelict.vorbis.enc;
+import derelict.vorbis.file;
 
 /++
 +/
@@ -8,18 +12,46 @@ class Buffer {
     public{
         ///
         this(){
-           alGenBuffers(1, cast(uint*)&_id); 
+            alGenBuffers(1, cast(uint*)&_id); 
         }
         
         ///
         ~this(){
-           alDeleteBuffers(1, cast(uint*)&_id); 
+            alDeleteBuffers(1, cast(uint*)&_id); 
         }
         
         ///
-        void load(ubyte[] buffer){
-            Wave wave= buffer.decodeWave;
+        void load(string path){
+            import std.file;
+            import std.path;
+            switch (extension(path)) {
+                case ".wav":
+                    loadWav(path);
+                    break;
+                case ".ogg":
+                    loadOgg(path);
+                    break;
+                default:
+                    assert(0, "invalid format");
+            }
+        }
+        
+        ///
+        void loadWav(string path){
+            import std.file;
+            loadWav(cast(ubyte[])read(path));
+        }
+        
+        ///
+        void loadWav(ubyte[] buffer){
+            load(buffer.decodeWave);
+        }
+        
+        ///
+        void load(Wave wave){
             import std.conv;
+            import std.stdio;
+            wave.data.writeln;
             alBufferData(_id,
                          format(wave.numChannels, wave.depth),
                          wave.data.ptr,
@@ -28,12 +60,43 @@ class Buffer {
         }
         
         ///
-        void load(string path){
-            import std.file;
-            load(cast(ubyte[])read(path));
+        void loadOgg(string path){
+            DerelictOgg.load();
+            DerelictVorbis.load();
+            DerelictVorbisEnc.load();
+            DerelictVorbisFile.load();
+            
+            OggVorbis_File vorbisFile;
+            import std.string;
+            if (ov_fopen(path.toStringz, &vorbisFile) != 0){
+                return;
+            }
+            vorbis_info* info = ov_info(&vorbisFile, -1);
+            
+            byte[] data;
+            
+            import std.conv;
+            byte[] tempData = new byte[4096];
+            int currentPosition = 0;
+            while(true){
+                size_t tempSize = ov_read(&vorbisFile, tempData.ptr, 4096, 0, 2, 1, &currentPosition);
+                if(tempSize <= 0)break;
+                import std.algorithm;
+                import std.array;
+                data ~= tempData;
+            }
+            
+            alBufferData(_id,
+                         format(info.channels, 16),
+                         data.ptr,
+                         data.length.to!int,
+                         info.rate);
+            
+            ov_clear(&vorbisFile);
         }
         
-        //TODO: load ogg
+        //TODO
+        // void loadOgg(ubyte[] buffer){
         
         ///
         int id()const{return _id;}
@@ -41,6 +104,7 @@ class Buffer {
 
     private{
         int _id;
+        
     }//private
 }//class Buffer
 
