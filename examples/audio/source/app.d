@@ -11,11 +11,12 @@ class TestApp : ar.app.BaseApp{
         _bufferM = new ar.audio.Buffer;
         _bufferM.load("data/se_monaural_16.wav");
         _bufferS = new ar.audio.Buffer;
-        _bufferS.load("data/se_system.ogg");
+        _bufferS.load("data/takewar-home8.ogg").range(0f, 11f);
         
         _source = new ar.audio.Source;
-        _source.buffer = _bufferS;
-        _source.isLooping(true).play;
+        _source.buffer(_bufferS)
+               .isLooping(true)
+               .play;
         
         _rad = 0.0f;
     }

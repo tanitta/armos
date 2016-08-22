@@ -21,7 +21,7 @@ class Buffer {
         }
         
         ///
-        void load(string path){
+        Buffer load(string path){
             import std.file;
             import std.path;
             switch (extension(path)) {
@@ -34,6 +34,7 @@ class Buffer {
                 default:
                     assert(0, "invalid format");
             }
+            return this;
         }
         
         ///
@@ -50,10 +51,12 @@ class Buffer {
         ///
         void load(Wave wave){
             import std.conv;
-            import std.stdio;
-            wave.data.writeln;
+            _sampleRate = wave.sampleRate.to!int;
+            _channels = wave.numChannels.to!int;
+            _depth = wave.depth.to!int;
+            _format = formatFrom(wave.numChannels, wave.depth);
             alBufferData(_id,
-                         format(wave.numChannels, wave.depth),
+                         _format,
                          wave.data.ptr,
                          wave.data.length.to!int,
                          wave.sampleRate.to!int);
@@ -76,20 +79,35 @@ class Buffer {
             byte[] data;
             
             import std.conv;
+            import std.algorithm;
+            import std.array;
             byte[] tempData = new byte[4096];
             int currentPosition = 0;
             while(true){
                 size_t tempSize = ov_read(&vorbisFile, tempData.ptr, 4096, 0, 2, 1, &currentPosition);
                 if(tempSize <= 0)break;
-                import std.algorithm;
-                import std.array;
-                data ~= tempData;
+                data ~= tempData[0..tempSize];
             }
             
+            _sampleRate = info.rate;
+            
+            import std.range;
+            foreach (offset; data.length.iota) {
+                if (offset % 2 == 0) {
+                    //convert ubyte to 16 bit little endian integer
+                    short val = cast(short)(cast(ubyte)(data[offset]) | (cast(ubyte)(data[offset + 1])<<8));
+                    _pcm ~= cast(short)((val & 0x8000) ? val | 0xFFFF0000 : val);
+                }
+            } 
+            
+            _channels = info.channels;
+            _depth = 16;
+            _format = formatFrom(info.channels, 16);
+                
             alBufferData(_id,
-                         format(info.channels, 16),
-                         data.ptr,
-                         data.length.to!int,
+                         _format, 
+                         _pcm.ptr,
+                         _pcm.length.to!int,
                          info.rate);
             
             ov_clear(&vorbisFile);
@@ -100,16 +118,60 @@ class Buffer {
         
         ///
         int id()const{return _id;}
+        
+        ///
+        int sampleRate()const{
+            return _sampleRate;
+        }
+        
+        ///
+        int channels()const{return _channels;}
+        
+        ///
+        int depth()const{return _depth;}
+        
+        ///
+        ALenum format()const{return _format;}
+        
+        short[] pcm(){
+            return _pcm;
+        }
+        
+        ///
+        Buffer range(in float startSec, in float finishSec){
+            _start  = startSec;
+            _finish = finishSec;
+            float sampleRate = _sampleRate;
+            import std.conv;
+            short[] rangedPcm;
+            if(finishSec < 0f){
+                rangedPcm = _pcm[(_start*sampleRate).to!int..$];
+            }else{
+                rangedPcm = _pcm[(_start*sampleRate).to!int..(_finish*sampleRate).to!int];
+            }
+            alBufferData(_id,
+                         _format, 
+                         rangedPcm.ptr,
+                         rangedPcm.length.to!int,
+                         _sampleRate);
+            return this;
+        }
     }//public
 
     private{
         int _id;
-        
+        short[] _pcm;
+        int _sampleRate;
+        int _channels;
+        int _depth;
+        float _start;
+        float _finish;
+        ALenum _format;
     }//private
 }//class Buffer
 
 private{
-    ALenum format(size_t numChannels, size_t depth){
+    ALenum formatFrom(size_t numChannels, size_t depth){
         ALenum f;
         if(numChannels == 1){
             if(depth == 8){
