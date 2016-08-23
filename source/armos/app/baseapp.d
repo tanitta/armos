@@ -88,6 +88,14 @@ class BaseApp{
     +/
     void keyReleased(int str) {
     }
+    
+    ///
+    void unicodeInputted(ref armos.events.UnicodeInputtedEventArg message){
+        unicodeInputted(message.key);
+    }
+    
+    ///
+    void unicodeInputted(uint key){}
 
     /++
         マウス位置を表すプロパティです．

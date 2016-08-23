@@ -10,6 +10,10 @@ class KeyReleasedEventArg : armos.events.EventArg{
     int  key;
 };
 
+class UnicodeInputtedEventArg : armos.events.EventArg{
+    uint  key;
+};
+
 @disable class MessageReceivedEventArg :armos.events.EventArg {}
 
 mixin template MouseEvent(){
@@ -62,6 +66,7 @@ class CoreEvents {
 
     armos.events.Event!(KeyPressedEventArg) keyPressed;
     armos.events.Event!(KeyReleasedEventArg) keyReleased;
+    armos.events.Event!(UnicodeInputtedEventArg) unicodeInputted;
 
     armos.events.Event!(MouseDraggedEventArg) mouseDragged;
     armos.events.Event!(MouseEnteredEventArg) mouseEntered;
@@ -86,6 +91,8 @@ class CoreEvents {
 
         keyPressed = new armos.events.Event!(KeyPressedEventArg);
         keyReleased = new armos.events.Event!(KeyReleasedEventArg);
+        
+        unicodeInputted = new armos.events.Event!(UnicodeInputtedEventArg);
 
         mouseDragged = new armos.events.Event!(MouseDraggedEventArg);
         mouseEntered = new armos.events.Event!(MouseEnteredEventArg);
@@ -128,6 +135,12 @@ class CoreEvents {
         auto obj = new KeyReleasedEventArg;
         obj.key = key;
         armos.events.notifyEvent(keyReleased, obj);
+    }
+    
+    void notifyUnicodeInput(uint key){
+        auto obj = new UnicodeInputtedEventArg;
+        obj.key = key;
+        armos.events.notifyEvent(unicodeInputted, obj);
     }
 
     void notifyMouseDragged(int x, int y, int button){

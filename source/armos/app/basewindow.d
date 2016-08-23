@@ -86,6 +86,7 @@ mixin template BaseWindow(){
             armos.events.addListener(_coreEvents.mouseDragged, app, &app.mouseDragged);
             armos.events.addListener(_coreEvents.mouseReleased, app, &app.mouseReleased);
             armos.events.addListener(_coreEvents.mousePressed, app, &app.mousePressed);
+            armos.events.addListener(_coreEvents.unicodeInputted, app, &app.unicodeInputted);
             armos.events.addListener(_coreEvents.exit, app, &app.exit);
         }
 
@@ -329,6 +330,15 @@ class GLFWWindow : Window{
                 currentWindow.events.notifyKeyReleased(key);
             }
         }
+        
+        static extern(C) void charCallbackFunction(GLFWwindow* window, uint key){
+            currentWindow.events.notifyUnicodeInput(key);
+            // if(action == GLFW_PRESS){
+            //     currentWindow.events.notifyKeyPressed(key);
+            // }else if(action == GLFW_RELEASE){
+            //     currentWindow.events.notifyKeyReleased(key);
+            // }
+        }
 
         static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
             currentWindow.events.notifyMouseMoved(cast(int)xpos, cast(int)ypos, 0);
@@ -361,6 +371,7 @@ class GLFWWindow : Window{
         void initGLFWEvents(){
             // glfwSetKeyCallback(window, &keyCallbackFunction);
             glfwSetKeyCallback(window, cast(GLFWkeyfun)&keyCallbackFunction);
+            glfwSetCharCallback(window, cast(GLFWcharfun)&charCallbackFunction);
             glfwSetCursorPosCallback(window, cast(GLFWcursorposfun)&cursorPositionFunction);
             glfwSetMouseButtonCallback(window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
             glfwSetWindowSizeCallback(window, cast(GLFWwindowsizefun)&resizeWindowFunction);
