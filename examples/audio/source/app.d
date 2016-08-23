@@ -7,16 +7,12 @@ import std.stdio;
 class TestApp : ar.app.BaseApp{
     override void setup(){
         _player = new ar.audio.Player;
+        _buffer = (new ar.audio.Buffer).load("data/bgm.ogg")
+                                       .range(0f, 11f);
         
-        _bufferM = new ar.audio.Buffer;
-        _bufferM.load("data/se_monaural_16.wav");
-        _bufferS = new ar.audio.Buffer;
-        _bufferS.load("data/takewar-home8.ogg").range(0f, 11f);
-        
-        _source = new ar.audio.Source;
-        _source.buffer(_bufferS)
-               .isLooping(true)
-               .play;
+        _source = (new ar.audio.Source).buffer(_buffer)
+                                       .isLooping(true)
+                                       .play;
         
         _rad = 0.0f;
     }
@@ -30,10 +26,13 @@ class TestApp : ar.app.BaseApp{
 
     override void draw(){}
     
+    override void unicodeInputted(uint key){
+        key.writeln;
+    }
+    
     private{
         ar.audio.Player _player;
-        ar.audio.Buffer _bufferS;
-        ar.audio.Buffer _bufferM;
+        ar.audio.Buffer _buffer;
         ar.audio.Source _source;
         float _rad;
     }

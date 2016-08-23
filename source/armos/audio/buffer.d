@@ -38,18 +38,20 @@ class Buffer {
         }
         
         ///
-        void loadWav(string path){
+        Buffer loadWav(string path){
             import std.file;
             loadWav(cast(ubyte[])read(path));
+            return this;
         }
         
         ///
-        void loadWav(ubyte[] buffer){
+        Buffer loadWav(ubyte[] buffer){
             load(buffer.decodeWave);
+            return this;
         }
         
         ///
-        void load(Wave wave){
+        Buffer load(Wave wave){
             import std.conv;
             _sampleRate = wave.sampleRate.to!int;
             _channels = wave.numChannels.to!int;
@@ -60,10 +62,11 @@ class Buffer {
                          wave.data.ptr,
                          wave.data.length.to!int,
                          wave.sampleRate.to!int);
+            return this;
         }
         
         ///
-        void loadOgg(string path){
+        Buffer loadOgg(string path){
             DerelictOgg.load();
             DerelictVorbis.load();
             DerelictVorbisEnc.load();
@@ -72,7 +75,7 @@ class Buffer {
             OggVorbis_File vorbisFile;
             import std.string;
             if (ov_fopen(path.toStringz, &vorbisFile) != 0){
-                return;
+                assert(0);
             }
             vorbis_info* info = ov_info(&vorbisFile, -1);
             
@@ -111,6 +114,7 @@ class Buffer {
                          info.rate);
             
             ov_clear(&vorbisFile);
+            return this;
         }
         
         //TODO
