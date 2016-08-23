@@ -63,16 +63,8 @@ class BaseApp{
     +/
     void keyPressed(ref armos.events.KeyPressedEventArg message){
         import std.conv;
-        keyPressed(message.key.to!int);
         keyPressed(message.key);
     }
-
-    /++
-        キーボードを押した際に呼ばれるメンバ関数です．
-        Params:
-        str = 押したキーのascii番号が格納されています．
-    +/
-    void keyPressed(int str){}
     
     /++
         キーボードを押した際に呼ばれるメンバ関数です．
@@ -88,16 +80,8 @@ class BaseApp{
     +/
     void keyReleased(ref armos.events.KeyReleasedEventArg message){
         import std.conv;
-        keyReleased(message.key.to!int);
         keyReleased(message.key);
     }
-
-    /++
-        キーボードを離した際に呼ばれるメンバ関数です．
-        Params: 
-        key = 離したキーのascii番号が格納されています．
-    +/
-    void keyReleased(int key){}
     
     /++
         キーボードを離した際に呼ばれるメンバ関数です．
