@@ -240,7 +240,7 @@ unittest{
     armos.events.addListener(core_events.setup, app, &app.setup);
     armos.events.addListener(core_events.keyPressed, app, &app.keyPressed);
     core_events.notifySetup();
-    core_events.notifyKeyPressed('a');
+    core_events.notifyKeyPressed(KeyType.A);
     assert(executedSetup);
-    assert(pressedKey == 'a');
+    assert(pressedKey == KeyType.A);
 }
