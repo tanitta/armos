@@ -1,13 +1,13 @@
 module armos.events.events;
-static import armos.events;
-static import armos.utils;
+import armos.events;
+import armos.utils;
 
 class KeyPressedEventArg : armos.events.EventArg{
-    int key;
+    KeyType key;
 };
 
 class KeyReleasedEventArg : armos.events.EventArg{
-    int  key;
+    KeyType key;
 };
 
 class UnicodeInputtedEventArg : armos.events.EventArg{
@@ -125,13 +125,13 @@ class CoreEvents {
         armos.events.notifyEvent(exit, voidEventArg);
     };
 
-    void notifyKeyPressed(int key){
+    void notifyKeyPressed(KeyType key){
         auto obj = new KeyPressedEventArg;
         obj.key = key;
         armos.events.notifyEvent(keyPressed, obj);
     }
 
-    void notifyKeyReleased(int key){
+    void notifyKeyReleased(KeyType key){
         auto obj = new KeyReleasedEventArg;
         obj.key = key;
         armos.events.notifyEvent(keyReleased, obj);

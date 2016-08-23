@@ -213,10 +213,12 @@ class GLFWWindow : Window{
         GLFWwindow* window;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
+            import std.conv;
+            import armos.utils.keytype;
             if(action == GLFW_PRESS){
-                currentWindow.events.notifyKeyPressed(key);
+                currentWindow.events.notifyKeyPressed(key.to!KeyType);
             }else if(action == GLFW_RELEASE){
-                currentWindow.events.notifyKeyReleased(key);
+                currentWindow.events.notifyKeyReleased(key.to!KeyType);
             }
         }
         

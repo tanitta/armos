@@ -1,6 +1,7 @@
 module armos.app.baseapp;
 static import armos.events;
 static import armos.math;
+import armos.utils.keytype;
 
 /++
 armosの中心となるクラスです．プロジェクトを作成する際はこのクラスを継承して処理を記述していきます．
@@ -61,16 +62,24 @@ class BaseApp{
         message = キーボードの状態が格納されたメッセージです．
     +/
     void keyPressed(ref armos.events.KeyPressedEventArg message){
+        import std.conv;
+        keyPressed(message.key.to!int);
         keyPressed(message.key);
     }
 
     /++
         キーボードを押した際に呼ばれるメンバ関数です．
         Params:
-        str = 離したキーのascii番号が格納されています．
+        str = 押したキーのascii番号が格納されています．
     +/
-    void keyPressed(int str) {
-    }
+    void keyPressed(int str){}
+    
+    /++
+        キーボードを押した際に呼ばれるメンバ関数です．
+        Params:
+        key = 押したキーの種類を表すarmos.utils.KeyTypeが格納されています．
+    +/
+    void keyPressed(KeyType key){}
 
     /++
         キーボードを離した際に呼ばれるメンバ関数です．
@@ -78,16 +87,24 @@ class BaseApp{
         message = キーボードの状態が格納されたメッセージです．
     +/
     void keyReleased(ref armos.events.KeyReleasedEventArg message){
+        import std.conv;
+        keyReleased(message.key.to!int);
         keyReleased(message.key);
     }
 
     /++
         キーボードを離した際に呼ばれるメンバ関数です．
         Params: 
-        str = 離したキーのascii番号が格納されています．
+        key = 離したキーのascii番号が格納されています．
     +/
-    void keyReleased(int str) {
-    }
+    void keyReleased(int key){}
+    
+    /++
+        キーボードを離した際に呼ばれるメンバ関数です．
+        Params: 
+        key = 離したキーの種類を表すarmos.utils.KeyTypeが格納されています．
+    +/
+    void keyReleased(KeyType key){}
     
     ///
     void unicodeInputted(ref armos.events.UnicodeInputtedEventArg message){
