@@ -194,10 +194,10 @@ private{
     }
     
     unittest{
-        assert(format(1,8)  == AL_FORMAT_MONO8);
-        assert(format(1,16) == AL_FORMAT_MONO16);
-        assert(format(2,8)  == AL_FORMAT_STEREO8);
-        assert(format(2,16) == AL_FORMAT_STEREO16);
+        assert(formatFrom(1,8)  == AL_FORMAT_MONO8);
+        assert(formatFrom(1,16) == AL_FORMAT_MONO16);
+        assert(formatFrom(2,8)  == AL_FORMAT_STEREO8);
+        assert(formatFrom(2,16) == AL_FORMAT_STEREO16);
     }
     
     /++
