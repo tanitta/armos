@@ -9,7 +9,7 @@ class TestApp : ar.app.BaseApp{
         _player = new ar.audio.Player;
         
         
-        _buffer = (new ar.audio.Buffer).load("data/bgm.ogg")
+        _buffer = (new ar.audio.Buffer).load("data/bgm.ogg")// loading a BGM(Music provided by OtObOx.thank you!)
                                        .range(0f, 10f);
         
         _source = (new ar.audio.Source).buffer(_buffer)

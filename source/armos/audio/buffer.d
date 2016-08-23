@@ -217,34 +217,8 @@ private{
         }//private
     }//class Wave
     
-    struct ChunkHead {
-        char[4] id;
-        uint size;
-    }
-
-    struct RiffChunk {
-        ChunkHead head;
-        char[4] format;
-    }
-
-    struct WaveFileFormat {
-        ushort audioFormat,
-               channels;
-        uint   samplePerSecond,
-               bytesPerSecond;
-        ushort blockAlign,
-               bitsPerSample;
-    }
-
-    struct WaveFormatChunk {
-        ChunkHead chunk;
-        WaveFileFormat format;
-    }
-
-    auto min(M, N)(M m, N n) {
-        return m > n ? n : m;
-    }
-    
+    // I wish to thank alpha_kai_NET for providing this decoder.
+    // cf. http://qiita.com/alpha_kai_NET/items/7346636d247449e8b342
     Wave decodeWave(ubyte[] buf){
         import std.stdio;
         size_t b = 0,
@@ -314,4 +288,33 @@ private{
         wav._data = pcm;
         return wav;
     }
+    
+    struct ChunkHead {
+        char[4] id;
+        uint size;
+    }
+
+    struct RiffChunk {
+        ChunkHead head;
+        char[4] format;
+    }
+
+    struct WaveFileFormat {
+        ushort audioFormat,
+               channels;
+        uint   samplePerSecond,
+               bytesPerSecond;
+        ushort blockAlign,
+               bitsPerSample;
+    }
+
+    struct WaveFormatChunk {
+        ChunkHead chunk;
+        WaveFileFormat format;
+    }
+
+    auto min(M, N)(M m, N n) {
+        return m > n ? n : m;
+    }
+    
 }
