@@ -20,7 +20,32 @@ class Bundle {
         this(BufferMesh bufferMesh, Shader shader){
             _shader = shader;
             _bufferMesh = bufferMesh;
-            
+            updateShaderAttribs();
+        }
+        
+        ///
+        Bundle shader(Shader shader){
+            _shader = shader;
+            if(_bufferMesh) updateShaderAttribs();
+            return this;
+        }
+        
+        ///
+        Bundle mesh(Mesh mesh, in BufferUsageFrequency freq, in BufferUsageNature nature){
+            _bufferMesh = new BufferMesh(mesh, freq, nature);
+            if(_shader) updateShaderAttribs();
+            return this;
+        }
+        
+        ///
+        Bundle bufferMesh(BufferMesh bufferMesh){
+            _bufferMesh = bufferMesh;
+            if(_shader) updateShaderAttribs();
+            return this;
+        }
+        
+        ///
+        Bundle updateShaderAttribs(){
             _bufferMesh.vao.begin();
             import std.algorithm;
             _bufferMesh.attribs.keys.filter!(key => key!="index").each!((key){
@@ -29,17 +54,6 @@ class Bundle {
                 _bufferMesh.attribs[key].end;
             });
             _bufferMesh.vao.end();
-        }
-        
-        ///
-        Bundle shader(Shader shader){
-            _shader = shader;
-            return this;
-        }
-        
-        ///
-        Bundle mesh(Mesh mesh, in BufferUsageFrequency freq, in BufferUsageNature nature){
-            _bufferMesh = new BufferMesh(mesh, freq, nature);
             return this;
         }
         
@@ -60,6 +74,14 @@ class Bundle {
             const scopedVao    = scoped(_bufferMesh.vao);
             const scopedShader = scoped(_shader);
             const iboScope     = scoped(_bufferMesh.attribs["index"]);
+            
+            import armos.graphics.renderer;
+            _shader.setUniform("modelViewMatrix", viewMatrix * modelMatrix);
+            _shader.setUniform("projectionMatrix", projectionMatrix);
+            _shader.setUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+            //TODO set valid matrix.
+            //TODO set textureMatrix to shader
+            
             _shader.enableAttribs();
                 int elements;
                 import derelict.opengl3.gl;

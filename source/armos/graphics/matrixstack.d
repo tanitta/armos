@@ -134,34 +134,35 @@ unittest{
 package mixin template MatrixStackFunction(string Name){
     public{
         import std.string;
+        /// armos.math.Matrix4f nameMatrix()
         mixin("
         armos.math.Matrix4f " ~ Name.toLower ~ "Matrix(){
           return currentRenderer." ~ Name.toLower ~ "Matrix;
         }
         ");
         
-        ///
+        /// void pushNameMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity)
         mixin("
         void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
             currentRenderer.push" ~ Name ~ "Matrix(newMatrix);
         }
         ");
 
-        ///
+        /// armos.math.Matrix4f popNameMatrix()
         mixin( "
         void pop" ~ Name ~ "Matrix(){
             currentRenderer.pop" ~ Name ~ "Matrix;
         }
         ");
 
-        ///
+        /// void multNameMatrix(in armos.math.Matrix4f matrix)
         mixin("
         void mult" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
             currentRenderer.mult" ~ Name ~ "Matrix(matrix);
         }
         ");
 
-        ///
+        /// void loadNameMatrix(in armos.math.Matrix4f matrix)
         mixin( "
         void load" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
             currentRenderer.load" ~ Name ~ "Matrix(matrix);

@@ -50,14 +50,14 @@ class Buffer {
 
         /++
         +/
-        Buffer array(T)(T[] array, in size_t count, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
+        Buffer array(T)(T[] array, in size_t dimention, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
             if(array.length == 0)return this;
             begin;
-            auto size = array.length * array[0].sizeof;
-            glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
+            _size = array.length * array[0].sizeof;
+            glBufferData(_bufferType, _size, array.ptr, usageEnum(freq, nature));
             import std.conv;
             glVertexAttribPointer(0,
-                                  count.to!int,
+                                  dimention.to!int,
                                   GL_FLOAT,
                                   GL_FALSE,
                                   0,
@@ -77,7 +77,6 @@ class Buffer {
             end;
             return this;
         }
-        
 
         /++
         +/
@@ -98,6 +97,7 @@ class Buffer {
         int[] _savedIDs;
         BufferType _bufferType;
         Vao _rootVao;
+        size_t _size;
     }//private
 }//class Vbo
 
