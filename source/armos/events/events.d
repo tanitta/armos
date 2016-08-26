@@ -228,7 +228,7 @@ unittest{
         override void draw(){}
         
 
-        override void keyPressed(int key) {
+        override void keyPressed(KeyType key) {
             
             char str_key = cast(char)key;
             pressedKey = key;
