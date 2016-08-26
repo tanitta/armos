@@ -243,7 +243,6 @@ private{
         ChunkHead* chunk;
 
         b = e;
-        size_t cursor;
         while (b < buf.length) {
             e = b + ChunkHead.sizeof;
             chunk = cast(ChunkHead*)buf[b..e];
