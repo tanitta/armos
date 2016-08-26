@@ -1,23 +1,23 @@
-import armos;
+static import ar = armos;
 
-class TestApp : ar.BaseApp{
+class TestApp : ar.app.BaseApp{
 	this(){}
 	
-	void setup(){}
+	override void setup(){}
 	
-	void update(){}
+	override void update(){}
 	
-	void draw(){}
+	override void draw(){}
 	
-	void keyPressed(int key){}
+	override void keyPressed(ar.utils.KeyType key){}
 	
-	void keyReleased(int key){}
+    override void keyReleased(ar.utils.KeyType key){}
 	
-	void mouseMoved(ar.Vector2i position, int button){}
+	override void mouseMoved(ar.math.Vector2i position, int button){}
 	
-	void mousePressed(ar.Vector2i position, int button){}
+	override void mousePressed(ar.math.Vector2i position, int button){}
 	
-	void mouseReleased(ar.Vector2i position, int button){}
+	override void mouseReleased(ar.math.Vector2i position, int button){}
 }
 
-void main(){ar.run(new TestApp);}
+void main(){ar.app.run(new TestApp);}
