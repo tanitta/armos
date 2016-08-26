@@ -166,6 +166,25 @@ void background(in float r, in float g, in float b, in float a = 255){
     currentRenderer.background = armos.types.Color(r, g, b, a);
 }
 
+///
+void fillBackground(){
+    currentRenderer.fillBackground = currentRenderer.background;
+}
+
+///
+void fillBackground(const armos.types.Color color){
+    currentRenderer.fillBackground = color;
+}
+
+///
+void fillBackground(const float gray){
+    currentRenderer.fillBackground = armos.types.Color(gray, gray, gray, 255);
+}
+///
+void fillBackground(in float r, in float g, in float b, in float a = 255){
+    currentRenderer.fillBackground = armos.types.Color(r, g, b, a);
+}
+
 /++
 +/
 void isBackgrounding(in bool b){
@@ -585,6 +604,11 @@ class Renderer {
         void background(in armos.types.Color color){
             _currentStyle.backgroundColor = cast(armos.types.Color)color;
             glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
+        }
+        
+        ///
+        armos.types.Color background(){
+            return _currentStyle.backgroundColor;
         }
 
         /++
