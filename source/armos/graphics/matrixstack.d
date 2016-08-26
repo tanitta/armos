@@ -16,39 +16,28 @@ Deprecated: 現在使用されていません．
 class MatrixStack {
     public{
         M4 matrix()const{
-            return _stackedMatrix * _currentMatrix;
+            return _matrices[$-1];
         }
         
-        void push(in M4 newMatrix = M4.identity){
-            _matrices ~= _currentMatrix;
-            updateStackedMatrix;
-            _currentMatrix = newMatrix;
+        void push(){
+            _matrices ~= _matrices[$-1];
         }
         
         void pop(){
-            _currentMatrix = _matrices[$-1];
             _matrices.popBack;
-            updateStackedMatrix;
         }
         
         void load(in M4 matrix){
-            _currentMatrix = matrix;
+            _matrices[$-1] = matrix;
         }
         
         void mult(in M4 matrix){
-            _currentMatrix = _currentMatrix * matrix;
+            _matrices[$-1] = _matrices[$-1] * matrix;
         }
     }//public
 
     private{
-        M4[] _matrices;
-        M4   _currentMatrix = armos.math.Matrix4f.identity;
-        M4   _stackedMatrix;
-        
-        void updateStackedMatrix(){
-            import std.algorithm;
-            _stackedMatrix = M4.identity.reduce!"a*b"(_matrices);
-        }
+        M4[] _matrices = [M4.identity];
     }//private
 }//class MatrixStack
 
@@ -143,8 +132,8 @@ package mixin template MatrixStackFunction(string Name){
         
         /// void pushNameMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity)
         mixin("
-        void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
-            currentRenderer.push" ~ Name ~ "Matrix(newMatrix);
+        void push" ~ Name ~ "Matrix(){
+            currentRenderer.push" ~ Name ~ "Matrix();
         }
         ");
 
@@ -183,8 +172,8 @@ package mixin template MatrixStackManipulator(string Name){
         
         ///
         mixin("
-        void push" ~ Name ~ "Matrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity){
-            _" ~ Name.toLower ~ "MatrixStack.push(newMatrix);
+        void push" ~ Name ~ "Matrix(){
+            _" ~ Name.toLower ~ "MatrixStack.push();
         }
         ");
 

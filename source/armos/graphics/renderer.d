@@ -310,13 +310,15 @@ void drawGrid(
 /++
 +/
 void popMatrix(){
-    currentRenderer.popMatrix();
+    // currentRenderer.popMatrix();
+    popModelMatrix;
 }
 
 /++
 +/
 void pushMatrix(){
-    currentRenderer.pushMatrix();
+    // currentRenderer.pushMatrix();
+    pushModelMatrix;
 }
 
 ///
@@ -364,19 +366,20 @@ unittest{
 /++
 +/
 void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
-    currentRenderer.translate(x, y, z);
+    import std.conv;
+    multModelMatrix(translationMatrix(x.to!float, y.to!float, z.to!float));
 }
 
 /++
 +/
 void translate(armos.math.Vector3f vec){
-    currentRenderer.translate(vec);
+    multModelMatrix(translationMatrix(vec[0], vec[1], vec[2]));
 }
 
 /++
 +/
 void translate(armos.math.Vector3d vec){
-    currentRenderer.translate(vec[0], vec[1], vec[2]);
+    multModelMatrix(translationMatrix!(float)(vec[0], vec[1], vec[2]));
 }
 
 ///
@@ -428,29 +431,29 @@ unittest{
 /++
 +/
 void scale(float x, float y, float z){
-    currentRenderer.scale(x, y, z);
+    multModelMatrix(scalingMatrix(x, y, z));
 }
 
 /++
 +/
 void scale(float s){
-    currentRenderer.scale(s, s, s);
+    multModelMatrix(scalingMatrix(s, s, s));
 }
 
 /++
 +/
 void scale(armos.math.Vector3f vec){
-    currentRenderer.scale(vec);
+    multModelMatrix(scalingMatrix(vec[0], vec[1], vec[2]));
 }
 
 ///
-M4 rotationMatrix(T, M4 = armos.math.Matrix!(T, 4, 4))(in T degrees, in T x, in T y, in T z)
+M4 rotationMatrix(T, M4 = armos.math.Matrix!(T, 4, 4))(in T rad, in T x, in T y, in T z)
 if(armos.math.isMatrix!(M4) && __traits(isArithmetic, T) && M4.rowSize == 4){
     import std.conv;
     import std.math;
     alias E = M4.elementType;
     alias M3 = armos.math.Matrix!(E, 3, 3);
-    immutable E d = degrees.to!E;
+    immutable E d = rad.to!E;
     immutable n = armos.math.Vector!(E, 3)(x, y, z).normalized;
     immutable r = M3(
         [E(0),     -n[2], n[1] ], 
@@ -480,11 +483,11 @@ unittest{
 }
 
 ///
-M rotate(M, T)(in M matrix, in T degrees, in T x, in T y, in T z)
+M rotate(M, T)(in M matrix, in T rad, in T x, in T y, in T z)
 if(armos.math.isMatrix!(M) && __traits(isArithmetic, T) && M.rowSize == 4){
     import std.conv;
     alias E = M.elementType;
-    return matrix * rotationMatrix(degrees.to!E, x.to!E, y.to!E, z.to!E);
+    return matrix * rotationMatrix(rad.to!E, x.to!E, y.to!E, z.to!E);
 }
 
 unittest{
@@ -507,14 +510,15 @@ unittest{
 
 /++
 +/
-void rotate(T)(in T degrees, in T vec_x, in T vec_y, in T vec_z)if(__traits(isArithmetic, T)){
-    currentRenderer.rotate(degrees, vec_x, vec_y, vec_z);
+void rotate(T)(in T rad, in T vec_x, in T vec_y, in T vec_z)if(__traits(isArithmetic, T)){
+    multModelMatrix(rotationMatrix!float(rad, vec_x, vec_y, vec_z));
 }
 
 /++
 +/
-void rotate(T, V)(in T degrees, V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
-    currentRenderer.rotate(degrees, vec);
+void rotate(T, V)(in T rad, V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
+    
+    multModelMatrix(rotationMatrix(rad, vec[0], vec[1], vec[2]));
 }
 
 /++
@@ -606,7 +610,8 @@ private struct ScopedMatrixStack{
     public{
         this(armos.graphics.MatrixStack matrixStack, in armos.math.Matrix4f matrix){
             _matrixStack = matrixStack;
-            _matrixStack.push(matrix);
+            _matrixStack.push();
+            _matrixStack.mult(matrix);
         }
         
         ~this(){
@@ -765,20 +770,6 @@ class Renderer {
             
             //TODO
             // _matrixStack.popProjectionMatrix;
-        }
-
-        /++
-        +/
-        void pushMatrix(){
-            // TODO
-            glPushMatrix();
-        }
-
-        /++
-        +/
-        void popMatrix(){
-            // TODO
-            glPopMatrix();
         }
 
         /++
@@ -955,7 +946,8 @@ class Renderer {
             ];
             import armos.utils.scoped;
             const scopedVao    = scoped(_bufferMesh.vao);
-            _bufferMesh.attribs["vertex"].array(vertices, armos.graphics.BufferUsageFrequency.Static, armos.graphics.BufferUsageNature.Draw);
+            _bufferMesh.attribs["vertex"].array(vertices, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
+            
             _bufferMesh.attribs["vertex"].begin;
             _shader.setAttrib("vertex");
             _bufferMesh.attribs["vertex"].end;
@@ -963,6 +955,7 @@ class Renderer {
             _shader.setUniform("modelViewMatrix", viewMatrix * modelMatrix);
             _shader.setUniform("projectionMatrix", projectionMatrix);
             _shader.setUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+            
             const scopedShader = scoped(_shader);
             _shader.enableAttrib("vertex");
             glDrawArrays(GL_LINES, 0, vertices.length);
@@ -1042,13 +1035,17 @@ class Renderer {
             // const scopedVao = scoped(_bufferMesh.vao);
             
             //set attribs
-            _bufferMesh.attribs["vertex"].array(vertices, armos.graphics.BufferUsageFrequency.Static, armos.graphics.BufferUsageNature.Draw);
-            if(useNormals) _bufferMesh.attribs["normal"].array(normals, armos.graphics.BufferUsageFrequency.Static, armos.graphics.BufferUsageNature.Draw);
+            _bufferMesh.vao.begin;
+            _bufferMesh.attribs["vertex"].array(vertices, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
+            if(useNormals) _bufferMesh.attribs["normal"].array(normals, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
             import std.algorithm;
             import std.array;
-            if(useColors) _bufferMesh.attribs["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, armos.graphics.BufferUsageFrequency.Static, armos.graphics.BufferUsageNature.Draw);
-            _bufferMesh.attribs["texCoord0"].array(texCoords, armos.graphics.BufferUsageFrequency.Static, armos.graphics.BufferUsageNature.Draw);
-            _bufferMesh.attribs["index"].array(indices, 0, armos.graphics.BufferUsageFrequency.Static, armos.graphics.BufferUsageNature.Draw);
+            if(useColors) _bufferMesh.attribs["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
+            _bufferMesh.attribs["texCoord0"].array(texCoords, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
+            import std.conv;
+            // _bufferMesh.attribs["index"].array(indices.map!(i=>i.to!uint).array, 0, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
+            _bufferMesh.attribs["index"].array(indices, 0, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
+            _bufferMesh.vao.end;
             
             _bundle.updateShaderAttribs;
                 
