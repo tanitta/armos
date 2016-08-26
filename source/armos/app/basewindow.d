@@ -172,7 +172,7 @@ class GLFWWindow : Window{
             Windowのサイズを返します．
         +/
         armos.math.Vector2i size(){
-            auto vec = armos.Vector2i();
+            auto vec = armos.math.Vector2i();
             glfwGetWindowSize(window, &vec[0], &vec[1]);
             return vec;
         }
