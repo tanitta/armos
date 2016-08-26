@@ -256,6 +256,7 @@ private{
             b = e;
 
             if (chunk.id == "fmt ") {
+                import std.algorithm : min;
                 e = b + min(chunk.size, WaveFormatChunk.sizeof);
                 format = cast(WaveFileFormat*)buf[b..e];
 
@@ -313,8 +314,4 @@ private{
         WaveFileFormat format;
     }
 
-    auto min(M, N)(M m, N n) {
-        return m > n ? n : m;
-    }
-    
 }
