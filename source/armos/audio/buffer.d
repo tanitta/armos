@@ -273,7 +273,7 @@ private{
                     if (offset % 2 == 0) {
                         //convert ubyte to 16 bit little endian integer
                         short val = cast(short)(bufPcm[offset] | (bufPcm[offset + 1] << 8));
-                        pcm[realIdx++] = cast(short)((val & 0x8000) ? val | 0xFFFF0000 : val);
+                        pcm[cast(uint)realIdx++] = cast(short)((val & 0x8000) ? val | 0xFFFF0000 : val);
                     }
                 } 
 
