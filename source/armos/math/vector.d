@@ -230,6 +230,121 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
+    +/
+    void opAddAssign(in VectorType v){
+        elements[] += v.elements[];
+    }
+    unittest{
+        auto vec1 = Vector3d(1.0,2.0,3.0);
+        auto vec2 = Vector3d(1.0,1.0,2.0);
+        vec1 += vec2;
+        assert(vec1 == Vector3d(2.0,3.0,5.0));
+    }
+
+    /++
+    +/
+    void opSubAssign(in VectorType v){
+        elements[] -= v.elements[];
+    }
+    unittest{
+        auto vec1 = Vector3d(5.0,4.0,3.0);
+        auto vec2 = Vector3d(3.0,2.0,1.0);
+        vec1 -= vec2;
+        assert(vec1 == Vector3d(2.0,2.0,2.0));
+    }
+
+    /++
+    +/
+    void opAddAssign(in T v){
+        elements[] += v;
+    }
+    unittest{
+        auto vec1 = Vector3d(1.0,2.0,3.0);
+        vec1 += 1.0;
+        assert(vec1 == Vector3d(2.0,3.0,4.0));
+    }
+
+    /++
+    +/
+    void opSubAssign(in T v){
+        elements[] -= v;
+    }
+    unittest{
+        auto vec1 = Vector3d(2.0,3.0,4.0);
+        vec1 -= 3.0;
+        assert(vec1 == Vector3d(-1.0,0.0,1.0));
+    }
+
+    /++
+    +/
+    void opModAssign(in T v){
+        elements[] %= v;
+    }
+    unittest{
+        auto vec1 = Vector3d(4.0,5.0,6.0);
+        vec1 %= 3.0;
+        assert(vec1 == Vector3d(1.0,2.0,0.0));
+    }
+
+    /++
+    +/
+    void opDivAssign(in T v){
+        elements[] /= v;
+    }
+    unittest{
+        auto vec1 = Vector3d(3.0,4.0,5.0);
+        vec1 /= 2.0;
+        assert(vec1 == Vector3d(1.5,2.0,2.5));
+    }
+
+    /++
+    +/
+    void opMulAssign(in T v){
+        elements[] *= v;
+    }
+    unittest{
+        auto vec1 = Vector3d(2.0,-1.0,1.0);
+        vec1 *= 3.0;
+        assert(vec1 == Vector3d(6.0,-3.0,3.0));
+    }
+
+    /++
+    +/
+    void opModAssign(in VectorType v){
+        elements[] %= v.elements[];
+    }
+    unittest{
+        auto vec1 = Vector3d(3.0,2.0,1.0);
+        auto vec2 = Vector3d(2.0,1.0,1.0);
+        vec1 %= vec2;
+        assert(vec1 == Vector3d(1.0,0.0,0.0));
+    }
+
+    /++
+    +/
+    void opDivAssign(in VectorType v){
+        elements[] /= v.elements[];
+    }
+    unittest{
+        auto vec1 = Vector3d(4.0,2.0,1.0);
+        auto vec2 = Vector3d(2.0,1.0,1.0);
+        vec1 /= vec2;
+        assert(vec1 == Vector3d(2.0,2.0,1.0));
+    }
+
+    /++
+    +/
+    void opMulAssign(in VectorType v){
+        elements[] *= v.elements[];
+    }
+    unittest{
+        auto vec1 = Vector3d(3.0,2.0,1.0);
+        auto vec2 = Vector3d(2.0,1.0,0.0);
+        vec1 *= vec2;
+        assert(vec1 == Vector3d(6.0,2.0,0.0));
+    }
+
+    /++
         Vectorのノルムを返します．
     +/
     T norm()const{
