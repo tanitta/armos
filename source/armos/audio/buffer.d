@@ -110,7 +110,7 @@ class Buffer {
             alBufferData(_id,
                          _format, 
                          _pcm.ptr,
-                         _pcm.length.to!int,
+                         _pcm.length.to!int*2,
                          info.rate);
             
             ov_clear(&vorbisFile);
@@ -156,7 +156,7 @@ class Buffer {
             alBufferData(_id,
                          _format, 
                          rangedPcm.ptr,
-                         rangedPcm.length.to!int,
+                         rangedPcm.length.to!int*2,
                          _sampleRate);
             return this;
         }
