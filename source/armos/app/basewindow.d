@@ -16,7 +16,12 @@ interface Window{
         armos.events.CoreEvents events();
 
         /++
-            サイズを返すプロパティです．
+            サイズのプロパティです
+        +/
+        void size(armos.math.Vector2i size);
+
+        /++
+            サイズのプロパティです．
         +/
         armos.math.Vector2i size();
 
@@ -168,6 +173,10 @@ class GLFWWindow : Window{
             writeVersion;
         }
 
+        void size(armos.math.Vector2i size){
+            glfwSetWindowSize(window, size[0], size[1]);
+        }
+
         /++
             Windowのサイズを返します．
         +/
@@ -275,6 +284,13 @@ class GLFWWindow : Window{
 +/
 armos.app.Window currentWindow(){
     return armos.app.mainLoop.window;
+}
+
+/++
+    現在のWindowの大きさを変更する関数です.
++/
+void windowSize(armos.math.Vector2i size){
+    currentWindow.size(size);
 }
 
 /++
