@@ -149,9 +149,9 @@ class Buffer {
             import std.conv;
             short[] rangedPcm;
             if(finishSec < 0f){
-                rangedPcm = _pcm[(_start*sampleRate).to!int..$];
+                rangedPcm = _pcm[(_start*sampleRate).to!int*2..$];
             }else{
-                rangedPcm = _pcm[(_start*sampleRate).to!int..(_finish*sampleRate).to!int];
+                rangedPcm = _pcm[(_start*sampleRate).to!int*2..(_finish*sampleRate).to!int*2];
             }
             alBufferData(_id,
                          _format, 
