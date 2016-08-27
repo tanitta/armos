@@ -243,7 +243,6 @@ private{
         ChunkHead* chunk;
 
         b = e;
-        size_t cursor;
         while (b < buf.length) {
             e = b + ChunkHead.sizeof;
             chunk = cast(ChunkHead*)buf[b..e];
@@ -256,6 +255,7 @@ private{
             b = e;
 
             if (chunk.id == "fmt ") {
+                import std.algorithm : min;
                 e = b + min(chunk.size, WaveFormatChunk.sizeof);
                 format = cast(WaveFileFormat*)buf[b..e];
 
@@ -266,14 +266,14 @@ private{
                 bufPcm = buf[b..e];
                 pcm.length = bufPcm.length / 2;
 
-                ulong realIdx;
+                size_t realIdx;
 
                 import std.range;
                 foreach (offset; bufPcm.length.iota) {
                     if (offset % 2 == 0) {
                         //convert ubyte to 16 bit little endian integer
                         short val = cast(short)(bufPcm[offset] | (bufPcm[offset + 1] << 8));
-                        pcm[cast(uint)realIdx++] = cast(short)((val & 0x8000) ? val | 0xFFFF0000 : val);
+                        pcm[realIdx++] = cast(short)((val & 0x8000) ? val | 0xFFFF0000 : val);
                     }
                 } 
 
@@ -313,8 +313,4 @@ private{
         WaveFileFormat format;
     }
 
-    auto min(M, N)(M m, N n) {
-        return m > n ? n : m;
-    }
-    
 }
