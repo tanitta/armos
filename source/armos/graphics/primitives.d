@@ -177,10 +177,10 @@ size = 長方形の大きさを指定します．
 armos.graphics.Mesh planePrimitive(in armos.math.Vector3f position, in armos.math.Vector2f size){
     auto mesh = new armos.graphics.Mesh;
     mesh.primitiveMode = armos.graphics.PrimitiveMode.Triangles;
-    mesh.addVertex(armos.math.Vector3f( -size[0]*0.5, -size[0]*0.5, 0)+position);
-    mesh.addVertex(armos.math.Vector3f( size[0]*0.5,  -size[0]*0.5, 0)+position);
-    mesh.addVertex(armos.math.Vector3f( size[0]*0.5,  size[0]*0.5,  0)+position);
-    mesh.addVertex(armos.math.Vector3f( -size[0]*0.5, size[0]*0.5,  0)+position);
+    mesh.addVertex(armos.math.Vector3f( -size[0]*0.5, -size[1]*0.5, 0)+position);
+    mesh.addVertex(armos.math.Vector3f( size[0]*0.5,  -size[1]*0.5, 0)+position);
+    mesh.addVertex(armos.math.Vector3f( size[0]*0.5,  size[1]*0.5,  0)+position);
+    mesh.addVertex(armos.math.Vector3f( -size[0]*0.5, size[1]*0.5,  0)+position);
 
     mesh.addIndex(0);
     mesh.addIndex(1);
