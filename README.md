@@ -12,26 +12,27 @@ armos is a free and open source library for creative coding in D programming lan
 # Demo
 
 ```
-import armos;
-class TestApp : ar.BaseApp{
-    ar.Mesh line = new ar.Mesh;
+import armos.app;
+import armos.graphics;
+class TestApp : BaseApp{
+    Mesh line = new Mesh;
 
-    void setup(){
-        ar.setLineWidth(2);
-        line.primitiveMode = ar.PrimitiveMode.LineStrip;
+    override void setup(){
+        lineWidth(2);
+        line.primitiveMode = PrimitiveMode.LineStrip;
     }
 
-    void draw(){
+    override void draw(){
         line.drawWireFrame;
     }
 
-    void mouseMoved(int x, int y, int button){
+    override void mouseMoved(int x, int y, int button){
         line.addVertex(x, y, 0);
         line.addIndex(cast(int)line.numVertices-1);
     }
 }
 
-void main(){ar.run(new TestApp);}
+void main(){run(new TestApp);}
 ```
 	
 	
