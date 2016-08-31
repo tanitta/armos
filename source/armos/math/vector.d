@@ -22,6 +22,17 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static assert(is(Vector!(float, 3).elementType == float));
     }
 
+    enum string coordNames = "xyzw";
+
+    static if (Dimention <= coordNames.length){
+        enum string coordName = coordNames[0..Dimention];
+    }else{
+        enum string coordName = "";
+    }
+    unittest{
+        static assert(Vector!(float,3).coordName == "xyz");
+    }
+
     /++
         Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
     +/
@@ -483,6 +494,82 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         vec_i = cast(Vector3i)vec_f;
 
         assert(vec_i[0] == 2);
+    }
+
+    /++
+        vec.x vec.xyのようにベクトルの一部を切り出すことが出来ます
+    +/
+    @property auto opDispatch(string swizzle)() if (swizzle.length > 0 && swizzle.length < coordName.length && coordName.length > 0) {
+        import std.string : indexOf,join;
+        import std.array : array;
+        import std.conv : to;
+        import std.algorithm.iteration : map;
+
+        static if (swizzle.length == 1) {
+            enum index = coordName.indexOf(swizzle[0]);
+            static if (index >= 0){
+                return elements[index];
+            }
+        } else {
+            enum int[] indecies = swizzle.map!(axis => coordName.indexOf(axis)).array;
+            mixin("return Vector!(T,swizzle.length)("~indecies.map!(index => "elements["~index.to!string~"]").array.join(',')~");");
+        }
+    }
+    unittest{
+        auto vec = Vector3f(1.0,2.0,3.0);
+
+        assert(vec.x == 1.0);
+        assert(vec.z == 3.0);
+
+        assert(vec.xy == Vector2f(1.0,2.0));
+        assert(vec.zx == Vector2f(3.0,1.0));
+
+        static assert (!__traits(compiles, vec.xw));
+    }
+
+    /++
+    +/
+    @property void opDispatch(string swizzle)(in T v) if (swizzle.length == 1 && coordName.length > 0) {
+        import std.string : indexOf;
+        enum index = coordName.indexOf(swizzle[0]);
+        static if (index >= 0) {
+            elements[index] = v;
+        }else{
+            static assert (false);
+        }
+    }
+    unittest{
+        auto vec = Vector3f(1.0,2.0,3.0);
+        vec.x = 4.0;
+        assert (vec == Vector3f(4.0,2.0,3.0));
+
+        static assert (!__traits(compiles,vec.w = 1.0));
+    }
+
+    /++
+    +/
+    @property void opDispatch(string swizzle,V)(in V v) if (swizzle.length > 0 && swizzle.length < coordName.length && coordName.length > 0 && isVector!V) {
+        import std.string : indexOf;
+        import std.array : array;
+        import std.conv : to;
+        import std.range : iota,zip;
+        import std.algorithm.iteration : map,reduce;
+        import std.traits;
+        static if (is(T == Unqual!(typeof(v.elements[0])))){
+            enum indecies = swizzle.map!(charcter => coordName.indexOf(charcter)).array;
+            mixin(swizzle.length.iota
+                        .zip(indecies)
+                        .map!(pair => "elements["~pair[1].to!string~"] = v.elements["~pair[0].to!string~"];")
+                        .reduce!"a~b"
+                        );
+         }
+    }
+    unittest{
+        auto vec = Vector3f(2.0,4.0,6.0);
+        vec.yx = Vector2f(0.0,1.0);
+        assert (vec == Vector3f(1.0,0.0,6.0));
+
+        static assert (!__traits(compiles,vec.xw = Vector2f(0.0,0.0)));
     }
 }
 
