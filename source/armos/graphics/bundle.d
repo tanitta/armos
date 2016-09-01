@@ -48,7 +48,8 @@ class Bundle {
         Bundle updateShaderAttribs(){
             _bufferMesh.vao.begin();
             import std.algorithm;
-            _bufferMesh.attribs.keys.filter!(key => key!="index").each!((key){
+            _bufferMesh.attribs.keys.filter!(key => key!="index")
+                                    .each!((key){
                 _bufferMesh.attribs[key].begin;
                 _shader.setAttrib(key);
                 _bufferMesh.attribs[key].end;

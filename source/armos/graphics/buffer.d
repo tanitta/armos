@@ -54,15 +54,18 @@ class Buffer {
             if(array.length == 0)return this;
             begin;
             _size = array.length * array[0].sizeof;
+            //TODO if array.length is'nt changed, use glBufferSubData
             glBufferData(_bufferType, _size, array.ptr, usageEnum(freq, nature));
             import std.conv;
-            glVertexAttribPointer(0,
-                                  dimention.to!int,
-                                  GL_FLOAT,
-                                  GL_FALSE,
-                                  0,
-                                  null,
-                                  );
+            if(_bufferType != BufferType.ElementArray){
+                glVertexAttribPointer(0,
+                                      dimention.to!int,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      0,
+                                      null,
+                                      );
+            }
             end;
             return this;
         }

@@ -598,8 +598,6 @@ mixin armos.graphics.matrixstack.MatrixStackFunction!("Projection");
 ///
 mixin armos.graphics.matrixstack.MatrixStackFunction!("Texture");
 
-//TODO set textureMatrix
-
 armos.math.Matrix4f modelViewProjectionMatrix(){
     return projectionMatrix * viewMatrix * modelMatrix;
 }
@@ -944,9 +942,12 @@ class Renderer {
                 armos.math.Vector4f(x1, y1, z1, 1f), 
                 armos.math.Vector4f(x2, y2, z2, 1f)
             ];
+            immutable freq = armos.graphics.BufferUsageFrequency.Dynamic;
+            immutable nature = armos.graphics.BufferUsageNature.Draw;
+            
             import armos.utils.scoped;
             const scopedVao    = scoped(_bufferMesh.vao);
-            _bufferMesh.attribs["vertex"].array(vertices, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
+            _bufferMesh.attribs["vertex"].array(vertices, freq, nature);
             
             _bufferMesh.attribs["vertex"].begin;
             _shader.setAttrib("vertex");
@@ -1031,21 +1032,20 @@ class Renderer {
             in bool useTextures,
             in bool useNormals
         ){
+            immutable freq = armos.graphics.BufferUsageFrequency.Dynamic;
+            immutable nature = armos.graphics.BufferUsageNature.Draw;
+            
             import armos.utils.scoped;
-            // const scopedVao = scoped(_bufferMesh.vao);
+            const scopedVao = scoped(_bufferMesh.vao);
             
             //set attribs
-            _bufferMesh.vao.begin;
-            _bufferMesh.attribs["vertex"].array(vertices, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
-            if(useNormals) _bufferMesh.attribs["normal"].array(normals, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
+            _bufferMesh.attribs["vertex"].array(vertices, freq, nature);
+            if(useNormals) _bufferMesh.attribs["normal"].array(normals, freq, nature);
             import std.algorithm;
             import std.array;
-            if(useColors) _bufferMesh.attribs["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
-            _bufferMesh.attribs["texCoord0"].array(texCoords, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
-            import std.conv;
-            // _bufferMesh.attribs["index"].array(indices.map!(i=>i.to!uint).array, 0, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
-            _bufferMesh.attribs["index"].array(indices, 0, armos.graphics.BufferUsageFrequency.Stream, armos.graphics.BufferUsageNature.Draw);
-            _bufferMesh.vao.end;
+            if(useColors) _bufferMesh.attribs["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
+            _bufferMesh.attribs["texCoord0"].array(texCoords, freq, nature);
+            _bufferMesh.attribs["index"].array(indices, 0, freq, nature);
             
             _bundle.updateShaderAttribs;
                 

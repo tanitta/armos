@@ -21,8 +21,8 @@ class BufferMesh {
                 import std.array;
                 import armos.types.color;
                 attribs["color"].array(mesh.colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
+                attribs["index"].array(mesh.indices, 0, freq, nature);
             _vao.end();
-            attribs["index"].array(mesh.indices, 0, freq, nature);
         }
         
         this(){
