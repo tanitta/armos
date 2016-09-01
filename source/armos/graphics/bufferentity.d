@@ -25,6 +25,9 @@ class BufferEntity {
         }
         
         ///
+        this(){}
+        
+        ///
         BufferEntity updateShaderAttribs(){
             _bufferMesh.vao.begin();
             import std.algorithm;
