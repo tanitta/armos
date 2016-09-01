@@ -521,23 +521,23 @@ void rotate(T, V)(in T rad, V vec)if(__traits(isArithmetic, T) && armos.math.isV
     multModelMatrix(rotationMatrix(rad, vec[0], vec[1], vec[2]));
 }
 
-/++
-+/
-void loadIdentity(){
-    currentRenderer.loadIdentity();
-}
-
-/++
-+/
-void loadMatrix(Q)(Q matrix){
-    currentRenderer.loadMatrix(matrix);
-}
-
-/++
-+/
-void multMatrix(Q)(Q matrix){
-    currentRenderer.multMatrix(matrix);
-}
+// /++
+// +/
+// void loadIdentity(){
+//     currentRenderer.loadIdentity();
+// }
+//
+// /++
+// +/
+// void loadMatrix(Q)(Q matrix){
+//     currentRenderer.loadMatrix(matrix);
+// }
+//
+// /++
+// +/
+// void multMatrix(Q)(Q matrix){
+//     currentRenderer.multMatrix(matrix);
+// }
 
 /++
 +/
@@ -741,73 +741,9 @@ class Renderer {
         
         /++
         +/
-        void matrixMode(MatrixMode mode){
-            glMatrixMode(getGLMatrixMode(mode));
-        }
-
-
-        /++
-        +/
-        //TODO replace pushProjectionMatrix
-        void bind(armos.math.Matrix4f projectionMatrix){
-            matrixMode(MatrixMode.Projection);
-            pushMatrix();
-            loadMatrix(projectionMatrix);
-            
-            //TODO
-            // _matrixStack.pushProjectionMatrix;
-            // _matrixStack.loadProjectionMatrix(projectionMatrix);
-        }
-
-        /++
-        +/
-        //TODO replace popProjectionMatrix
-        void unbind(){
-            matrixMode(MatrixMode.Projection);
-            popMatrix();
-            
-            //TODO
-            // _matrixStack.popProjectionMatrix;
-        }
-
-        /++
-        +/
-        void loadIdentity(){
-            // TODO
-            glLoadIdentity();
-        }
-
-        /++
-        +/
-        //TODO remove
-        void loadMatrix(M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
-            manipulateGlMatrix!("glLoadMatrix")(matrix);
-        }
-
-        /++
-        +/
-        //TODO remove
-        void multMatrix(M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
-            manipulateGlMatrix!("glMultMatrix")(matrix);
-        }
-        
-        private void manipulateGlMatrix(string FuncNamePre, M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
-            static if(is(M.elementType == double)){
-                mixin("alias F = " ~ FuncNamePre ~ "d;");
-                F(matrix.array.ptr);
-            }else if(is(M.elementType == float)){
-                mixin("alias F = " ~ FuncNamePre ~ "f;");
-                F(matrix.array.ptr);
-            }else{assert(false);}
-        }
-
-        /++
-        +/
         void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
             import std.conv;
             _modelMatrixStack.mult(translationMatrix!(float)(x, y, z));
-            //TODO remove
-            glTranslatef(x.to!float, y.to!float, z.to!float);
         }
 
         /++
@@ -821,8 +757,6 @@ class Renderer {
         void scale(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
             import std.conv;
             _modelMatrixStack.mult(scalingMatrix!(float)(x, y, z));
-            //TODO remove
-            glScalef(x.to!float, y.to!float, z.to!float);
         }
 
         /++
@@ -837,8 +771,6 @@ class Renderer {
         void rotate(T)(in T degrees, in T vecX, in T vecY, in T vecZ)if(__traits(isArithmetic, T)){
             import std.conv;
             _modelMatrixStack.mult(rotationMatrix!(float)(degrees, vecX, vecY, vecZ));
-            //TODO remove
-            glRotatef(degrees.to!float, vecX.to!float, vecY.to!float, vecZ.to!float);
         }
         
         ///
