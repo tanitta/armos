@@ -25,6 +25,7 @@ class Material {
 
         ///
         void begin(){
+            _shader.begin;
             if(_texture){
                 _texture.begin;
             }
@@ -35,6 +36,7 @@ class Material {
             if(_texture){
                 _texture.end;
             }
+            _shader.end;
         }
 
         ///

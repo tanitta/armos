@@ -1,49 +1,77 @@
 module armos.graphics.bufferentity;
 
-static import armos.graphics;
+import armos.graphics;
+import armos.graphics.mesh;
+import armos.graphics.material;
+import armos.graphics.buffer;
+import armos.graphics.buffermesh;
+import armos.graphics.shader;
 
 /++
 +/
 class BufferEntity {
+    import armos.utils.scoped;
     public{
         ///
-        void draw(in armos.graphics.PolyRenderMode renderMode){
-            _material.begin;
-            armos.graphics.pushStyle;
-            armos.graphics.color = _material.diffuse;
-            
-            //TODO
-            // armos.graphics.currentRenderer.draw(_bufferMesh, renderMode, false, false, false);
-            
-            armos.graphics.popStyle;
-            _material.end;
-        };
-        
-        /++
-            entityをワイヤフレームで描画します．
-        +/
-        void drawWireFrame(){
-            draw(armos.graphics.PolyRenderMode.WireFrame);
-        };
-
-        /++
-            entityの頂点を点で描画します．
-        +/
-        void drawVertices(){
-            draw(armos.graphics.PolyRenderMode.Points);
-        };
-
-        /++
-            meshの面を塗りつぶして描画します．
-        +/
-        void drawFill(){
-            draw(armos.graphics.PolyRenderMode.Fill);
-        };
+        this(Mesh mesh, Material material, in BufferUsageFrequency freq, in BufferUsageNature nature){
+            this(new BufferMesh(mesh, freq, nature), material);
+        }
         
         ///
-        BufferEntity bufferMesh(armos.graphics.BufferMesh bm){
-            _bufferMesh = bm;
+        this(BufferMesh bufferMesh, Material material){
+            _material = material;
+            _bufferMesh = bufferMesh;
+            updateShaderAttribs();
+        }
+        
+        ///
+        BufferEntity updateShaderAttribs(){
+            _bufferMesh.vao.begin();
+            import std.algorithm;
+            _bufferMesh.attribs.keys.filter!(key => key!="index")
+                                    .each!((key){
+                _bufferMesh.attribs[key].begin;
+                _material.shader.setAttrib(key);
+                _bufferMesh.attribs[key].end;
+            });
+            _bufferMesh.vao.end();
             return this;
+        }
+        
+        ///
+        void begin(){
+            _material.begin;
+            _bufferMesh.vao.begin;
+        }
+        
+        ///
+        void end(){
+            _bufferMesh.vao.end;
+            _material.end;
+        }
+        
+        ///
+        const(BufferMesh) bufferMesh(){
+            return _bufferMesh;
+        }
+        
+        ///
+        BufferEntity bufferMesh(BufferMesh bm){
+            _bufferMesh = bm;
+            if(_material && _material.shader) updateShaderAttribs();
+            return this;
+        }
+        
+        ///
+        BufferEntity mesh(Mesh mesh, in BufferUsageFrequency freq, in BufferUsageNature nature){
+            _bufferMesh = new BufferMesh(mesh, freq, nature);
+            if(_material && _material.shader) updateShaderAttribs();
+            return this;
+        }
+        
+        ///
+        const(Material) material(){
+            return _material;
         }
         
         ///
@@ -53,14 +81,63 @@ class BufferEntity {
         }
         
         ///
-        armos.graphics.BufferMesh bufferMesh(){
-            return _bufferMesh;
+        BufferEntity shader(Shader shader){
+            if(_material)_material = new Material;
+            _material.shader = shader;
+            if(_bufferMesh) updateShaderAttribs();
+            return this;
         }
         
         ///
-        armos.graphics.Material material(){
-            return _material;
+        void draw(){
+            const scopedVao    = scoped(_bufferMesh.vao);
+            const scopedShader = scoped(_material.shader);
+            const iboScope     = scoped(_bufferMesh.attribs["index"]);
+            
+            import armos.graphics.renderer;
+            _material.shader.setUniform("modelViewMatrix", viewMatrix * modelMatrix);
+            _material.shader.setUniform("projectionMatrix", projectionMatrix);
+            _material.shader.setUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+            //TODO set valid matrix.
+            //TODO set textureMatrix to shader
+            
+            _material.shader.enableAttribs();
+                int elements;
+                import derelict.opengl3.gl;
+                glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
+                import std.conv;
+                immutable int size = (elements/GLushort.sizeof).to!int;
+                glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, null);
+            _material.shader.disableAttribs();
         }
+        
+        void draw(in armos.graphics.PolyRenderMode renderMode){
+            import derelict.opengl3.gl;
+            glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(renderMode));
+            draw;
+            glPolygonMode(GL_FRONT_AND_BACK, currentStyle.isFill ?  GL_FILL : GL_LINE);
+        }
+        
+        /++
+            entityをワイヤフレームで描画します．
+        +/
+        void drawWireFrame(){
+            draw(armos.graphics.PolyRenderMode.WireFrame);
+        };
+        
+        /++
+            entityの頂点を点で描画します．
+        +/
+        void drawVertices(){
+            draw(armos.graphics.PolyRenderMode.Points);
+        };
+        
+        /++
+            meshの面を塗りつぶして描画します．
+        +/
+        void drawFill(){
+            draw(armos.graphics.PolyRenderMode.Fill);
+        };
     }//public
 
     private{

@@ -654,8 +654,8 @@ class Renderer {
             _fbo = new armos.graphics.Fbo;
             
             _bufferMesh = new armos.graphics.BufferMesh;
-            _shader = (new armos.graphics.Material).shader;
-            _bundle = new armos.graphics.Bundle(_bufferMesh, _shader);
+            _material = new armos.graphics.Material;
+            _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, _material);
             
             _modelMatrixStack.push;
             _viewMatrixStack.push;
@@ -979,18 +979,11 @@ class Renderer {
             _bufferMesh.attribs["texCoord0"].array(texCoords, freq, nature);
             _bufferMesh.attribs["index"].array(indices, 0, freq, nature);
             
-            _bundle.updateShaderAttribs;
+            _bufferEntity.updateShaderAttribs;
                 
             glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
-            _bundle.draw();
+            _bufferEntity.draw();
             glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
-        }
-        
-        // TODO use material shader
-        ///
-        void draw(armos.graphics.Bundle bundle){
-            import armos.utils;
-            auto m = scoped(bundle);
         }
 
         /++
@@ -1042,9 +1035,9 @@ class Renderer {
         armos.graphics.Style[] _styleStack;
         
         armos.graphics.Shader _shader;
-        armos.graphics.Material _currentMaterial;
+        armos.graphics.Material _material;;
         armos.graphics.BufferMesh _bufferMesh;
-        armos.graphics.Bundle _bundle;
+        armos.graphics.BufferEntity _bufferEntity;
         
         bool _isBackgrounding = true;
     }//private

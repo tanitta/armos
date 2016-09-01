@@ -1,13 +1,13 @@
 module armos.graphics.entity;
 
-static import armos.graphics;
+import armos.graphics;
 
 /++
 +/
 class Entity {
     public{
         ///
-        void draw(in armos.graphics.PolyRenderMode renderMode){
+        void draw(in PolyRenderMode renderMode){
             _material.begin;
             armos.graphics.pushStyle;
             armos.graphics.color = _material.diffuse;
@@ -15,6 +15,12 @@ class Entity {
             armos.graphics.popStyle;
             _material.end;
         };
+        
+        ///
+        //TODO after changing currentStyle
+        // void draw(){
+        //     draw(currentStyle.isFill?:PolyRenderMode.)
+        // };
         
         /++
             entityをワイヤフレームで描画します．
