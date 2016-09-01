@@ -711,7 +711,7 @@ class Renderer {
             lineWidth = s.lineWidth;
             isSmoothingLine = s.isSmoothing;
             isUsingDepthTest(s.isDepthTest);
-            _currentStyle.isFill = s.isFill;
+            _currentStyle.polyRenderMode = s.polyRenderMode;
         }
 
         /++
@@ -907,12 +907,6 @@ class Renderer {
             armos.math.Vector4f[] texCoords;
             int[4] indices = [0, 1, 2, 3];
 
-            armos.graphics.PolyRenderMode renderMode;
-            if(_currentStyle.isFill){
-                renderMode = armos.graphics.PolyRenderMode.Fill;
-            }else{
-                renderMode = armos.graphics.PolyRenderMode.WireFrame;
-            }
             draw(
                 vertices,
                 null,
@@ -920,7 +914,7 @@ class Renderer {
                 texCoords,
                 indices, 
                 armos.graphics.PrimitiveMode.TriangleStrip, 
-                renderMode,
+                _currentStyle.polyRenderMode, 
                 true,
                 false,
                 false
@@ -983,7 +977,7 @@ class Renderer {
                 
             glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
             _bufferEntity.draw();
-            glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
+            glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(_currentStyle.polyRenderMode));
         }
 
         /++

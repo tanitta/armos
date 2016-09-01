@@ -11,6 +11,6 @@ struct Style {
     armos.graphics.BlendMode blendMode;
     float lineWidth = 1.0;
     bool isSmoothing = true;
-    bool isFill = true;
+    armos.graphics.PolyRenderMode polyRenderMode = armos.graphics.PolyRenderMode.Fill;
     bool isDepthTest = false;
 }

@@ -17,10 +17,9 @@ class Entity {
         };
         
         ///
-        //TODO after changing currentStyle
-        // void draw(){
-        //     draw(currentStyle.isFill?:PolyRenderMode.)
-        // };
+        void draw(){
+            draw(currentStyle.polyRenderMode);
+        };
         
         /++
             entityをワイヤフレームで描画します．

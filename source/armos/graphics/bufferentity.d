@@ -115,7 +115,7 @@ class BufferEntity {
             import derelict.opengl3.gl;
             glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(renderMode));
             draw;
-            glPolygonMode(GL_FRONT_AND_BACK, currentStyle.isFill ?  GL_FILL : GL_LINE);
+            glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(currentStyle.polyRenderMode));
         }
         
         /++
