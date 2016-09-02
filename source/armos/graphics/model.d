@@ -195,15 +195,15 @@ class AssimpModelLoader {
 
             //diffuse
             aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
-            mat.diffuse = fromAiColor(color);
+            mat.attr!"diffuse" = fromAiColor(color);
 
             //speculer
             aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
-            mat.speculer = fromAiColor(color);
+            mat.attr!"speculer" = fromAiColor(color);
 
             //ambient
             aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
-            mat.ambient = fromAiColor(color);
+            mat.attr!"ambient" = fromAiColor(color);
 
             //texture
             aiString aiPath;

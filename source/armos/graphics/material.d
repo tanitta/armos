@@ -1,6 +1,6 @@
 module armos.graphics.material;
-static import armos.types;
-static import armos.graphics;
+import armos.types;
+import armos.graphics;
 
 /++
 材質を表すclassです．
@@ -38,40 +38,15 @@ class Material {
             }
             _shader.end;
         }
-
-        ///
-        void diffuse(in armos.types.Color d){ _diffuse = d; }
-
-        ///
-        void diffuse(T)(in T r, in T g, in T b, in T a = T( armos.graphics.Color.limit )){ 
-            _diffuse = armos.graphics.Color(r, g, b, a); 
+        
+        void attr(string Name)(Color c){
+            _attr[Name] = c;
         }
-
-        ///
-        armos.types.Color diffuse()const{return _diffuse; }
-
-        ///
-        void speculer(in armos.types.Color s){ _specular = s; }
-
-        ///
-        void speculer(T)(in T r, in T g, in T b, in T a = T( armos.graphics.Color.limit )){
-            _specular = armos.graphics.Color(r, g, b, a); 
+        
+        Color attr(string Name)()const{
+            return _attr[Name];
         }
-
-        ///
-        armos.types.Color speculer()const{return _specular; }
-
-        ///
-        void ambient(in armos.types.Color a){ _ambient = a; }
-
-        ///
-        void ambient(T)(in T r, in T g, in T b, in T a = T( armos.graphics.Color.limit )){
-            _ambient = armos.graphics.Color(r, g, b, a); 
-        }
-
-        ///
-        armos.types.Color ambient()const{return _ambient; }
-
+        
         ///
         void texture(armos.graphics.Texture tex){ _texture = tex; }
         
@@ -96,9 +71,7 @@ class Material {
     }//public
 
     private{
-        armos.types.Color _diffuse;
-        armos.types.Color _specular;
-        armos.types.Color _ambient;
+        armos.types.Color[string] _attr;
         armos.graphics.Texture _texture;
         armos.graphics.Shader _shader;
     }//private
@@ -125,7 +98,7 @@ out vec2 outtexCoord1;
 
 void main(void) {
     gl_Position = modelViewProjectionMatrix * vertex;
-    // f_color = color;
+    f_color = color;
     f_color = vec4(1, 1, 1, 1);
     outtexCoord0 = (textureMatrix * texCoord0).xy;
     outtexCoord1 = (textureMatrix * texCoord1).xy;
@@ -138,6 +111,9 @@ private immutable string defaultFragmentShaderSource = q{
 in vec4 f_color;
 in vec2 outtexCoord0;
 in vec2 outtexCoord1;
+
+uniform sampler2D tex0;
+uniform sampler2D tex1;
 
 void main(void) {
     gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, 1);
