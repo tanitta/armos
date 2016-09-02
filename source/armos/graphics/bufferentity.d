@@ -85,7 +85,7 @@ class BufferEntity {
         
         ///
         BufferEntity shader(Shader shader){
-            if(_material)_material = new Material;
+            if(_material)_material = new DefaultMaterial;
             _material.shader = shader;
             if(_bufferMesh) updateShaderAttribs();
             return this;

@@ -10,7 +10,7 @@ class Entity {
         void draw(in PolyRenderMode renderMode){
             _material.begin;
             armos.graphics.pushStyle;
-            armos.graphics.color = _material.attr!"diffuse";
+            armos.graphics.color = _material.attr("diffuse");
             armos.graphics.currentRenderer.draw(_mesh, renderMode, false, false, false);
             armos.graphics.popStyle;
             _material.end;

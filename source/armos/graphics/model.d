@@ -190,20 +190,20 @@ class AssimpModelLoader {
             auto name = fromAiString(aiName);
 
 
-            auto mat= new armos.graphics.Material;
+            auto mat= new armos.graphics.DefaultMaterial;
             aiColor4D color;
 
             //diffuse
             aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
-            mat.attr!"diffuse" = fromAiColor(color);
+            mat.attr("diffuse") = fromAiColor(color);
 
             //speculer
             aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
-            mat.attr!"speculer" = fromAiColor(color);
+            mat.attr("speculer") = fromAiColor(color);
 
             //ambient
             aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
-            mat.attr!"ambient" = fromAiColor(color);
+            mat.attr("ambient") = fromAiColor(color);
 
             //texture
             aiString aiPath;
