@@ -101,6 +101,7 @@ class BufferEntity {
             _material.shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
             _material.shader.uniform("projectionMatrix", projectionMatrix);
             _material.shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+            _material.shader.uniform("textureMatrix", textureMatrix);
             
             _material.shader.enableAttribs();
                 int elements;
