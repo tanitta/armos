@@ -879,15 +879,15 @@ class Renderer {
             
             import armos.utils.scoped;
             const scopedVao    = scoped(_bufferMesh.vao);
-            _bufferMesh.attribs["vertex"].array(vertices, freq, nature);
+            _bufferMesh.attr["vertex"].array(vertices, freq, nature);
             
-            _bufferMesh.attribs["vertex"].begin;
-            _shader.setAttrib("vertex");
-            _bufferMesh.attribs["vertex"].end;
+            _bufferMesh.attr["vertex"].begin;
+            _shader.attr("vertex");
+            _bufferMesh.attr["vertex"].end;
             
-            _shader.setUniform("modelViewMatrix", viewMatrix * modelMatrix);
-            _shader.setUniform("projectionMatrix", projectionMatrix);
-            _shader.setUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+            _shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
+            _shader.uniform("projectionMatrix", projectionMatrix);
+            _shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
             
             const scopedShader = scoped(_shader);
             _shader.enableAttrib("vertex");
@@ -964,14 +964,14 @@ class Renderer {
             import armos.utils.scoped;
             const scopedVao = scoped(_bufferMesh.vao);
             
-            //set attribs
-            _bufferMesh.attribs["vertex"].array(vertices, freq, nature);
-            if(useNormals) _bufferMesh.attribs["normal"].array(normals, freq, nature);
+            //set attr
+            _bufferMesh.attr["vertex"].array(vertices, freq, nature);
+            if(useNormals) _bufferMesh.attr["normal"].array(normals, freq, nature);
             import std.algorithm;
             import std.array;
-            if(useColors) _bufferMesh.attribs["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
-            _bufferMesh.attribs["texCoord0"].array(texCoords, freq, nature);
-            _bufferMesh.attribs["index"].array(indices, 0, freq, nature);
+            if(useColors) _bufferMesh.attr["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
+            _bufferMesh.attr["texCoord0"].array(texCoords, freq, nature);
+            _bufferMesh.attr["index"].array(indices, 0, freq, nature);
             
             _bufferEntity.updateShaderAttribs;
                 

@@ -111,7 +111,7 @@ class Shader {
         shader.setUniform("v", v);
         ----
         +/
-        void setUniform(V)(in string name, V v)
+        void uniform(V)(in string name, V v)
             if(isVector!(V) && V.dimention <= 4){
                 if(_isLoaded){
                     begin;
@@ -135,7 +135,7 @@ class Shader {
         shader.setUniform("m", m);
         ----
         +/
-        void setUniform(M)(in string name, M m)
+        void uniform(M)(in string name, M m)
             if(isMatrix!(M) && M.rowSize<=4 && M.colSize<=4){
                 if(_isLoaded){
                     begin;
@@ -158,7 +158,7 @@ class Shader {
         shader.setUniform("v", a, b, c);
         ----
         +/
-        void setUniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0])){
+        void uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0])){
             if(_isLoaded){
                 begin;
                 int location = uniformLocation(name);
@@ -171,20 +171,20 @@ class Shader {
 
         /++
         +/
-        void setUniformTexture(in string name, armos.graphics.Texture texture, int textureLocation){
+        void uniformTexture(in string name, armos.graphics.Texture texture, int textureLocation){
             import std.string;
             if(_isLoaded){
                 begin;scope(exit)end;
                 texture.begin;scope(exit)texture.end;
                 glActiveTexture(GL_TEXTURE0 + textureLocation);
-                setUniform(name, textureLocation);
+                uniform(name, textureLocation);
                 glActiveTexture(GL_TEXTURE0);
             }
         }
 
         /++
         +/
-        int attribLocation(in string name)const{
+        int attrLocation(in string name)const{
             import std.string;
             immutable location = glGetAttribLocation(_programID, name.toStringz);
             return location;
@@ -201,7 +201,7 @@ class Shader {
         shader.setAttrib("v", a, b, c);
         ----
         +/
-        void setAttrib(Args...)(in string name, Args v)if(Args.length > 0 && __traits(isArithmetic, Args[0])){
+        void attr(Args...)(in string name, Args v)if(Args.length > 0 && __traits(isArithmetic, Args[0])){
             if(_isLoaded){
                 begin;{
                     int location = attribLocation(name);
@@ -228,7 +228,7 @@ class Shader {
         shader.setAttrib("coord2d", vertices);
         ----
         +/
-        void setAttrib(Args...)(in string name, Args v)if(Args.length > 0 && !__traits(isArithmetic, Args[0])){
+        void attr(Args...)(in string name, Args v)if(Args.length > 0 && !__traits(isArithmetic, Args[0])){
             if(_isLoaded){
                 begin;{
                     int location = attribLocation(name);
@@ -246,10 +246,10 @@ class Shader {
         /++
             Set current selected buffer as an attribute.
         +/
-        void setAttrib(in string name){
+        void attr(in string name){
             if(_isLoaded){
                 begin;{
-                    int location = attribLocation(name);
+                    int location = attrLocation(name);
                     if(location != -1){
                         int dim = attribDim(name);
                         _attribNames[name] = true;
@@ -269,7 +269,7 @@ class Shader {
         shader.setAttrib("v", v);
         ----
         +/
-        void setAttrib(V)(in string name, V v)if(isVector!(V) && V.dimention <= 4){
+        void attr(V)(in string name, V v)if(isVector!(V) && V.dimention <= 4){
             if(_isLoaded){
                 begin;{
                     int location = attribLocation(name);
@@ -286,13 +286,13 @@ class Shader {
         /++
         +/
         void enableAttrib(in string name){
-            glEnableVertexAttribArray(attribLocation(name));
+            glEnableVertexAttribArray(attrLocation(name));
         }
 
         /++
         +/
         void disableAttrib(in string name){
-            glDisableVertexAttribArray(attribLocation(name));
+            glDisableVertexAttribArray(attrLocation(name));
         }
         
         ///
@@ -370,7 +370,7 @@ class Shader {
             int dim = 0;
             if(_isLoaded){
                 begin;scope(exit)end;
-                int location = attribLocation(name);
+                int location = attrLocation(name);
                 if(location != -1){
                     int maxLength;
                     glGetProgramiv(_programID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength);

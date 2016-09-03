@@ -31,11 +31,11 @@ class BufferEntity {
         BufferEntity updateShaderAttribs(){
             _bufferMesh.vao.begin();
             import std.algorithm;
-            _bufferMesh.attribs.keys.filter!(key => key!="index")
-                                    .each!((key){
-                _bufferMesh.attribs[key].begin;
-                _material.shader.setAttrib(key);
-                _bufferMesh.attribs[key].end;
+            _bufferMesh.attr.keys.filter!(key => key!="index")
+                                 .each!((key){
+                _bufferMesh.attr[key].begin;
+                _material.shader.attr(key);
+                _bufferMesh.attr[key].end;
             });
             _bufferMesh.vao.end();
             return this;
@@ -95,14 +95,12 @@ class BufferEntity {
         void draw(){
             const scopedVao    = scoped(_bufferMesh.vao);
             const scopedShader = scoped(_material.shader);
-            const iboScope     = scoped(_bufferMesh.attribs["index"]);
+            const iboScope     = scoped(_bufferMesh.attr["index"]);
             
             import armos.graphics.renderer;
-            _material.shader.setUniform("modelViewMatrix", viewMatrix * modelMatrix);
-            _material.shader.setUniform("projectionMatrix", projectionMatrix);
-            _material.shader.setUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
-            //TODO set valid matrix.
-            //TODO set textureMatrix to shader
+            _material.shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
+            _material.shader.uniform("projectionMatrix", projectionMatrix);
+            _material.shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
             
             _material.shader.enableAttribs();
                 int elements;
