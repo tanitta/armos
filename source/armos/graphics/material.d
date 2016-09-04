@@ -47,6 +47,14 @@ mixin template MaterialImpl(){
             if(_texture){
                 _texture.begin;
             }
+            import std.algorithm;
+            import std.array;
+            import armos.math;
+            foreach (string key; _attrs.keys) {
+                import std.conv;
+                auto v = Vector4f(_attrs[key].r.to!float/255f, _attrs[key].g.to!float/255f, _attrs[key].b.to!float/255f, _attrs[key].a.to!float/255f);
+                _shader.uniform(key, v);
+            }
             return this;
         }
 
@@ -61,18 +69,19 @@ mixin template MaterialImpl(){
 
         ///
         T attr(string Name, in Color c){
-            _attr[Name] = c;
+            _attrs[Name] = c;
             return this;
         }
 
         ///
         ref Color attr(string name){
-            return _attr[name];
+            return _attrs[name];
         }
 
         ///
         T texture(armos.graphics.Texture tex){
             _texture = tex; 
+            _shader.uniformTexture("tex0", _texture, 0);
             return this;
         }
 
@@ -99,7 +108,7 @@ mixin template MaterialImpl(){
     }//public
 
     private{
-        armos.types.Color[string] _attr;
+        armos.types.Color[string] _attrs;
         armos.graphics.Texture _texture;
         armos.graphics.Shader _shader;
     }//private
@@ -139,9 +148,8 @@ out vec2 outtexCoord1;
 void main(void) {
     gl_Position = modelViewProjectionMatrix * vertex;
     f_color = color;
-    // f_color = vec4(1, 1, 1, 1);
-    outtexCoord0 = (textureMatrix * texCoord0).xy;
-    outtexCoord1 = (textureMatrix * texCoord1).xy;
+    outtexCoord0 = texCoord0.xy;
+    outtexCoord1 = texCoord1.xy;
 }
 };
 
@@ -156,6 +164,6 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 
 void main(void) {
-    gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, 1);
+    gl_FragColor = texture( tex0, outtexCoord0) * vec4(f_color.x, f_color.y, f_color.z, 1);
 }
 };

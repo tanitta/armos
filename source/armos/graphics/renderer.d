@@ -653,8 +653,9 @@ class Renderer {
         this(){
             _fbo = new armos.graphics.Fbo;
             
-            _bufferMesh = new armos.graphics.BufferMesh;
-            _material = new armos.graphics.DefaultMaterial;
+            _bufferMesh   = new armos.graphics.BufferMesh;
+            _material     = new armos.graphics.DefaultMaterial;
+            _material.texture = (new armos.graphics.Texture).allocate(2, 2);
             _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, _material);
             
             _modelMatrixStack.push;
@@ -1022,15 +1023,15 @@ class Renderer {
 
     private{
         armos.graphics.Fbo _fbo;
-        bool _isUseFbo = true;
+        bool               _isUseFbo = true;
         
-        
-        armos.graphics.Style _currentStyle = armos.graphics.Style();
+        armos.graphics.Style   _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
         
-        armos.graphics.Shader _shader;
-        armos.graphics.Material _material;;
-        armos.graphics.BufferMesh _bufferMesh;
+        armos.graphics.Shader       _shader;
+        armos.graphics.Material     _material;
+        // armos.graphics.Texture      _dummyTexture;
+        armos.graphics.BufferMesh   _bufferMesh;
         armos.graphics.BufferEntity _bufferEntity;
         
         bool _isBackgrounding = true;

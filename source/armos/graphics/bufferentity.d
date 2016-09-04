@@ -93,9 +93,9 @@ class BufferEntity {
         
         ///
         void draw(){
-            const scopedVao    = scoped(_bufferMesh.vao);
-            const scopedShader = scoped(_material.shader);
-            const iboScope     = scoped(_bufferMesh.attr["index"]);
+            const scopedVao      = scoped(_bufferMesh.vao);
+            const scopedMaterial = scoped(_material);
+            const iboScope       = scoped(_bufferMesh.attr["index"]);
             
             import armos.graphics.renderer;
             _material.shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);

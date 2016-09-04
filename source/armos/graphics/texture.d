@@ -35,12 +35,12 @@ class Texture {
         /++
         +/
         this(){
-            glEnable(GL_TEXTURE_2D);
-            glGenTextures(1 , cast(uint*)&_texID);
+            glEnable(GL_TEXTURE);
+            glGenTextures(1 , cast(uint*)&_id);
         }
 
         ~this(){
-            glDeleteTextures(1 , cast(uint*)&_texID);
+            glDeleteTextures(1 , cast(uint*)&_id);
         }
 
         /++
@@ -65,29 +65,44 @@ class Texture {
         /++
             Return gl texture id.
         +/
-        int id()const{return _texID;}
+        int id()const{return _id;}
 
         /++
             Begin to bind the texture.
         +/
-        void begin(){
-            glGetIntegerv(GL_TEXTURE_BINDING_2D, &_savedTexID);
-            glBindTexture(GL_TEXTURE_2D , _texID);
+        Texture begin(){
+            int savedID;
+            glGetIntegerv(GL_TEXTURE_BINDING_2D,&savedID);
+            _savedIDs ~= savedID;
+            
+            glBindTexture(GL_TEXTURE_2D , _id);
+            
+            // _sampler.begin;
+            return this;
         }
 
         /++
             End to bind the texture.
         +/
-        void end(){
-            glBindTexture(GL_TEXTURE_2D , _savedTexID);
+        Texture end(){
+            import std.range;
+            glBindTexture(GL_TEXTURE_2D , _savedIDs[$-1]);
+            if (_savedIDs.length == 0) {
+                assert(0, "stack is empty");
+            }else{
+                _savedIDs.popBack;
+            }
+            // _sampler.end;
+            return this;
         }
 
         /++
             Resize texture.
         +/
-        void resize(in armos.math.Vector2i textureSize){
+        Texture resize(in armos.math.Vector2i textureSize){
             _size = textureSize;
             allocate;
+            return this;
         };
 
         /++
@@ -102,8 +117,9 @@ class Texture {
         /++
             Set pixel of texture
         +/
-        void pixel(in ubyte v){
+        Texture pixel(in ubyte v){
             assert(_bitsPtr!=null);
+            return this;
         }
 
         /++
@@ -112,10 +128,11 @@ class Texture {
             w = width
             h = height
         +/
-        void allocate(in int w, in int h){
+        Texture allocate(in int w, in int h){
             _size[0] = w;
             _size[1] = h;
             allocate;
+            return this;
         }
 
         /++
@@ -124,11 +141,12 @@ class Texture {
             w = width
             h = height
         +/
-        void allocate(in int w, in int h, armos.graphics.ColorFormat format){
+        Texture allocate(in int w, in int h, armos.graphics.ColorFormat format){
             _size[0] = w;
             _size[1] = h;
             _format = format;
             allocate;
+            return this;
         }
 
         /++
@@ -136,7 +154,7 @@ class Texture {
             Params:
             bitmap =
         +/
-        void allocate(armos.graphics.Bitmap!(char) bitmap){
+        Texture allocate(armos.graphics.Bitmap!(char) bitmap){
             import std.math;
             if(bitmap.width != bitmap.height){
                 int side = cast( int )fmax(bitmap.width, bitmap.height);
@@ -167,7 +185,7 @@ class Texture {
                 }
                 allocate(bits, bitmap.size[0], bitmap.size[1], bitmap.colorFormat);
             }
-
+            return this;
         }
 
         /++
@@ -177,57 +195,62 @@ class Texture {
             h    = height
             bits = image data
         +/
-        void allocate(ubyte[] bits, in int w, in int h, in armos.graphics.ColorFormat format){
+        Texture allocate(ubyte[] bits, in int w, in int h, in armos.graphics.ColorFormat format){
             _size[0] = w;
             _size[1] = h;
             _bitsPtr = bits.ptr;
             allocate(format);
+            return this;
         }
 
         /++
             Allocate texture
         +/
-        void allocate(in armos.graphics.ColorFormat format){
+        Texture allocate(in armos.graphics.ColorFormat format){
             _format = format;
             allocate();
+            return this;
         }
 
         /++
             Allocate texture
         +/
-        void allocate(){
+        Texture allocate(){
             GLuint internalFormat = armos.graphics.getGLInternalFormat(_format);
-            GLuint components= armos.graphics.numColorFormatElements(_format);
             begin;
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexImage2D(
-                    GL_TEXTURE_2D, 0, components,
+                    GL_TEXTURE_2D, 0, internalFormat,
                     _size[0], _size[1],
                     0, internalFormat, GL_UNSIGNED_BYTE, cast(GLvoid*)_bitsPtr
                     );
             end;
+            return this;
         }
 
         /++
         +/
-        void setMinMagFilter(in TextureFilter minFilter, in TextureFilter magFilter){
+        Texture setMinMagFilter(in TextureFilter minFilter, in TextureFilter magFilter){
             begin;
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
             end;
+            return this;
         }
 
         /++
         +/
-        void setMinMagFilter(in TextureFilter filter){
+        Texture setMinMagFilter(in TextureFilter filter){
             setMinMagFilter(filter, filter);
+            return this;
         }
     }
 
     private{
-        int _savedTexID;
-        int _texID;
+        // int _savedId;
+        int[] _savedIDs;
+        int _id;
         ubyte* _bitsPtr;
         armos.math.Vector2i _size;
         armos.graphics.ColorFormat _format;

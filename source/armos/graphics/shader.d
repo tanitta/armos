@@ -183,10 +183,9 @@ class Shader {
             import std.string;
             if(_isLoaded){
                 begin;scope(exit)end;
-                texture.begin;scope(exit)texture.end;
                 glActiveTexture(GL_TEXTURE0 + textureLocation);
+                texture.begin;scope(exit)texture.end;
                 uniform(name, textureLocation);
-                glActiveTexture(GL_TEXTURE0);
             }
             return this;
         }
