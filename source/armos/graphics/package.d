@@ -12,6 +12,7 @@ public import armos.graphics.rbo;
 public import armos.graphics.buffer;
 public import armos.graphics.vao;
 public import armos.graphics.texture;
+public import armos.graphics.sampler;
 public import armos.graphics.font;
 public import armos.graphics.pixel;
 public import armos.graphics.bitmap;
