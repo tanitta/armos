@@ -24,7 +24,7 @@ class Fbo{
         /++
         +/
         this(in int width, in int height){
-            glGenFramebuffers(1, cast(uint*)&fboID_);
+            glGenFramebuffers(1, cast(uint*)&_id);
 
             _colorTexture = new armos.graphics.Texture;
             _colorTexture.allocate(width, height, armos.graphics.ColorFormat.RGBA);
@@ -48,34 +48,34 @@ class Fbo{
             rect.addIndex(2);
             rect.addIndex(3);
 
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFboID_);
-            glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
+            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
+            glBindFramebuffer(GL_FRAMEBUFFER, _id);
 
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorTexture.id, 0);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, _depthTexture.id, 0);
-            glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
+            glBindFramebuffer(GL_FRAMEBUFFER, _savedId);
         }
 
         /++
             FBOへの描画処理を開始します．
         +/
         void begin(){
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFboID_);
-            glBindFramebuffer(GL_FRAMEBUFFER, fboID_);
+            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
+            glBindFramebuffer(GL_FRAMEBUFFER, _id);
         }
 
         /++
             FBOへの描画処理を終了します．
         +/
         void end(){
-            glBindFramebuffer(GL_FRAMEBUFFER, savedFboID_);
+            glBindFramebuffer(GL_FRAMEBUFFER, _savedId);
         }
 
         /++
             FBOのIDを返します．
         +/
         int id()const{
-            return fboID_;
+            return _id;
         }
 
         /++
@@ -109,8 +109,8 @@ class Fbo{
     }//public
 
     private{
-        int savedFboID_=0;
-        int fboID_ = 0;
+        int _savedId =0;
+        int _id = 0;
         armos.graphics.Texture _colorTexture;
         armos.graphics.Texture _depthTexture;
         armos.graphics.Mesh rect = new armos.graphics.Mesh;
