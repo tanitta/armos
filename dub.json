@@ -3,7 +3,7 @@
     "description": "Armos is a free and open source library for creative coding in D programming language.",
     "copyright": "Copyright © 2015, tanitta",
     "authors": ["tanitta"],
-    "license": "Boost",
+    "license": "BSL-1.0",
     "targetType": "library",
     "dependencies": {
         "derelict-sdl2": ">=1.9.7", 
