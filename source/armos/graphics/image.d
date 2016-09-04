@@ -66,7 +66,7 @@ class Image {
 
             画像を読み込みます．
         +/
-        void load(string pathInDataDir){
+        Image load(string pathInDataDir){
             import std.string;
             FIBITMAP * freeImageBitmap = null;
             _bitmap = armos.graphics.Bitmap!(char)();
@@ -97,18 +97,21 @@ class Image {
             }
 
             allocate;
+            
+            return this;
         }
 
 
-        void drawCropped(T)(
+        Image drawCropped(T)(
                 in T x, in T y,
                 in T startX, in T startY,
                 in T endX, in T endY
                 ){
             drawCropped(x, y, T(0), startX, startY, endX, endY);
+            return this;
         }
 
-        void drawCropped(T)(
+        Image drawCropped(T)(
                 in T x, in T y, in T z,
                 in T startX, in T startY,
                 in T endX, in T endY
@@ -132,6 +135,8 @@ class Image {
                 _texture.end;
                 armos.graphics.popMatrix;
             }
+            
+            return this;
         }
 
         /++
@@ -139,8 +144,9 @@ class Image {
 
             読み込んだ画像データを画面に描画します．
         +/
-        void draw(T)(in T x, in T y, in T z = T(0)){
+        Image draw(T)(in T x, in T y, in T z = T(0)){
             drawCropped(x, y, z, 0, 0, bitmap.width, bitmap.height);
+            return this;
         }
 
         /++
@@ -148,13 +154,14 @@ class Image {
 
             読み込んだ画像データを画面に描画します．
         +/
-        void draw(T)(in T position)const{
+        Image draw(T)(in T position)const{
             static if(position.data.length == 2)
                 draw(position[0], position[1]);
             else if(position.data.length == 3)
                 draw(position[0], position[1], position[2]);
             else
                 static assert(0, "arg is invalid dimention");
+            return this;
         }
 
         /++
@@ -188,10 +195,11 @@ class Image {
         /++
             Set bitmap
         +/
-        void bitmap(armos.graphics.Bitmap!(char) data){
+        Image bitmap(armos.graphics.Bitmap!(char) data){
             _bitmap = data;
             allocate();
             _isLoaded = true;
+            return this;
         }
 
         /++
@@ -199,16 +207,17 @@ class Image {
 
             一次元配列からImageを生成します
         +/
-        void setFromAlignedPixels(T)(T* pixels, int width, int height, armos.graphics.ColorFormat format){
+        Image setFromAlignedPixels(T)(T* pixels, int width, int height, armos.graphics.ColorFormat format){
             _bitmap.setFromAlignedPixels(cast(char*)pixels, width, height, format);
             allocate;
             _isLoaded = true;
+            return this;
         }
 
         /++
             与えられたbitmapを元にtextureとrectを生成します
         +/
-        void allocate(){
+        Image allocate(){
             _texture = new armos.graphics.Texture;
             _texture.allocate(_bitmap);
             _rect = new armos.graphics.Mesh;
@@ -227,6 +236,7 @@ class Image {
             _rect.addIndex(1);
             _rect.addIndex(2);
             _rect.addIndex(3);
+            return this;
         }
 
         /++
@@ -246,14 +256,16 @@ class Image {
 
         /++
         +/
-        void setMinMagFilter(in armos.graphics.TextureFilter minFilter, in armos.graphics.TextureFilter magFilter){
+        Image setMinMagFilter(in armos.graphics.TextureFilter minFilter, in armos.graphics.TextureFilter magFilter){
             _texture.setMinMagFilter(minFilter, magFilter);
+            return this;
         }
 
         /++
         +/
-        void setMinMagFilter(in armos.graphics.TextureFilter filter){
+        Image setMinMagFilter(in armos.graphics.TextureFilter filter){
             _texture.setMinMagFilter(filter);
+            return this;
         }
     }//public
 
