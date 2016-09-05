@@ -1,11 +1,12 @@
 import armos, std.stdio, std.math;
 import derelict.opengl3.gl;
-class TestApp : ar.BaseApp{
-	ar.Texture texture;
-	ar.Mesh rect;
 	
-	void setup(){
-		texture = new ar.Texture;
+static import ar = armos;
+class TestApp : ar.app.BaseApp{
+	ar.graphics.Texture texture;
+	ar.graphics.Mesh rect;
+	override void setup(){
+		texture = new ar.graphics.Texture;
 		uint i , j;
 		uint textureSize = 512;
 		ubyte[] bits = new ubyte[](textureSize*textureSize*4);
@@ -16,10 +17,10 @@ class TestApp : ar.BaseApp{
 				bits[i*512*4 + j*4 + 3] = cast(ubyte)( j*i );
 			}
 		}
-		texture.allocate(bits, textureSize, textureSize, ar.ColorFormat.RGBA);
 		
-		rect = new ar.Mesh;
-		rect.primitiveMode = ar.PrimitiveMode.TriangleStrip;
+		texture.allocate(bits, textureSize, textureSize, ar.graphics.ColorFormat.RGBA);
+		rect = new ar.graphics.Mesh;
+		rect.primitiveMode = ar.graphics.PrimitiveMode.TriangleStrip;
 		float x = 512;
 		float y = 512;
 		rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
@@ -33,11 +34,11 @@ class TestApp : ar.BaseApp{
 		rect.addIndex(3);
 	}
 	
-	void draw(){
+	override void draw(){
 		texture.begin;
 		rect.drawFill;
 		texture.end;
 	}
 }
 
-void main(){ar.run(new TestApp);}
+void main(){ar.app.run(new TestApp);}
