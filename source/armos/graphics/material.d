@@ -62,12 +62,6 @@ mixin template MaterialImpl(){
             }
             
             foreach (int index, string key; _textures.keys){
-                import std.stdio;
-                "--------".writeln;
-                key.writeln;
-                _textures.keys.writeln;
-                index.writeln;
-                
                 _shader.uniformTexture(key, _textures[key], index);
             }
             return this;
@@ -106,15 +100,6 @@ mixin template MaterialImpl(){
         ///
         T texture(in string name, armos.graphics.Texture tex){
             _textures[name] = tex;
-            // import std.conv;
-            // import std.algorithm;
-            // int index = _textures.keys.countUntil(name).to!int;
-            // import std.stdio;
-            // "--------".writeln;
-            // name.writeln;
-            // _textures.keys.writeln;
-            // index.writeln;
-            // _shader.uniformTexture(name, tex, index);
             return this;
         }
 
