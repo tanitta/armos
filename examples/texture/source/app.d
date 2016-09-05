@@ -1,4 +1,4 @@
-import armos, std.stdio, std.math;
+import std.stdio, std.math;
 import derelict.opengl3.gl;
 	
 static import ar = armos;
