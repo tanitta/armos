@@ -1,4 +1,4 @@
-import armos, std.stdio, std.math;
+import std.stdio, std.math;
 static import ar = armos;
 
 class TestApp : ar.app.BaseApp{
