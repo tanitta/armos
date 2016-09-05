@@ -71,13 +71,7 @@ class Texture {
             Begin to bind the texture.
         +/
         Texture begin(){
-            int savedID;
-            glGetIntegerv(GL_TEXTURE_BINDING_2D,&savedID);
-            _savedIDs ~= savedID;
-            
             glBindTexture(GL_TEXTURE_2D , _id);
-            
-            // _sampler.begin;
             return this;
         }
 
@@ -85,14 +79,7 @@ class Texture {
             End to bind the texture.
         +/
         Texture end(){
-            import std.range;
-            glBindTexture(GL_TEXTURE_2D , _savedIDs[$-1]);
-            if (_savedIDs.length == 0) {
-                assert(0, "stack is empty");
-            }else{
-                _savedIDs.popBack;
-            }
-            // _sampler.end;
+            glBindTexture(GL_TEXTURE_2D , 0);
             return this;
         }
 
@@ -248,8 +235,6 @@ class Texture {
     }
 
     private{
-        // int _savedId;
-        int[] _savedIDs;
         int _id;
         ubyte* _bitsPtr;
         armos.math.Vector2i _size;

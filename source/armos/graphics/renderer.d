@@ -655,7 +655,7 @@ class Renderer {
             
             _bufferMesh   = new armos.graphics.BufferMesh;
             _material     = new armos.graphics.DefaultMaterial;
-            _material.texture = (new armos.graphics.Texture).allocate(2, 2);
+            _material.texture("tex0", (new armos.graphics.Texture).allocate(2, 2));
             _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, _material);
             
             _modelMatrixStack.push;

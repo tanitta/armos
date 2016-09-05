@@ -184,7 +184,7 @@ class Shader {
             if(_isLoaded){
                 begin;scope(exit)end;
                 glActiveTexture(GL_TEXTURE0 + textureLocation);
-                texture.begin;scope(exit)texture.end;
+                texture.begin;
                 uniform(name, textureLocation);
             }
             return this;

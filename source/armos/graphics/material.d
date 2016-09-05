@@ -1,9 +1,10 @@
 module armos.graphics.material;
 import armos.types;
+import armos.math;
 import armos.graphics;
 
 /++
-材質を表すclassです．
+材質を表すinterfaceです．
 +/
 interface Material{
     public{
@@ -14,16 +15,19 @@ interface Material{
         Material end();
         
         ///
-        Material attr(string Name, in Color c);
+        Material attr(string name, in Color c);
         
         ///
-        ref Color attr(string Name);
+        Material attr(string name, in Vector4f v);
         
         ///
-        Material texture(armos.graphics.Texture tex);
+        ref Vector4f attr(string name);
+        
+        ///
+        Material texture(in string name, armos.graphics.Texture tex);
 
         ///
-        armos.graphics.Texture texture();
+        armos.graphics.Texture texture(in string name);
 
         ///
         armos.graphics.Shader shader();
@@ -44,49 +48,78 @@ mixin template MaterialImpl(){
         ///
         T begin(){
             _shader.begin;
-            if(_texture){
-                _texture.begin;
-            }
+            // foreach (string key; _textures.keys) {
+            //     auto texture = _textures[key];
+            //     if(texture){
+            //         texture.begin;
+            //     }
+            // }
             import std.algorithm;
             import std.array;
             import armos.math;
             foreach (string key; _attrs.keys) {
-                import std.conv;
-                auto v = Vector4f(_attrs[key].r.to!float/255f, _attrs[key].g.to!float/255f, _attrs[key].b.to!float/255f, _attrs[key].a.to!float/255f);
-                _shader.uniform(key, v);
+                _shader.uniform(key, _attrs[key]);
+            }
+            
+            foreach (int index, string key; _textures.keys){
+                import std.stdio;
+                "--------".writeln;
+                key.writeln;
+                _textures.keys.writeln;
+                index.writeln;
+                
+                _shader.uniformTexture(key, _textures[key], index);
             }
             return this;
         }
 
         ///
         T end(){
-            if(_texture){
-                _texture.end;
-            }
+            // foreach (string key; _textures.keys) {
+            //     auto texture = _textures[key];
+            //     if(texture){
+            //         texture.end;
+            //     }
+            // }
             _shader.end;
             return this;
         }
 
         ///
+        T attr(string Name, in Vector4f v){
+            _attrs[Name] = v;
+            return this;
+        }
+        
+        ///
         T attr(string Name, in Color c){
-            _attrs[Name] = c;
+            import std.conv;
+            _attrs[Name] = Vector4f(c.r.to!float/255f, c.g.to!float/255f, c.b.to!float/255f, c.a.to!float/255f);
             return this;
         }
 
         ///
-        ref Color attr(string name){
+        ref Vector4f attr(string name){
             return _attrs[name];
         }
 
         ///
-        T texture(armos.graphics.Texture tex){
-            _texture = tex; 
-            _shader.uniformTexture("tex0", _texture, 0);
+        T texture(in string name, armos.graphics.Texture tex){
+            _textures[name] = tex;
+            // import std.conv;
+            // import std.algorithm;
+            // int index = _textures.keys.countUntil(name).to!int;
+            // import std.stdio;
+            // "--------".writeln;
+            // name.writeln;
+            // _textures.keys.writeln;
+            // index.writeln;
+            // _shader.uniformTexture(name, tex, index);
             return this;
         }
 
         ///
-        armos.graphics.Texture texture(){return _texture;}
+        armos.graphics.Texture texture(in string name){return _textures[name];}
 
         ///
         armos.graphics.Shader shader(){
@@ -108,8 +141,8 @@ mixin template MaterialImpl(){
     }//public
 
     private{
-        armos.types.Color[string] _attrs;
-        armos.graphics.Texture _texture;
+        Vector4f[string] _attrs;
+        armos.graphics.Texture[string] _textures;
         armos.graphics.Shader _shader;
     }//private
    
@@ -164,6 +197,6 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 
 void main(void) {
-    gl_FragColor = texture( tex0, outtexCoord0) * vec4(f_color.x, f_color.y, f_color.z, 1);
+    gl_FragColor = texture(tex0, outtexCoord0) + texture(tex1, outtexCoord0);
 }
 };

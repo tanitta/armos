@@ -195,15 +195,15 @@ class AssimpModelLoader {
 
             //diffuse
             aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
-            mat.attr("diffuse") = fromAiColor(color);
+            mat.attr("diffuse", fromAiColor(color));
 
             //speculer
             aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
-            mat.attr("speculer") = fromAiColor(color);
+            mat.attr("speculer", fromAiColor(color));
 
             //ambient
             aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
-            mat.attr("ambient") = fromAiColor(color);
+            mat.attr("ambient", fromAiColor(color));
 
             //texture
             aiString aiPath;
@@ -220,7 +220,7 @@ class AssimpModelLoader {
                 immutable string textureFileName = fromAiString( aiPath );
                 image.load(buildPath( dirName(_modelfilepath), textureFileName ));
 
-                mat.texture = image.texture;
+                mat.texture("tex0", image.texture);
             }
 
             return mat;
