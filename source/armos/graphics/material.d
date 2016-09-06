@@ -47,13 +47,15 @@ mixin template MaterialImpl(){
     public{
         ///
         T begin(){
+            pushMaterialStack(this);
+            
             _shader.begin;
-            // foreach (string key; _textures.keys) {
-            //     auto texture = _textures[key];
-            //     if(texture){
-            //         texture.begin;
-            //     }
-            // }
+            foreach (string key; _textures.keys) {
+                auto texture = _textures[key];
+                if(texture){
+                    texture.begin;
+                }
+            }
             import std.algorithm;
             import std.array;
             import armos.math;
@@ -69,13 +71,15 @@ mixin template MaterialImpl(){
 
         ///
         T end(){
-            // foreach (string key; _textures.keys) {
-            //     auto texture = _textures[key];
-            //     if(texture){
-            //         texture.end;
-            //     }
-            // }
+            foreach (string key; _textures.keys) {
+                auto texture = _textures[key];
+                if(texture){
+                    texture.end;
+                }
+            }
             _shader.end;
+            
+            popMaterialStack;
             return this;
         }
 
@@ -182,6 +186,6 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 
 void main(void) {
-    gl_FragColor = texture(tex0, outtexCoord0) + texture(tex1, outtexCoord0);
+    gl_FragColor = texture(tex0, outtexCoord0);
 }
 };

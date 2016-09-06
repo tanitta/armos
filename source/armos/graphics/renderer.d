@@ -638,6 +638,26 @@ ScopedMatrixStack scopedTextureMatrix(in armos.math.Matrix4f matrix = armos.math
     return ScopedMatrixStack(currentRenderer._textureMatrixStack, matrix);
 }
 
+// ///
+// void currentMaterial(armos.graphics.Material material){
+//     currentRenderer.currentMaterial = material;
+// }
+
+///
+void pushMaterialStack(armos.graphics.Material material){
+    currentRenderer.pushMaterialStack(material);
+}
+
+///
+void popMaterialStack(){
+    currentRenderer.popMaterialStack;
+}
+
+///
+armos.graphics.Material currentMaterial(){
+    return currentRenderer.currentMaterial;
+}
+
 /++
 +/
 class Renderer {
@@ -654,9 +674,10 @@ class Renderer {
             _fbo = new armos.graphics.Fbo;
             
             _bufferMesh   = new armos.graphics.BufferMesh;
-            _material     = new armos.graphics.DefaultMaterial;
-            _material.texture("tex0", (new armos.graphics.Texture).allocate(2, 2));
-            _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, _material);
+            _materialStack ~= new armos.graphics.DefaultMaterial;
+            currentMaterial.texture("tex0", (new armos.graphics.Texture).allocate(2, 2));
+            currentMaterial.texture("tex1", (new armos.graphics.Texture).allocate(2, 2));
+            _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, currentMaterial);
             
             _modelMatrixStack.push;
             _viewMatrixStack.push;
@@ -1019,6 +1040,24 @@ class Renderer {
             _currentStyle.blendMode = mode;
         }
 
+        void pushMaterialStack(armos.graphics.Material material){
+            _materialStack ~= material;
+            _bufferEntity.material = currentMaterial;
+        }
+        
+        void popMaterialStack(){
+            import std.range;
+            if (_materialStack.length == 0) {
+                assert(0, "stack is empty");
+            }else{
+                _materialStack.popBack;
+            }
+            _bufferEntity.material = currentMaterial;
+        }
+        
+        armos.graphics.Material currentMaterial(){
+            return _materialStack[$-1];
+        }
     }//public
 
     private{
@@ -1029,8 +1068,8 @@ class Renderer {
         armos.graphics.Style[] _styleStack;
         
         armos.graphics.Shader       _shader;
-        armos.graphics.Material     _material;
-        // armos.graphics.Texture      _dummyTexture;
+        armos.graphics.Material[]     _materialStack;
+        
         armos.graphics.BufferMesh   _bufferMesh;
         armos.graphics.BufferEntity _bufferEntity;
         

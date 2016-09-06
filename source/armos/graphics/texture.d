@@ -82,6 +82,12 @@ class Texture {
             glBindTexture(GL_TEXTURE_2D , 0);
             return this;
         }
+        
+        ///
+        Texture bind(){
+            glBindTexture(GL_TEXTURE_2D , _id);
+            return this;
+        };
 
         /++
             Resize texture.
