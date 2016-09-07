@@ -1,7 +1,9 @@
 module armos.graphics.fbo;
 import armos.graphics;
+import armos.types;
 import derelict.opengl3.gl;
 import armos.math.vector;
+// import armos.graphics.material;
 
 /++
     Frame Buffer Objectを表すclassです．
@@ -34,19 +36,27 @@ class Fbo{
 
             float x = width;
             float y = height;
-            rect.primitiveMode = armos.graphics.PrimitiveMode.TriangleStrip;
+            
+            rect = new Mesh;
 
-            _colorTexture.begin;
-            rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
-            rect.addTexCoord(0, 0);rect.addVertex(0, y, 0);
-            rect.addTexCoord(1, 1);rect.addVertex(x, 0, 0);
-            rect.addTexCoord(1, 0);rect.addVertex(x, y, 0);
-            _colorTexture.end;
-
-            rect.addIndex(0);
-            rect.addIndex(1);
-            rect.addIndex(2);
-            rect.addIndex(3);
+            rect.vertices = [
+                Vector4f(0.0, 0.0,  0.0, 1.0f),
+                Vector4f(0.0, y,  0.0, 1.0f),
+                Vector4f(x,  y,  0.0, 1.0f),
+                Vector4f(x,  0.0,  0.0, 1.0f),
+            ];
+            
+            rect.texCoords0= [
+                Vector4f(0f, 0f,  0.0, 1.0f),
+                Vector4f(0, 1f,  0.0, 1.0f),
+                Vector4f(1,  1,  0.0, 1.0f),
+                Vector4f(1.0,  0,  0.0, 1.0f),
+            ];
+            
+            rect.indices = [
+                0, 1, 2,
+                2, 3, 0,
+            ];
 
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
             glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -54,21 +64,26 @@ class Fbo{
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorTexture.id, 0);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, _depthTexture.id, 0);
             glBindFramebuffer(GL_FRAMEBUFFER, _savedId);
+            
+            _material = (new FboMaterial).texture("colorTexture", _colorTexture)
+                                         .texture("depthTexture", _depthTexture);
         }
 
         /++
             FBOへの描画処理を開始します．
         +/
-        void begin(){
+        Fbo begin(){
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
             glBindFramebuffer(GL_FRAMEBUFFER, _id);
+            return this;
         }
 
         /++
             FBOへの描画処理を終了します．
         +/
-        void end(){
+        Fbo end(){
             glBindFramebuffer(GL_FRAMEBUFFER, _savedId);
+            return this;
         }
 
         /++
@@ -81,10 +96,11 @@ class Fbo{
         /++
             FBOを描画します．
         +/
-        void draw(){
-            _colorTexture.begin;
+        Fbo draw(){
+            _material.begin;
             rect.drawFill();
-            _colorTexture.end;
+            _material.end;
+            return this;
         }
 
         /++
@@ -92,20 +108,41 @@ class Fbo{
             Params:
             size = リサイズ後のサイズ
         +/
-        void resize(in armos.math.Vector2i size){
+        Fbo resize(in armos.math.Vector2i size){
+            size.print;
             begin;
             rect.vertices[1][1] = size[1];
             rect.vertices[2][0] = size[0];
-            rect.vertices[3][1] = size[1];
+            rect.vertices[2][1] = size[1];
             rect.vertices[3][0] = size[0];
-            _colorTexture.resize(size);
+            // _colorTexture.resize(size);
+            _colorTexture.resize(Vector2i(size[0], size[1]));
             _depthTexture.resize(size);
             end;
+            return this;
         }
-
-        // void draw(in armos.math.Vector2f position, in armos.math.Vector2f size){
-        //	 draw(position[0], position[1], size[0], size[1]);
-        // }
+        
+        bool isFlip()const{return _isFlip;}
+        
+        Fbo isFlip(in bool f){
+            _isFlip = f;
+            if(_isFlip){
+                rect.texCoords0 = [
+                    Vector4f(0f, 1f,  0.0, 1.0f),
+                    Vector4f(0, 0f,  0.0, 1.0f),
+                    Vector4f(1,  0,  0.0, 1.0f),
+                    Vector4f(1.0,  1,  0.0, 1.0f),
+                ];
+            }else{
+                rect.texCoords0 = [
+                    Vector4f(0f, 0f,  0.0, 1.0f),
+                    Vector4f(0, 1f,  0.0, 1.0f),
+                    Vector4f(1,  1,  0.0, 1.0f),
+                    Vector4f(1.0,  0,  0.0, 1.0f),
+                ];
+            }
+            return this;
+        }
     }//public
 
     private{
@@ -114,5 +151,65 @@ class Fbo{
         armos.graphics.Texture _colorTexture;
         armos.graphics.Texture _depthTexture;
         armos.graphics.Mesh rect = new armos.graphics.Mesh;
+        armos.graphics.Material _material;
+        
+        bool _isFlip = false;
     }//private
 }
+
+/++
++/
+class FboMaterial : armos.graphics.Material{
+    mixin armos.graphics.MaterialImpl;
+    
+    ///
+    this(){
+        _shader = new armos.graphics.Shader;
+        _shader.loadSources(fboVertesShaderSource, fboFragmentShaderSource);
+    }
+    
+    private{
+    }
+}//class FboMaterial
+
+private immutable string fboVertesShaderSource = q{
+#version 330
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewProjectionMatrix;
+uniform mat4 textureMatrix;
+
+in vec4 vertex;
+in vec3 normal;
+in vec3 tangent;
+in vec4 texCoord0;
+in vec4 texCoord1;
+in vec4 color;
+
+out vec4 f_color;
+out vec2 outtexCoord0;
+out vec2 outtexCoord1;
+
+void main(void) {
+    gl_Position = modelViewProjectionMatrix * vertex;
+    f_color = color;
+    outtexCoord0 = texCoord0.xy;
+    outtexCoord1 = texCoord1.xy;
+}
+};
+
+private immutable string fboFragmentShaderSource = q{
+#version 330
+    
+in vec4 f_color;
+in vec2 outtexCoord0;
+in vec2 outtexCoord1;
+
+uniform sampler2D colorTexture;
+uniform sampler2D depthTexture;
+
+void main(void) {
+    gl_FragColor = texture(colorTexture, outtexCoord0);
+}
+};
