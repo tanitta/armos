@@ -156,6 +156,6 @@ class Mesh {
     }//public
 
     private{
-        armos.graphics.PrimitiveMode primitiveMode_;
+        armos.graphics.PrimitiveMode primitiveMode_ = armos.graphics.PrimitiveMode.Triangles;
     }//private
 }//class Mesh

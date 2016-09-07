@@ -225,7 +225,7 @@ class Label : Widget{
         override void draw(){
             armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
-            armos.graphics.color(_style.colors["font1"]);
+            _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_str, _style.font.width, 0);
         };
     }//public
@@ -253,7 +253,7 @@ class Partition : Widget{
         override void draw(){
             armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
-            armos.graphics.color(_style.colors["font2"]);
+            _style.font.material.attr("diffuse", _style.colors["font2"]);
             string str;
             for (int i = 0; i < _style.width/_style.font.width/_str.length; i++) {
                 str ~= _str;
@@ -301,7 +301,8 @@ class Slider(T) : Widget{
             }else if(__traits(isFloating, *_var)){
                 varString = format("%f", *_var).to!string;
             }
-            armos.graphics.color(_style.colors["font1"]);
+            _style.font.material.attr("diffuse", _style.colors["font1"]);
+            
             _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
 
             immutable int currentValueAsSliderPosition = armos.math.map.map( ( *_var ).to!float, _varMin.to!float, _varMax.to!float, 0.0, _style.width.to!float - _style.font.width.to!float*2.0).to!int;
@@ -404,7 +405,7 @@ class MovingGraph(T) : Widget{
             }else if(__traits(isFloating, *_var)){
                 varString = format("%f", *_var).to!string;
             }
-            armos.graphics.color(_style.colors["font1"]);
+            _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
 
             armos.graphics.color(_style.colors["base1"]);
@@ -484,7 +485,7 @@ class MovingGraphXY(T) : Widget{
                 varStringX = format("%f", *_varX).to!string;
                 varStringY = format("%f", *_varY).to!string;
             }
-            armos.graphics.color(_style.colors["font1"]);
+            _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_nameX ~ " : " ~ varStringX, _style.font.width, 0);
             _style.font.draw(_nameY ~ " : " ~ varStringY, _style.font.width, _style.font.height);
 
@@ -541,7 +542,7 @@ class Button : Widget{
             armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
-            armos.graphics.color(_style.colors["font1"]);
+            _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_name, _style.font.width, 0);
 
             if(*_v){
@@ -611,7 +612,7 @@ class ToggleButton : Widget{
             armos.graphics.color(_style.colors["background"]);
             armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
 
-            armos.graphics.color(_style.colors["font1"]);
+            _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_name, _style.font.width, 0);
 
             if(*_v){

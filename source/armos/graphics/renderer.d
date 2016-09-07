@@ -934,13 +934,13 @@ class Renderer {
         +/
         void drawRectangle(in float x, in float y, in float w, in float h){
             armos.math.Vector4f[4] vertices;
-            vertices[0] = armos.math.Vector4f(x, y, 0f, 1f);
-            vertices[1] = armos.math.Vector4f(x, y+h, 0f, 1f);
-            vertices[2] = armos.math.Vector4f(x+w, y, 0f, 1f);
-            vertices[3] = armos.math.Vector4f(x+w, y+h, 0f, 1f);
+            vertices[0] = armos.math.Vector4f(x,   y,   0f, 1f);
+            vertices[1] = armos.math.Vector4f(x,   y+h, 0f, 1f);
+            vertices[2] = armos.math.Vector4f(x+w, y+h, 0f, 1f);
+            vertices[3] = armos.math.Vector4f(x+w, y,   0f, 1f);
 
             armos.math.Vector4f[] texCoords;
-            int[4] indices = [0, 1, 2, 3];
+            int[] indices = [0, 1, 2, 2, 3, 0];
 
             draw(
                 vertices,
@@ -1011,7 +1011,7 @@ class Renderer {
             _bufferEntity.updateShaderAttribs;
                 
             glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
-            _bufferEntity.draw();
+            _bufferEntity.primitiveMode(primitiveMode).draw();
             glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(_currentStyle.polyRenderMode));
         }
 

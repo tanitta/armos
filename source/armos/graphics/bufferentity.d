@@ -109,7 +109,7 @@ class BufferEntity {
                 glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
                 import std.conv;
                 immutable int size = (elements/GLuint.sizeof).to!int;
-                glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, null);
+                glDrawElements(_primitiveMode.getGLPrimitiveMode, size, GL_UNSIGNED_INT, null);
             _material.shader.disableAttribs();
         }
         
@@ -140,10 +140,22 @@ class BufferEntity {
         void drawFill(){
             draw(armos.graphics.PolyRenderMode.Fill);
         };
+        
+        ///
+        BufferEntity primitiveMode(in armos.graphics.PrimitiveMode mode){
+            _primitiveMode = mode;
+            return this;
+        }
+        
+        ///
+        armos.graphics.PrimitiveMode primitiveMode()const{
+            return _primitiveMode;
+        }
     }//public
 
     private{
         armos.graphics.BufferMesh _bufferMesh;
         armos.graphics.Material _material;
+        armos.graphics.PrimitiveMode _primitiveMode = armos.graphics.PrimitiveMode.Triangles;
     }//private
 }//class BufferEntity

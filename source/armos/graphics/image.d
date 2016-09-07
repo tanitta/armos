@@ -283,6 +283,11 @@ class Image {
             _texture.setMinMagFilter(filter);
             return this;
         }
+        
+        ///
+        Material material(){
+            return _material;
+        }
     }//public
 
     private{

@@ -20,11 +20,12 @@ class BitmapFont {
             fontWidth = フォントの横幅を指定します．
             fontHeight= フォントの縦幅を指定します．
         +/
-        void load(in string fileName, in int fontWidth, in int fontHeight){
+        BitmapFont load(in string fileName, in int fontWidth, in int fontHeight){
             _image.load(fileName);
             _image.setMinMagFilter(armos.graphics.TextureFilter.Nearest);
             width = fontWidth;
             height = fontHeight;
+            return this;
         };
 
         /++
@@ -35,8 +36,8 @@ class BitmapFont {
             y = 文字列を描画するY座標を指定します．
             z = 文字列を描画するZ座標を指定します．
         +/
-        void draw(in string str, in int x, in int y, in int z = 0){
-            if(str == ""){return;}
+        BitmapFont draw(in string str, in int x, in int y, in int z = 0){
+            if(str == ""){return this;}
 
             int currentPosition = 0;
 
@@ -56,6 +57,7 @@ class BitmapFont {
                 currentPosition += 1;
             }
             armos.graphics.popMatrix;
+            return this;
         }
 
         /++
@@ -68,8 +70,9 @@ class BitmapFont {
         /++
             fontの横幅のプロパティです．
         +/
-        void width(in int w){
+        BitmapFont width(in int w){
             _size[0] = w;
+            return this;
         }
 
         /++
@@ -82,8 +85,9 @@ class BitmapFont {
         /++
             fontの縦幅のプロパティです．
         +/
-        void height(in int h){
+        BitmapFont height(in int h){
             _size[1] = h;
+            return this;
         }
 
         /++
@@ -95,18 +99,22 @@ class BitmapFont {
             文字の位置を左寄せに設定します．
             Deprecated: 現在動作しません．
         +/
-        void alignLeft(){_align = armos.graphics.TextAlign.Left;}
+        BitmapFont alignLeft(){_align = armos.graphics.TextAlign.Left;return this;}
         /++
             文字の位置を中央寄せに設定します．
             Deprecated: 現在動作しません．
         +/
-        void alignCenter(){_align = armos.graphics.TextAlign.Center;}
+        BitmapFont alignCenter(){_align = armos.graphics.TextAlign.Center;return this;}
         /++
             文字の位置を右寄せに設定します．
             Deprecated: 現在動作しません．
         +/
-        void alignRight(){_align = armos.graphics.TextAlign.Right;}
+        BitmapFont alignRight(){_align = armos.graphics.TextAlign.Right;return this;}
 
+        ///
+        Material material(){
+            return _image.material;
+        }
     }//public
 
     private{
