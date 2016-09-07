@@ -109,7 +109,6 @@ class Fbo{
             size = リサイズ後のサイズ
         +/
         Fbo resize(in armos.math.Vector2i size){
-            size.print;
             begin;
             rect.vertices[1][1] = size[1];
             rect.vertices[2][0] = size[0];
