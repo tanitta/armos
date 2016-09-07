@@ -671,7 +671,7 @@ class Renderer {
         /++
         +/
         this(){
-            _fbo = (new armos.graphics.Fbo).isFlip(true);
+            _fbo = (new armos.graphics.Fbo);
             
             _bufferMesh   = new armos.graphics.BufferMesh;
             _materialStack ~= new armos.graphics.DefaultMaterial;
@@ -687,6 +687,8 @@ class Renderer {
             _viewMatrixStack.push;
             _projectionMatrixStack.push;
             _textureMatrixStack.push;
+            
+            // color(armos.types.Color(255, 255, 255, 255));
         }
         
         /++
@@ -862,12 +864,15 @@ class Renderer {
         +/
         void startRender(){
             // setBackground(currentStyle.backgroundColor );
+            
+            viewport();
+            _projectionMatrixStack.push;
+            _projectionMatrixStack.load(screenPerspectiveMatrix);
+            
             if(_isUseFbo){
                 _fbo.begin;
             }
 
-            viewport();
-            _projectionMatrixStack.load(screenPerspectiveMatrix);
 
             if( _isBackgrounding ){
                 fillBackground(currentStyle.backgroundColor);
@@ -885,8 +890,11 @@ class Renderer {
                 bool isEnableDepthTest;
                 glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
                 disableDepthTest;
+                
 
+                _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
                 _fbo.draw;
+                _projectionMatrixStack.pop;
                 color(tmp);
                 if(isEnableDepthTest){
                     enableDepthTest;
@@ -1111,8 +1119,8 @@ armos.math.Matrix4f screenPerspectiveMatrix(in float width = -1, in float height
         armos.math.Vector3f(eyeX, eyeY, 0),
         armos.math.Vector3f(0, 1, 0)
     );
-
-    return persp*lookAt*scalingMatrix(1f, -1f, 1f)*translationMatrix(0, -viewH, 0);
+    
+    return persp*lookAt;
 }
 
 ///

@@ -5,11 +5,11 @@ import derelict.opengl3.gl;
 class TestApp : ar.app.BaseApp{
 	override void setup(){
 		_fbo = new ar.graphics.Fbo;
-		_camera.position = ar.math.Vector3f(0, 0, -40);
-		_circle = ar.graphics.circlePrimitive(ar.math.Vector3f(0, 0, 0), 1);
 		_fbo.begin;
 			ar.graphics.fillBackground(32, 32, 32);
 		_fbo.end;
+        
+		_circle = ar.graphics.circlePrimitive(ar.math.Vector3f(0, 0, 0), 1);
 	}
 	
 	override void update(){
@@ -61,7 +61,6 @@ class TestApp : ar.app.BaseApp{
     private{
         ar.graphics.Fbo _fbo;
         ar.graphics.Mesh _circle;
-        ar.graphics.Camera _camera = new ar.graphics.Camera;
         
         float _angle = 0;
 
