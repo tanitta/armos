@@ -11,6 +11,7 @@ class Model {
     public{
         armos.graphics.Mesh[] meshes;
         armos.graphics.Material[] materials;
+        armos.graphics.Entity[] entities;
 
         /++
             モデルを読み込みます．
@@ -18,8 +19,10 @@ class Model {
             読み込み時にmeshはmaterial毎に分割されます．
         +/
         void load(in string pathInDataDir){
-            meshes = (new AssimpModelLoader).load(pathInDataDir).meshes;
-            materials = (new AssimpModelLoader).load(pathInDataDir).materials;
+            auto loadedModel = (new AssimpModelLoader).load(pathInDataDir);
+            meshes    = loadedModel.meshes;
+            materials = loadedModel.materials;
+            entities  = loadedModel.entities;
         }
 
         /++
@@ -42,13 +45,8 @@ class Model {
             renderMode = 面，線，点のどれを描画するか指定します．
         +/
         void draw(in armos.graphics.PolyRenderMode renderMode){
-            foreach (mesh; meshes) {
-                mesh.material.begin;
-                armos.graphics.pushStyle;
-                armos.graphics.color = mesh.material.diffuse;
-                armos.graphics.currentRenderer.draw(mesh, renderMode, false, false, false);
-                armos.graphics.popStyle;
-                mesh.material.end;
+            foreach (entity; entities) {
+                entity.draw(renderMode);
             }
         };
 
@@ -104,24 +102,8 @@ class AssimpModelLoader {
             DerelictASSIMP3.load();
 
             loadScene(_modelfilepath);
-
-
-            import std.stdio;
-
-            auto materials
-                = _scene.mMaterials[0 .. _scene.mNumMaterials]
-                .map!(m => createMaterial(m))
-                .array;
-
-            auto meshes
-                = _scene.mMeshes[0 .. _scene.mNumMeshes]
-                .map!(m => createMesh(m, materials))
-                .array;
-
-            auto model = new Model;
-            model.materials = materials;
-            model.meshes = meshes;
-            return model;
+            
+            return createdModel(_scene);
         }
 
         /// 読み込んだモデルを削除します．
@@ -179,28 +161,49 @@ class AssimpModelLoader {
         static armos.math.Vector2f fromAiVector2f(ref const aiVector2D v){
             return armos.math.Vector2f(v.x, v.y);
         }
+        
+        armos.graphics.Model createdModel(const(aiScene)* scene)const{
+            import std.range;
+            auto model = new Model;
+            model.materials = scene.mMaterials[0 .. scene.mNumMaterials]
+                                   .map!(m => createdMaterial(m))
+                                   .array;
 
-        ///set material
-        armos.graphics.Material createMaterial(const(aiMaterial)* material) const {
+            model.meshes    = scene.mMeshes[0 .. scene.mNumMeshes]
+                                   .map!(m => createdMesh(m))
+                                   .array;
+            
+            model.entities  = scene.mMeshes[0 .. scene.mNumMeshes]
+                                   .length
+                                   .iota
+                                   .map!( 
+                                           i => (new armos.graphics.Entity).mesh(model.meshes[i])
+                                                                            .material(model.materials[scene.mMeshes[i].mMaterialIndex])
+                                        )
+                                   .array;
+            return model;
+        }
+
+        armos.graphics.Material createdMaterial(const(aiMaterial)* material) const {
             aiString aiName;
             aiGetMaterialString(material, AI_MATKEY_NAME, 0, 0, &aiName);
             auto name = fromAiString(aiName);
 
 
-            auto mat= new armos.graphics.Material;
+            auto mat= new armos.graphics.DefaultMaterial;
             aiColor4D color;
 
             //diffuse
             aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
-            mat.diffuse = fromAiColor(color);
+            mat.attr("diffuse", fromAiColor(color));
 
             //speculer
             aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
-            mat.speculer = fromAiColor(color);
+            mat.attr("speculer", fromAiColor(color));
 
             //ambient
             aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
-            mat.ambient = fromAiColor(color);
+            mat.attr("ambient", fromAiColor(color));
 
             //texture
             aiString aiPath;
@@ -217,14 +220,14 @@ class AssimpModelLoader {
                 immutable string textureFileName = fromAiString( aiPath );
                 image.load(buildPath( dirName(_modelfilepath), textureFileName ));
 
-                mat.texture = image.texture;
+                mat.texture("tex0", image.texture);
             }
 
             return mat;
         }
 
-        ///
-        armos.graphics.Mesh createMesh(const(aiMesh)* mesh, armos.graphics.Material[] materials) const {
+        armos.graphics.Mesh createdMesh(const(aiMesh)* mesh) const {
+        // armos.graphics.Mesh createMesh(const(aiMesh)* mesh, armos.graphics.Material[] materials) const {
             auto name = fromAiString(mesh.mName);
 
             auto vertices = 
@@ -259,9 +262,9 @@ class AssimpModelLoader {
                 }
             }
 
-            immutable mi = mesh.mMaterialIndex;
-            auto material = (mi < materials.length) ? materials[mi] : null;
-            convertedMesh.material = material;
+            // immutable mi = mesh.mMaterialIndex;
+            // auto material = (mi < materials.length) ? materials[mi] : null;
+            // convertedMesh.material = material;
 
             return convertedMesh;
         }

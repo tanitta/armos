@@ -1,130 +1,192 @@
 module armos.graphics.material;
-static import armos.types;
-static import armos.graphics;
+import armos.types;
+import armos.math;
+import armos.graphics;
 
 /++
-材質を表すclassです．
+材質を表すinterfaceです．
 +/
-class Material {
+interface Material{
     public{
         ///
-        this(){
-            this(defaultVertesShaderSource, defaultFragmentShaderSource);
-        }
-        
-        ///
-        this(in string vertexShaderSource, in string fragmentShaderSource){
-            _shader = new armos.graphics.Shader;
-            _shader.loadSources(vertexShaderSource, fragmentShaderSource);
-        }
-        
-        ///
-        this(armos.graphics.Shader s){
-            _shader = s;
-        }
+        Material begin();
 
         ///
-        void begin(){
-            if(_texture){
-                _texture.begin;
+        Material end();
+        
+        ///
+        Material attr(string name, in Color c);
+        
+        ///
+        Material attr(string name, in Vector4f v);
+        
+        ///
+        ref Vector4f attr(string name);
+        
+        ///
+        Material texture(in string name, armos.graphics.Texture tex);
+
+        ///
+        armos.graphics.Texture texture(in string name);
+
+        ///
+        armos.graphics.Shader shader();
+        
+        ///
+        Material shader(armos.graphics.Shader s);
+        
+        ///
+        Material loadImage(in string pathInDataDir);
+    }//public
+
+}//interface Material
+
+///
+mixin template MaterialImpl(){
+    alias T = typeof(this);
+    public{
+        ///
+        T begin(){
+            pushMaterialStack(this);
+            
+            _shader.begin;
+            foreach (string key; _textures.keys) {
+                auto texture = _textures[key];
+                if(texture){
+                    texture.begin;
+                }
             }
-        }
-
-        ///
-        void end(){
-            if(_texture){
-                _texture.end;
+            import std.algorithm;
+            import std.array;
+            import armos.math;
+            foreach (string key; _attrs.keys) {
+                _shader.uniform(key, _attrs[key]);
             }
+            
+            foreach (int index, string key; _textures.keys){
+                _shader.uniformTexture(key, _textures[key], index);
+            }
+            return this;
         }
 
         ///
-        void diffuse(in armos.types.Color d){ _diffuse = d; }
-
-        ///
-        void diffuse(T)(in T r, in T g, in T b, in T a = T( armos.graphics.Color.limit )){ 
-            _diffuse = armos.graphics.Color(r, g, b, a); 
+        T end(){
+            foreach (string key; _textures.keys) {
+                auto texture = _textures[key];
+                if(texture){
+                    texture.end;
+                }
+            }
+            _shader.end;
+            
+            popMaterialStack;
+            return this;
         }
 
         ///
-        armos.types.Color diffuse()const{return _diffuse; }
-
-        ///
-        void speculer(in armos.types.Color s){ _specular = s; }
-
-        ///
-        void speculer(T)(in T r, in T g, in T b, in T a = T( armos.graphics.Color.limit )){
-            _specular = armos.graphics.Color(r, g, b, a); 
+        T attr(string Name, in Vector4f v){
+            _attrs[Name] = v;
+            return this;
         }
-
-        ///
-        armos.types.Color speculer()const{return _specular; }
-
-        ///
-        void ambient(in armos.types.Color a){ _ambient = a; }
-
-        ///
-        void ambient(T)(in T r, in T g, in T b, in T a = T( armos.graphics.Color.limit )){
-            _ambient = armos.graphics.Color(r, g, b, a); 
-        }
-
-        ///
-        armos.types.Color ambient()const{return _ambient; }
-
-        ///
-        void texture(armos.graphics.Texture tex){ _texture = tex; }
         
         ///
-        armos.graphics.Texture texture(){return _texture;}
-        
+        T attr(string Name, in Color c){
+            import std.conv;
+            _attrs[Name] = Vector4f(c.r.to!float/255f, c.g.to!float/255f, c.b.to!float/255f, c.a.to!float/255f);
+            return this;
+        }
+
+        ///
+        ref Vector4f attr(string name){
+            return _attrs[name];
+        }
+
+        ///
+        T texture(in string name, armos.graphics.Texture tex){
+            _textures[name] = tex;
+            return this;
+        }
+
+        ///
+        armos.graphics.Texture texture(in string name){return _textures[name];}
+
         ///
         armos.graphics.Shader shader(){
             return _shader;
         }
-        
+
         ///
-        void shader(armos.graphics.Shader s){
+        T shader(armos.graphics.Shader s){
             _shader = s;
+            return this;
         }
-        
+
         ///
-        void loadImage(in string pathInDataDir){
+        T loadImage(in string pathInDataDir){
             auto image = new armos.graphics.Image();
             image.load(pathInDataDir);
+            return this;
         }
     }//public
 
     private{
-        armos.types.Color _diffuse;
-        armos.types.Color _specular;
-        armos.types.Color _ambient;
-        armos.graphics.Texture _texture;
+        Vector4f[string] _attrs;
+        armos.graphics.Texture[string] _textures;
         armos.graphics.Shader _shader;
     }//private
-}//class Material
+   
+}
+
+///
+class DefaultMaterial : Material{
+    mixin MaterialImpl;
+    
+    ///
+    this(){
+        _shader = new armos.graphics.Shader;
+        _shader.loadSources(defaultVertesShaderSource, defaultFragmentShaderSource);
+    }
+}//class DefaultMaterial
 
 private immutable string defaultVertesShaderSource = q{
 #version 330
 
-in vec3 position;
-in vec3 v_color;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewProjectionMatrix;
+uniform mat4 textureMatrix;
 
-uniform mat4 mpv;
-varying vec3 f_color;
+in vec4 vertex;
+in vec3 normal;
+in vec3 tangent;
+in vec4 texCoord0;
+in vec4 texCoord1;
+in vec4 color;
+
+out vec4 f_color;
+out vec2 outtexCoord0;
+out vec2 outtexCoord1;
 
 void main(void) {
-    gl_Position = mpv * vec4(position, 1.0);
-    f_color = v_color;
+    gl_Position = modelViewProjectionMatrix * vertex;
+    f_color = color;
+    outtexCoord0 = texCoord0.xy;
+    outtexCoord1 = texCoord1.xy;
 }
 };
 
 private immutable string defaultFragmentShaderSource = q{
 #version 330
     
-uniform float fade;
-varying vec3 f_color;
-uniform vec4 vec_test;
+in vec4 f_color;
+in vec2 outtexCoord0;
+in vec2 outtexCoord1;
+
+uniform vec4      diffuse;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
 
 void main(void) {
-    gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, fade)*vec_test;
+    gl_FragColor = texture(tex0, outtexCoord0)*diffuse;
 }
 };

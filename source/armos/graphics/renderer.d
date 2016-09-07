@@ -310,13 +310,15 @@ void drawGrid(
 /++
 +/
 void popMatrix(){
-    currentRenderer.popMatrix();
+    // currentRenderer.popMatrix();
+    popModelMatrix;
 }
 
 /++
 +/
 void pushMatrix(){
-    currentRenderer.pushMatrix();
+    // currentRenderer.pushMatrix();
+    pushModelMatrix;
 }
 
 ///
@@ -364,19 +366,20 @@ unittest{
 /++
 +/
 void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
-    currentRenderer.translate(x, y, z);
+    import std.conv;
+    multModelMatrix(translationMatrix(x.to!float, y.to!float, z.to!float));
 }
 
 /++
 +/
 void translate(armos.math.Vector3f vec){
-    currentRenderer.translate(vec);
+    multModelMatrix(translationMatrix(vec[0], vec[1], vec[2]));
 }
 
 /++
 +/
 void translate(armos.math.Vector3d vec){
-    currentRenderer.translate(vec[0], vec[1], vec[2]);
+    multModelMatrix(translationMatrix!(float)(vec[0], vec[1], vec[2]));
 }
 
 ///
@@ -428,29 +431,29 @@ unittest{
 /++
 +/
 void scale(float x, float y, float z){
-    currentRenderer.scale(x, y, z);
+    multModelMatrix(scalingMatrix(x, y, z));
 }
 
 /++
 +/
 void scale(float s){
-    currentRenderer.scale(s, s, s);
+    multModelMatrix(scalingMatrix(s, s, s));
 }
 
 /++
 +/
 void scale(armos.math.Vector3f vec){
-    currentRenderer.scale(vec);
+    multModelMatrix(scalingMatrix(vec[0], vec[1], vec[2]));
 }
 
 ///
-M4 rotationMatrix(T, M4 = armos.math.Matrix!(T, 4, 4))(in T degrees, in T x, in T y, in T z)
+M4 rotationMatrix(T, M4 = armos.math.Matrix!(T, 4, 4))(in T rad, in T x, in T y, in T z)
 if(armos.math.isMatrix!(M4) && __traits(isArithmetic, T) && M4.rowSize == 4){
     import std.conv;
     import std.math;
     alias E = M4.elementType;
     alias M3 = armos.math.Matrix!(E, 3, 3);
-    immutable E d = degrees.to!E;
+    immutable E d = rad.to!E;
     immutable n = armos.math.Vector!(E, 3)(x, y, z).normalized;
     immutable r = M3(
         [E(0),     -n[2], n[1] ], 
@@ -480,11 +483,11 @@ unittest{
 }
 
 ///
-M rotate(M, T)(in M matrix, in T degrees, in T x, in T y, in T z)
+M rotate(M, T)(in M matrix, in T rad, in T x, in T y, in T z)
 if(armos.math.isMatrix!(M) && __traits(isArithmetic, T) && M.rowSize == 4){
     import std.conv;
     alias E = M.elementType;
-    return matrix * rotationMatrix(degrees.to!E, x.to!E, y.to!E, z.to!E);
+    return matrix * rotationMatrix(rad.to!E, x.to!E, y.to!E, z.to!E);
 }
 
 unittest{
@@ -507,33 +510,34 @@ unittest{
 
 /++
 +/
-void rotate(T)(in T degrees, in T vec_x, in T vec_y, in T vec_z)if(__traits(isArithmetic, T)){
-    currentRenderer.rotate(degrees, vec_x, vec_y, vec_z);
+void rotate(T)(in T rad, in T vec_x, in T vec_y, in T vec_z)if(__traits(isArithmetic, T)){
+    multModelMatrix(rotationMatrix!float(rad, vec_x, vec_y, vec_z));
 }
 
 /++
 +/
-void rotate(T, V)(in T degrees, V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
-    currentRenderer.rotate(degrees, vec);
+void rotate(T, V)(in T rad, V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
+    
+    multModelMatrix(rotationMatrix(rad, vec[0], vec[1], vec[2]));
 }
 
-/++
-+/
-void loadIdentity(){
-    currentRenderer.loadIdentity();
-}
-
-/++
-+/
-void loadMatrix(Q)(Q matrix){
-    currentRenderer.loadMatrix(matrix);
-}
-
-/++
-+/
-void multMatrix(Q)(Q matrix){
-    currentRenderer.multMatrix(matrix);
-}
+// /++
+// +/
+// void loadIdentity(){
+//     currentRenderer.loadIdentity();
+// }
+//
+// /++
+// +/
+// void loadMatrix(Q)(Q matrix){
+//     currentRenderer.loadMatrix(matrix);
+// }
+//
+// /++
+// +/
+// void multMatrix(Q)(Q matrix){
+//     currentRenderer.multMatrix(matrix);
+// }
 
 /++
 +/
@@ -582,15 +586,109 @@ void blendMode(armos.graphics.BlendMode mode){
     currentRenderer.blendMode = mode;
 }
 
+///
+mixin armos.graphics.matrixstack.MatrixStackFunction!("Model");
+
+///
+mixin armos.graphics.matrixstack.MatrixStackFunction!("View");
+
+///
+mixin armos.graphics.matrixstack.MatrixStackFunction!("Projection");
+
+///
+mixin armos.graphics.matrixstack.MatrixStackFunction!("Texture");
+
+armos.math.Matrix4f modelViewProjectionMatrix(){
+    return projectionMatrix * viewMatrix * modelMatrix;
+}
+
+/++
++/
+private struct ScopedMatrixStack{
+    public{
+        this(armos.graphics.MatrixStack matrixStack, in armos.math.Matrix4f matrix){
+            _matrixStack = matrixStack;
+            _matrixStack.push();
+            _matrixStack.mult(matrix);
+        }
+        
+        ~this(){
+            _matrixStack.pop;
+        }
+    }//public
+
+    private{
+        armos.graphics.MatrixStack _matrixStack;
+    }//private
+}//struct ScopedMatrixStack
+
+ScopedMatrixStack scopedModelMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
+    return ScopedMatrixStack(currentRenderer._modelMatrixStack, matrix);
+}
+
+ScopedMatrixStack scopedViewMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
+    return ScopedMatrixStack(currentRenderer._viewMatrixStack, matrix);
+}
+
+ScopedMatrixStack scopedProjectionMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
+    return ScopedMatrixStack(currentRenderer._projectionMatrixStack, matrix);
+}
+
+ScopedMatrixStack scopedTextureMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
+    return ScopedMatrixStack(currentRenderer._textureMatrixStack, matrix);
+}
+
+// ///
+// void currentMaterial(armos.graphics.Material material){
+//     currentRenderer.currentMaterial = material;
+// }
+
+///
+void pushMaterialStack(armos.graphics.Material material){
+    currentRenderer.pushMaterialStack(material);
+}
+
+///
+void popMaterialStack(){
+    currentRenderer.popMaterialStack;
+}
+
+///
+armos.graphics.Material currentMaterial(){
+    return currentRenderer.currentMaterial;
+}
+
 /++
 +/
 class Renderer {
+    mixin armos.graphics.matrixstack.MatrixStackManipulator!("Model");
+    mixin armos.graphics.matrixstack.MatrixStackManipulator!("View");
+    mixin armos.graphics.matrixstack.MatrixStackManipulator!("Projection");
+    mixin armos.graphics.matrixstack.MatrixStackManipulator!("Texture");
+    
     public{
+        
         /++
         +/
         this(){
-            _matrixStack = new armos.graphics.MatrixStack();
-            _fbo = new armos.graphics.Fbo;
+            _fbo = (new armos.graphics.Fbo);
+            
+            _bufferMesh   = new armos.graphics.BufferMesh;
+            _materialStack ~= new armos.graphics.DefaultMaterial;
+            auto bitmap = (new armos.graphics.Bitmap!(char)).allocate(2, 2, armos.graphics.ColorFormat.RGBA)
+                                                      .setAllPixels(0, 255)
+                                                      .setAllPixels(1, 255)
+                                                      .setAllPixels(2, 255)
+                                                      .setAllPixels(3, 255);
+            currentMaterial.texture("tex0", (new armos.graphics.Texture).allocate(bitmap));
+            _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, currentMaterial);
+            
+            _modelMatrixStack.push;
+            _viewMatrixStack.push;
+            _projectionMatrixStack.push;
+            _textureMatrixStack.push;
+            
+            // color(armos.types.Color(255, 255, 255, 255));
         }
         
         /++
@@ -622,6 +720,7 @@ class Renderer {
         +/
         void color(in armos.types.Color c){
             _currentStyle.color = cast(armos.types.Color)c; 
+            _materialStack[0].attr("diffuse", armos.math.Vector4f(c.r/255.0,c.g/255.0,c.b/255.0,c.a/255.0));
             glColor4f(c.r/255.0,c.g/255.0,c.b/255.0,c.a/255.0);
         }
 
@@ -641,7 +740,7 @@ class Renderer {
             lineWidth = s.lineWidth;
             isSmoothingLine = s.isSmoothing;
             isUsingDepthTest(s.isDepthTest);
-            _currentStyle.isFill = s.isFill;
+            _currentStyle.polyRenderMode = s.polyRenderMode;
         }
 
         /++
@@ -671,122 +770,41 @@ class Renderer {
         
         /++
         +/
-        void matrixMode(MatrixMode mode){
-            glMatrixMode(getGLMatrixMode(mode));
-        }
-
-
-        /++
-        +/
-        void bind(armos.math.Matrix4f projectionMatrix){
-            matrixMode(MatrixMode.Projection);
-            pushMatrix();
-            loadMatrix(projectionMatrix);
-            
-            // TODO
-            _matrixStack.pushProjectionMatrix;
-            _matrixStack.loadProjectionMatrix(projectionMatrix);
-        }
-
-        /++
-        +/
-        void unbind(){
-            matrixMode(MatrixMode.Projection);
-            popMatrix();
-            
-            // TODO
-            _matrixStack.popProjectionMatrix;
-        }
-
-        /++
-        +/
-        void pushMatrix(){
-            // TODO
-            glPushMatrix();
-        }
-
-        /++
-        +/
-        void popMatrix(){
-            // TODO
-            glPopMatrix();
-        }
-
-        /++
-        +/
-        void loadIdentity(){
-            // TODO
-            glLoadIdentity();
-        }
-
-        /++
-        +/
-        void loadMatrix(M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
-            manipulateGlMatrix!("glLoadMatrix")(matrix);
-        }
-
-        /++
-        +/
-        void multMatrix(M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
-            manipulateGlMatrix!("glMultMatrix")(matrix);
-        }
-        
-        private void manipulateGlMatrix(string FuncNamePre, M)(in M matrix)if(armos.math.isSquareMatrix!(M), M.size == 4){
-            static if(is(M.elementType == double)){
-                mixin("alias F = " ~ FuncNamePre ~ "d;");
-                F(matrix.array.ptr);
-            }else if(is(M.elementType == float)){
-                mixin("alias F = " ~ FuncNamePre ~ "f;");
-                F(matrix.array.ptr);
-            }else{assert(false);}
-        }
-
-        /++
-        +/
         void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
-            //TODO
-            // _matrixStack.multModelViewMatrix();
             import std.conv;
-            glTranslatef(x.to!float, y.to!float, z.to!float);
+            _modelMatrixStack.mult(translationMatrix!(float)(x, y, z));
         }
 
         /++
         +/
         void translate(V)(in V vec)if(armos.math.isVector!(V)){
-            //TODO
-            glTranslatef(vec[0], vec[1], vec[2]);
+            translate(vec[0], vec[1], vec[2]);
         };
 
         /++
         +/
         void scale(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
-            //TODO
             import std.conv;
-            glScalef(x.to!float, y.to!float, z.to!float);
+            _modelMatrixStack.mult(scalingMatrix!(float)(x, y, z));
         }
 
         /++
         +/
         
         void scale(V)(in V vec)if(armos.math.isVector!(V)){
-            //TODO
             scale(vec[0], vec[1], vec[2]);
         }
 
         /++
         +/
-        
-        void rotate(T, V)(in T degrees, in V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
-            //TODO
-            rotate(degrees, vec[0], vec[1], vec[2]);
-        }
-
-        /++
-        +/
         void rotate(T)(in T degrees, in T vecX, in T vecY, in T vecZ)if(__traits(isArithmetic, T)){
-            //TODO
             import std.conv;
-            glRotatef(degrees.to!float, vecX.to!float, vecY.to!float, vecZ.to!float);
+            _modelMatrixStack.mult(rotationMatrix!(float)(degrees, vecX, vecY, vecZ));
+        }
+        
+        ///
+        void rotate(T, V)(in T degrees, in V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
+            rotate(degrees, vec[0], vec[1], vec[2]);
         }
 
         /++
@@ -810,7 +828,6 @@ class Renderer {
                 _fbo.begin;
             }
             viewport();
-            setupScreenPerspective();
             fillBackground(currentStyle.backgroundColor );
 
             if(_isUseFbo){
@@ -842,58 +859,23 @@ class Renderer {
             glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
         }
 
-        /++
-        +/
-        void setupScreenPerspective(in float width = -1, in float height = -1, in float fov = 60, in float nearDist = 0, in float farDist = 0){
-            float viewW, viewH;
-            if(width<0 || height<0){
-                viewW = armos.app.windowSize[0];
-                viewH = armos.app.windowSize[1];
-            }else{
-                viewW = width;
-                viewH = height;
-            }
-
-            immutable float eyeX = viewW / 2.0;
-            immutable float eyeY = viewH / 2.0;
-            immutable float halfFov = PI * fov / 360;
-            immutable float theTan = tan(halfFov);
-            immutable float dist = eyeY / theTan;
-            immutable float aspect = viewW / viewH;
-            //
-            immutable float near = (nearDist==0)?dist / 10.0f:nearDist;
-            immutable float far  = (farDist==0)?dist * 10.0f:farDist;
-
-            armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, near, far);
-
-            armos.math.Matrix4f lookAt = lookAtViewMatrix(
-                armos.math.Vector3f(eyeX, eyeY, dist),
-                armos.math.Vector3f(eyeX, eyeY, 0),
-                armos.math.Vector3f(0, 1, 0)
-            );
-
-            matrixMode(MatrixMode.Projection);
-            glLoadIdentity();
-
-            loadMatrix((persp*lookAt));
-            glScalef(1, -1, 1);
-            glTranslatef(0, -viewH, 0);
-            matrixMode(MatrixMode.Projection);
-        }
 
         /++
         +/
         void startRender(){
             // setBackground(currentStyle.backgroundColor );
+            
+            viewport();
+            _projectionMatrixStack.push;
+            _projectionMatrixStack.load(screenPerspectiveMatrix);
+            
             if(_isUseFbo){
                 _fbo.begin;
             }
 
-            viewport();
-            setupScreenPerspective();
 
             if( _isBackgrounding ){
-                fillBackground(currentStyle.backgroundColor );
+                fillBackground(currentStyle.backgroundColor);
             }
         };
 
@@ -908,8 +890,11 @@ class Renderer {
                 bool isEnableDepthTest;
                 glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
                 disableDepthTest;
+                
 
+                _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
                 _fbo.draw;
+                _projectionMatrixStack.pop;
                 color(tmp);
                 if(isEnableDepthTest){
                     enableDepthTest;
@@ -920,34 +905,43 @@ class Renderer {
         /++
         +/
         void drawLine(in float x1, in float y1, in float z1, in float x2, in float y2, in float z2){
-            armos.math.Vector4f[2] vertices;
-            vertices[0] = armos.math.Vector4f(x1, y1, z1, 1f);
-            vertices[1] = armos.math.Vector4f(x2, y2, z2, 1f);
-
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(4, GL_FLOAT, 0, vertices.ptr);
-            glDrawArrays(GL_LINES, 0, 2);
-            glDisableClientState(GL_VERTEX_ARRAY);
+            armos.math.Vector4f[2] vertices = [
+                armos.math.Vector4f(x1, y1, z1, 1f), 
+                armos.math.Vector4f(x2, y2, z2, 1f)
+            ];
+            immutable freq = armos.graphics.BufferUsageFrequency.Dynamic;
+            immutable nature = armos.graphics.BufferUsageNature.Draw;
+            
+            import armos.utils.scoped;
+            const scopedVao    = scoped(_bufferMesh.vao);
+            _bufferMesh.attr["vertex"].array(vertices, freq, nature);
+            
+            _bufferMesh.attr["vertex"].begin;
+            _shader.attr("vertex");
+            _bufferMesh.attr["vertex"].end;
+            
+            _shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
+            _shader.uniform("projectionMatrix", projectionMatrix);
+            _shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+            
+            const scopedShader = scoped(_shader);
+            _shader.enableAttrib("vertex");
+            glDrawArrays(GL_LINES, 0, vertices.length);
+            _shader.disableAttrib("vertex");
         };
 
         /++
         +/
         void drawRectangle(in float x, in float y, in float w, in float h){
             armos.math.Vector4f[4] vertices;
-            vertices[0] = armos.math.Vector4f(x, y, 0f, 1f);
-            vertices[1] = armos.math.Vector4f(x, y+h, 0f, 1f);
-            vertices[2] = armos.math.Vector4f(x+w, y, 0f, 1f);
-            vertices[3] = armos.math.Vector4f(x+w, y+h, 0f, 1f);
+            vertices[0] = armos.math.Vector4f(x,   y,   0f, 1f);
+            vertices[1] = armos.math.Vector4f(x,   y+h, 0f, 1f);
+            vertices[2] = armos.math.Vector4f(x+w, y+h, 0f, 1f);
+            vertices[3] = armos.math.Vector4f(x+w, y,   0f, 1f);
 
             armos.math.Vector4f[] texCoords;
-            int[4] indices = [0, 1, 2, 3];
+            int[] indices = [0, 1, 2, 2, 3, 0];
 
-            armos.graphics.PolyRenderMode renderMode;
-            if(_currentStyle.isFill){
-                renderMode = armos.graphics.PolyRenderMode.Fill;
-            }else{
-                renderMode = armos.graphics.PolyRenderMode.WireFrame;
-            }
             draw(
                 vertices,
                 null,
@@ -955,7 +949,7 @@ class Renderer {
                 texCoords,
                 indices, 
                 armos.graphics.PrimitiveMode.TriangleStrip, 
-                renderMode,
+                _currentStyle.polyRenderMode, 
                 true,
                 false,
                 false
@@ -965,7 +959,7 @@ class Renderer {
         /++
         +/
         void draw(
-            in armos.graphics.Mesh mesh,
+            armos.graphics.Mesh mesh,
             in armos.graphics.PolyRenderMode renderMode,
             in bool useColors,
             in bool useTextures,
@@ -986,74 +980,39 @@ class Renderer {
         }
 
         /++
-            deprecated:
-        +/
-        void draw(armos.graphics.Vao vao, in armos.graphics.PrimitiveMode primitiveMode){
-        }
-
-        /++
         +/
         void draw(
-            in armos.math.Vector4f[] vertices,
-            in armos.math.Vector3f[] normals,
-            in armos.types.FloatColor[] colors,
-            in armos.math.Vector4f[] texCoords,
-            in int[] indices,
+            armos.math.Vector4f[] vertices,
+            armos.math.Vector3f[] normals,
+            armos.types.FloatColor[] colors,
+            armos.math.Vector4f[] texCoords,
+            int[] indices,
             in armos.graphics.PrimitiveMode primitiveMode, 
             in armos.graphics.PolyRenderMode renderMode,
             in bool useColors,
             in bool useTextures,
             in bool useNormals
         ){
-            glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
+            immutable freq = armos.graphics.BufferUsageFrequency.Dynamic;
+            immutable nature = armos.graphics.BufferUsageNature.Draw;
             
+            import armos.utils.scoped;
+            const scopedVao = scoped(_bufferMesh.vao);
+            
+            //set attr
+            _bufferMesh.attr["vertex"].array(vertices, freq, nature);
+            if(useNormals) _bufferMesh.attr["normal"].array(normals, freq, nature);
             import std.algorithm;
             import std.array;
-            //add vertices to GL
-            if(vertices.length){
-                glEnableClientState(GL_VERTEX_ARRAY);
-                auto p = vertices.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
-                glVertexPointer(4, GL_FLOAT, 0, p);
-            }
-
-            //add normals to GL
-            if(normals.length && useNormals){
-                glEnableClientState(GL_NORMAL_ARRAY);
-                auto p = normals.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
-                glNormalPointer(GL_FLOAT, 0, p);
-            }
-
-            //add colors to GL
-            if(colors.length && useColors){
-                glEnableClientState(GL_COLOR_ARRAY);
-                glColorPointer(4, GL_FLOAT, armos.types.FloatColor.sizeof, colors.ptr);
-            }
-
-            //add texchoords to gl
-            if(texCoords.length){
-                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                auto p = texCoords.map!(v => v.elements).fold!((a, b) => a ~ b)([]).ptr;
-                glTexCoordPointer(4, GL_FLOAT, 0, p);
-            }
-
-            //add indicees to GL
-            if(indices.length){
-                glDrawElements(
-                    armos.graphics.getGLPrimitiveMode(primitiveMode),
-                    cast(int)indices.length,
-                    GL_UNSIGNED_INT,
-                    indices.ptr
-                );
-            }
-
-            glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.currentStyle.isFill ?  GL_FILL : GL_LINE);
-
-            if(vertices.length){
-                glDisableClientState(GL_VERTEX_ARRAY);
-            }
-            if(texCoords.length){
-                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-            }
+            if(useColors) _bufferMesh.attr["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
+            _bufferMesh.attr["texCoord0"].array(texCoords, freq, nature);
+            _bufferMesh.attr["index"].array(indices, 0, freq, nature);
+            
+            _bufferEntity.updateShaderAttribs;
+                
+            glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
+            _bufferEntity.primitiveMode(primitiveMode).draw();
+            glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(_currentStyle.polyRenderMode));
         }
 
         /++
@@ -1094,26 +1053,77 @@ class Renderer {
             _currentStyle.blendMode = mode;
         }
 
+        void pushMaterialStack(armos.graphics.Material material){
+            _materialStack ~= material;
+            _bufferEntity.material = currentMaterial;
+        }
+        
+        void popMaterialStack(){
+            import std.range;
+            if (_materialStack.length == 0) {
+                assert(0, "stack is empty");
+            }else{
+                _materialStack.popBack;
+            }
+            _bufferEntity.material = currentMaterial;
+            
+        }
+        
+        armos.graphics.Material currentMaterial(){
+            return _materialStack[$-1];
+        }
     }//public
 
     private{
         armos.graphics.Fbo _fbo;
-        bool _isUseFbo = true;
+        bool               _isUseFbo = true;
         
-        armos.graphics.MatrixStack _matrixStack;
-        
-        armos.graphics.Style _currentStyle = armos.graphics.Style();
+        armos.graphics.Style   _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
         
-        armos.graphics.Shader _currentShader;
-        armos.graphics.Material _currentMaterial;
+        armos.graphics.Shader       _shader;
+        armos.graphics.Material[]     _materialStack;
+        
+        armos.graphics.BufferMesh   _bufferMesh;
+        armos.graphics.BufferEntity _bufferEntity;
         
         bool _isBackgrounding = true;
     }//private
 }
 
-/++
-+/
+///
+armos.math.Matrix4f screenPerspectiveMatrix(in float width = -1, in float height = -1, in float fov = 60, in float nearDist = 0, in float farDist = 0){
+    float viewW, viewH;
+    if(width<0 || height<0){
+        viewW = armos.app.windowSize[0];
+        viewH = armos.app.windowSize[1];
+    }else{
+        viewW = width;
+        viewH = height;
+    }
+
+    immutable float eyeX = viewW / 2.0;
+    immutable float eyeY = viewH / 2.0;
+    immutable float halfFov = PI * fov / 360;
+    immutable float theTan = tan(halfFov);
+    immutable float dist = eyeY / theTan;
+    immutable float aspect = viewW / viewH;
+    //
+    immutable float near = (nearDist==0)?dist / 10.0f:nearDist;
+    immutable float far  = (farDist==0)?dist * 10.0f:farDist;
+
+    armos.math.Matrix4f persp = perspectiveMatrix(fov, aspect, near, far);
+
+    armos.math.Matrix4f lookAt = lookAtViewMatrix(
+        armos.math.Vector3f(eyeX, eyeY, dist),
+        armos.math.Vector3f(eyeX, eyeY, 0),
+        armos.math.Vector3f(0, 1, 0)
+    );
+    
+    return persp*lookAt;
+}
+
+///
 armos.math.Matrix4f perspectiveMatrix(in float fov, in float aspect, in float nearDist, in float farDist){
     double tan_fovy = tan(fov*0.5*PI/180.0);
     double right  =  tan_fovy * aspect* nearDist;
@@ -1124,8 +1134,7 @@ armos.math.Matrix4f perspectiveMatrix(in float fov, in float aspect, in float ne
     return frustumMatrix(left,right,bottom,top,nearDist,farDist);
 }
 
-/++
-+/
+///
 armos.math.Matrix4f frustumMatrix(in double left, in double right, in double bottom, in double top, in double zNear, in double zFar){
     double A = (right+left)/(right-left);
     double B = (top+bottom)/(top-bottom);
@@ -1140,8 +1149,7 @@ armos.math.Matrix4f frustumMatrix(in double left, in double right, in double bot
     );
 }
 
-/++
-+/
+///
 armos.math.Matrix4f lookAtViewMatrix(in armos.math.Vector3f eye, in armos.math.Vector3f center, in armos.math.Vector3f up){
     armos.math.Vector3f zaxis;
     if((eye-center).norm>0){

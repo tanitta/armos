@@ -2,6 +2,7 @@ module armos.graphics.buffer;
 
 import derelict.opengl3.gl;
 import armos.graphics.vao;
+import armos.math;
 
 /++
 +/
@@ -49,12 +50,35 @@ class Buffer {
 
         /++
         +/
-        void set(Array)(Array array, in BufferUsageFrequency freq, in BufferUsageNature nature){
+        Buffer array(T)(T[] array, in size_t dimention, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
+            if(array.length == 0)return this;
             begin;
-            auto size = array.length * array[0].sizeof;
-            glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
-            glVertexAttribPointer(0, 3, GL_FLOAT, GLfloat.sizeof * 2, 0, null);
+            _size = array.length * array[0].sizeof;
+            //TODO if array.length is'nt changed, use glBufferSubData
+            glBufferData(_bufferType, _size, array.ptr, usageEnum(freq, nature));
+            import std.conv;
+            if(_bufferType != BufferType.ElementArray){
+                glVertexAttribPointer(0,
+                                      dimention.to!int,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      0,
+                                      null,
+                                      );
+            }
             end;
+            return this;
+        }
+        
+        ///
+        Buffer array(V)(V[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(isVector!V){
+            if(array.length == 0)return this;
+            begin;
+            import std.algorithm;
+            V.elementType[] raw = array.map!(v => v.elements).fold!"a~b";
+            this.array(raw, V.dimention, freq, nature);
+            end;
+            return this;
         }
 
         /++
@@ -76,6 +100,7 @@ class Buffer {
         int[] _savedIDs;
         BufferType _bufferType;
         Vao _rootVao;
+        size_t _size;
     }//private
 }//class Vbo
 

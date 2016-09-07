@@ -10,16 +10,18 @@ class Mesh {
     public{
         alias int IndexType;
 
-        bool isVertsChanged = false;
-        bool isFaceDirty= false;
+        bool isVertsChanged   = false;
+        bool isFaceDirty      = false;
         bool isIndicesChanged = false;
 
-        armos.math.Vector4f[] vertices;
-        armos.math.Vector3f[] normals;
+        armos.math.Vector4f[]    vertices;
+        armos.math.Vector3f[]    normals;
+        armos.math.Vector3f[]    tangents;
+        armos.math.Vector4f[]    texCoords0;
+        armos.math.Vector4f[]    texCoords1;
+        alias texCoords0         texCoords; 
         armos.types.FloatColor[] colors;
-        armos.math.Vector4f[] texCoords;
-        IndexType[] indices;
-        armos.graphics.Material material;
+        IndexType[]              indices;
 
         /// テクスチャ座標の数を表します．
         size_t numTexCoords()const{
@@ -63,25 +65,6 @@ class Mesh {
         +/
         void addTexCoord(in float u, in float v){
             texCoords ~= armos.math.Vector4f(u, v, 0f, 1f);
-        }
-
-        /++
-            テクスチャ座標を追加します．
-        +/
-        void addTexCoord(in armos.math.Vector2f vec, armos.graphics.Texture texture){
-            texture.begin;
-            // addTexCoord(vec[0], vec[1]);
-            texture.end;
-        }
-
-        /++
-            テクスチャ座標を追加します．
-            Deprecated: 現在動作しません．
-        +/
-        void addTexCoord(in float x, in float y, armos.graphics.Texture texture){
-            texture.begin;
-            // glTexCoord2d(x, y);
-            texture.end;
         }
 
         /++
@@ -173,6 +156,6 @@ class Mesh {
     }//public
 
     private{
-        armos.graphics.PrimitiveMode primitiveMode_;
+        armos.graphics.PrimitiveMode primitiveMode_ = armos.graphics.PrimitiveMode.Triangles;
     }//private
 }//class Mesh

@@ -67,14 +67,21 @@ class Camera{
             // );
 
             _projectionMatrix = persp*lookAt;
-            armos.graphics.currentRenderer.bind(_projectionMatrix);
+            // armos.graphics.currentRenderer.bind(_projectionMatrix);
+            armos.graphics.pushViewMatrix;
+            armos.graphics.loadViewMatrix(lookAt);
+            armos.graphics.pushProjectionMatrix;
+            armos.graphics.loadProjectionMatrix(persp);
+            // armos.graphics.loadProjectionMatrix(_projectionMatrix);
         }
 
         /++
             Cameraで表示する処理を終了します．
         +/
         void end(){
-            armos.graphics.currentRenderer.unbind();
+            armos.graphics.popViewMatrix;
+            armos.graphics.popProjectionMatrix;
+            // armos.graphics.currentRenderer.unbind();
         }
     }
 

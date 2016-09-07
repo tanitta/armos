@@ -23,21 +23,22 @@ class TestApp : ar.app.BaseApp{
 		rect.primitiveMode = ar.graphics.PrimitiveMode.TriangleStrip;
 		float x = 512;
 		float y = 512;
-		rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
-		rect.addTexCoord(0, 0);rect.addVertex(0, y, 0);
-		rect.addTexCoord(1, 1);rect.addVertex(x, 0, 0);
-		rect.addTexCoord(1, 0);rect.addVertex(x, y, 0);
+		rect.addTexCoord(0, 0);rect.addVertex(0, 0, 0);
+		rect.addTexCoord(0, 1);rect.addVertex(0, y, 0);
+		rect.addTexCoord(1, 1);rect.addVertex(x, y, 0);
+		rect.addTexCoord(1, 0);rect.addVertex(x, 0, 0);
 		
 		rect.addIndex(0);
 		rect.addIndex(1);
 		rect.addIndex(2);
+		rect.addIndex(2);
 		rect.addIndex(3);
+		rect.addIndex(0);
+        ar.graphics.currentMaterial.texture("tex0", texture);
 	}
 	
 	override void draw(){
-		texture.begin;
 		rect.drawFill;
-		texture.end;
 	}
 }
 

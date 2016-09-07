@@ -23,21 +23,23 @@ class Shader {
         /++
             Load the shader from shaderName
         +/
-        void load(in string shaderName){
+        Shader load(in string shaderName){
             loadFiles(shaderName ~ ".vert", shaderName ~ ".frag");
+            return this;
         }
 
         /++
             Load the shader from path
         +/
-        void loadFiles(in string vertexShaderSourcePath, in string fragmentShaderSourcePath){
+        Shader loadFiles(in string vertexShaderSourcePath, in string fragmentShaderSourcePath){
             loadSources(vertexShaderSourcePath.loadedSource, fragmentShaderSourcePath.loadedSource);
+            return this;
         }
         
         /++
             Load the shader from sources 
         +/
-        void loadSources(in string vertexShaderSource, in string fragmentShaderSource){
+        Shader loadSources(in string vertexShaderSource, in string fragmentShaderSource){
             if(vertexShaderSource != ""){
                 addLog("load vertex shader");
                 loadShaderSource(vertexShaderSource, GL_VERTEX_SHADER);
@@ -58,6 +60,7 @@ class Shader {
             }else{
                 _isLoaded = true;
             }
+            return this;
         }
 
         /++
@@ -68,17 +71,18 @@ class Shader {
         /++
             Begin adapted process
         +/
-        void begin(){
+        Shader begin(){
             int savedProgramID;
             glGetIntegerv(GL_CURRENT_PROGRAM,&savedProgramID);
             _savedProgramIDs ~= savedProgramID;
             glUseProgram(_programID);
+            return this;
         }
 
         /++
             End adapted process
         +/
-        void end(){
+        Shader end(){
             import std.range;
             glUseProgram(_savedProgramIDs[$-1]);
             if (_savedProgramIDs.length == 0) {
@@ -86,6 +90,7 @@ class Shader {
             }else{
                 _savedProgramIDs.popBack;
             }
+            return this;
         }
 
         /++
@@ -99,7 +104,7 @@ class Shader {
         int uniformLocation(in string name){
             import std.string;
             immutable location = glGetUniformLocation(_programID, name.toStringz);
-            assert(location != -1, "Could not find uniform \"" ~ name ~ "\"");
+            // assert(location != -1, "Could not find uniform \"" ~ name ~ "\"");
             return location;
         }
 
@@ -111,17 +116,18 @@ class Shader {
         shader.setUniform("v", v);
         ----
         +/
-        void setUniform(V)(in string name, V v)
-            if(isVector!(V) && V.dimention <= 4){
-                if(_isLoaded){
-                    begin;
-                    int location = uniformLocation(name);
-                    if(location != -1){
-                        mixin(glFunctionString!(typeof(v[0]), v.elements.length)("glUniform"));
-                    }
-                    end;
+        Shader uniform(V)(in string name, V v)
+        if(isVector!(V) && V.dimention <= 4){
+            if(_isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    mixin(glFunctionString!(typeof(v[0]), v.elements.length)("glUniform"));
                 }
+                end;
             }
+            return this;
+        }
 
         /++
             Set matrix to uniform.
@@ -135,17 +141,18 @@ class Shader {
         shader.setUniform("m", m);
         ----
         +/
-        void setUniform(M)(in string name, M m)
-            if(isMatrix!(M) && M.rowSize<=4 && M.colSize<=4){
-                if(_isLoaded){
-                    begin;
-                    int location = uniformLocation(name);
-                    if(location != -1){
-                        mixin( glFunctionString!(typeof(m[0][0])[], m.rowSize, m.colSize).glFunctionNameString("glUniform") ~ "(location, 1, GL_FALSE, m.array.ptr);" );
-                    }
-                    end;
+        Shader uniform(M)(in string name, M m)
+        if(isMatrix!(M) && M.rowSize<=4 && M.colSize<=4){
+            if(_isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    mixin( glFunctionString!(typeof(m[0][0])[], m.rowSize, m.colSize).glFunctionNameString("glUniform") ~ "(location, 1, GL_FALSE, m.array.ptr);" );
                 }
+                end;
             }
+            return this;
+        }
 
         /++
             Set as an uniform.
@@ -158,7 +165,7 @@ class Shader {
         shader.setUniform("v", a, b, c);
         ----
         +/
-        void setUniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0])){
+        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0])){
             if(_isLoaded){
                 begin;
                 int location = uniformLocation(name);
@@ -167,27 +174,27 @@ class Shader {
                 }
                 end;
             }
+            return this;
         }
 
         /++
         +/
-        void setUniformTexture(in string name, armos.graphics.Texture texture, int textureLocation){
+        Shader uniformTexture(in string name, armos.graphics.Texture texture, int textureLocation){
             import std.string;
             if(_isLoaded){
                 begin;scope(exit)end;
-                texture.begin;scope(exit)texture.end;
                 glActiveTexture(GL_TEXTURE0 + textureLocation);
-                setUniform(name, textureLocation);
-                glActiveTexture(GL_TEXTURE0);
+                texture.begin;
+                uniform(name, textureLocation);
             }
+            return this;
         }
 
         /++
         +/
-        int attribLocation(in string name)const{
+        int attrLocation(in string name)const{
             import std.string;
             immutable location = glGetAttribLocation(_programID, name.toStringz);
-            assert(location != -1, "Could not find attribute \"" ~ name ~ "\"");
             return location;
         }
 
@@ -202,15 +209,19 @@ class Shader {
         shader.setAttrib("v", a, b, c);
         ----
         +/
-        void setAttrib(Args...)(in string name, Args v)if(Args.length > 0 && __traits(isArithmetic, Args[0])){
+        Shader attr(Args...)(in string name, Args v)if(Args.length > 0 && __traits(isArithmetic, Args[0])){
             if(_isLoaded){
                 begin;{
                     int location = attribLocation(name);
                     if(location != -1){
+                        _attribNames[name] = true;
                         mixin(glFunctionString!(typeof(v[0]), v.length)("glVertexAttrib"));
+                    }else{
+                        addLog("Could not find attribute \"" ~ name ~ "\"");
                     }
                 }end;
             }
+            return this;
         }
 
         /++
@@ -226,31 +237,39 @@ class Shader {
         shader.setAttrib("coord2d", vertices);
         ----
         +/
-        void setAttrib(Args...)(in string name, Args v)if(Args.length > 0 && !__traits(isArithmetic, Args[0])){
+        Shader attr(Args...)(in string name, Args v)if(Args.length > 0 && !__traits(isArithmetic, Args[0])){
             if(_isLoaded){
                 begin;{
                     int location = attribLocation(name);
                     if(location != -1){
                         int dim = attribDim(name);
+                        _attribNames[name] = true;
                         glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, v[0].ptr);
+                    }else{
+                        addLog("Could not find attribute \"" ~ name ~ "\"");
                     }
                 }end;
             }
+            return this;
         }
 
         /++
             Set current selected buffer as an attribute.
         +/
-        void setAttrib(in string name){
+        Shader attr(in string name){
             if(_isLoaded){
                 begin;{
-                    int location = attribLocation(name);
+                    int location = attrLocation(name);
                     if(location != -1){
                         int dim = attribDim(name);
+                        _attribNames[name] = true;
                         glVertexAttribPointer(location, dim, GL_FLOAT, GL_FALSE, 0, null);
+                    }else{
+                        addLog("Could not find attribute \"" ~ name ~ "\"");
                     }
                 }end;
             }
+            return this;
         }
 
         /++
@@ -261,33 +280,58 @@ class Shader {
         shader.setAttrib("v", v);
         ----
         +/
-        void setAttrib(V)(in string name, V v)if(isVector!(V) && V.dimention <= 4){
+        Shader attr(V)(in string name, V v)if(isVector!(V) && V.dimention <= 4){
             if(_isLoaded){
                 begin;{
                     int location = attribLocation(name);
                     if(location != -1){
+                        _attribNames[name] = true;
                         mixin(glFunctionString!(typeof(v[0]), v.elements.length)("glVertexAttrib"));
+                    }else{
+                        addLog("Could not find attribute \"" ~ name ~ "\"");
                     }
                 }end;
             }
+            return this;
         }
 
         /++
         +/
-        void enableAttrib(in string name){
-            glEnableVertexAttribArray(attribLocation(name));
+        Shader enableAttrib(in string name){
+            glEnableVertexAttribArray(attrLocation(name));
+            return this;
         }
 
         /++
         +/
-        void disableAttrib(in string name){
-            glDisableVertexAttribArray(attribLocation(name));
+        Shader disableAttrib(in string name){
+            glDisableVertexAttribArray(attrLocation(name));
+            return this;
+        }
+        
+        ///
+        Shader enableAttribs(){
+            import std.algorithm;
+            _attribNames.keys.each!(attribName => enableAttrib(attribName));
+            return this;
+        }
+
+        ///
+        Shader disableAttribs(){
+            import std.algorithm;
+            _attribNames.keys.each!(attribName => disableAttrib(attribName));
+            return this;
+        }
+        
+        string[] attribNames()const{
+            return _attribNames.keys;
         }
     }//public
 
     private{
         int _programID;
         int[] _savedProgramIDs;
+        bool[string] _attribNames;
         bool _isLoaded = false;
         string _log;
 
@@ -342,7 +386,7 @@ class Shader {
             int dim = 0;
             if(_isLoaded){
                 begin;scope(exit)end;
-                int location = attribLocation(name);
+                int location = attrLocation(name);
                 if(location != -1){
                     int maxLength;
                     glGetProgramiv(_programID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength);
@@ -366,6 +410,9 @@ class Shader {
                             break;
                         case GL_FLOAT_VEC3:
                             dim = 3;
+                            break;
+                        case GL_FLOAT_VEC4:
+                            dim = 4;
                             break;
                         default:
                             dim = 0;

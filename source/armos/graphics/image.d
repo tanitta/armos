@@ -2,6 +2,7 @@ module armos.graphics.image;
 
 static import armos.graphics;
 import armos.math;
+import armos.graphics.material;;
 /++
     画像のファイルフォーマットを表します
 +/
@@ -59,6 +60,8 @@ class Image {
                 FreeImage_Initialise();
                 isInitializedFreeImage = true;
             }
+            _material = (new DefaultMaterial);
+            _material.attr("diffuse", Vector4f(1, 1, 1, 1));
         }
 
         /++
@@ -66,7 +69,7 @@ class Image {
 
             画像を読み込みます．
         +/
-        void load(string pathInDataDir){
+        Image load(string pathInDataDir){
             import std.string;
             FIBITMAP * freeImageBitmap = null;
             _bitmap = armos.graphics.Bitmap!(char)();
@@ -97,41 +100,51 @@ class Image {
             }
 
             allocate;
+            _material.texture("tex0", this._texture);
+            return this;
         }
 
 
-        void drawCropped(T)(
+        Image drawCropped(T)(
                 in T x, in T y,
                 in T startX, in T startY,
                 in T endX, in T endY
                 ){
             drawCropped(x, y, T(0), startX, startY, endX, endY);
+            return this;
         }
 
-        void drawCropped(T)(
+        Image drawCropped(T)(
                 in T x, in T y, in T z,
                 in T startX, in T startY,
                 in T endX, in T endY
                 ){
             if(_isLoaded){
                 import std.conv;
-                _rect.texCoords[0] = Vector4f(startY.to!float/_texture.height, startX.to!float/_texture.width, 0, 1);
-                _rect.texCoords[1] = Vector4f(endY.to!float/_texture.height,   startX.to!float/_texture.width, 0, 1);
-                _rect.texCoords[2] = Vector4f(startY.to!float/_texture.height, endX.to!float/_texture.width,   0, 1);
-                _rect.texCoords[3] = Vector4f(endY.to!float/_texture.height,   endX.to!float/_texture.width,   0, 1);
+                _rect.texCoords[0] = Vector4f(startX.to!float/_texture.width, startY.to!float/_texture.height, 0, 1);
+                _rect.texCoords[1] = Vector4f(startX.to!float/_texture.width, endY.to!float/_texture.height,   0, 1);
+                _rect.texCoords[2] = Vector4f(endX.to!float/_texture.width,   endY.to!float/_texture.height,   0, 1);
+                _rect.texCoords[3] = Vector4f(endX.to!float/_texture.width,   startY.to!float/_texture.height, 0, 1);
+                
+                // _rect.texCoords[0] = Vector4f(0, 0, 0, 1);
+                // _rect.texCoords[1] = Vector4f(0, 1, 0, 1);
+                // _rect.texCoords[2] = Vector4f(1,   1,   0, 1);
+                // _rect.texCoords[3] = Vector4f(1,   ,   0, 1);
 
                 _rect.vertices[0] = Vector4f(0f,          0f,          0f, 1f);
                 _rect.vertices[1] = Vector4f(0f,          endY-startY, 0f, 1f);
-                _rect.vertices[2] = Vector4f(endX-startX, 0f,          0f, 1f);
-                _rect.vertices[3] = Vector4f(endX-startX, endY-startY, 0f, 1f);
+                _rect.vertices[2] = Vector4f(endX-startX, endY-startY, 0f, 1f);
+                _rect.vertices[3] = Vector4f(endX-startX, 0f,          0f, 1f);
 
                 armos.graphics.pushMatrix;
                 armos.graphics.translate(x, y, z);
-                _texture.begin;
+                _material.begin;
                 _rect.drawFill();
-                _texture.end;
+                _material.end;
                 armos.graphics.popMatrix;
             }
+            
+            return this;
         }
 
         /++
@@ -139,8 +152,9 @@ class Image {
 
             読み込んだ画像データを画面に描画します．
         +/
-        void draw(T)(in T x, in T y, in T z = T(0)){
+        Image draw(T)(in T x, in T y, in T z = T(0)){
             drawCropped(x, y, z, 0, 0, bitmap.width, bitmap.height);
+            return this;
         }
 
         /++
@@ -148,13 +162,14 @@ class Image {
 
             読み込んだ画像データを画面に描画します．
         +/
-        void draw(T)(in T position)const{
+        Image draw(T)(in T position)const{
             static if(position.data.length == 2)
                 draw(position[0], position[1]);
             else if(position.data.length == 3)
                 draw(position[0], position[1], position[2]);
             else
                 static assert(0, "arg is invalid dimention");
+            return this;
         }
 
         /++
@@ -188,10 +203,11 @@ class Image {
         /++
             Set bitmap
         +/
-        void bitmap(armos.graphics.Bitmap!(char) data){
+        Image bitmap(armos.graphics.Bitmap!(char) data){
             _bitmap = data;
             allocate();
             _isLoaded = true;
+            return this;
         }
 
         /++
@@ -199,34 +215,44 @@ class Image {
 
             一次元配列からImageを生成します
         +/
-        void setFromAlignedPixels(T)(T* pixels, int width, int height, armos.graphics.ColorFormat format){
+        Image setFromAlignedPixels(T)(T* pixels, int width, int height, armos.graphics.ColorFormat format){
             _bitmap.setFromAlignedPixels(cast(char*)pixels, width, height, format);
             allocate;
             _isLoaded = true;
+            _material.texture("tex0", this._texture);
+            return this;
         }
 
         /++
             与えられたbitmapを元にtextureとrectを生成します
         +/
-        void allocate(){
+        Image allocate(){
             _texture = new armos.graphics.Texture;
             _texture.allocate(_bitmap);
             _rect = new armos.graphics.Mesh;
             _rect.primitiveMode = armos.graphics.PrimitiveMode.TriangleStrip ;
             float x = _bitmap.width;
             float y = _bitmap.height;
+            
+            _rect.vertices = [
+                Vector4f(0.0, 0.0, 0.0, 1.0f),
+                Vector4f(0.0, y,   0.0, 1.0f),
+                Vector4f(x,   y,   0.0, 1.0f),
+                Vector4f(x,   0.0, 0.0, 1.0f),
+            ];
+            
+            _rect.texCoords0= [
+                Vector4f(0f, 0f,  0f, 1f),
+                Vector4f(0,                                1f*_bitmap.height/_texture.height,  0f, 1f),
+                Vector4f(1f*_bitmap.width/_texture.width,  1f*_bitmap.height/_texture.height,  0f, 1f),
+                Vector4f(1f*_bitmap.width/_texture.width,  0,  0f, 1f),
+            ];
 
-            _texture.begin;
-            _rect.addTexCoord(0, 0);_rect.addVertex(0, 0, 0);
-            _rect.addTexCoord(1.0*_bitmap.height/_texture.height, 0);_rect.addVertex(0, y, 0);
-            _rect.addTexCoord(1.0*_bitmap.height/_texture.height, 1.0*_bitmap.width/_texture.width);_rect.addVertex(x, y, 0);
-            _rect.addTexCoord(0, 1.0*_bitmap.width/_texture.width);_rect.addVertex(x, 0, 0);
-            _texture.end;
-
-            _rect.addIndex(0);
-            _rect.addIndex(1);
-            _rect.addIndex(2);
-            _rect.addIndex(3);
+            _rect.indices = [
+                0, 1, 2,
+                2, 3, 0,
+            ];
+            return this;
         }
 
         /++
@@ -246,24 +272,32 @@ class Image {
 
         /++
         +/
-        void setMinMagFilter(in armos.graphics.TextureFilter minFilter, in armos.graphics.TextureFilter magFilter){
+        Image setMinMagFilter(in armos.graphics.TextureFilter minFilter, in armos.graphics.TextureFilter magFilter){
             _texture.setMinMagFilter(minFilter, magFilter);
+            return this;
         }
 
         /++
         +/
-        void setMinMagFilter(in armos.graphics.TextureFilter filter){
+        Image setMinMagFilter(in armos.graphics.TextureFilter filter){
             _texture.setMinMagFilter(filter);
+            return this;
+        }
+        
+        ///
+        Material material(){
+            return _material;
         }
     }//public
 
     private{
+        static bool isInitializedFreeImage = false;
         armos.math.Vector2i _size;
         armos.graphics.Bitmap!(char) _bitmap;
         armos.graphics.Texture _texture;
         armos.graphics.Mesh _rect;
         bool _isLoaded = false;
-        static bool isInitializedFreeImage = false;
+        Material _material;
 
         /++
             ImageのbitmapにfreeImageのbitmapを指定します．
