@@ -153,14 +153,14 @@ class Texture {
                 int side = cast( int )fmax(bitmap.width, bitmap.height);
                 armos.graphics.Bitmap!(char) squareBitmap;
                 squareBitmap.allocate(side, side, bitmap.colorFormat);
-                for (int i = 0; i < bitmap.size[0]; i++) {
-                    for (int j = 0; j < bitmap.size[1]; j++) {
+                for (int j = 0; j < bitmap.size[1]; j++) {
+                    for (int i = 0; i < bitmap.size[0]; i++) {
                         squareBitmap.pixel(i, j, bitmap.pixel(i, j));
                     }
                 }
                 ubyte[] bits;
-                for (int i = 0; i < squareBitmap.size[0]; i++) {
-                    for (int j = 0; j < squareBitmap.size[1]; j++) {
+                for (int j = 0; j < squareBitmap.size[1]; j++) {
+                    for (int i = 0; i < squareBitmap.size[0]; i++) {
                         for (int k = 0; k < squareBitmap.numElements; k++) {
                             bits ~= squareBitmap.pixel(i, j).element(k);
                         }
@@ -169,8 +169,8 @@ class Texture {
                 allocate(bits, squareBitmap.size[0], squareBitmap.size[1], squareBitmap.colorFormat);
             }else{
                 ubyte[] bits;
-                for (int i = 0; i < bitmap.size[0]; i++) {
-                    for (int j = 0; j < bitmap.size[1]; j++) {
+                for (int j = 0; j < bitmap.size[1]; j++) {
+                    for (int i = 0; i < bitmap.size[0]; i++) {
                         for (int k = 0; k < bitmap.numElements; k++) {
                             bits ~= bitmap.pixel(i, j).element(k);
                         }

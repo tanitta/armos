@@ -2,6 +2,7 @@ module armos.graphics.image;
 
 static import armos.graphics;
 import armos.math;
+import armos.graphics.material;;
 /++
     画像のファイルフォーマットを表します
 +/
@@ -59,6 +60,7 @@ class Image {
                 FreeImage_Initialise();
                 isInitializedFreeImage = true;
             }
+            _material = (new DefaultMaterial);
         }
 
         /++
@@ -97,7 +99,7 @@ class Image {
             }
 
             allocate;
-            
+            _material.texture("tex0", this._texture);
             return this;
         }
 
@@ -118,21 +120,26 @@ class Image {
                 ){
             if(_isLoaded){
                 import std.conv;
-                _rect.texCoords[0] = Vector4f(startY.to!float/_texture.height, startX.to!float/_texture.width, 0, 1);
-                _rect.texCoords[1] = Vector4f(endY.to!float/_texture.height,   startX.to!float/_texture.width, 0, 1);
-                _rect.texCoords[2] = Vector4f(startY.to!float/_texture.height, endX.to!float/_texture.width,   0, 1);
-                _rect.texCoords[3] = Vector4f(endY.to!float/_texture.height,   endX.to!float/_texture.width,   0, 1);
+                _rect.texCoords[0] = Vector4f(startX.to!float/_texture.width, startY.to!float/_texture.height, 0, 1);
+                _rect.texCoords[1] = Vector4f(startX.to!float/_texture.width, endY.to!float/_texture.height,   0, 1);
+                _rect.texCoords[2] = Vector4f(endX.to!float/_texture.width,   endY.to!float/_texture.height,   0, 1);
+                _rect.texCoords[3] = Vector4f(endX.to!float/_texture.width,   startY.to!float/_texture.height, 0, 1);
+                
+                // _rect.texCoords[0] = Vector4f(0, 0, 0, 1);
+                // _rect.texCoords[1] = Vector4f(0, 1, 0, 1);
+                // _rect.texCoords[2] = Vector4f(1,   1,   0, 1);
+                // _rect.texCoords[3] = Vector4f(1,   ,   0, 1);
 
                 _rect.vertices[0] = Vector4f(0f,          0f,          0f, 1f);
                 _rect.vertices[1] = Vector4f(0f,          endY-startY, 0f, 1f);
-                _rect.vertices[2] = Vector4f(endX-startX, 0f,          0f, 1f);
-                _rect.vertices[3] = Vector4f(endX-startX, endY-startY, 0f, 1f);
+                _rect.vertices[2] = Vector4f(endX-startX, endY-startY, 0f, 1f);
+                _rect.vertices[3] = Vector4f(endX-startX, 0f,          0f, 1f);
 
                 armos.graphics.pushMatrix;
                 armos.graphics.translate(x, y, z);
-                _texture.begin;
+                _material.begin;
                 _rect.drawFill();
-                _texture.end;
+                _material.end;
                 armos.graphics.popMatrix;
             }
             
@@ -211,6 +218,7 @@ class Image {
             _bitmap.setFromAlignedPixels(cast(char*)pixels, width, height, format);
             allocate;
             _isLoaded = true;
+            _material.texture("tex0", this._texture);
             return this;
         }
 
@@ -224,18 +232,25 @@ class Image {
             _rect.primitiveMode = armos.graphics.PrimitiveMode.TriangleStrip ;
             float x = _bitmap.width;
             float y = _bitmap.height;
+            
+            _rect.vertices = [
+                Vector4f(0.0, 0.0, 0.0, 1.0f),
+                Vector4f(0.0, y,   0.0, 1.0f),
+                Vector4f(x,   y,   0.0, 1.0f),
+                Vector4f(x,   0.0, 0.0, 1.0f),
+            ];
+            
+            _rect.texCoords0= [
+                Vector4f(0f, 0f,  0f, 1f),
+                Vector4f(0,                                1f*_bitmap.height/_texture.height,  0f, 1f),
+                Vector4f(1f*_bitmap.width/_texture.width,  1f*_bitmap.height/_texture.height,  0f, 1f),
+                Vector4f(1f*_bitmap.width/_texture.width,  0,  0f, 1f),
+            ];
 
-            _texture.begin;
-            _rect.addTexCoord(0, 0);_rect.addVertex(0, 0, 0);
-            _rect.addTexCoord(1.0*_bitmap.height/_texture.height, 0);_rect.addVertex(0, y, 0);
-            _rect.addTexCoord(1.0*_bitmap.height/_texture.height, 1.0*_bitmap.width/_texture.width);_rect.addVertex(x, y, 0);
-            _rect.addTexCoord(0, 1.0*_bitmap.width/_texture.width);_rect.addVertex(x, 0, 0);
-            _texture.end;
-
-            _rect.addIndex(0);
-            _rect.addIndex(1);
-            _rect.addIndex(2);
-            _rect.addIndex(3);
+            _rect.indices = [
+                0, 1, 2,
+                2, 3, 0,
+            ];
             return this;
         }
 
@@ -270,12 +285,13 @@ class Image {
     }//public
 
     private{
+        static bool isInitializedFreeImage = false;
         armos.math.Vector2i _size;
         armos.graphics.Bitmap!(char) _bitmap;
         armos.graphics.Texture _texture;
         armos.graphics.Mesh _rect;
         bool _isLoaded = false;
-        static bool isInitializedFreeImage = false;
+        Material _material;
 
         /++
             ImageのbitmapにfreeImageのbitmapを指定します．

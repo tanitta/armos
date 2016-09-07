@@ -13,9 +13,10 @@ struct Bitmap(T){
             size = Bitmapのサイズです．
             colorType = Bitmapのカラーフォーマットを指定します．
         +/
-        void allocate(armos.math.Vector2i size, armos.graphics.ColorFormat colorType){
+        Bitmap allocate(armos.math.Vector2i size, armos.graphics.ColorFormat colorType){
             _colorFormat = colorType;
             allocate(size[0], size[1], colorType);
+            return this;
         }
 
         /++
@@ -25,7 +26,7 @@ struct Bitmap(T){
             height = Bitmapの縦幅です．
             colorType = Bitmapのカラーフォーマットを指定します．
         +/
-        void allocate(int width, int height, armos.graphics.ColorFormat colorType){
+        Bitmap allocate(int width, int height, armos.graphics.ColorFormat colorType){
             _size[0] = width;
             _size[1] = height;
             _colorFormat = colorType;
@@ -34,6 +35,7 @@ struct Bitmap(T){
             for (int i = 0; i < arraySize; i++) {
                 _data ~= armos.graphics.Pixel!T(colorType);
             }
+            return this;
         }
 
         /++
@@ -41,10 +43,11 @@ struct Bitmap(T){
 
             全てのピクセルのindexで与えられた画素に値を代入します
         +/
-        void setAllPixels(int index, T level){
+        Bitmap setAllPixels(int index, T level){
             foreach (pixel; _data) {
                 pixel.element(index, level);
             }
+            return this;
         };
 
         /++
@@ -52,8 +55,9 @@ struct Bitmap(T){
 
             positionとindexで指定された画素に値を代入します．
         +/
-        void pixel(in int x, in int y, in int index, in T value){
+        Bitmap pixel(in int x, in int y, in int index, in T value){
             _data[x+y*_size[0]].element(index, value);
+            return this;
         };
 
         /++
@@ -70,8 +74,9 @@ struct Bitmap(T){
 
             positionで指定された座標のpixelにpixelを設定します．
         +/
-        void pixel(in int x, in int y, armos.graphics.Pixel!(T) pixel){
+        Bitmap pixel(in int x, in int y, armos.graphics.Pixel!(T) pixel){
             _data[x+y*_size[0]].element(pixel);
+            return this;
         };
 
 
@@ -80,12 +85,13 @@ struct Bitmap(T){
 
             bitmapを指定した座標に貼り付けます．
         +/
-        void pasteInto(ref Bitmap!(T) targetBitmap, in int x, in int y){
+        Bitmap pasteInto(ref Bitmap!(T) targetBitmap, in int x, in int y){
             for (int i = 0; i < size[0]; i++) {
                 for (int j = 0; j < size[1]; j++) {
                     targetBitmap.pixel(i+x, j+y, pixel(i, j));
                 }
             }
+            return this;
         }
 
         /++
@@ -123,7 +129,7 @@ struct Bitmap(T){
 
             一次元配列からBitmapを生成します
         +/
-        void setFromAlignedPixels(T* pixels, int width, int height, armos.graphics.ColorFormat format){
+        Bitmap setFromAlignedPixels(T* pixels, int width, int height, armos.graphics.ColorFormat format){
             allocate(width, height, format);
             auto size = width * height;
             auto numChannels = armos.graphics.numColorFormatElements(format);
@@ -132,12 +138,13 @@ struct Bitmap(T){
                     _data[i/numChannels].element(channel, pixels[channel+i]);
                 }
             }
+            return this;
         }
 
         /++
             RとBのチャンネルを入れ替えます．
         +/
-        void swapRAndB(){
+        Bitmap swapRAndB(){
             if(numElements < 3){assert(0);}
             foreach (ref pixel; _data) {
                 auto r = pixel.element(0);
@@ -145,6 +152,7 @@ struct Bitmap(T){
                 pixel.element(0, b);
                 pixel.element(2, r);
             }
+            return this;
         }
 
         /++
