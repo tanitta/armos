@@ -100,6 +100,7 @@ class Image {
 
             allocate;
             _material.texture("tex0", this._texture);
+            _material.attr("diffuse", Vector4f(1, 1, 1, 1));
             return this;
         }
 
