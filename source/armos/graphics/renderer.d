@@ -675,8 +675,12 @@ class Renderer {
             
             _bufferMesh   = new armos.graphics.BufferMesh;
             _materialStack ~= new armos.graphics.DefaultMaterial;
-            currentMaterial.texture("tex0", (new armos.graphics.Texture).allocate(2, 2));
-            currentMaterial.texture("tex1", (new armos.graphics.Texture).allocate(2, 2));
+            auto bitmap = (new armos.graphics.Bitmap!(char)).allocate(2, 2, armos.graphics.ColorFormat.RGBA)
+                                                      .setAllPixels(0, 255)
+                                                      .setAllPixels(1, 255)
+                                                      .setAllPixels(2, 255)
+                                                      .setAllPixels(3, 255);
+            currentMaterial.texture("tex0", (new armos.graphics.Texture).allocate(bitmap));
             _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, currentMaterial);
             
             _modelMatrixStack.push;
@@ -714,6 +718,7 @@ class Renderer {
         +/
         void color(in armos.types.Color c){
             _currentStyle.color = cast(armos.types.Color)c; 
+            _materialStack[0].attr("diffuse", armos.math.Vector4f(c.r/255.0,c.g/255.0,c.b/255.0,c.a/255.0));
             glColor4f(c.r/255.0,c.g/255.0,c.b/255.0,c.a/255.0);
         }
 
@@ -1053,6 +1058,7 @@ class Renderer {
                 _materialStack.popBack;
             }
             _bufferEntity.material = currentMaterial;
+            
         }
         
         armos.graphics.Material currentMaterial(){

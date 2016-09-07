@@ -182,11 +182,11 @@ in vec4 f_color;
 in vec2 outtexCoord0;
 in vec2 outtexCoord1;
 
+uniform vec4      diffuse;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
 void main(void) {
-    // gl_FragColor = texture(tex0, outtexCoord0)*f_color;
-    gl_FragColor = texture(tex0, outtexCoord0);
+    gl_FragColor = texture(tex0, outtexCoord0)*diffuse;
 }
 };

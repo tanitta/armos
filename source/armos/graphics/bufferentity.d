@@ -108,7 +108,7 @@ class BufferEntity {
                 import derelict.opengl3.gl;
                 glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
                 import std.conv;
-                immutable int size = (elements/GLushort.sizeof).to!int;
+                immutable int size = (elements/GLuint.sizeof).to!int;
                 glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, null);
             _material.shader.disableAttribs();
         }

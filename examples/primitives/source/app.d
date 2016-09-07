@@ -3,13 +3,12 @@ import std.stdio, std.math;
 
 class TestApp : ar.app.BaseApp{
 	override void setup(){
-		ar.graphics.enableDepthTest;
 		_camera.position = ar.math.Vector3f(0, 0, -100);
 		_camera.target= ar.math.Vector3f(0, 0, 0);
 	}
 	
 	override void update(){
-		counter += 1;
+		counter += 0.01;
 	}
 	
 	override void draw(){
@@ -32,7 +31,6 @@ class TestApp : ar.app.BaseApp{
 			),
 			ar.types.Color(0xffdc00)
 		);
-		
 		
 		drawPrimitiveExample(
 			ar.math.Vector3f(40, 0, 0),
