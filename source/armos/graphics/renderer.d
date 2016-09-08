@@ -658,6 +658,17 @@ armos.graphics.Material currentMaterial(){
     return currentRenderer.currentMaterial;
 }
 
+///
+void samples(in int s){
+    currentRenderer.samples = s;
+}
+    
+///
+int samples(){
+    return currentRenderer.samples;
+    
+}
+
 /++
 +/
 class Renderer {
@@ -713,7 +724,14 @@ class Renderer {
         +/
         void fillBackground(in armos.types.Color color){
             background = color;
-            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            if(_isUseFbo){
+                auto tmp = _currentStyle.color;
+                this.color(currentStyle.backgroundColor);
+                drawRectangle(0, 0, armos.app.currentWindow.size[0], armos.app.currentWindow.size[1]);
+                this.color(tmp);
+            }else{
+                glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            }
         }
 
         /++
@@ -865,14 +883,12 @@ class Renderer {
         void startRender(){
             // setBackground(currentStyle.backgroundColor );
             
-            viewport();
+            fillBackground(currentStyle.backgroundColor);
             _projectionMatrixStack.push;
             _projectionMatrixStack.load(screenPerspectiveMatrix);
-            
             if(_isUseFbo){
                 _fbo.begin;
             }
-
 
             if( _isBackgrounding ){
                 fillBackground(currentStyle.backgroundColor);
@@ -893,6 +909,8 @@ class Renderer {
                 
 
                 _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
+                
+                viewport();
                 _fbo.draw;
                 _projectionMatrixStack.pop;
                 color(tmp);
@@ -1071,6 +1089,15 @@ class Renderer {
         
         armos.graphics.Material currentMaterial(){
             return _materialStack[$-1];
+        }
+        
+        void samples(in int s){
+            _fbo.samples = s;
+        }
+            
+        int samples()const{
+            return _fbo.samples;
+            
         }
     }//public
 

@@ -5,6 +5,7 @@ class TestApp : ar.app.BaseApp{
 	override void setup(){
 		_camera.position = ar.math.Vector3f(0, 0, -100);
 		_camera.target= ar.math.Vector3f(0, 0, 0);
+        ar.graphics.samples = 2;
 	}
 	
 	override void update(){

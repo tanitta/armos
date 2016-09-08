@@ -13,8 +13,8 @@ class Fbo{
         /++
         +/
         this(){
-            static import armos.app;
-            this(armos.app.currentWindow.size);
+            import armos.app;
+            this(currentWindow.size);
         }
 
         /++
@@ -26,31 +26,33 @@ class Fbo{
         /++
         +/
         this(in int width, in int height){
+            _size = Vector2i(width, height);
+            Vector2i textureSize = _size * _samples;
+            int x = textureSize.x;
+            int y = textureSize.y;
+            
             glGenFramebuffers(1, cast(uint*)&_id);
 
             _colorTexture = new armos.graphics.Texture;
-            _colorTexture.allocate(width, height, armos.graphics.ColorFormat.RGBA);
+            _colorTexture.allocate(x, y, armos.graphics.ColorFormat.RGBA);
 
             _depthTexture= new armos.graphics.Texture;
-            _depthTexture.allocate(width, height, armos.graphics.ColorFormat.Depth);
+            _depthTexture.allocate(x, y, armos.graphics.ColorFormat.Depth);
 
-            float x = width;
-            float y = height;
-            
             rect = new Mesh;
 
-            rect.vertices = [
-                Vector4f(0.0, 0.0,  0.0, 1.0f),
-                Vector4f(0.0, y,  0.0, 1.0f),
-                Vector4f(x,  y,  0.0, 1.0f),
-                Vector4f(x,  0.0,  0.0, 1.0f),
+            rect.texCoords0 = [
+                Vector4f(0f, 0f, 0.0, 1.0f),
+                Vector4f(0,  1f, 0.0, 1.0f),
+                Vector4f(1f, 1f, 0.0, 1.0f),
+                Vector4f(1f, 0,  0.0, 1.0f),
             ];
             
-            rect.texCoords0= [
-                Vector4f(0f, 0f,  0.0, 1.0f),
-                Vector4f(0, 1f,  0.0, 1.0f),
-                Vector4f(1,  1,  0.0, 1.0f),
-                Vector4f(1.0,  0,  0.0, 1.0f),
+            rect.vertices = [
+                Vector4f(0.0,   0.0,    0.0, 1.0f),
+                Vector4f(0.0,   height, 0.0, 1.0f),
+                Vector4f(width, height, 0.0, 1.0f),
+                Vector4f(width, 0.0,    0.0, 1.0f),
             ];
             
             rect.indices = [
@@ -75,6 +77,8 @@ class Fbo{
         Fbo begin(){
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
             glBindFramebuffer(GL_FRAMEBUFFER, _id);
+            Vector2i textureSize = _size*_samples;
+            glViewport(0, 0, textureSize[0], textureSize[1]);
             return this;
         }
 
@@ -98,7 +102,7 @@ class Fbo{
         +/
         Fbo draw(){
             _material.begin;
-            rect.drawFill();
+            rect.drawFill;
             _material.end;
             return this;
         }
@@ -109,50 +113,70 @@ class Fbo{
             size = リサイズ後のサイズ
         +/
         Fbo resize(in armos.math.Vector2i size){
-            begin;
-            rect.vertices[1][1] = size[1];
-            rect.vertices[2][0] = size[0];
-            rect.vertices[2][1] = size[1];
-            rect.vertices[3][0] = size[0];
-            // _colorTexture.resize(size);
-            _colorTexture.resize(Vector2i(size[0], size[1]));
-            _depthTexture.resize(size);
-            end;
+            _size = size;
+            rect.vertices[1][1] = _size[1];
+            rect.vertices[2][0] = _size[0];
+            rect.vertices[2][1] = _size[1];
+            rect.vertices[3][0] = _size[0];
+            
+            resizeTextures;
             return this;
         }
         
+        ///
         bool isFlip()const{return _isFlip;}
         
+        ///
         Fbo isFlip(in bool f){
             _isFlip = f;
             if(_isFlip){
                 rect.texCoords0 = [
-                    Vector4f(0f, 1f,  0.0, 1.0f),
-                    Vector4f(0, 0f,  0.0, 1.0f),
-                    Vector4f(1,  0,  0.0, 1.0f),
-                    Vector4f(1.0,  1,  0.0, 1.0f),
+                    Vector4f(0f,  1f, 0.0, 1.0f),
+                    Vector4f(0,   0f, 0.0, 1.0f),
+                    Vector4f(1,   0,  0.0, 1.0f),
+                    Vector4f(1.0, 1,  0.0, 1.0f),
                 ];
             }else{
                 rect.texCoords0 = [
-                    Vector4f(0f, 0f,  0.0, 1.0f),
-                    Vector4f(0, 1f,  0.0, 1.0f),
-                    Vector4f(1,  1,  0.0, 1.0f),
-                    Vector4f(1.0,  0,  0.0, 1.0f),
+                    Vector4f(0f,  0f, 0.0, 1.0f),
+                    Vector4f(0,   1f, 0.0, 1.0f),
+                    Vector4f(1,   1,  0.0, 1.0f),
+                    Vector4f(1.0, 0,  0.0, 1.0f),
                 ];
             }
             return this;
         }
+        
+        ///
+        Fbo samples(in int s){
+            _samples = s;
+            resizeTextures;
+            return this;
+        }
+        
+        ///
+        int samples()const{
+            return _samples;
+        }
     }//public
 
     private{
-        int _savedId =0;
+        int _savedId = 0;
         int _id = 0;
         armos.graphics.Texture _colorTexture;
         armos.graphics.Texture _depthTexture;
         armos.graphics.Mesh rect = new armos.graphics.Mesh;
         armos.graphics.Material _material;
-        
+        int _samples = 1;
         bool _isFlip = false;
+        Vector2i _size;
+        
+        void resizeTextures(){
+            begin;
+            _colorTexture.resize(_size*_samples);
+            _depthTexture.resize(_size*_samples);
+            end;
+        }
     }//private
 }
 
@@ -210,5 +234,6 @@ uniform sampler2D depthTexture;
 
 void main(void) {
     gl_FragColor = texture(colorTexture, outtexCoord0);
+    // gl_FragColor = vec4(1, 1, 1, 1);
 }
 };
