@@ -1,9 +1,9 @@
 module armos.app.basewindow;
 
 import derelict.opengl3.gl;
-static import armos.events;
-static import armos.math;
-static import armos.app;
+import armos.events;
+import armos.math;
+import armos.app;
 
 /++
 armosで用いるWindowsの雛形となるinterfaceです．新たにWindowを実装する際はこのinterfaceを継承することでrunnerから実行できます．
@@ -13,17 +13,17 @@ interface Window{
         /++
             Windowsが実行するイベントを表すプロパティです．
         +/
-        armos.events.CoreEvents events();
+        CoreEvents events();
 
         /++
             サイズのプロパティです
         +/
-        void size(armos.math.Vector2i size);
+        void size(Vector2i size);
 
         /++
             サイズのプロパティです．
         +/
-        armos.math.Vector2i size();
+        Vector2i size();
 
         /++
             イベントが発生している場合，登録されたイベントを実行します
@@ -78,26 +78,26 @@ mixin template BaseWindow(){
 
         /++
         +/
-        void initEvents(armos.app.baseapp.BaseApp app){
+        void initEvents(BaseApp app){
             _app = app;
-            _coreEvents= new armos.events.CoreEvents;
+            _coreEvents= new CoreEvents;
             assert(_coreEvents);
 
-            armos.events.addListener(_coreEvents.setup, app, &app.setup);
-            armos.events.addListener(_coreEvents.update, app, &app.update);
-            armos.events.addListener(_coreEvents.draw, app, &app.draw);
-            armos.events.addListener(_coreEvents.keyPressed, app, &app.keyPressed);
-            armos.events.addListener(_coreEvents.mouseMoved, app, &app.mouseMoved);
-            armos.events.addListener(_coreEvents.mouseDragged, app, &app.mouseDragged);
-            armos.events.addListener(_coreEvents.mouseReleased, app, &app.mouseReleased);
-            armos.events.addListener(_coreEvents.mousePressed, app, &app.mousePressed);
-            armos.events.addListener(_coreEvents.unicodeInputted, app, &app.unicodeInputted);
-            armos.events.addListener(_coreEvents.exit, app, &app.exit);
+            addListener(_coreEvents.setup, app, &app.setup);
+            addListener(_coreEvents.update, app, &app.update);
+            addListener(_coreEvents.draw, app, &app.draw);
+            addListener(_coreEvents.keyPressed, app, &app.keyPressed);
+            addListener(_coreEvents.mouseMoved, app, &app.mouseMoved);
+            addListener(_coreEvents.mouseDragged, app, &app.mouseDragged);
+            addListener(_coreEvents.mouseReleased, app, &app.mouseReleased);
+            addListener(_coreEvents.mousePressed, app, &app.mousePressed);
+            addListener(_coreEvents.unicodeInputted, app, &app.unicodeInputted);
+            addListener(_coreEvents.exit, app, &app.exit);
         }
 
         /++
         +/
-        armos.events.CoreEvents events(){
+        CoreEvents events(){
             assert(_coreEvents);
             return _coreEvents;
         }
@@ -115,14 +115,14 @@ mixin template BaseWindow(){
     }//public
 
     private{
-        armos.app.baseapp.BaseApp _app;
-        armos.events.CoreEvents _coreEvents;
+        BaseApp _app;
+        CoreEvents _coreEvents;
     }//private
 
     protected{
         bool _shouldClose = false;
         string _name = "";
-        armos.math.Vector2f _windowSize;
+        Vector2f _windowSize;
     }//protected
 }
 
@@ -138,7 +138,7 @@ class GLFWWindow : Window{
             Params:
             apprication = Windowとひも付けされるアプリケーションです．
         +/
-        this(armos.app.BaseApp apprication, armos.app.WindowConfig config){
+        this(BaseApp apprication, WindowConfig config){
             DerelictGL.load();
             DerelictGLFW3.load();
 
@@ -173,15 +173,15 @@ class GLFWWindow : Window{
             writeVersion;
         }
 
-        void size(armos.math.Vector2i size){
+        void size(Vector2i size){
             glfwSetWindowSize(window, size[0], size[1]);
         }
 
         /++
             Windowのサイズを返します．
         +/
-        armos.math.Vector2i size(){
-            auto vec = armos.math.Vector2i();
+        Vector2i size(){
+            auto vec = Vector2i();
             glfwGetWindowSize(window, &vec[0], &vec[1]);
             return vec;
         }
@@ -282,21 +282,21 @@ class GLFWWindow : Window{
 /++
     現在のWindowを返す関数です．
 +/
-armos.app.Window currentWindow(){
-    return armos.app.mainLoop.window;
+Window currentWindow(){
+    return mainLoop.window;
 }
 
 /++
     現在のWindowの大きさを変更する関数です.
 +/
-void windowSize(armos.math.Vector2i size){
+void windowSize(Vector2i size){
     currentWindow.size(size);
 }
 
 /++
     現在のWindowの大きさを返す関数です．
 +/
-armos.math.Vector2i windowSize(){
+Vector2i windowSize(){
     return currentWindow.size;
 }
 

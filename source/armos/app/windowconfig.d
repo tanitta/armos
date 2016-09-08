@@ -1,6 +1,6 @@
 module armos.app.windowconfig;
 
-static import armos.math;
+import armos.math;
 import armos.utils.semver;
 import std.conv;
 
@@ -14,8 +14,8 @@ class WindowConfig {
         int width()const{return _width;}
         void width(in int h){_width = h;}
         
-        armos.math.Vector2i position()const{return _position;}
-        void position(in armos.math.Vector2i p){_position = p;}
+        Vector2i position()const{return _position;}
+        void position(in Vector2i p){_position = p;}
         
         int glVersionMajor()const{return _glVersion.major;}
         int glVersionMinor()const{return _glVersion.minor;}
@@ -42,7 +42,7 @@ class WindowConfig {
     private{
         int _height;
         int _width;
-        armos.math.Vector2i _position;
+        Vector2i _position;
         SemVer _glVersion = SemVer(3, 2, 0);
     }//private
 }//interface WindowConfig

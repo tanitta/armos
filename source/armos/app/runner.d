@@ -1,22 +1,22 @@
 module armos.app.runner;
-static import armos.app;
-static import armos.utils;
-static import armos.events;
-static import armos.graphics;
+import armos.app;
+import armos.utils;
+import armos.events;
+import armos.graphics;
 
 /++
 armosのアプリケーションの更新を行うclassです．
 +/
 class Loop {
     public{
-        armos.app.basewindow.Window window;
-        armos.graphics.Renderer renderer;
-        armos.app.BaseApp* application;
+        Window window;
+        Renderer renderer;
+        BaseApp* application;
 
         /++
         +/
         this(){
-            fpscounter = new armos.utils.FpsCounter;
+            fpscounter = new FpsCounter;
         }
 
         /++
@@ -24,7 +24,7 @@ class Loop {
             Params:
             app = 更新されるアプリケーションです．
         +/
-        void run(WindowType)(armos.app.BaseApp app, armos.app.WindowConfig config){
+        void run(WindowType)(BaseApp app, WindowConfig config){
             createWindow!(WindowType)(app, config);
             loop();
         };
@@ -46,11 +46,11 @@ class Loop {
 
     private{
         bool isLoop = true;
-        armos.utils.FpsCounter fpscounter;
+        FpsCounter fpscounter;
 
-        void createWindow(WindowType)(armos.app.BaseApp app, armos.app.WindowConfig config){
+        void createWindow(WindowType)(BaseApp app, WindowConfig config){
             window = new WindowType(app, config);
-            renderer = new armos.graphics.Renderer;
+            renderer = new Renderer;
             application = &app;
             assert(window);
             renderer.setup();
@@ -94,12 +94,11 @@ Loop mainLoop() @property
     WindowType = 立ち上げるWindowの型を指定します．省略可能です．
     app = 立ち上げるアプリケーションを指定します．
 +/
-void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app, armos.app.WindowConfig config = null){
+void run(WindowType = GLFWWindow)(BaseApp app, WindowConfig config = null){
     mainLoop_ = new Loop;
     if(!config){
-        config = new armos.app.WindowConfig();
+        config = new WindowConfig();
         with(config){
-            import armos.utils.semver;
             glVersion = SemVer(3, 3, 0);
             width = 640;
             height = 480;
