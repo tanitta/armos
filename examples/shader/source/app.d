@@ -7,7 +7,9 @@ class TestApp : ar.app.BaseApp{
 	float c = 0;
 	
 	override void setup(){
-		_shader = new ar.graphics.Shader().load("simple");
+		_shader = (new ar.graphics.Shader).load("simple");
+        _shader.log.writeln;
+        
         ar.graphics.currentMaterial.texture("tex", (new ar.graphics.Image).load("lena_std.tif").texture);
         ar.graphics.currentMaterial.shader = _shader;
         
@@ -35,11 +37,10 @@ class TestApp : ar.app.BaseApp{
 	
 	override void update(){
 		c += 0.01;
-		_shader.uniform("color", c%1f, c%1f, c%1f, 1.0f);
+		_shader.uniform("userVar", c%1f);
 	}
 	
 	override void draw(){
-        // image.draw(0, 0);
         _rect.drawFill;
 	}
 }

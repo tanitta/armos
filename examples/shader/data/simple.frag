@@ -1,15 +1,11 @@
 // simple.frag
-#version 130
+#version 330
 
-uniform vec4 color;
+uniform float userVar;
 uniform sampler2D tex;
 
+in vec2 outtexCoord0;
+
 void main(void) {
-	vec2 pos = gl_TexCoord[0].xy;
-	float r = texture2D(tex, pos).r;
-	float g = texture2D(tex, pos).g;
-	float b = texture2D(tex, pos).b;
-	float a = texture2D(tex, pos).a;
-	
-	gl_FragColor = vec4(r*color.r,g*color.r,b*color.b,a*color*a);
+    gl_FragColor = texture(tex, outtexCoord0)*userVar;
 }
