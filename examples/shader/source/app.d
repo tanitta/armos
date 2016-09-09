@@ -16,17 +16,17 @@ class TestApp : ar.app.BaseApp{
         _rect = new ar.graphics.Mesh;
 
         _rect.vertices = [
-            ar.math.Vector4f(0.0, 0.0,  0.0, 1.0f),
-            ar.math.Vector4f(0.0, 512,  0.0, 1.0f),
-            ar.math.Vector4f(512,  512,  0.0, 1.0f),
-            ar.math.Vector4f(512,  0.0,  0.0, 1.0f),
+            ar.math.Vector4f(0f,   0f,   0f, 1f),
+            ar.math.Vector4f(0f,   512f, 0f, 1f),
+            ar.math.Vector4f(512f, 512f, 0f, 1f),
+            ar.math.Vector4f(512f, 0f,   0f, 1f),
         ];
         
         _rect.texCoords0= [
-            ar.math.Vector4f(0f, 0f,  0.0, 1.0f),
-            ar.math.Vector4f(0, 1f,  0.0, 1.0f),
-            ar.math.Vector4f(1,  1,  0.0, 1.0f),
-            ar.math.Vector4f(1.0,  0,  0.0, 1.0f),
+            ar.math.Vector4f(0f, 0f,  0f, 1f),
+            ar.math.Vector4f(0f, 1f,  0f, 1f),
+            ar.math.Vector4f(1f, 1f,  0f, 1f),
+            ar.math.Vector4f(1f, 0f,  0f, 1f),
         ];
         
         _rect.indices = [
@@ -36,9 +36,15 @@ class TestApp : ar.app.BaseApp{
 	}
 	
 	override void update(){
-		c += 0.01;
-		_shader.uniform("userVar", c%1f);
+		c += 0.2;
+		_shader.uniform("time", c);
 	}
+    
+    override void mouseMoved(ar.math.Vector2i p, int button){
+        import std.conv:to;
+		_shader.uniform!float("shiftX", p.x);
+		_shader.uniform!float("shiftY", p.y);
+    }
 	
 	override void draw(){
         _rect.drawFill;
