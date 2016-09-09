@@ -1,10 +1,11 @@
 module armos.graphics.matrixstack;
+
+import std.array;
 import armos.app;
 import armos.types;
-import std.array;
-static import armos.math;
+import armos.math;
 
-private alias M4 = armos.math.Matrix4f;
+private alias M4 = Matrix4f;
 
 /++
 RendererでのMatrixを管理するclassです．
@@ -123,37 +124,37 @@ unittest{
 package mixin template MatrixStackFunction(string Name){
     public{
         import std.string;
-        /// armos.math.Matrix4f nameMatrix()
+        /// Matrix4f nameMatrix()
         mixin("
-        armos.math.Matrix4f " ~ Name.toLower ~ "Matrix(){
+        Matrix4f " ~ Name.toLower ~ "Matrix(){
           return currentRenderer." ~ Name.toLower ~ "Matrix;
         }
         ");
         
-        /// void pushNameMatrix(in armos.math.Matrix4f newMatrix = armos.math.Matrix4f.identity)
+        /// void pushNameMatrix(in Matrix4f newMatrix = Matrix4f.identity)
         mixin("
         void push" ~ Name ~ "Matrix(){
             currentRenderer.push" ~ Name ~ "Matrix();
         }
         ");
 
-        /// armos.math.Matrix4f popNameMatrix()
+        /// Matrix4f popNameMatrix()
         mixin( "
         void pop" ~ Name ~ "Matrix(){
             currentRenderer.pop" ~ Name ~ "Matrix;
         }
         ");
 
-        /// void multNameMatrix(in armos.math.Matrix4f matrix)
+        /// void multNameMatrix(in Matrix4f matrix)
         mixin("
-        void mult" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+        void mult" ~ Name ~ "Matrix(in Matrix4f matrix){
             currentRenderer.mult" ~ Name ~ "Matrix(matrix);
         }
         ");
 
-        /// void loadNameMatrix(in armos.math.Matrix4f matrix)
+        /// void loadNameMatrix(in Matrix4f matrix)
         mixin( "
-        void load" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+        void load" ~ Name ~ "Matrix(in Matrix4f matrix){
             currentRenderer.load" ~ Name ~ "Matrix(matrix);
         }
         ");
@@ -165,7 +166,7 @@ package mixin template MatrixStackManipulator(string Name){
     public{
         import std.string;
         mixin("
-        armos.math.Matrix4f " ~ Name.toLower ~ "Matrix()const{
+        Matrix4f " ~ Name.toLower ~ "Matrix()const{
           return _" ~ Name.toLower ~ "MatrixStack.matrix;
         }
         ");
@@ -186,20 +187,20 @@ package mixin template MatrixStackManipulator(string Name){
 
         ///
         mixin("
-        void mult" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+        void mult" ~ Name ~ "Matrix(in Matrix4f matrix){
           _" ~ Name.toLower ~ "MatrixStack.mult(matrix);
         }
         ");
 
         ///
         mixin( "
-        void load" ~ Name ~ "Matrix(in armos.math.Matrix4f matrix){
+        void load" ~ Name ~ "Matrix(in Matrix4f matrix){
             _" ~ Name.toLower ~ "MatrixStack.load(matrix);
         }
         ");
     }
     
     private{
-        mixin("armos.graphics.MatrixStack _" ~ Name.toLower ~ "MatrixStack = new armos.graphics.MatrixStack();");
+        mixin("MatrixStack _" ~ Name.toLower ~ "MatrixStack = new MatrixStack();");
     }
 }

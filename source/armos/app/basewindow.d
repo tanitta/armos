@@ -256,8 +256,8 @@ class GLFWWindow : Window{
         }
 
         static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
-            static import armos.graphics;
-            armos.graphics.currentRenderer.resize();
+            import armos.graphics;
+            currentRenderer.resize();
         }
         
         void writeVersion(){

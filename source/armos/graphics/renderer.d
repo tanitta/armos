@@ -1,11 +1,11 @@
 module armos.graphics.renderer;
-import armos.app;
-static import armos.graphics;
-import derelict.opengl3.gl;
-import std.math;
 
-static import armos.math;
-static import armos.types;
+import std.math;
+import derelict.opengl3.gl;
+import armos.app;
+import armos.graphics;
+import armos.math;
+import armos.types;
 
 /++
 ポリゴンのレンダリング方法を表します

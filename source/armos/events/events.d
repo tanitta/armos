@@ -210,7 +210,7 @@ unittest{
     auto core_events = new CoreEvents;
     bool executedSetup = false;
     int pressedKey = false;
-    static import armos.app;
+    import armos.app;
     class TestApp: armos.app.BaseApp {
         //i want to write like c++. the following is verbose...
         //should i use template mixin instead alias?

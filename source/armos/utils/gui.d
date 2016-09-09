@@ -1,9 +1,10 @@
 module armos.utils.gui;
-static import armos.graphics;
-static import armos.types.color;
-static import armos.app;
-static import armos.math;
-static import armos.events;
+
+import armos.graphics;
+import armos.types.color;
+import armos.app;
+import armos.math;
+import armos.events;
 
 /++
 値にアクセスするGuiを表すclassです．
@@ -43,13 +44,13 @@ class Gui {
         +/
         this(){
             _style = new Style;
-            _style.font = new armos.graphics.BitmapFont;
+            _style.font = new BitmapFont;
             _style.font.load("font.png", 8, 8);
-            _style.colors["font1"] = armos.types.Color(200, 200, 200);
-            _style.colors["font2"] = armos.types.Color(105, 105, 105);
-            _style.colors["background"] = armos.types.Color(40, 40, 40, 200);
-            _style.colors["base1"] = armos.types.Color(64, 64, 64);
-            _style.colors["base2"] = armos.types.Color(150, 150, 150);
+            _style.colors["font1"] = Color(200, 200, 200);
+            _style.colors["font2"] = Color(105, 105, 105);
+            _style.colors["background"] = Color(40, 40, 40, 200);
+            _style.colors["base1"] = Color(64, 64, 64);
+            _style.colors["base2"] = Color(150, 150, 150);
             _style.width = 256;
         }
 
@@ -66,19 +67,19 @@ class Gui {
             Guiの内部のウィジェットを再帰的に描画します．
         +/
         void draw(){
-            armos.graphics.pushStyle;
-            armos.graphics.blendMode(armos.graphics.BlendMode.Alpha);
-            armos.graphics.disableDepthTest;
+            pushStyle;
+            blendMode(BlendMode.Alpha);
+            disableDepthTest;
 
             int currentWidth = 0;
             foreach (list; _lists) {
-                armos.graphics.pushMatrix;
-                armos.graphics.translate(currentWidth, 0, 0);
+                pushMatrix;
+                translate(currentWidth, 0, 0);
                 list.draw(currentWidth);
-                armos.graphics.popMatrix;
+                popMatrix;
                 currentWidth += list.width + _style.font.width;
             }
-            armos.graphics.popStyle;
+            popStyle;
         }
 
     }//public
@@ -94,9 +95,9 @@ class Style {
         this(){}
 
         int width = 256;
-        armos.graphics.BitmapFont font;
+        BitmapFont font;
 
-        armos.types.color.Color[string] colors;
+        Color[string] colors;
     }//public
 
     private{
@@ -131,11 +132,11 @@ class List {
         void draw(in int posX){
             int currentHeight= 0;
             foreach (widget; _widgets) {
-                armos.graphics.pushMatrix;
-                armos.graphics.translate(0, currentHeight, 0);
-                widget.position = armos.math.Vector2i(posX, currentHeight);
+                pushMatrix;
+                translate(0, currentHeight, 0);
+                widget.position = Vector2i(posX, currentHeight);
                 widget.draw();
-                armos.graphics.popMatrix;
+                popMatrix;
                 currentHeight += widget.height;
             }
         }
@@ -175,7 +176,7 @@ class Widget {
         /++
             Widgetの座標を返します．
         +/
-        void position(armos.math.Vector2i pos){_position = pos;}
+        void position(Vector2i pos){_position = pos;}
 
         /++
         +/
@@ -202,7 +203,7 @@ class Widget {
     }//private
 
     protected{
-        armos.math.Vector2i _position;
+        Vector2i _position;
         Style _style;
     }//protected
 }//class Widget
@@ -223,8 +224,8 @@ class Label : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.color(_style.colors["background"]);
-            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
+            color(_style.colors["background"]);
+            drawRectangle(0, 0, _style.width, _style.font.height*2);
             _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_str, _style.font.width, 0);
         };
@@ -251,8 +252,8 @@ class Partition : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.color(_style.colors["background"]);
-            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*2);
+            color(_style.colors["background"]);
+            drawRectangle(0, 0, _style.width, _style.font.height*2);
             _style.font.material.attr("diffuse", _style.colors["font2"]);
             string str;
             for (int i = 0; i < _style.width/_style.font.width/_str.length; i++) {
@@ -292,8 +293,8 @@ class Slider(T) : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.color(_style.colors["background"]);
-            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
+            color(_style.colors["background"]);
+            drawRectangle(0, 0, _style.width, _style.font.height*4);
 
             string varString = "";
             static if(__traits(isIntegral, *_var)){
@@ -305,11 +306,11 @@ class Slider(T) : Widget{
             
             _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
 
-            immutable int currentValueAsSliderPosition = armos.math.map.map( ( *_var ).to!float, _varMin.to!float, _varMax.to!float, 0.0, _style.width.to!float - _style.font.width.to!float*2.0).to!int;
-            armos.graphics.color(_style.colors["base1"]);
-            armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*2);
-            armos.graphics.color(_style.colors["base2"]);
-            armos.graphics.drawRectangle(_style.font.width, _style.font.height, currentValueAsSliderPosition.to!int, _style.font.height*2);
+            immutable int currentValueAsSliderPosition = map( ( *_var ).to!float, _varMin.to!float, _varMax.to!float, 0.0, _style.width.to!float - _style.font.width.to!float*2.0).to!int;
+            color(_style.colors["base1"]);
+            drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*2);
+            color(_style.colors["base2"]);
+            drawRectangle(_style.font.width, _style.font.height, currentValueAsSliderPosition.to!int, _style.font.height*2);
         };
 
         /++
@@ -322,7 +323,7 @@ class Slider(T) : Widget{
         +/
         void mouseMoved(ref armos.events.MouseMovedEventArg message){
             if(_isPressing){
-                *_var = armos.math.map.map( 
+                *_var = map( 
                         ( message.x-_position[0]).to!float,
                         _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
                         _varMin.to!float, _varMax.to!float
@@ -334,7 +335,7 @@ class Slider(T) : Widget{
         +/
         void mouseReleased(ref armos.events.MouseReleasedEventArg message){
             if(_isPressing){
-                *_var = armos.math.map.map( 
+                *_var = map( 
                         ( message.x-_position[0]).to!float,
                         _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float, 
                         _varMin.to!float, _varMax.to!float
@@ -376,8 +377,8 @@ class MovingGraph(T) : Widget{
             _varMin = min;
             _varMax= max;
             _height = 128;
-            _lines = new armos.graphics.Mesh();
-            _lines.primitiveMode = armos.graphics.PrimitiveMode.LineStrip;
+            _lines = new Mesh();
+            _lines.primitiveMode = PrimitiveMode.LineStrip;
             foreach (int i, v; _buffer) {
                 v = _varMin;
                 _lines.addVertex(i.to!float/_bufferSize.to!float, v, 0);
@@ -394,8 +395,8 @@ class MovingGraph(T) : Widget{
         };
 
         override void draw(){
-            armos.graphics.color(_style.colors["background"]);
-            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*16);
+            color(_style.colors["background"]);
+            drawRectangle(0, 0, _style.width, _style.font.height*16);
 
             import std.format:format;
             import std.conv;
@@ -408,8 +409,8 @@ class MovingGraph(T) : Widget{
             _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
 
-            armos.graphics.color(_style.colors["base1"]);
-            armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*14);
+            color(_style.colors["base1"]);
+            drawRectangle(_style.font.width, _style.font.height, _style.width - _style.font.width*2, _style.font.height*14);
 
             drawLine;
         }
@@ -422,17 +423,17 @@ class MovingGraph(T) : Widget{
         T _varMax;
         enum int _bufferSize = 30;
         T[_bufferSize] _buffer;
-        armos.graphics.Mesh _lines;
+        Mesh _lines;
 
         void drawLine(){
             import std.conv;
-            armos.graphics.color(_style.colors["font1"]);
+            color(_style.colors["font1"]);
             foreach (i, v; _buffer) {
-                immutable x = armos.math.map.map( i.to!float, 0f, 30f, _style.font.width.to!float, _style.width.to!float);
-                immutable y = armos.math.map.map( _varMax - v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
+                immutable x = map( i.to!float, 0f, 30f, _style.font.width.to!float, _style.width.to!float);
+                immutable y = map( _varMax - v, _varMin, _varMax, _style.font.height.to!float, _style.font.height.to!float*15);
                 _lines.vertices[i][0] = x;
                 _lines.vertices[i][1] = y;
-                // y = armos.math.map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
+                // y = map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
             }
             _lines.drawWireFrame;
         }
@@ -449,12 +450,12 @@ class MovingGraphXY(T) : Widget{
             _nameY = nameY;
             _varX = &varX;
             _varY = &varY;
-            _varMin = armos.math.Vector!(T, 2)(minX, minY);
-            _varMax = armos.math.Vector!(T, 2)(maxX, maxY);
+            _varMin = Vector!(T, 2)(minX, minY);
+            _varMax = Vector!(T, 2)(maxX, maxY);
 
             _height = 128+16;
-            _lines = new armos.graphics.Mesh();
-            _lines.primitiveMode = armos.graphics.PrimitiveMode.LineStrip;
+            _lines = new Mesh();
+            _lines.primitiveMode = PrimitiveMode.LineStrip;
             foreach (int i, v; _buffer) {
                 v = _varMin;
                 _lines.addVertex(0, 0, 0);
@@ -467,12 +468,12 @@ class MovingGraphXY(T) : Widget{
             for (int i = 0; i < _bufferSize -1; i++) {
                 _buffer[i] = _buffer[i+1];
             }
-            _buffer[$-1] = armos.math.Vector!(T, 2)(*_varX, *_varY);
+            _buffer[$-1] = Vector!(T, 2)(*_varX, *_varY);
         };
 
         override void draw(){
-            armos.graphics.color(_style.colors["background"]);
-            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*18);
+            color(_style.colors["background"]);
+            drawRectangle(0, 0, _style.width, _style.font.height*18);
 
             import std.format:format;
             import std.conv;
@@ -489,8 +490,8 @@ class MovingGraphXY(T) : Widget{
             _style.font.draw(_nameX ~ " : " ~ varStringX, _style.font.width, 0);
             _style.font.draw(_nameY ~ " : " ~ varStringY, _style.font.width, _style.font.height);
 
-            armos.graphics.color(_style.colors["base1"]);
-            armos.graphics.drawRectangle(_style.font.width, _style.font.height*2, _style.width - _style.font.width*2, _style.font.height*15);
+            color(_style.colors["base1"]);
+            drawRectangle(_style.font.width, _style.font.height*2, _style.width - _style.font.width*2, _style.font.height*15);
 
             drawLine;
         }
@@ -501,21 +502,21 @@ class MovingGraphXY(T) : Widget{
         string _nameY;
         T* _varX;
         T* _varY;
-        armos.math.Vector!(T, 2) _varMin;
-        armos.math.Vector!(T, 2) _varMax;
+        Vector!(T, 2) _varMin;
+        Vector!(T, 2) _varMax;
         enum int _bufferSize = 30;
-        armos.math.Vector!(T, 2)[_bufferSize] _buffer;
-        armos.graphics.Mesh _lines;
+        Vector!(T, 2)[_bufferSize] _buffer;
+        Mesh _lines;
 
         void drawLine(){
             import std.conv;
-            armos.graphics.color(_style.colors["font1"]);
+            color(_style.colors["font1"]);
             foreach (i, v; _buffer) {
-                immutable x = armos.math.map.map( v[0], _varMin[0], _varMax[0], _style.font.width.to!float, _style.width - _style.font.width);
-                immutable y = armos.math.map.map(  - v[1], _varMin[1], _varMax[1], _style.font.height.to!float*2, _style.font.height.to!float*17);
+                immutable x = map( v[0], _varMin[0], _varMax[0], _style.font.width.to!float, _style.width - _style.font.width);
+                immutable y = map(  - v[1], _varMin[1], _varMax[1], _style.font.height.to!float*2, _style.font.height.to!float*17);
                 _lines.vertices[i].x = x;
                 _lines.vertices[i].y = y;
-                // y = armos.math.map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
+                // y = map.map( v, _varMin, _varMax, _style.font.width.to!float, _style.width.to!float - _style.font.width.to!float);
             }
             _lines.drawWireFrame;
         }
@@ -539,19 +540,19 @@ class Button : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.color(_style.colors["background"]);
-            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
+            color(_style.colors["background"]);
+            drawRectangle(0, 0, _style.width, _style.font.height*4);
 
             _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_name, _style.font.width, 0);
 
             if(*_v){
-                armos.graphics.color(_style.colors["base2"]);
+                color(_style.colors["base2"]);
             }else{
-                armos.graphics.color(_style.colors["base1"]);
+                color(_style.colors["base1"]);
             }
 
-            armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+            drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
         }
 
         /++
@@ -609,19 +610,19 @@ class ToggleButton : Widget{
         /++
         +/
         override void draw(){
-            armos.graphics.color(_style.colors["background"]);
-            armos.graphics.drawRectangle(0, 0, _style.width, _style.font.height*4);
+            color(_style.colors["background"]);
+            drawRectangle(0, 0, _style.width, _style.font.height*4);
 
             _style.font.material.attr("diffuse", _style.colors["font1"]);
             _style.font.draw(_name, _style.font.width, 0);
 
             if(*_v){
-                armos.graphics.color(_style.colors["base2"]);
+                color(_style.colors["base2"]);
             }else{
-                armos.graphics.color(_style.colors["base1"]);
+                color(_style.colors["base1"]);
             }
 
-            armos.graphics.drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+            drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
         }
 
         /++

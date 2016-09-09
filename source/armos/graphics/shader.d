@@ -1,7 +1,9 @@
 module armos.graphics.shader;
+
 import derelict.opengl3.gl;
 import armos.math.vector;
 import armos.math.matrix;
+import armos.graphics;
 
 /++
 +/
@@ -179,7 +181,7 @@ class Shader {
 
         /++
         +/
-        Shader uniformTexture(in string name, armos.graphics.Texture texture, int textureLocation){
+        Shader uniformTexture(in string name, Texture texture, int textureLocation){
             import std.string;
             if(_isLoaded){
                 begin;scope(exit)end;
@@ -493,8 +495,8 @@ private template glFunctionString(T, size_t DimC, size_t DimR = 1){
 
 private{
     string loadedSource(in string path){
-        static import armos.utils;
-        immutable absolutePath = armos.utils.absolutePath(path);
+        import armos.utils;
+        immutable absolutePath = absolutePath(path);
         import std.file;
         return readText(absolutePath);
     }

@@ -1,7 +1,7 @@
 module armos.graphics.camera;
 import armos.graphics;
 import armos.math;
-static import armos.events;
+import armos.events;
 /++
 Cameraを表すClassです．Cameraで写したい処理をbegin()とend()の間に記述します．
 +/
@@ -10,22 +10,22 @@ class Camera{
         /++
             projectionMatrixを取得します．
         +/
-        armos.math.Matrix4f projectionMatrix()const{return _projectionMatrix;}
+        Matrix4f projectionMatrix()const{return _projectionMatrix;}
 
         /++
             Cameraの位置を表します．
         +/
-        armos.math.Vector3f position = armos.math.Vector3f.zero;
+        Vector3f position = Vector3f.zero;
 
         /++
             Cameraが映す対象の位置を表します．
         +/
-        armos.math.Vector3f target = armos.math.Vector3f.zero;
+        Vector3f target = Vector3f.zero;
 
         /++
             Cameraの方向を表します．
         +/
-        armos.math.Vector3f up = armos.math.Vector3f(0, 1, 0);
+        Vector3f up = Vector3f(0, 1, 0);
 
         /**
           Cameraの視野角を表します．単位はdegreeです．
@@ -46,55 +46,55 @@ class Camera{
             Cameraで表示する処理を開始します．
         +/
         void begin(){
-            armos.math.Matrix4f lookAt = armos.graphics.lookAtViewMatrix(
+            Matrix4f lookAt = lookAtViewMatrix(
                     position, 
                     target, 
                     up
                     );
 
-            armos.math.Matrix4f persp =  armos.graphics.perspectiveMatrix(
+            Matrix4f persp =  perspectiveMatrix(
                     fov,
-                    armos.app.windowAspect,
+                    windowAspect,
                     nearDist,
                     farDist
                     );
 
-            // armos.math.Matrix4f vFlip = armos.math.Matrix4f(
+            // Matrix4f vFlip = Matrix4f(
             // 	[1,  0, 0, 0                       ],
-            // 	[0, -1, 0, armos.app.windowSize[1] ],
+            // 	[0, -1, 0, windowSize[1] ],
             // 	[0, 0,  1, 0                       ],
             // 	[0, 0,  0, 1                       ],
             // );
 
             _projectionMatrix = persp*lookAt;
-            // armos.graphics.currentRenderer.bind(_projectionMatrix);
-            armos.graphics.pushViewMatrix;
-            armos.graphics.loadViewMatrix(lookAt);
-            armos.graphics.pushProjectionMatrix;
-            armos.graphics.loadProjectionMatrix(persp);
-            // armos.graphics.loadProjectionMatrix(_projectionMatrix);
+            // currentRenderer.bind(_projectionMatrix);
+            pushViewMatrix;
+            loadViewMatrix(lookAt);
+            pushProjectionMatrix;
+            loadProjectionMatrix(persp);
+            // loadProjectionMatrix(_projectionMatrix);
         }
 
         /++
             Cameraで表示する処理を終了します．
         +/
         void end(){
-            armos.graphics.popViewMatrix;
-            armos.graphics.popProjectionMatrix;
-            // armos.graphics.currentRenderer.unbind();
+            popViewMatrix;
+            popProjectionMatrix;
+            // currentRenderer.unbind();
         }
     }
 
     private{
-        armos.math.Matrix4f _projectionMatrix;
+        Matrix4f _projectionMatrix;
     }
 }
 
 /++
     Deprecated: WIP
 +/
-static import armos.app;
-static import armos.events;
+import armos.app;
+import armos.events;
 class EasyCam : Camera{
     alias N = float;
     alias Q = Quaternion!(N);
@@ -105,10 +105,10 @@ class EasyCam : Camera{
 
     public{
         this(){
-            armos.events.addListener(armos.app.currentWindow.events.mouseMoved, this, &this.mouseMoved);
-            armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
-            armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
-            armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
+            addListener(currentWindow.events.mouseMoved, this, &this.mouseMoved);
+            addListener(currentWindow.events.mouseReleased, this, &this.mouseReleased);
+            addListener(currentWindow.events.mousePressed, this, &this.mousePressed);
+            addListener(currentWindow.events.update, this, &this.update);
 
             reset;
         }
@@ -143,20 +143,20 @@ class EasyCam : Camera{
         V3 _currentMousePosition;
         V3 _mouseMovingDirection;
 
-        void mouseMoved(ref armos.events.MouseMovedEventArg message){
+        void mouseMoved(ref MouseMovedEventArg message){
             _currentMousePosition = V3(message.x, message.y, 0);
 
         }
 
-        void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+        void mouseReleased(ref MouseReleasedEventArg message){
             _isDrag = false;
         }
 
-        void mousePressed(ref armos.events.MousePressedEventArg message){
+        void mousePressed(ref MousePressedEventArg message){
             _isDrag = true;
         }
 
-        void update(ref armos.events.EventArg arg){
+        void update(ref EventArg arg){
             _oldMousePosition = _currentMousePosition;
             _mouseMovingDirection = _currentMousePosition - _oldMousePosition;
         }

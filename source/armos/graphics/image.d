@@ -1,8 +1,7 @@
 module armos.graphics.image;
 
-static import armos.graphics;
+import armos.graphics;
 import armos.math;
-import armos.graphics.material;;
 /++
     画像のファイルフォーマットを表します
 +/
@@ -72,10 +71,10 @@ class Image {
         Image load(string pathInDataDir){
             import std.string;
             FIBITMAP * freeImageBitmap = null;
-            _bitmap = armos.graphics.Bitmap!(char)();
+            _bitmap = Bitmap!(char)();
 
-            static import armos.utils;
-            string fileName = armos.utils.absolutePath(pathInDataDir);
+            import armos.utils;
+            string fileName = absolutePath(pathInDataDir);
 
             FREE_IMAGE_FORMAT freeImageFormat = FIF_UNKNOWN;
             freeImageFormat = FreeImage_GetFileType(fileName.toStringz , 0);
@@ -91,7 +90,7 @@ class Image {
             }
 
             if ( _isLoaded ){
-                //TODO: bring freeImageBitmap to armos.graphics.Bitmap
+                //TODO: bring freeImageBitmap to Bitmap
                 bitmap(freeImageBitmap);
             }
 
@@ -136,12 +135,12 @@ class Image {
                 _rect.vertices[2] = Vector4f(endX-startX, endY-startY, 0f, 1f);
                 _rect.vertices[3] = Vector4f(endX-startX, 0f,          0f, 1f);
 
-                armos.graphics.pushMatrix;
-                armos.graphics.translate(x, y, z);
+                pushMatrix;
+                translate(x, y, z);
                 _material.begin;
                 _rect.drawFill();
                 _material.end;
-                armos.graphics.popMatrix;
+                popMatrix;
             }
             
             return this;
@@ -177,7 +176,7 @@ class Image {
 
             画像のサイズを返します．
         +/
-        armos.math.Vector2i size()const{return _size;}
+        Vector2i size()const{return _size;}
 
         /++
             Return width.
@@ -198,12 +197,12 @@ class Image {
 
             画像のビットマップデータを返します．
         +/
-        armos.graphics.Bitmap!(char) bitmap(){return _bitmap;}
+        Bitmap!(char) bitmap(){return _bitmap;}
 
         /++
             Set bitmap
         +/
-        Image bitmap(armos.graphics.Bitmap!(char) data){
+        Image bitmap(Bitmap!(char) data){
             _bitmap = data;
             allocate();
             _isLoaded = true;
@@ -215,7 +214,7 @@ class Image {
 
             一次元配列からImageを生成します
         +/
-        Image setFromAlignedPixels(T)(T* pixels, int width, int height, armos.graphics.ColorFormat format){
+        Image setFromAlignedPixels(T)(T* pixels, int width, int height, ColorFormat format){
             _bitmap.setFromAlignedPixels(cast(char*)pixels, width, height, format);
             allocate;
             _isLoaded = true;
@@ -227,10 +226,10 @@ class Image {
             与えられたbitmapを元にtextureとrectを生成します
         +/
         Image allocate(){
-            _texture = new armos.graphics.Texture;
+            _texture = new Texture;
             _texture.allocate(_bitmap);
-            _rect = new armos.graphics.Mesh;
-            _rect.primitiveMode = armos.graphics.PrimitiveMode.TriangleStrip ;
+            _rect = new Mesh;
+            _rect.primitiveMode = PrimitiveMode.TriangleStrip ;
             float x = _bitmap.width;
             float y = _bitmap.height;
             
@@ -266,26 +265,26 @@ class Image {
 
         /++
         +/
-        armos.graphics.Texture texture(){
+        Texture texture(){
             return _texture;
         }
 
         /++
         +/
-        Image minMagFilter(in armos.graphics.TextureMinFilter minFilter, in armos.graphics.TextureMagFilter magFilter){
+        Image minMagFilter(in TextureMinFilter minFilter, in TextureMagFilter magFilter){
             _texture.minMagFilter(minFilter, magFilter);
             return this;
         }
 
         /++
         +/
-        Image minFilter(in armos.graphics.TextureMinFilter filter){
+        Image minFilter(in TextureMinFilter filter){
             _texture.minFilter(filter);
             return this;
         }
         
         ///
-        Image magFilter(in armos.graphics.TextureMagFilter filter){
+        Image magFilter(in TextureMagFilter filter){
             _texture.magFilter(filter);
             return this;
         }
@@ -298,10 +297,10 @@ class Image {
 
     private{
         static bool isInitializedFreeImage = false;
-        armos.math.Vector2i _size;
-        armos.graphics.Bitmap!(char) _bitmap;
-        armos.graphics.Texture _texture;
-        armos.graphics.Mesh _rect;
+        Vector2i _size;
+        Bitmap!(char) _bitmap;
+        Texture _texture;
+        Mesh _rect;
         bool _isLoaded = false;
         Material _material;
 
@@ -324,19 +323,19 @@ class Image {
             uint channels = (bpp / bits) / 8;
             uint pitch = FreeImage_GetPitch(freeImageBitmap);
 
-            armos.graphics.ColorFormat armosColorFormat;
+            ColorFormat armosColorFormat;
             switch (channels) {
                 case 1:
-                    armosColorFormat = armos.graphics.ColorFormat.Gray;
+                    armosColorFormat = ColorFormat.Gray;
                     break;
                 case 2:
-                    armosColorFormat = armos.graphics.ColorFormat.Gray;
+                    armosColorFormat = ColorFormat.Gray;
                     break;
                 case 3:
-                    armosColorFormat = armos.graphics.ColorFormat.RGB;
+                    armosColorFormat = ColorFormat.RGB;
                     break;
                 case 4:
-                    armosColorFormat = armos.graphics.ColorFormat.RGBA;
+                    armosColorFormat = ColorFormat.RGBA;
                     break;
                 default:
                     break;

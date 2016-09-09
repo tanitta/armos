@@ -13,12 +13,12 @@ Return absolutePath from absolute or relative
 +/
 string absolutePath(string path){
     import std.path;
-    static import armos.utils;
+    import armos.utils;
     string absolutePath;
     if(isAbsolute(path)){
         absolutePath = path;
     }else{
-        absolutePath = armos.utils.toDataPath(path);
+        absolutePath = toDataPath(path);
     }
     return absolutePath;
 }

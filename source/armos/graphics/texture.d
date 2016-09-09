@@ -1,18 +1,19 @@
 module armos.graphics.texture;
+
 import derelict.opengl3.gl;
 import armos.math.vector;
-static import armos.graphics;
+import armos.graphics;
 
 /++
     openGLのtextureを表すクラスです．
     初期化後，allocateして利用します．
     Example:
     ---
-        auto texture = new armos.graphics.Texture;
+        auto texture = new Texture;
         texture.allocate(256, 256);
         
-        auto rect = new armos.graphics.Mesh;
-        rect.primitiveMode = armos.graphics.PrimitiveMode.Quads;
+        auto rect = new Mesh;
+        rect.primitiveMode = PrimitiveMode.Quads;
         texture.begin;
             rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
             rect.addTexCoord(0, 0);rect.addVertex(0, 1, 0);
@@ -48,7 +49,7 @@ class Texture {
 
             textureのサイズを返します．
         +/
-        armos.math.Vector2i size()const{return _size;}
+        Vector2i size()const{return _size;}
 
         /++
         +/
@@ -92,7 +93,7 @@ class Texture {
         /++
             Resize texture.
         +/
-        Texture resize(in armos.math.Vector2i textureSize){
+        Texture resize(in Vector2i textureSize){
             _size = textureSize;
             allocate;
             return this;
@@ -134,7 +135,7 @@ class Texture {
             w = width
             h = height
         +/
-        Texture allocate(in int w, in int h, armos.graphics.ColorFormat format){
+        Texture allocate(in int w, in int h, ColorFormat format){
             _size[0] = w;
             _size[1] = h;
             _format = format;
@@ -147,11 +148,11 @@ class Texture {
             Params:
             bitmap =
         +/
-        Texture allocate(armos.graphics.Bitmap!(char) bitmap){
+        Texture allocate(Bitmap!(char) bitmap){
             import std.math;
             if(bitmap.width != bitmap.height){
                 int side = cast( int )fmax(bitmap.width, bitmap.height);
-                armos.graphics.Bitmap!(char) squareBitmap;
+                Bitmap!(char) squareBitmap;
                 squareBitmap.allocate(side, side, bitmap.colorFormat);
                 for (int j = 0; j < bitmap.size[1]; j++) {
                     for (int i = 0; i < bitmap.size[0]; i++) {
@@ -188,7 +189,7 @@ class Texture {
             h    = height
             bits = image data
         +/
-        Texture allocate(ubyte[] bits, in int w, in int h, in armos.graphics.ColorFormat format){
+        Texture allocate(ubyte[] bits, in int w, in int h, in ColorFormat format){
             _size[0] = w;
             _size[1] = h;
             _bitsPtr = bits.ptr;
@@ -199,7 +200,7 @@ class Texture {
         /++
             Allocate texture
         +/
-        Texture allocate(in armos.graphics.ColorFormat format){
+        Texture allocate(in ColorFormat format){
             _format = format;
             allocate();
             return this;
@@ -209,7 +210,7 @@ class Texture {
             Allocate texture
         +/
         Texture allocate(){
-            GLuint internalFormat = armos.graphics.getGLInternalFormat(_format);
+            GLuint internalFormat = getGLInternalFormat(_format);
             begin;
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -278,8 +279,8 @@ class Texture {
     private{
         int _id;
         ubyte* _bitsPtr;
-        armos.math.Vector2i _size;
-        armos.graphics.ColorFormat _format;
+        Vector2i _size;
+        ColorFormat _format;
     }
 }
 
