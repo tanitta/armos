@@ -724,14 +724,7 @@ class Renderer {
         +/
         void fillBackground(in armos.types.Color color){
             background = color;
-            if(_isUseFbo){
-                auto tmp = _currentStyle.color;
-                this.color(currentStyle.backgroundColor);
-                drawRectangle(0, 0, armos.app.currentWindow.size[0], armos.app.currentWindow.size[1]);
-                this.color(tmp);
-            }else{
-                glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            }
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
         /++
@@ -881,15 +874,11 @@ class Renderer {
         /++
         +/
         void startRender(){
-            // setBackground(currentStyle.backgroundColor );
-            
-            fillBackground(currentStyle.backgroundColor);
             _projectionMatrixStack.push;
             _projectionMatrixStack.load(screenPerspectiveMatrix);
             if(_isUseFbo){
                 _fbo.begin;
             }
-
             if( _isBackgrounding ){
                 fillBackground(currentStyle.backgroundColor);
             }
@@ -907,7 +896,6 @@ class Renderer {
                 glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
                 disableDepthTest;
                 
-
                 _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
                 
                 viewport();
@@ -957,7 +945,13 @@ class Renderer {
             vertices[2] = armos.math.Vector4f(x+w, y+h, 0f, 1f);
             vertices[3] = armos.math.Vector4f(x+w, y,   0f, 1f);
 
-            armos.math.Vector4f[] texCoords;
+            armos.math.Vector4f[] texCoords = [
+                armos.math.Vector4f(0f, 0f, 0.0, 1.0f),
+                armos.math.Vector4f(0,  1f, 0.0, 1.0f),
+                armos.math.Vector4f(1f, 1f, 0.0, 1.0f),
+                armos.math.Vector4f(1f, 0,  0.0, 1.0f),
+            ];
+
             int[] indices = [0, 1, 2, 2, 3, 0];
 
             draw(

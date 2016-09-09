@@ -6,6 +6,7 @@ class TestApp : ar.app.BaseApp{
 		_camera.position = ar.math.Vector3f(0, 0, -100);
 		_camera.target= ar.math.Vector3f(0, 0, 0);
         ar.graphics.samples = 2;
+        ar.graphics.enableDepthTest;
 	}
 	
 	override void update(){
