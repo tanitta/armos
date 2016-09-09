@@ -55,8 +55,8 @@ class TestApp : ar.app.BaseApp{
             ar.graphics.translate(position);
             ar.graphics.rotate(counter, ar.math.Vector3f(1, 1, 1));
             ar.graphics.color(color);
-            // mesh.drawFill();
-            // ar.graphics.color(ar.types.Color(0x16160e));
+            mesh.drawFill();
+            ar.graphics.color(ar.types.Color(0x16160e));
             mesh.drawWireFrame();
             ar.graphics.popMatrix;
         }
