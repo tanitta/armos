@@ -1,9 +1,9 @@
 module armos.graphics.fbo;
+
+import derelict.opengl3.gl;
 import armos.graphics;
 import armos.types;
-import derelict.opengl3.gl;
 import armos.math.vector;
-// import armos.graphics.material;
 
 /++
     Frame Buffer Objectを表すclassです．
@@ -33,11 +33,11 @@ class Fbo{
             
             glGenFramebuffers(1, cast(uint*)&_id);
 
-            _colorTexture = new armos.graphics.Texture;
-            _colorTexture.allocate(x, y, armos.graphics.ColorFormat.RGBA);
+            _colorTexture = (new Texture).allocate(x, y, armos.graphics.ColorFormat.RGBA)
+                                         .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
 
-            _depthTexture= new armos.graphics.Texture;
-            _depthTexture.allocate(x, y, armos.graphics.ColorFormat.Depth);
+            _depthTexture = (new Texture).allocate(x, y, armos.graphics.ColorFormat.Depth)
+                                         .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
 
             rect = new Mesh;
 
@@ -163,10 +163,10 @@ class Fbo{
     private{
         int _savedId = 0;
         int _id = 0;
-        armos.graphics.Texture _colorTexture;
-        armos.graphics.Texture _depthTexture;
-        armos.graphics.Mesh rect = new armos.graphics.Mesh;
-        armos.graphics.Material _material;
+        Texture _colorTexture;
+        Texture _depthTexture;
+        Mesh rect = new Mesh;
+        Material _material;
         int _samples = 1;
         bool _isFlip = false;
         Vector2i _size;
@@ -182,12 +182,12 @@ class Fbo{
 
 /++
 +/
-class FboMaterial : armos.graphics.Material{
-    mixin armos.graphics.MaterialImpl;
+class FboMaterial : Material{
+    mixin MaterialImpl;
     
     ///
     this(){
-        _shader = new armos.graphics.Shader;
+        _shader = new Shader;
         _shader.loadSources(fboVertesShaderSource, fboFragmentShaderSource);
     }
     

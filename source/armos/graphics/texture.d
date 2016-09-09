@@ -224,7 +224,7 @@ class Texture {
 
         /++
         +/
-        Texture setMinMagFilter(in TextureFilter minFilter, in TextureFilter magFilter){
+        Texture minMagFilter(in TextureMinFilter minFilter, in TextureMagFilter magFilter){
             begin;
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
@@ -234,8 +234,43 @@ class Texture {
 
         /++
         +/
-        Texture setMinMagFilter(in TextureFilter filter){
-            setMinMagFilter(filter, filter);
+        Texture minFilter(in TextureMinFilter filter){
+            begin;
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+            end;
+            return this;
+        }
+        
+        ///
+        Texture magFilter(in TextureMagFilter filter){
+            begin;
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+            end;
+            return this;
+        }
+        
+        ///
+        Texture wrap(in TextureWrap p){
+            begin;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, p);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, p);
+            end;
+            return this;
+        }
+        
+        ///
+        Texture wrapS(in TextureWrap p){
+            begin;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, p);
+            end;
+            return this;
+        }
+        
+        ///
+        Texture wrapT(in TextureWrap p){
+            begin;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, p);
+            end;
             return this;
         }
     }
@@ -250,7 +285,24 @@ class Texture {
 
 /++
 +/
-enum TextureFilter{
+enum TextureMinFilter{
     Linear = GL_LINEAR,
-    Nearest = GL_NEAREST
+    Nearest = GL_NEAREST, 
+    NearestMipmapNearest = GL_NEAREST_MIPMAP_NEAREST,
+    NearestMipmapLinear  = GL_NEAREST_MIPMAP_LINEAR,
+    LinearMipmapNearest  = GL_LINEAR_MIPMAP_NEAREST,
+    LinearMipmapLinear   = GL_LINEAR_MIPMAP_LINEAR,
+}
+
+///
+enum TextureMagFilter{
+    Linear = GL_LINEAR,
+    Nearest = GL_NEAREST, 
+}
+
+
+///
+enum TextureWrap{
+    Clamp  = GL_CLAMP,
+    Repeat = GL_REPEAT,
 }

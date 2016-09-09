@@ -9,7 +9,7 @@ class TestApp : ar.app.BaseApp{
 		
 		_dman = new ar.graphics.Image;
 		_dman.load("d-man.png");
-		_dman.setMinMagFilter(ar.graphics.TextureFilter.Nearest);
+		_dman.minMagFilter(ar.graphics.TextureFilter.Nearest);
 		
 		ar.graphics.background(64, 64, 64);
 	}

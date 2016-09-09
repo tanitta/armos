@@ -21,8 +21,8 @@ class BitmapFont {
             fontHeight= フォントの縦幅を指定します．
         +/
         BitmapFont load(in string fileName, in int fontWidth, in int fontHeight){
-            _image.load(fileName);
-            _image.setMinMagFilter(armos.graphics.TextureFilter.Nearest);
+            _image.load(fileName)
+                  .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
             width = fontWidth;
             height = fontHeight;
             return this;

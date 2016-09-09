@@ -7,7 +7,7 @@ class TestApp : ar.app.BaseApp{
 		_imageLena = (new ar.graphics.Image).load("lena_std.tif");
 		
 		_imageDman = (new ar.graphics.Image).load("d-man.png")
-                                            .setMinMagFilter(ar.graphics.TextureFilter.Nearest);
+                                            .minMagFilter(ar.graphics.TextureMinFilter.Nearest, ar.graphics.TextureMagFilter.Nearest);
 		_imageFromArray = new ar.graphics.Image;
 		ubyte[100*100] array;
 		ar.math.Vector2i position;

@@ -272,15 +272,21 @@ class Image {
 
         /++
         +/
-        Image setMinMagFilter(in armos.graphics.TextureFilter minFilter, in armos.graphics.TextureFilter magFilter){
-            _texture.setMinMagFilter(minFilter, magFilter);
+        Image minMagFilter(in armos.graphics.TextureMinFilter minFilter, in armos.graphics.TextureMagFilter magFilter){
+            _texture.minMagFilter(minFilter, magFilter);
             return this;
         }
 
         /++
         +/
-        Image setMinMagFilter(in armos.graphics.TextureFilter filter){
-            _texture.setMinMagFilter(filter);
+        Image minFilter(in armos.graphics.TextureMinFilter filter){
+            _texture.minFilter(filter);
+            return this;
+        }
+        
+        ///
+        Image magFilter(in armos.graphics.TextureMagFilter filter){
+            _texture.magFilter(filter);
             return this;
         }
         
