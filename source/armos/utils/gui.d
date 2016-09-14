@@ -315,13 +315,13 @@ class Slider(T) : Widget{
 
         /++
         +/
-        void mousePressed(ref armos.events.MousePressedEventArg message){
+        override void mousePressed(ref armos.events.MousePressedEventArg message){
             _isPressing = isOnMouse(message.x, message.y);
         }
 
         /++
         +/
-        void mouseMoved(ref armos.events.MouseMovedEventArg message){
+        override void mouseMoved(ref armos.events.MouseMovedEventArg message){
             if(_isPressing){
                 *_var = map( 
                         ( message.x-_position[0]).to!float,
@@ -333,7 +333,7 @@ class Slider(T) : Widget{
 
         /++
         +/
-        void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+        override void mouseReleased(ref armos.events.MouseReleasedEventArg message){
             if(_isPressing){
                 *_var = map( 
                         ( message.x-_position[0]).to!float,
@@ -387,7 +387,7 @@ class MovingGraph(T) : Widget{
             armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
         }
 
-        void update(ref armos.events.EventArg arg){
+        override void update(ref armos.events.EventArg arg){
             for (int i = 0; i < _bufferSize -1; i++) {
                 _buffer[i] = _buffer[i+1];
             }
@@ -464,7 +464,7 @@ class MovingGraphXY(T) : Widget{
             armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
         }
 
-        void update(ref armos.events.EventArg arg){
+        override void update(ref armos.events.EventArg arg){
             for (int i = 0; i < _bufferSize -1; i++) {
                 _buffer[i] = _buffer[i+1];
             }
