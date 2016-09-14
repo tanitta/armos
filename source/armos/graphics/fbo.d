@@ -229,10 +229,12 @@ in vec4 f_color;
 in vec2 outtexCoord0;
 in vec2 outtexCoord1;
 
+out vec4 fragColor;
+
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
 
 void main(void) {
-    gl_FragColor = texture(colorTexture, outtexCoord0);
+    fragColor = texture(colorTexture, outtexCoord0);
 }
 };
