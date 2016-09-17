@@ -27,7 +27,7 @@ class WindowConfig {
         void glVersion(in string v){
             import std.algorithm;
             import std.array;
-            immutable digits = v.split(".").map!(n => n.to!int).array;
+            const digits = v.split(".").map!(n => n.to!int).array;
             glVersion = SemVer(digits[0], digits[1], digits[2]);
         }
         
