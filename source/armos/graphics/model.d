@@ -18,11 +18,12 @@ class Model {
 
             読み込み時にmeshはmaterial毎に分割されます．
         +/
-        void load(in string pathInDataDir){
+        Model load(in string pathInDataDir){
             auto loadedModel = (new AssimpModelLoader).load(pathInDataDir);
             meshes    = loadedModel.meshes;
             materials = loadedModel.materials;
             entities  = loadedModel.entities;
+            return this;
         }
 
         /++
@@ -44,31 +45,35 @@ class Model {
             Params:
             renderMode = 面，線，点のどれを描画するか指定します．
         +/
-        void draw(in PolyRenderMode renderMode){
+        Model draw(in PolyRenderMode renderMode){
             foreach (entity; entities) {
                 entity.draw(renderMode);
             }
+            return this;
         };
 
         /++
             modelをワイヤフレームで描画します．
         +/
-        void drawWireFrame(){
+        Model drawWireFrame(){
             draw(PolyRenderMode.WireFrame);
+            return this;
         };
 
         /++
             modelの頂点を点で描画します．
         +/
-        void drawVertices(){
+        Model drawVertices(){
             draw(PolyRenderMode.Points);
+            return this;
         };
 
         /++
             meshの面を塗りつぶして描画します．
         +/
-        void drawFill(){
+        Model drawFill(){
             draw(PolyRenderMode.Fill);
+            return this;
         };
 
     }//public
@@ -190,21 +195,8 @@ class AssimpModelLoader {
             auto name = fromAiString(aiName);
 
 
-            auto mat= new DefaultMaterial;
-            aiColor4D color;
-
-            //diffuse
-            aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
-            mat.attr("diffuse", fromAiColor(color));
-
-            //speculer
-            aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
-            mat.attr("speculer", fromAiColor(color));
-
-            //ambient
-            aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
-            mat.attr("ambient", fromAiColor(color));
-
+            Material mat;
+            
             //texture
             aiString aiPath;
             if(
@@ -219,9 +211,26 @@ class AssimpModelLoader {
                 import std.path;
                 immutable string textureFileName = fromAiString( aiPath );
                 image.load(buildPath( dirName(_modelfilepath), textureFileName ));
-
+                
+                mat = new DefaultMaterial;
                 mat.texture("tex0", image.texture);
+            }else{
+                mat = new NoTextureMaterial;
             }
+            
+            aiColor4D color;
+
+            //diffuse
+            aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
+            mat.attr("diffuse", fromAiColor(color));
+
+            //speculer
+            aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
+            mat.attr("speculer", fromAiColor(color));
+
+            //ambient
+            aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
+            mat.attr("ambient", fromAiColor(color));
 
             return mat;
         }
@@ -242,15 +251,14 @@ class AssimpModelLoader {
                     .array;
             }
 
-            import std.stdio;
-
             auto convertedMesh= new Mesh;
 
-
-            for (int i = 0; i < mesh.mNumVertices; i++) {
-                convertedMesh.texCoords ~= Vector4f(mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y, 0f, 1f);
+            if(mesh.mTextureCoords[0] !is null){
+                for (int i = 0; i < mesh.mNumVertices; i++) {
+                    convertedMesh.texCoords ~= Vector4f(mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y, 0f, 1f);
+                }
             }
-
+            
             convertedMesh.vertices = vertices.map!((Vector3f vec){
                     return Vector4f(vec[0], vec[1], vec[2], 1f);
                     }).array;
@@ -274,3 +282,48 @@ class AssimpModelLoader {
         string _modelfilepath;
     }//private
 }//class AssimpModelLoader
+
+///
+class NoTextureMaterial : Material{
+    mixin MaterialImpl;
+    
+    ///
+    this(){
+        _shader = new armos.graphics.Shader;
+        _shader.loadSources(noTextureVertesShaderSource, noTextureFragmentShaderSource);
+    }
+}//class NoTextureMaterial
+
+private immutable string noTextureVertesShaderSource = q{
+#version 330
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewProjectionMatrix;
+
+in vec4 vertex;
+in vec3 normal;
+in vec3 tangent;
+in vec4 color;
+
+out vec4 f_color;
+
+void main(void) {
+    gl_Position = modelViewProjectionMatrix * vertex;
+    f_color = color;
+}
+};
+
+private immutable string noTextureFragmentShaderSource = q{
+#version 330
+    
+in vec4 f_color;
+
+out vec4 fragColor;
+
+uniform vec4 diffuse;
+
+void main(void) {
+    fragColor = diffuse;
+}
+};

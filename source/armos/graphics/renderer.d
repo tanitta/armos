@@ -272,11 +272,11 @@ void drawAxis(
     pushStyle;{
         lineWidth = 2.0;
         color(255, 0, 0);
-        drawLine( -size, 0.0,   0.0,   size, 0.0,  0.0  );
+        drawLine(-size*0.5, 0.0, 0.0, size, 0.0,  0.0);
         color(0, 255, 0);
-        drawLine( 0.0,   -size, 0.0,   0.0,  size, 0.0  );
+        drawLine(0.0, -size*0.5, 0.0, 0.0,  size, 0.0);
         color(0, 0, 255);
-        drawLine( 0.0,   0.0,   -size, 0.0,  0.0,  size );
+        drawLine(0.0, 0.0, -size*0.5, 0.0,  0.0,  size);
     }popStyle;
 }
 
@@ -730,8 +730,9 @@ class Renderer {
         /++
         +/
         void color(in armos.types.Color c){
+            import std.conv:to;
             _currentStyle.color = cast(armos.types.Color)c; 
-            _materialStack[0].attr("diffuse", armos.math.Vector4f(c.r/255.0,c.g/255.0,c.b/255.0,c.a/255.0));
+            _materialStack[0].attr("diffuse", armos.math.Vector4f(c.r.to!float/255.0,c.g.to!float/255.0,c.b.to!float/255.0,c.a.to!float/255.0));
             glColor4f(c.r/255.0,c.g/255.0,c.b/255.0,c.a/255.0);
         }
 
@@ -917,23 +918,26 @@ class Renderer {
             ];
             immutable freq = armos.graphics.BufferUsageFrequency.Dynamic;
             immutable nature = armos.graphics.BufferUsageNature.Draw;
+            auto shader = currentMaterial.shader;
             
             import armos.utils.scoped;
             const scopedVao    = scoped(_bufferMesh.vao);
+            const scopedMaterial = scoped(currentMaterial);
+            
             _bufferMesh.attr["vertex"].array(vertices, freq, nature);
             
             _bufferMesh.attr["vertex"].begin;
-            _shader.attr("vertex");
+            shader.attr("vertex");
             _bufferMesh.attr["vertex"].end;
             
-            _shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
-            _shader.uniform("projectionMatrix", projectionMatrix);
-            _shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+            shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
+            shader.uniform("projectionMatrix", projectionMatrix);
+            shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
             
-            const scopedShader = scoped(_shader);
-            _shader.enableAttrib("vertex");
+            const scopedShader = scoped(shader);
+            shader.enableAttrib("vertex");
             glDrawArrays(GL_LINES, 0, vertices.length);
-            _shader.disableAttrib("vertex");
+            shader.disableAttrib("vertex");
         };
 
         /++
@@ -1102,7 +1106,6 @@ class Renderer {
         armos.graphics.Style   _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
         
-        armos.graphics.Shader       _shader;
         armos.graphics.Material[]     _materialStack;
         
         armos.graphics.BufferMesh   _bufferMesh;
