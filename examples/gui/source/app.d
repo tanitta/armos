@@ -3,7 +3,7 @@ import std.stdio, std.math, std.conv;
 static import ar = armos;
 
 class TestApp : ar.app.BaseApp{
-	ar.graphics.Camera camera = new ar.graphics.Camera();
+	ar.graphics.Camera camera = new ar.graphics.DefaultCamera();
 	ar.utils.Gui gui;
 	ar.graphics.Mesh mesh;
 	float _fpsUseRate = 0.0;
