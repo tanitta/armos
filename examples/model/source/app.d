@@ -5,7 +5,7 @@ class TestApp : ar.app.BaseApp{
 	override void setup(){
         ar.graphics.enableDepthTest;
         ar.graphics.samples = 2;
-        _camera = (new ar.graphics.BasicCamera).position(ar.math.Vector3f(0, 0, -40))
+        _camera = (new ar.graphics.DefaultCamera).position(ar.math.Vector3f(0, 0, -40))
                                                .target(ar.math.Vector3f.zero);
         
         _model  = (new ar.graphics.Model).load("bunny.fbx");
