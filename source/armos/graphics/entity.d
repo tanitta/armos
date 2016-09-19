@@ -7,40 +7,41 @@ import armos.graphics;
 class Entity {
     public{
         ///
-        void draw(in PolyRenderMode renderMode){
+        Entity draw(in PolyRenderMode renderMode){
             _material.begin;
-            armos.graphics.pushStyle;
-            import armos.types.color;
-            armos.graphics.color = Color(_material.attr("diffuse"));
             armos.graphics.currentRenderer.draw(_mesh, renderMode, false, false, false);
-            armos.graphics.popStyle;
             _material.end;
+            return this;
         };
         
         ///
-        void draw(){
+        Entity draw(){
             draw(currentStyle.polyRenderMode);
+            return this;
         };
         
         /++
             entityをワイヤフレームで描画します．
         +/
-        void drawWireFrame(){
+        Entity drawWireFrame(){
             draw(armos.graphics.PolyRenderMode.WireFrame);
+            return this;
         };
 
         /++
             entityの頂点を点で描画します．
         +/
-        void drawVertices(){
+        Entity drawVertices(){
             draw(armos.graphics.PolyRenderMode.Points);
+            return this;
         };
 
         /++
             meshの面を塗りつぶして描画します．
         +/
-        void drawFill(){
+        Entity drawFill(){
             draw(armos.graphics.PolyRenderMode.Fill);
+            return this;
         };
         
         ///
