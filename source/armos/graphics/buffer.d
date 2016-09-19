@@ -75,7 +75,12 @@ class Buffer {
             if(array.length == 0)return this;
             begin;
             import std.algorithm;
-            V.elementType[] raw = array.map!(v => v.elements).reduce!"a~b";
+            V.elementType[] raw = new V.elementType[array.length*V.dimention];
+            foreach (size_t i, ref v; array) {
+                foreach (size_t j, ref e; v.elements) {
+                    raw[j+i*V.dimention] = v.elements[j];
+                }
+            }
             this.array(raw, V.dimention, freq, nature);
             end;
             return this;
