@@ -80,7 +80,7 @@ interface Camera{
 }//interface Camera
 
 ///
-class BasicCamera: Camera{
+class DefaultCamera: Camera{
     mixin CameraImpl;
 }
 
@@ -167,13 +167,11 @@ mixin template CameraImpl(){
                     _farDist
                     );
 
-            // _projectionMatrix = persp*lookAt;
-            // currentRenderer.bind(_projectionMatrix);
             pushViewMatrix;
             loadViewMatrix(_viewMatrix);
             pushProjectionMatrix;
             loadProjectionMatrix(_projectionMatrix);
-            // loadProjectionMatrix(_projectionMatrix);
+            multProjectionMatrix(scalingMatrix!float(1f, -1f, 1f));
             return this;
         }
 
@@ -183,7 +181,6 @@ mixin template CameraImpl(){
         T end(){
             popViewMatrix;
             popProjectionMatrix;
-            // currentRenderer.unbind();
             return this;
         }
     }
