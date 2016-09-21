@@ -165,25 +165,26 @@ struct Bitmap(T){
             return _colorFormat;
         }
         
-        
         ///
         Slice!(3LU, V*) sliced(V = float)(){
-            import std.array:appender;
-            auto app = appender!(V[]);
             import std.range;
             import std.algorithm;
             import std.conv;
-            foreach (ref pixel; _data) {
-                foreach (ref index; numElements.iota.array) {
+            
+            V[] data = new V[_size.x*_size.y*numElements];
+            
+            foreach (int indexPixel, ref pixel; _data) {
+                foreach (int indexElement, ref index; numElements.iota.array) {
+                    size_t slicedIndex = indexElement + indexPixel*numElements;
                     static if(__traits(isFloating, T)){
-                        app.put(pixel.element(index));
+                        data[slicedIndex] = pixel.element(index);
                     }else{
                         import std.conv;
-                        app.put(pixel.element(index).to!V/T.max.to!V);
+                        data[slicedIndex] = pixel.element(index).to!V/T.max.to!V;
                     }
                 }
             }
-            return app.data.sliced(_size[0], _size[1], numElements);
+            return data.sliced(_size[0], _size[1], numElements);
         }
     }
 
