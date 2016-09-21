@@ -254,12 +254,10 @@ class AssimpModelLoader {
             auto convertedMesh= new Mesh;
 
             if(mesh.mTextureCoords[0] !is null){
-                import std.array:appender;
-                auto app = appender!(Vector4f[]);
+                convertedMesh.texCoords = new Vector4f[mesh.mNumVertices];
                 for (int i = 0; i < mesh.mNumVertices; i++) {
-                    app.put(Vector4f(mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y, 0f, 1f));
+                    convertedMesh.texCoords[i] = Vector4f(mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y, 0f, 1f);
                 }
-                convertedMesh.texCoords = app.data;
             }
             
             convertedMesh.vertices = vertices.map!((Vector3f vec){
