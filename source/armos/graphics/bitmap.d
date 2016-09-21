@@ -28,13 +28,14 @@ struct Bitmap(T){
             colorType = Bitmapのカラーフォーマットを指定します．
         +/
         Bitmap allocate(int width, int height, armos.graphics.ColorFormat colorType){
+            import std.array:appender;
             _size[0] = width;
             _size[1] = height;
             _colorFormat = colorType;
             auto arraySize = width * height;
-            _data = [];
+            _data = new armos.graphics.Pixel!(T)[arraySize];
             for (int i = 0; i < arraySize; i++) {
-                _data ~= armos.graphics.Pixel!T(colorType);
+                _data[i] = armos.graphics.Pixel!T(colorType);
             }
             return this;
         }
@@ -167,21 +168,22 @@ struct Bitmap(T){
         
         ///
         Slice!(3LU, V*) sliced(V = float)(){
-            V[] arr;
+            import std.array:appender;
+            auto app = appender!(V[]);
             import std.range;
             import std.algorithm;
             import std.conv;
             foreach (ref pixel; _data) {
                 foreach (ref index; numElements.iota.array) {
                     static if(__traits(isFloating, T)){
-                        arr ~= pixel.element(index);
+                        app.put(pixel.element(index));
                     }else{
                         import std.conv;
-                        arr ~= pixel.element(index).to!V/T.max.to!V;
+                        app.put(pixel.element(index).to!V/T.max.to!V);
                     }
                 }
             }
-            return arr.sliced(_size[0], _size[1], numElements);
+            return app.data.sliced(_size[0], _size[1], numElements);
         }
     }
 

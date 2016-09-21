@@ -150,6 +150,9 @@ class Texture {
         +/
         Texture allocate(Bitmap!(char) bitmap){
             import std.math;
+            import std.array:appender;
+            
+            auto bitsApp = appender!(ubyte[]);
             if(bitmap.width != bitmap.height){
                 int side = cast( int )fmax(bitmap.width, bitmap.height);
                 Bitmap!(char) squareBitmap;
@@ -159,25 +162,23 @@ class Texture {
                         squareBitmap.pixel(i, j, bitmap.pixel(i, j));
                     }
                 }
-                ubyte[] bits;
                 for (int j = 0; j < squareBitmap.size[1]; j++) {
                     for (int i = 0; i < squareBitmap.size[0]; i++) {
                         for (int k = 0; k < squareBitmap.numElements; k++) {
-                            bits ~= squareBitmap.pixel(i, j).element(k);
+                            bitsApp.put(squareBitmap.pixel(i, j).element(k));
                         }
                     }
                 }
-                allocate(bits, squareBitmap.size[0], squareBitmap.size[1], squareBitmap.colorFormat);
+                allocate(bitsApp.data, squareBitmap.size[0], squareBitmap.size[1], squareBitmap.colorFormat);
             }else{
-                ubyte[] bits;
                 for (int j = 0; j < bitmap.size[1]; j++) {
                     for (int i = 0; i < bitmap.size[0]; i++) {
                         for (int k = 0; k < bitmap.numElements; k++) {
-                            bits ~= bitmap.pixel(i, j).element(k);
+                            bitsApp.put(bitmap.pixel(i, j).element(k));
                         }
                     }
                 }
-                allocate(bits, bitmap.size[0], bitmap.size[1], bitmap.colorFormat);
+                allocate(bitsApp.data, bitmap.size[0], bitmap.size[1], bitmap.colorFormat);
             }
             return this;
         }

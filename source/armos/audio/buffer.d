@@ -79,29 +79,33 @@ class Buffer {
             }
             vorbis_info* info = ov_info(&vorbisFile, -1);
             
-            byte[] data;
-            
             import std.conv;
             import std.algorithm;
             import std.array;
             byte[] tempData = new byte[4096];
             int currentPosition = 0;
+            
+            import std.array:appender;
+            auto dataApp = appender!(byte[]);
             while(true){
                 size_t tempSize = ov_read(&vorbisFile, tempData.ptr, 4096, 0, 2, 1, &currentPosition);
                 if(tempSize <= 0)break;
-                data ~= tempData[0..tempSize];
+                dataApp.put(tempData[0..tempSize]);
             }
+            byte[] data = dataApp.data;
             
             _sampleRate = info.rate;
             
             import std.range;
+            auto pcmApp = appender!(short[]);
             foreach (offset; data.length.iota) {
                 if (offset % 2 == 0) {
                     //convert ubyte to 16 bit little endian integer
                     short val = cast(short)(cast(ubyte)(data[offset]) | (cast(ubyte)(data[offset + 1])<<8));
-                    _pcm ~= cast(short)((val & 0x8000) ? val | 0xFFFF0000 : val);
+                    pcmApp.put(cast(short)((val & 0x8000) ? val | 0xFFFF0000 : val));
                 }
             } 
+            _pcm = pcmApp.data;
             
             _channels = info.channels;
             _depth = 16;
