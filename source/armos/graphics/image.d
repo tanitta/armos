@@ -206,6 +206,7 @@ class Image {
             _bitmap = data;
             allocate();
             _isLoaded = true;
+            _material.texture("tex0", this._texture);
             return this;
         }
 
