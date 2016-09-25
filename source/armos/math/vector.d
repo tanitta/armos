@@ -499,7 +499,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
         vec.x vec.xyのようにベクトルの一部を切り出すことが出来ます
     +/
-    @property auto opDispatch(string swizzle)() if (swizzle.length > 0 && swizzle.length < coordName.length && coordName.length > 0) {
+    @property auto opDispatch(string swizzle)()const if (swizzle.length > 0 && swizzle.length < coordName.length && coordName.length > 0) {
         import std.string : indexOf,join;
         import std.array : array;
         import std.conv : to;
@@ -515,6 +515,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
             mixin("return Vector!(T,swizzle.length)("~indecies.map!(index => "elements["~index.to!string~"]").array.join(',')~");");
         }
     }
+    
     unittest{
         auto vec = Vector3f(1.0,2.0,3.0);
 
@@ -525,6 +526,16 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         assert(vec.zx == Vector2f(3.0,1.0));
 
         static assert (!__traits(compiles, vec.xw));
+    }
+    
+    unittest{
+        const vec = Vector3f(1.0,2.0,3.0);
+
+        assert(vec.x == 1.0);
+        assert(vec.z == 3.0);
+
+        assert(vec.xy == Vector2f(1.0,2.0));
+        assert(vec.zx == Vector2f(3.0,1.0));
     }
 
     /++
