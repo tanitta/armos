@@ -45,35 +45,39 @@ class Mesh {
 
         /// meshの描画モードを返します．
         PrimitiveMode primitiveMode()const{
-            return primitiveMode_;
+            return _primitiveMode;
         }
 
         /// meshの描画モードを指定します．
-        void primitiveMode(in PrimitiveMode mode){
-            primitiveMode_ = mode;
+        Mesh primitiveMode(in PrimitiveMode mode){
+            _primitiveMode = mode;
+            return this;
         }
 
         /++
             テクスチャ座標を追加します．
         +/
-        void addTexCoord(in Vector2f vec){
+        Mesh addTexCoord(in Vector2f vec){
             addTexCoord(vec[0], vec[1]);
+            return this;
         }
 
         /++
             テクスチャ座標を追加します．
         +/
-        void addTexCoord(in float u, in float v){
+        Mesh addTexCoord(in float u, in float v){
             texCoords ~= Vector4f(u, v, 0f, 1f);
+            return this;
         }
 
         /++
             頂点座標を追加します．
         +/
-        void addVertex(in Vector3f vec){
+        Mesh addVertex(in Vector3f vec){
             vertices ~= Vector4f(vec[0], vec[1], vec[2], 1);
             isVertsChanged = true;
             isFaceDirty = true;
+            return this;
         };
         unittest{
             auto mesh = new Mesh;
@@ -88,31 +92,35 @@ class Mesh {
         /++
             頂点座標を追加します．
         +/
-        void addVertex(in float x, in float y, in float z){
+        Mesh addVertex(in float x, in float y, in float z){
             addVertex(Vector3f(x, y, z));
+            return this;
         }
 
         /++
             法線ベクトルを追加します．
         +/
-        void addNormal(in Vector3f vec){
+        Mesh addNormal(in Vector3f vec){
             normals ~= vec;
+            return this;
         }
 
         /++
             法線ベクトルを追加します．
         +/
-        void addNormal(in float x, in float y, in float z){
+        Mesh addNormal(in float x, in float y, in float z){
             addNormal(Vector3f(x, y, z));
+            return this;
         }
 
         /++
             頂点インデックスを追加します．
         +/
-        void addIndex(in IndexType index){
+        Mesh addIndex(in IndexType index){
             indices ~= index;
             isIndicesChanged = true;
             isFaceDirty = true;
+            return this;
         };
         unittest{
             auto mesh = new Mesh;
@@ -129,33 +137,125 @@ class Mesh {
             Params:
             renderMode = 面，線，点のどれを描画するか指定します．
         +/
-        void draw(in PolyRenderMode renderMode){
+        Mesh draw(in PolyRenderMode renderMode){
             currentRenderer.draw(this, renderMode, false, false, false);
+            return this;
         };
 
         /++
             meshをワイヤフレームで描画します．
         +/
-        void drawWireFrame(){
+        Mesh drawWireFrame(){
             draw(PolyRenderMode.WireFrame);
+            return this;
         };
 
         /++
             meshの頂点を点で描画します．
         +/
-        void drawVertices(){
+        Mesh drawVertices(){
             draw(PolyRenderMode.Points);
+            return this;
         };
 
         /++
             meshの面を塗りつぶして描画します．
         +/
-        void drawFill(){
+        Mesh drawFill(){
             draw(PolyRenderMode.Fill);
+            return this;
         };
+        
+        ///
+        Mesh opBinary(string op:"~")(Mesh rhs){
+            assert(this.primitiveMode == rhs.primitiveMode, "missmatch primitive mode");
+            import std.algorithm;
+            import std.conv;
+            auto result = new Mesh;
+            result.indices    = this.indices    ~ rhs.indices.map!(i => (i + this.vertices.length).to!int).array;
+            result.vertices   = this.vertices   ~ rhs.vertices;
+            result.normals    = this.normals    ~ rhs.normals;
+            result.tangents   = this.tangents   ~ rhs.tangents;
+            result.texCoords0 = this.texCoords0 ~ rhs.texCoords0;
+            result.texCoords1 = this.texCoords1 ~ rhs.texCoords1;
+            result.colors     = this.colors     ~ rhs.colors;
+            return result;
+        }
+        
+        unittest{
+            alias V = Vector4f;
+            auto m1 = new Mesh;
+            m1.vertices = [
+                V(1, 0, 0, 1), 
+                V(0, 2, 0, 1), 
+                V(0, 0, 3, 1)
+            ];
+            m1.indices = [0, 1, 2];
+            
+            auto m2 = new Mesh;
+            m2.vertices = [
+                V(4, 0, 0, 1), 
+                V(0, 5, 0, 1), 
+                V(0, 0, 6, 1)
+            ];
+            m2.indices = [0, 1, 2];
+            
+            auto m3 = m1 ~ m2;
+            assert(m3.vertices.length == 6);
+            assert(m3.vertices == m1.vertices ~ m2.vertices);
+            assert(m3.indices.length  == m1.indices.length+m2.indices.length);
+            assert(m3.indices == [0, 1, 2, 3, 4, 5]);
+        }
+        
+        ///
+        void opOpAssign(string op:"~")(Mesh rhs){
+            assert(this.primitiveMode == rhs.primitiveMode, "missmatch primitive mode");
+            import std.algorithm;
+            import std.conv;
+            this.indices    ~= rhs.indices.map!(i => (i + this.vertices.length).to!int).array;
+            this.vertices   ~= rhs.vertices;
+            this.normals    ~= rhs.normals;
+            this.tangents   ~= rhs.tangents;
+            this.texCoords0 ~= rhs.texCoords0;
+            this.texCoords1 ~= rhs.texCoords1;
+            this.colors     ~= rhs.colors;
+        }
+        
+        unittest{
+            alias V = Vector4f;
+            auto m1 = new Mesh;
+            m1.vertices = [
+                V(1, 0, 0, 1), 
+                V(0, 2, 0, 1), 
+                V(0, 0, 3, 1)
+            ];
+            m1.indices = [0, 1, 2];
+            
+            auto m2 = new Mesh;
+            m2.vertices = [
+                V(4, 0, 0, 1), 
+                V(0, 5, 0, 1), 
+                V(0, 0, 6, 1)
+            ];
+            m2.indices = [0, 1, 2];
+            
+            m1 ~= m2;
+            assert(m1.vertices.length == 6);
+            assert(m1.vertices == [
+                V(1, 0, 0, 1), 
+                V(0, 2, 0, 1), 
+                V(0, 0, 3, 1)
+            ] ~ [
+                V(4, 0, 0, 1), 
+                V(0, 5, 0, 1), 
+                V(0, 0, 6, 1)
+            ]);
+            assert(m1.indices.length  == 6);
+            assert(m1.indices == [0, 1, 2, 3, 4, 5]);
+        }
     }//public
 
     private{
-        PrimitiveMode primitiveMode_ = PrimitiveMode.Triangles;
+        PrimitiveMode _primitiveMode = PrimitiveMode.Triangles;
     }//private
 }//class Mesh
