@@ -131,8 +131,17 @@ private{
     
     static unittest{
         import std.stdio;
-        auto array = hypercubeVertices!(int, 3);
-        array.writeln;
+        alias V = Vector3i;
+        assert(hypercubeVertices!(int, 3) == [
+            V(0, 0, 0), 
+            V(1, 0, 0), 
+            V(0, 1, 0), 
+            V(1, 1, 0), 
+            V(0, 0, 1), 
+            V(1, 0, 1), 
+            V(0, 1, 1), 
+            V(1, 1, 1), 
+        ]);
     }
     
     T[] reverseArray(T)(T[] array, in int index){
