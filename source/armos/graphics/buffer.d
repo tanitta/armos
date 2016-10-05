@@ -53,9 +53,15 @@ class Buffer {
         Buffer array(T)(T[] array, in size_t dimention, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
             if(array.length == 0)return this;
             begin;
-            _size = array.length * array[0].sizeof;
-            //TODO if array.length is'nt changed, use glBufferSubData
-            glBufferData(_bufferType, _size, array.ptr, usageEnum(freq, nature));
+            
+            immutable currentSize = array.length * array[0].sizeof;
+            if(_size != currentSize){
+                _size = currentSize;
+                glBufferData(_bufferType, _size, array.ptr, usageEnum(freq, nature));
+            }else{
+                glBufferSubData(_bufferType, 0, _size, array.ptr);
+            }
+            
             import std.conv;
             if(_bufferType != BufferType.ElementArray){
                 glVertexAttribPointer(0,
