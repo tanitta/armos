@@ -73,6 +73,39 @@ armos.graphics.Mesh boxPrimitive(in armos.math.Vector3f position, in armos.math.
     return mesh;
 }
 
+armos.graphics.Mesh boxFramePrimitive(in armos.math.Vector3f position, in armos.math.Vector3f size){
+    auto mesh = new armos.graphics.Mesh;
+
+    auto halfSize = size*0.5;
+    mesh.primitiveMode = armos.graphics.PrimitiveMode.Lines;
+
+    mesh.addVertex(armos.math.Vector3f( -halfSize[0], -halfSize[1], -halfSize[2]  )+position);
+    mesh.addVertex(armos.math.Vector3f( halfSize[0],  -halfSize[1], -halfSize[2]  )+position);
+    mesh.addVertex(armos.math.Vector3f( halfSize[0],  halfSize[1],  -halfSize[2]  )+position);
+    mesh.addVertex(armos.math.Vector3f( -halfSize[0], halfSize[1],  -halfSize[2]  )+position);
+
+    mesh.addVertex(armos.math.Vector3f( -halfSize[0], -halfSize[1], halfSize[2] )+position);
+    mesh.addVertex(armos.math.Vector3f( halfSize[0],  -halfSize[1], halfSize[2] )+position);
+    mesh.addVertex(armos.math.Vector3f( halfSize[0],  halfSize[1],  halfSize[2] )+position);
+    mesh.addVertex(armos.math.Vector3f( -halfSize[0], halfSize[1],  halfSize[2] )+position);
+
+    mesh.addIndex(0); mesh.addIndex(1);
+    mesh.addIndex(1); mesh.addIndex(2);
+    mesh.addIndex(3); mesh.addIndex(2);
+    mesh.addIndex(3); mesh.addIndex(0);
+
+    mesh.addIndex(4); mesh.addIndex(5);
+    mesh.addIndex(5); mesh.addIndex(6);
+    mesh.addIndex(6); mesh.addIndex(7);
+    mesh.addIndex(7); mesh.addIndex(4);
+    
+    mesh.addIndex(0); mesh.addIndex(4);
+    mesh.addIndex(1); mesh.addIndex(5);
+    mesh.addIndex(2); mesh.addIndex(6);
+    mesh.addIndex(3); mesh.addIndex(7);
+    return mesh;
+}
+
 /++
 連続した線のMeshを返します．
 Params:
