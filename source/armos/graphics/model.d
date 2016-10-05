@@ -264,13 +264,20 @@ class AssimpModelLoader {
                     return Vector4f(vec[0], vec[1], vec[2], 1f);
                     }).array;
 
+            auto totalIndices = 0;
+            foreach(f; mesh.mFaces[0 .. mesh.mNumFaces]) {
+                totalIndices += f.mNumIndices;
+            }
+            
+            convertedMesh.indices = new int[totalIndices];
+            auto indexCounter = 0;
             foreach(f; mesh.mFaces[0 .. mesh.mNumFaces]) {
                 immutable int numVertices =  f.mNumIndices;
                 foreach(i; f.mIndices[0 .. numVertices]){
-                    convertedMesh.addIndex(i);
+                    convertedMesh.indices[indexCounter] = i;
+                    indexCounter++;
                 }
             }
-
             // immutable mi = mesh.mMaterialIndex;
             // auto material = (mi < materials.length) ? materials[mi] : null;
             // convertedMesh.material = material;
