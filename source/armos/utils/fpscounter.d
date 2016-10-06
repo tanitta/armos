@@ -13,7 +13,8 @@ class FpsCounter {
 
         void targetFps(in double fps){
             _targetFps = fps;
-            _targetTime = convertedTimeFromFps(fps);
+            //convert from fps to nsecs
+            _targetNsecsTime = (1.0/fps*1000000000.0).to!int;
         }
 
         double targetFps()const{
@@ -39,14 +40,14 @@ class FpsCounter {
 
         void adjust(){
             immutable MonoTime after = MonoTime.currTime;
-            immutable def = ( after - _timer );
-            if( def.split.hnsecs < _targetTime){
-                Thread.sleep( dur!("hnsecs")( _targetTime - def.split.hnsecs ) );
+            immutable def = ( after.ticks - _timer.ticks ).ticksToNSecs;
+            if( def < _targetNsecsTime){
+                Thread.sleep( dur!("nsecs")( _targetNsecsTime - def ) );
             }
             immutable after2 = MonoTime.currTime;
-            immutable def2 = after2 - _timer;
-            _currentFps = 1.0/def2.split.hnsecs.to!double*10000000.0;
-            _fpsUseRate = def.split.hnsecs.to!double/_targetTime.to!double;
+            immutable def2 = ( after2.ticks - _timer.ticks ).ticksToNSecs;
+            _currentFps = 1.0/def2.to!double*1000000000.0;
+            _fpsUseRate = def.to!double/_targetNsecsTime.to!double;
         }
     }
 
@@ -54,14 +55,10 @@ class FpsCounter {
         double _targetFps = 60.0;
         double _currentFps = 60.0;
         ulong  _currentFrames = 0;
-        int _targetTime = 0;
+        int    _targetNsecsTime = 0;
         double _fpsUseRate = 0;
         MonoTime _timer;
 
     }
-}
-
-private int convertedTimeFromFps(in double fps){
-    return (1.0/fps*10000000.0).to!int;
 }
 

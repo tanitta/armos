@@ -39,8 +39,18 @@ class Loop {
         /++
             FPS(Frame Per Second)を指定します．
         +/
-        void targetFps(double fps){
+        void targetFps(in double fps){
             fpscounter.targetFps = fps;
+        }
+        
+        ///
+        double targetFps()const{
+            return fpscounter.targetFps;
+        }
+        
+        ///
+        double currentFps()const{
+            return fpscounter.currentFps;
         }
     }//public
 
@@ -117,6 +127,14 @@ double fpsUseRate(){
 /++
     FPS(Frame Per Second)を指定します．
 +/
-void targetFps(double fps){
+void targetFps(in double fps){
     mainLoop.targetFps(fps);
+}
+
+double targetFps(){
+    return mainLoop.targetFps;
+}
+
+double currentFps(){
+    return mainLoop.currentFps;
 }
