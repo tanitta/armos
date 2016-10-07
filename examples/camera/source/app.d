@@ -25,7 +25,7 @@ class TestApp : ar.app.BaseApp{
     
     private{
         float _counter = 0f;
-        ar.graphics.Camera _camera = new ar.graphics.BasicCamera;
+        ar.graphics.Camera _camera = new ar.graphics.DefaultCamera;
 	
     }
 }

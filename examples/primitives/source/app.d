@@ -48,7 +48,7 @@ class TestApp : ar.app.BaseApp{
     
     private{
         float counter = 0;
-        ar.graphics.Camera _camera = new ar.graphics.Camera();
+        ar.graphics.Camera _camera = new ar.graphics.DefaultCamera;
 
         void drawPrimitiveExample(ar.math.Vector3f position, ar.graphics.Mesh mesh, ar.types.Color color){
             ar.graphics.pushMatrix;
