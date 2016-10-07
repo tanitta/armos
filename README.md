@@ -4,7 +4,6 @@ armos
 ====
 
 [![Dub version](https://img.shields.io/dub/v/armos.svg)](https://code.dlang.org/packages/armos)
-[![Build Status](https://travis-ci.org/tanitta/armos.svg?branch=master)](https://travis-ci.org/tanitta/armos)
 [![Build Status](https://travis-ci.org/tanitta/armos.svg?branch=dev)](https://travis-ci.org/tanitta/armos)
 
 armos is a free and open source library for creative coding in D programming language.
