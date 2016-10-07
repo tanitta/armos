@@ -7,5 +7,6 @@ env:
     - TEST_DIR=.
     - TEST_DIR=examples/*
 script:
+    echo $TEST_DIR &&
     cd $TEST_DIR &&
     dub test --compiler=${DC}
