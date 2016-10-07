@@ -3,3 +3,9 @@ language: d
 d:
     - dmd
     - ldc
+env:
+    - TEST_DIR=.
+    - TEST_DIR=examples/*
+script:
+    cd $TEST_DIR &&
+    dub test --compiler=${DC}
