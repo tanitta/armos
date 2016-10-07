@@ -20,4 +20,9 @@ class TestApp : ar.app.BaseApp{
 	override void mouseReleased(ar.math.Vector2i position, int button){}
 }
 
-void main(){ar.app.run(new TestApp);}
+void main(){
+    version(unittest){
+    }else{
+        ar.app.run(new TestApp);
+    }
+}

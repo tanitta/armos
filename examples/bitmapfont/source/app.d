@@ -34,4 +34,9 @@ class TestApp : ar.app.BaseApp{
     }
 }
 
-void main(){ar.app.run(new TestApp);}
+void main(){
+    version(unittest){
+    }else{
+        ar.app.run(new TestApp);
+    }
+}
