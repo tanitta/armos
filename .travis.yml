@@ -1,6 +1,7 @@
 language: d
     
 d:
+    - dmd
     - ldc
 env:
     - TEST_DIR=.
