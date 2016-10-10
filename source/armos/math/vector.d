@@ -516,28 +516,6 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         }
     }
     
-    unittest{
-        auto vec = Vector3f(1.0,2.0,3.0);
-
-        assert(vec.x == 1.0);
-        assert(vec.z == 3.0);
-
-        assert(vec.xy == Vector2f(1.0,2.0));
-        assert(vec.zx == Vector2f(3.0,1.0));
-
-        static assert (!__traits(compiles, vec.xw));
-    }
-    
-    unittest{
-        const vec = Vector3f(1.0,2.0,3.0);
-
-        assert(vec.x == 1.0);
-        assert(vec.z == 3.0);
-
-        assert(vec.xy == Vector2f(1.0,2.0));
-        assert(vec.zx == Vector2f(3.0,1.0));
-    }
-
     /++
     +/
     @property void opDispatch(string swizzle)(in T v) if (swizzle.length == 1 && coordName.length > 0) {
@@ -548,13 +526,6 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         }else{
             static assert (false);
         }
-    }
-    unittest{
-        auto vec = Vector3f(1.0,2.0,3.0);
-        vec.x = 4.0;
-        assert (vec == Vector3f(4.0,2.0,3.0));
-
-        static assert (!__traits(compiles,vec.w = 1.0));
     }
 
     /++
@@ -575,13 +546,44 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
                         );
          }
     }
-    unittest{
-        auto vec = Vector3f(2.0,4.0,6.0);
-        vec.yx = Vector2f(0.0,1.0);
-        assert (vec == Vector3f(1.0,0.0,6.0));
+}
 
-        static assert (!__traits(compiles,vec.xw = Vector2f(0.0,0.0)));
-    }
+unittest{
+    auto vec = Vector3f(1.0,2.0,3.0);
+
+    assert(vec.x == 1.0);
+    assert(vec.z == 3.0);
+
+    assert(vec.xy == Vector2f(1.0,2.0));
+    assert(vec.zx == Vector2f(3.0,1.0));
+
+    static assert (!__traits(compiles, vec.xw));
+}
+
+unittest{
+    const vec = Vector3f(1.0,2.0,3.0);
+
+    assert(vec.x == 1.0);
+    assert(vec.z == 3.0);
+
+    assert(vec.xy == Vector2f(1.0,2.0));
+    assert(vec.zx == Vector2f(3.0,1.0));
+}
+
+unittest{
+    auto vec = Vector3f(1.0,2.0,3.0);
+    vec.x = 4.0;
+    assert (vec == Vector3f(4.0,2.0,3.0));
+
+    static assert (!__traits(compiles,vec.w = 1.0));
+}
+
+unittest{
+    auto vec = Vector3f(2.0,4.0,6.0);
+    vec.yx = Vector2f(0.0,1.0);
+    assert (vec == Vector3f(1.0,0.0,6.0));
+
+    static assert (!__traits(compiles,vec.xw = Vector2f(0.0,0.0)));
 }
 
 /// int型の2次元ベクトルです．
