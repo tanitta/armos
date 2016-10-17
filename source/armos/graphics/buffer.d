@@ -79,10 +79,9 @@ class Buffer {
         ///
         Buffer array(V)(in V[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(isVector!V){
             if(array.length == 0)return this;
-            import std.algorithm;
             V.elementType[] raw = new V.elementType[array.length*V.dimention];
-            foreach (size_t i, ref v; array) {
-                raw[i*V.dimention..(i+1)*V.dimention] = v.elements;
+            for (size_t i = 0, pos = 0, len = array.length; i < len; ++i, pos += V.dimention) {
+                raw[pos .. pos + V.dimention] = array[i].elements[];
             }
             this.array(raw, V.dimention, freq, nature);
             return this;
