@@ -421,6 +421,31 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         assert(vector0.vectorProduct(vector1) == anser);
     }
 
+	/++
+		VectorとVectorの成す角を求めます
+	+/
+	auto angle(VectorType v) {
+		import std.numeric : dotProduct;
+		import std.traits;
+		immutable cross = dotProduct(elements,v.elements);
+		immutable norm_cross = dotProduct(elements,elements) * dotProduct(v.elements,v.elements);
+		static if (__traits(isIntegral,T)) {
+			return acos(cast(double)cross / sqrt(cast(double)norm_cross));
+		}
+		else {
+			return acos (cross / sqrt(norm_cross));
+		}
+	}
+	unittest {
+		auto v1 = Vector2i(3,0);
+		auto v2 = Vector2i(0,5);
+		assert (abs(v1.angle(v2) - PI/2) < 0.001);
+		
+		auto v3 = Vector3d(1.0 * cos(PI*1/6), 1.0 * sin(PI*1/6),0.0);
+		auto v4 = Vector3d(2.0 * cos(PI*5/6), 2.0 * sin(PI*5/6),0.0);
+		assert (abs(v3.angle(v4) - PI*2/3) < 0.001);
+	}
+
     /++
         正規化したVectorを返します．
     +/
