@@ -426,7 +426,6 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 	+/
 	auto angle(VectorType v) {
 		import std.numeric : dotProduct;
-		import std.traits;
 		immutable cross = dotProduct(elements,v.elements);
 		immutable norm_cross = dotProduct(elements,elements) * dotProduct(v.elements,v.elements);
 		static if (__traits(isIntegral,T)) {
