@@ -429,7 +429,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 		immutable cross = dotProduct(elements,v.elements);
 		immutable norm_cross = dotProduct(elements,elements) * dotProduct(v.elements,v.elements);
 		static if (__traits(isIntegral,T)) {
-			return acos(cast(double)cross / sqrt(cast(double)norm_cross));
+			return acos(cast(float)cross / sqrt(cast(float)norm_cross));
 		}
 		else {
 			return acos (cross / sqrt(norm_cross));
