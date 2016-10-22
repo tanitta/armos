@@ -143,6 +143,13 @@ class Source{
         
         ///
         bool isLooping()const{return _isLooping;}
+        
+        ///
+        float currentPlaybackTime()const{
+            float result;
+            alGetSourcef(_id, AL_SEC_OFFSET, &result);
+            return result;   
+        }
     }//public
 
     private{

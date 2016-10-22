@@ -13,6 +13,10 @@ class TestApp : ar.app.BaseApp{
                                        .play;
     }
 
+    override void update(){
+        writeln("currentPlaybackTime : ", _source.currentPlaybackTime);
+    }
+    
     private{
         ar.audio.Player _player;
         ar.audio.Buffer _buffer;
