@@ -219,10 +219,10 @@ class EasyCam : Camera{
     
     public{
         this(){
-            addListener(currentWindow.events.mouseMoved, this, &this.mouseMoved);
-            addListener(currentWindow.events.mouseReleased, this, &this.mouseReleased);
-            addListener(currentWindow.events.mousePressed, this, &this.mousePressed);
-            addListener(currentWindow.events.update, this, &this.update);
+            addListener(currentEvents.mouseMoved, this, &this.mouseMoved);
+            addListener(currentEvents.mouseReleased, this, &this.mouseReleased);
+            addListener(currentEvents.mousePressed, this, &this.mousePressed);
+            addListener(currentEvents.update, this, &this.update);
 
             reset;
         }

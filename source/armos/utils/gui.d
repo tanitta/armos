@@ -285,9 +285,9 @@ class Slider(T) : Widget{
             _varMax = max;
             _name = name;
             _height = 32;
-            armos.events.addListener(armos.app.currentWindow.events.mouseMoved, this, &this.mouseMoved);
-            armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
-            armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+            armos.events.addListener(armos.app.currentEvents.mouseMoved, this, &this.mouseMoved);
+            armos.events.addListener(armos.app.currentEvents.mouseReleased, this, &this.mouseReleased);
+            armos.events.addListener(armos.app.currentEvents.mousePressed, this, &this.mousePressed);
         };
 
         /++
@@ -384,7 +384,7 @@ class MovingGraph(T) : Widget{
                 _lines.addVertex(i.to!float/_bufferSize.to!float, v, 0);
                 _lines.addIndex(i);
             }
-            armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
+            armos.events.addListener(armos.app.currentEvents.update, this, &this.update);
         }
 
         override void update(ref armos.events.EventArg arg){
@@ -461,7 +461,7 @@ class MovingGraphXY(T) : Widget{
                 _lines.addVertex(0, 0, 0);
                 _lines.addIndex(i);
             }
-            armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
+            armos.events.addListener(armos.app.currentEvents.update, this, &this.update);
         }
 
         override void update(ref armos.events.EventArg arg){
@@ -531,8 +531,8 @@ class Button : Widget{
             _v = &v;
             _name = name;
 
-            armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
-            armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+            armos.events.addListener(armos.app.currentEvents.mouseReleased, this, &this.mouseReleased);
+            armos.events.addListener(armos.app.currentEvents.mousePressed, this, &this.mousePressed);
 
             _height = 32;
         }
@@ -601,8 +601,8 @@ class ToggleButton : Widget{
             _v = &v;
             _name = name;
 
-            armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
-            armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
+            armos.events.addListener(armos.app.currentEvents.mouseReleased, this, &this.mouseReleased);
+            armos.events.addListener(armos.app.currentEvents.mousePressed, this, &this.mousePressed);
 
             _height = 32;
         }

@@ -120,8 +120,8 @@ GLuint getGLMatrixMode(MatrixMode mode){
 
 /++
 +/
-armos.graphics.Renderer* currentRenderer(){
-    return &armos.app.mainLoop.renderer;
+armos.graphics.Renderer currentRenderer(){
+    return armos.app.mainLoop.renderer;
 }
 
 /++

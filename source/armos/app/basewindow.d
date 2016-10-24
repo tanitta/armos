@@ -10,10 +10,11 @@ armosで用いるWindowsの雛形となるinterfaceです．新たにWindowを�
 +/
 interface Window{
     public{
+        enum bool hasRenderer = false;
         /++
             Windowsが実行するイベントを表すプロパティです．
         +/
-        CoreEvents events();
+        // CoreEvents events();
 
         /++
             サイズのプロパティです
@@ -59,6 +60,10 @@ interface Window{
             Windowのタイトル文字列のプロパティです．
         +/
         void name(in string str);
+        
+        ///
+        // void initEvents(BaseApp, CoreEvents);
+        void select();
     }//public
 }
 
@@ -78,29 +83,10 @@ mixin template BaseWindow(){
 
         /++
         +/
-        void initEvents(BaseApp app){
-            _app = app;
-            _coreEvents= new CoreEvents;
-            assert(_coreEvents);
-
-            addListener(_coreEvents.setup, app, &app.setup);
-            addListener(_coreEvents.update, app, &app.update);
-            addListener(_coreEvents.draw, app, &app.draw);
-            addListener(_coreEvents.keyPressed, app, &app.keyPressed);
-            addListener(_coreEvents.mouseMoved, app, &app.mouseMoved);
-            addListener(_coreEvents.mouseDragged, app, &app.mouseDragged);
-            addListener(_coreEvents.mouseReleased, app, &app.mouseReleased);
-            addListener(_coreEvents.mousePressed, app, &app.mousePressed);
-            addListener(_coreEvents.unicodeInputted, app, &app.unicodeInputted);
-            addListener(_coreEvents.exit, app, &app.exit);
-        }
-
-        /++
-        +/
-        CoreEvents events(){
-            assert(_coreEvents);
-            return _coreEvents;
-        }
+        // CoreEvents events(){
+        //     assert(_coreEvents);
+        //     return _coreEvents;
+        // }
 
         /++
         +/
@@ -112,17 +98,14 @@ mixin template BaseWindow(){
             }
 
         }
+        
     }//public
-
-    private{
-        BaseApp _app;
-        CoreEvents _coreEvents;
-    }//private
 
     protected{
         bool _shouldClose = false;
         string _name = "";
         Vector2f _windowSize;
+        
     }//protected
 }
 
@@ -134,11 +117,12 @@ class GLFWWindow : Window{
     mixin BaseWindow;
 
     public{
+        enum bool hasRenderer = true;
         /++
             Params:
             apprication = Windowとひも付けされるアプリケーションです．
         +/
-        this(BaseApp apprication, WindowConfig config){
+        this(BaseApp apprication, CoreEvents events, WindowConfig config){
             DerelictGL.load();
             DerelictGLFW3.load();
 
@@ -153,10 +137,10 @@ class GLFWWindow : Window{
                 glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             }
 
-            window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, null);
-            if(!window){close;}
+            _window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, null);
+            if(!_window){close;}
 
-            glfwMakeContextCurrent(window);
+            glfwMakeContextCurrent(_window);
 
             if(config.glVersion >= SemVer("3.2.0")){
                 DerelictGL3.reload();
@@ -164,17 +148,17 @@ class GLFWWindow : Window{
                 DerelictGL.reload();
             }
 
-            initEvents(apprication);
+            initEvents(apprication, events);
             initGLFWEvents();
 
             glfwSwapInterval(0);
-            glfwSwapBuffers(window);
+            glfwSwapBuffers(_window);
             
             writeVersion;
         }
 
         void size(Vector2i size){
-            glfwSetWindowSize(window, size[0], size[1]);
+            glfwSetWindowSize(_window, size[0], size[1]);
         }
 
         /++
@@ -182,7 +166,7 @@ class GLFWWindow : Window{
         +/
         Vector2i size(){
             auto vec = Vector2i();
-            glfwGetWindowSize(window, &vec[0], &vec[1]);
+            glfwGetWindowSize(_window, &vec[0], &vec[1]);
             return vec;
         }
 
@@ -199,8 +183,8 @@ class GLFWWindow : Window{
         void update(){
             // glFlush();
             // glFinish();
-            glfwSwapBuffers(window);
-            _shouldClose = cast(bool)glfwWindowShouldClose(window);
+            glfwSwapBuffers(_window);
+            _shouldClose = cast(bool)glfwWindowShouldClose(_window);
         }
 
         /++
@@ -214,34 +198,38 @@ class GLFWWindow : Window{
         void name(in string str){
             import std.string;
             _name = str;
-            glfwSetWindowTitle(window, str.toStringz);
+            glfwSetWindowTitle(_window, str.toStringz);
         }
+        
+        void select(){
+            glfwMakeContextCurrent(_window);
+        };
     }//public
 
     private{
-        GLFWwindow* window;
+        GLFWwindow* _window;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
             import std.conv;
             import armos.utils.keytype;
             if(action == GLFW_PRESS){
-                currentWindow.events.notifyKeyPressed(key.to!KeyType);
+                currentEvents.notifyKeyPressed(key.to!KeyType);
             }else if(action == GLFW_RELEASE){
-                currentWindow.events.notifyKeyReleased(key.to!KeyType);
+                currentEvents.notifyKeyReleased(key.to!KeyType);
             }
         }
         
         static extern(C) void charCallbackFunction(GLFWwindow* window, uint key){
-            currentWindow.events.notifyUnicodeInput(key);
+            currentEvents.notifyUnicodeInput(key);
             // if(action == GLFW_PRESS){
-            //     currentWindow.events.notifyKeyPressed(key);
+            //     currentEvents.notifyKeyPressed(key);
             // }else if(action == GLFW_RELEASE){
-            //     currentWindow.events.notifyKeyReleased(key);
+            //     currentEvents.notifyKeyReleased(key);
             // }
         }
 
         static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
-            currentWindow.events.notifyMouseMoved(cast(int)xpos, cast(int)ypos, 0);
+            currentEvents.notifyMouseMoved(cast(int)xpos, cast(int)ypos, 0);
         }
 
         static extern(C ) void mouseButtonFunction(GLFWwindow* window, int button, int action, int mods){
@@ -249,9 +237,9 @@ class GLFWWindow : Window{
             glfwGetCursorPos(window, &xpos, &ypos);
 
             if(action == GLFW_PRESS){
-                currentWindow.events.notifyMousePressed(cast(int)xpos, cast(int)ypos, button);
+                currentEvents.notifyMousePressed(cast(int)xpos, cast(int)ypos, button);
             }else if(action == GLFW_RELEASE){
-                currentWindow.events.notifyMouseReleased(cast(int)xpos, cast(int)ypos, button);
+                currentEvents.notifyMouseReleased(cast(int)xpos, cast(int)ypos, button);
             }
         }
 
@@ -267,14 +255,25 @@ class GLFWWindow : Window{
             writefln("Version:  %s",   to!string(glGetString(GL_VERSION)));
             writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
         };
+        
+        void initEvents(BaseApp app, CoreEvents events){
+            assert(events);
+            addListener(events.keyPressed, app, &app.keyPressed);
+            addListener(events.mouseMoved, app, &app.mouseMoved);
+            addListener(events.mouseDragged, app, &app.mouseDragged);
+            addListener(events.mouseReleased, app, &app.mouseReleased);
+            addListener(events.mousePressed, app, &app.mousePressed);
+            addListener(events.unicodeInputted, app, &app.unicodeInputted);
+        }
+
 
         void initGLFWEvents(){
             // glfwSetKeyCallback(window, &keyCallbackFunction);
-            glfwSetKeyCallback(window, cast(GLFWkeyfun)&keyCallbackFunction);
-            glfwSetCharCallback(window, cast(GLFWcharfun)&charCallbackFunction);
-            glfwSetCursorPosCallback(window, cast(GLFWcursorposfun)&cursorPositionFunction);
-            glfwSetMouseButtonCallback(window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
-            glfwSetWindowSizeCallback(window, cast(GLFWwindowsizefun)&resizeWindowFunction);
+            glfwSetKeyCallback(_window, cast(GLFWkeyfun)&keyCallbackFunction);
+            glfwSetCharCallback(_window, cast(GLFWcharfun)&charCallbackFunction);
+            glfwSetCursorPosCallback(_window, cast(GLFWcursorposfun)&cursorPositionFunction);
+            glfwSetMouseButtonCallback(_window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
+            glfwSetWindowSizeCallback(_window, cast(GLFWwindowsizefun)&resizeWindowFunction);
         }
     }//private
 }
