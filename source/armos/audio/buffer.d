@@ -6,6 +6,8 @@ import derelict.vorbis.vorbis;
 import derelict.vorbis.enc;
 import derelict.vorbis.file;
 
+import armos.audio.spectrum;
+
 /++
 +/
 class Buffer {
@@ -128,7 +130,7 @@ class Buffer {
         int id()const{return _id;}
         
         ///
-        int sampleRate()const{
+        int samplingRate()const{
             return _sampleRate;
         }
         
@@ -143,6 +145,25 @@ class Buffer {
         
         short[] pcm(){
             return _pcm;
+        }
+        
+        ///
+        T[] channel(T = short)(in size_t channelIndex)const{
+            assert(channelIndex < _channels);
+            
+            import std.range:appender;
+            auto app = appender!(T[]);
+            for (int i = 0; i < _pcm.length/_channels; i++) {
+                immutable pcmIndex = i*_channels+channelIndex;
+                import std.conv:to;
+                app.put(_pcm[pcmIndex].to!T);
+            }
+            return app.data;
+        }
+        
+        ///
+        size_t channelLength()const{
+            return _pcm.length/_channels;
         }
         
         ///
@@ -164,6 +185,28 @@ class Buffer {
                          _sampleRate);
             return this;
         }
+        
+        ///
+        Spectrum!T spectrumAtIndex(T = double)(in size_t channelIndex, in size_t index, in size_t bufferSize)const
+        in{
+            assert(index < channelLength);
+        }
+        body{
+            //TODO
+            T[] channel = channel!T(channelIndex);
+            
+            import std.range:appender;
+            auto app = appender!(T[]);
+            for (size_t i = index-(bufferSize*2-1); i <= index; i++) {
+                if(i < 0){
+                    app.put(0);
+                }else{
+                    app.put(channel[i]);
+                }
+            }
+            import std.conv;
+            return spectrum(app.data, _sampleRate.to!T);
+        }
     }//public
 
     private{
@@ -175,10 +218,33 @@ class Buffer {
         float _start;
         float _finish;
         ALenum _format;
+        
     }//private
 }//class Buffer
 
 private{
+    Spectrum!T spectrum(T)(T[] sample, T samplingRate){
+        import std.numeric:fft;
+        import std.range:iota;
+        import std.algorithm:map;
+        import std.array:array;
+        
+        auto windowLength = sample.length;
+        auto transformLength = windowLength;//TODO
+        
+        auto frequencyRange = transformLength.iota.map!(x=>x*(samplingRate/transformLength))[0..$/2].array;
+        
+        auto fx = fft(sample)[0..$/2];
+        auto powers = fx.map!(x=>(x*typeof(x)(x.re, -x.im)).re/transformLength).array;
+
+        Spectrum!T result;
+
+        result.samplingRate = samplingRate;
+        result.powers = powers;
+        result.frequencyRange = frequencyRange;
+        return result;
+    }
+    
     ALenum formatFrom(size_t numChannels, size_t depth){
         ALenum f;
         if(numChannels == 1){

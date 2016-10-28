@@ -17,6 +17,20 @@ class TestApp : ar.app.BaseApp{
         writeln("currentPlaybackTime : ", _source.currentPlaybackTime);
     }
     
+    override void draw(){
+        ar.graphics.pushMatrix;
+            ar.graphics.translate(0, ar.app.windowSize.y/2, 0);
+            ar.graphics.scale(1, -1, 1);
+            foreach (int t,  ref v; _source.currentSpectrum(0, 1024).powers) {
+                import std.math;
+                ar.graphics.drawLine(
+                    ar.math.Vector2d(t, 0),
+                    ar.math.Vector2d(t, log10(v)*10.0)
+                );
+            }
+        ar.graphics.popMatrix;
+    }
+    
     private{
         ar.audio.Player _player;
         ar.audio.Buffer _buffer;

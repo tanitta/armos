@@ -3,6 +3,7 @@ module armos.audio.source;
 import derelict.openal.al;
 import armos.math;
 import armos.audio.buffer;
+import armos.audio.spectrum;
 
 /++
 +/
@@ -30,6 +31,7 @@ class Source{
         ///
         Source buffer(Buffer b){
             alSourcei(_id, AL_BUFFER, b.id);
+            _buffer = b;
             return this;
         }
         
@@ -150,6 +152,17 @@ class Source{
             alGetSourcef(_id, AL_SEC_OFFSET, &result);
             return result;   
         }
+        
+        ///
+        size_t currentPlaybackIndex()const{
+            import std.conv:to;
+            return (currentPlaybackTime*_buffer.samplingRate.to!float).to!size_t;
+        }
+        
+        ///
+        Spectrum!double currentSpectrum(in size_t channel, in size_t bufferSize)const{
+            return _buffer.spectrumAtIndex(channel, currentPlaybackIndex, bufferSize);
+        }
     }//public
 
     private{
@@ -159,6 +172,7 @@ class Source{
         Vector4f _direction = Vector4f(0, 0, 0, 0);
         float _gain = 1f;
         bool _isLooping = false;
+        Buffer _buffer;
         
         SourceState _state;
     }//private
