@@ -56,9 +56,12 @@ class Buffer {
         Buffer load(Wave wave){
             import std.conv;
             _sampleRate = wave.sampleRate.to!int;
-            _channels = wave.numChannels.to!int;
+            _numChannels = wave.numChannels.to!int;
             _depth = wave.depth.to!int;
             _format = formatFrom(wave.numChannels, wave.depth);
+            
+            if(!_channels) setupChannnels;
+            
             alBufferData(_id,
                          _format,
                          wave.data.ptr,
@@ -109,9 +112,11 @@ class Buffer {
             } 
             _pcm = pcmApp.data;
             
-            _channels = info.channels;
+            _numChannels = info.channels;
             _depth = 16;
             _format = formatFrom(info.channels, 16);
+            
+            if(!_channels) setupChannnels;
                 
             alBufferData(_id,
                          _format, 
@@ -135,7 +140,7 @@ class Buffer {
         }
         
         ///
-        int channels()const{return _channels;}
+        int numChannels()const{return _numChannels;}
         
         ///
         int depth()const{return _depth;}
@@ -148,22 +153,8 @@ class Buffer {
         }
         
         ///
-        T[] channel(T = short)(in size_t channelIndex)const{
-            assert(channelIndex < _channels);
-            
-            import std.range:appender;
-            auto app = appender!(T[]);
-            for (int i = 0; i < _pcm.length/_channels; i++) {
-                immutable pcmIndex = i*_channels+channelIndex;
-                import std.conv:to;
-                app.put(_pcm[pcmIndex].to!T);
-            }
-            return app.data;
-        }
-        
-        ///
         size_t channelLength()const{
-            return _pcm.length/_channels;
+            return _pcm.length/_numChannels;
         }
         
         ///
@@ -178,6 +169,9 @@ class Buffer {
             }else{
                 rangedPcm = _pcm[(_start*sampleRate).to!int*2..(_finish*sampleRate).to!int*2];
             }
+            
+            if(!_channels) setupChannnels;
+            
             alBufferData(_id,
                          _format, 
                          rangedPcm.ptr,
@@ -187,57 +181,74 @@ class Buffer {
         }
         
         ///
-        Spectrum!T spectrumAtIndex(T = double)(in size_t channelIndex, in size_t index, in size_t bufferSize)const
+        Spectrum!double spectrumAtIndex(T = short)(in size_t channelIndex, in size_t index, in size_t bufferSize)const
         in{
             assert(index < channelLength);
         }
         body{
-            //TODO
-            T[] channel = channel!T(channelIndex);
+            const channel = _channels[channelIndex];
             
-            import std.range:appender;
-            auto app = appender!(T[]);
-            for (size_t i = index-(bufferSize*2-1); i <= index; i++) {
-                if(i < 0){
-                    app.put(0);
-                }else{
-                    app.put(channel[i]);
+            short[] result = new short[](bufferSize*2);
+            for (size_t i = index-(bufferSize*2-1), j = 0; i <= index; i++, j++) {
+                if(0 <= i){
+                    result[j] = channel[i];
                 }
             }
-            import std.conv;
-            return spectrum(app.data, _sampleRate.to!T);
+            assert(result.length == bufferSize*2);
+            return spectrum!double(result, _sampleRate);
         }
     }//public
 
     private{
         int _id;
         short[] _pcm;
+        short[][] _channels;
         int _sampleRate;
-        int _channels;
+        int _numChannels;
         int _depth;
         float _start;
         float _finish;
         ALenum _format;
         
+        void setupChannnels(){
+            import std.range:Appender;
+            import std.stdio;
+            for (int c = 0; c < _numChannels; c++) {
+                _channels ~= new short[](0);
+            }
+            
+            Appender!(short[])[] channelApps = new Appender!(short[])[](_numChannels);
+            for (int i = 0; i < _pcm.length/_numChannels; i++) {
+                for (int c = 0; c < _numChannels; c++) {
+                    immutable pcmIndex = i*_numChannels+c;
+                    channelApps[c].put(_pcm[pcmIndex]);
+                }
+            }
+            assert(_channels.length == _numChannels);
+            for (int c = 0; c < _numChannels; c++) {
+                _channels[c] = channelApps[c].data;
+            }
+        }
     }//private
 }//class Buffer
 
 private{
-    Spectrum!T spectrum(T)(T[] sample, T samplingRate){
+    Spectrum!R spectrum(R, T)(T[] sample, in int samplingRate){
         import std.numeric:fft;
         import std.range:iota;
         import std.algorithm:map;
         import std.array:array;
+        import std.conv:to;
         
         auto windowLength = sample.length;
         auto transformLength = windowLength;//TODO
         
-        auto frequencyRange = transformLength.iota.map!(x=>x*(samplingRate/transformLength))[0..$/2].array;
+        auto frequencyRange = transformLength.iota.map!(x=>x*(samplingRate/transformLength).to!R)[0..$/2].array;
         
         auto fx = fft(sample)[0..$/2];
         auto powers = fx.map!(x=>(x*typeof(x)(x.re, -x.im)).re/transformLength).array;
 
-        Spectrum!T result;
+        Spectrum!R result;
 
         result.samplingRate = samplingRate;
         result.powers = powers;

@@ -25,7 +25,7 @@ class TestApp : ar.app.BaseApp{
                 import std.math;
                 ar.graphics.drawLine(
                     ar.math.Vector2d(t, 0),
-                    ar.math.Vector2d(t, log10(v)*10.0)
+                    ar.math.Vector2d(t, (v)/10000000)
                 );
             }
         ar.graphics.popMatrix;
