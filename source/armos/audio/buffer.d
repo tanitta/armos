@@ -10,6 +10,13 @@ import armos.audio.spectrum;
 
 /++
 +/
+enum BpmDetectionSource {
+    Beats,
+    // Tones
+}//enum BpmDetectionSource
+
+/++
++/
 class Buffer {
     public{
         ///
@@ -181,7 +188,7 @@ class Buffer {
         }
         
         ///
-        Spectrum!double spectrumAtIndex(T = short)(in size_t channelIndex, in size_t index, in size_t bufferSize)const
+        Spectrum!R spectrumAtIndex(R = double, T = short)(in size_t channelIndex, in size_t index, in size_t bufferSize)const
         in{
             assert(index < channelLength);
         }
@@ -195,7 +202,72 @@ class Buffer {
                 }
             }
             assert(result.length == bufferSize*2);
-            return spectrum!double(result, _sampleRate);
+            return analyze!R(result, _sampleRate);
+        }
+        
+        ///
+        auto detectBpm(in size_t bufferSize, BpmDetectionSource sourceType = BpmDetectionSource.Beats){
+            float[] sample = new float[](channelLength);
+            for (int i = 0; i < channelLength; i++) {
+                float sum = 0;
+                for (int c = 0; c < numChannels; c++) {
+                    sum += _channels[c][i];
+                }
+                sample[i] = sum;
+            }
+            
+            alias F = double;
+            
+            Spectrum!F[] spectrums = new Spectrum!F[](channelLength/bufferSize);
+            for (int i = 0; i < channelLength/bufferSize; i++) {
+                import std.stdio;
+                import std.conv:to;
+                writeln((i*bufferSize).to!F/channelLength.to!F*100f, "%");
+                
+                F[] bufferSizedsample = new F[](bufferSize*2);
+
+                for (size_t j = 0; j < bufferSize*2; j++) {
+                    size_t k = 0;
+                    if(j + i*bufferSize < bufferSize*2){
+                        bufferSizedsample[j] = 0;
+                    }else{
+                        k = j + i*bufferSize - bufferSize*2;
+                        bufferSizedsample[j] = sample[k];
+                    }
+                }
+                
+                spectrums[i] = analyze!F(bufferSizedsample, _sampleRate);
+            }
+            
+            auto filteredSample = new F[](channelLength/bufferSize); 
+            switch (sourceType) {
+                case BpmDetectionSource.Beats:
+                    foreach (size_t i, ref s; spectrums) {
+                        import std.algorithm:sum;
+                        filteredSample[i] = s.powers[0..$/6].sum;
+                        import std.math;
+                        assert(!isNaN(filteredSample[i]));
+                    }
+                    break;
+                default:
+                    assert(false);
+            }
+            
+            auto bpmSpectrum = analyze!F(filteredSample, _sampleRate/bufferSize);
+            import std.range:zip;
+            import std.array:array;
+            
+            import std.algorithm:sort;
+            //sort by power
+            // zip(bpmSpectrum.frequencyRange, bpmSpectrum.powers, bpmSpectrum.phases).sort!("a[1]>b[1]").array;
+            
+            // return this;
+            return bpmSpectrum;
+        }
+        
+        ///
+        float bpm()const{
+            return _bpm;
         }
     }//public
 
@@ -209,6 +281,7 @@ class Buffer {
         float _start;
         float _finish;
         ALenum _format;
+        float _bpm;
         
         void setupChannnels(){
             import std.range:Appender;
@@ -233,27 +306,67 @@ class Buffer {
 }//class Buffer
 
 private{
-    Spectrum!R spectrum(R, T)(T[] sample, in int samplingRate){
+    version(LDC){
+        size_t nextPow2(size_t val) pure nothrow @nogc @safe
+        {
+            size_t res = 1;
+            while (res < val)
+                res <<= 1;
+            return res;
+        }
+    }
+    
+    Spectrum!R analyze(R, T)(T[] sample, in size_t samplingRate)
+    in{
+        import std.math:isNaN;
+        import std.conv;
+        foreach (size_t i, ref e; sample) {
+            assert(!isNaN(e), i.to!string);
+        }
+    }
+    out(spectrum){
+        import std.math:isNaN;
+        foreach (e; spectrum.powers) {
+            assert(!isNaN(e));
+        }
+        foreach (e; spectrum.phases) {
+            assert(!isNaN(e));
+        }
+        foreach (e; spectrum.frequencyRange) {
+            assert(!isNaN(e));
+        }
+    }
+    body{
         import std.numeric:fft;
         import std.range:iota;
-        import std.algorithm:map;
+        import std.algorithm:map, fill;
         import std.array:array;
         import std.conv:to;
+        version(DigitalMars){
+            import std.math:nextPow2;
+        }
         
-        auto windowLength = sample.length;
-        auto transformLength = windowLength;//TODO
+        if((sample.length-1).nextPow2 != sample.length){
+            auto zeroSlice = new T[](sample.length.nextPow2 - sample.length);
+            zeroSlice.fill(T(0));
+            sample = zeroSlice ~ sample;
+        }
+        
+        immutable windowLength = sample.length;
+        immutable transformLength = windowLength;//TODO
         
         auto frequencyRange = transformLength.iota.map!(x=>x*(samplingRate/transformLength).to!R)[0..$/2].array;
         
-        auto fx = fft(sample)[0..$/2];
-        auto powers = fx.map!(x=>(x*typeof(x)(x.re, -x.im)).re/transformLength).array;
+        const fx = fft(sample)[0..$/2];
 
-        Spectrum!R result;
+        Spectrum!R powerSpectrum;
 
-        result.samplingRate = samplingRate;
-        result.powers = powers;
-        result.frequencyRange = frequencyRange;
-        return result;
+        powerSpectrum.samplingRate = samplingRate;
+        powerSpectrum.powers = fx.map!(x=>(x*typeof(x)(x.re, -x.im)).re/transformLength).array;
+        import std.math:atan2;
+        powerSpectrum.phases = fx.map!(x=>atan2(x.im, x.re)).array;
+        powerSpectrum.frequencyRange = frequencyRange;
+        return powerSpectrum;
     }
     
     ALenum formatFrom(size_t numChannels, size_t depth){
