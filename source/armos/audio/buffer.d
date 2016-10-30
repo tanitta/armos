@@ -206,18 +206,20 @@ class Buffer {
         }
         
         ///
-        auto detectBpm(in size_t bufferSize, BpmDetectionSource sourceType = BpmDetectionSource.Beats){
-            float[] sample = new float[](channelLength);
+        auto detectBpm(in size_t bufferSize, in BpmDetectionSource sourceType = BpmDetectionSource.Beats){
+            alias F = double;
+            
+            //Merge channels.
+            F[] sample = new F[](channelLength);
             for (int i = 0; i < channelLength; i++) {
-                float sum = 0;
+                F sum = 0;
                 for (int c = 0; c < numChannels; c++) {
                     sum += _channels[c][i];
                 }
                 sample[i] = sum;
             }
             
-            alias F = double;
-            
+            //Calculate each frame spectrums.
             Spectrum!F[] spectrums = new Spectrum!F[](channelLength/bufferSize);
             for (int i = 0; i < channelLength/bufferSize; i++) {
                 import std.stdio;
@@ -239,6 +241,7 @@ class Buffer {
                 spectrums[i] = analyze!F(bufferSizedsample, _sampleRate);
             }
             
+            //Select tone range by sourceType.
             auto filteredSample = new F[](channelLength/bufferSize); 
             switch (sourceType) {
                 case BpmDetectionSource.Beats:
@@ -248,21 +251,35 @@ class Buffer {
                         import std.math;
                         assert(!isNaN(filteredSample[i]));
                     }
+                    import std.stdio;
+                    spectrums[0].frequencyRange[0..$/108].writeln;
                     break;
                 default:
                     assert(false);
             }
-            
             auto bpmSpectrum = analyze!F(filteredSample, _sampleRate/bufferSize);
-            import std.range:zip;
-            import std.array:array;
             
-            import std.algorithm:sort;
+            //filter by common bpm range(60<= bpm <=240)
+            auto filteredSpectrum = Spectrum!F();
+            {
+                auto r = bpmSpectrum.frequencyRange.arrayRange!("60<=a*60", "a*60<=240");
+                immutable first = r[0];
+                immutable last= r[1]+1;
+                filteredSpectrum.samplingRate = bpmSpectrum.samplingRate;
+                filteredSpectrum.frequencyRange = bpmSpectrum.frequencyRange[first..last];
+                filteredSpectrum.powers = bpmSpectrum.powers[first..last];
+                filteredSpectrum.phases = bpmSpectrum.phases[first..last];
+            }
+            
             //sort by power
-            // zip(bpmSpectrum.frequencyRange, bpmSpectrum.powers, bpmSpectrum.phases).sort!("a[1]>b[1]").array;
+            import std.range:zip;
+            import std.algorithm:sort;
+            zip(filteredSpectrum.frequencyRange, filteredSpectrum.powers, filteredSpectrum.phases).sort!"a[1]>b[1]";
             
-            // return this;
-            return bpmSpectrum;
+            //Set bpm.
+            _bpm = filteredSpectrum.frequencyRange[0]*60.0;
+            
+            return this;
         }
         
         ///
@@ -302,6 +319,7 @@ class Buffer {
                 _channels[c] = channelApps[c].data;
             }
         }
+        
     }//private
 }//class Buffer
 
@@ -355,7 +373,7 @@ private{
         immutable windowLength = sample.length;
         immutable transformLength = windowLength;//TODO
         
-        auto frequencyRange = transformLength.iota.map!(x=>x*(samplingRate/transformLength).to!R)[0..$/2].array;
+        auto frequencyRange = transformLength.iota.map!(x=>x.to!float*(samplingRate.to!float/transformLength.to!float).to!R)[0..$/2].array;
         
         const fx = fft(sample)[0..$/2];
 
@@ -507,4 +525,12 @@ private{
         WaveFileFormat format;
     }
 
+    import std.typecons:Tuple;
+    Tuple!(size_t, size_t) arrayRange(string Cl, string Cu, T)(in T[] r){
+        import std.algorithm:find, filter;
+        import std.array:array;
+        immutable first = r.length - r.find!(Cl).length;
+        immutable last = r.filter!(Cu).array.length-1;
+        return Tuple!(size_t, size_t)(first, last);
+    }
 }
