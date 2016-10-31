@@ -104,10 +104,12 @@ body{
 ///
 Spectrum!R analyzeSpectrum(R, T)(in T[] sample, in size_t samplingRate)
 in{
-    import std.math:isNaN;
-    import std.conv;
-    foreach (size_t i, ref e; sample) {
-        assert(!isNaN(e), i.to!string);
+    static if(__traits(isFloating, T)){
+        import std.math:isNaN;
+        import std.conv;
+        foreach (size_t i, ref e; sample) {
+            assert(!isNaN(e), i.to!string);
+        }
     }
 }
 out(spectrum){
