@@ -17,7 +17,6 @@ in{
     assert(0<sample.length);
 }
 body{
-    
     //Calc difference between current frame and previous one.
     F[] differedSample = new F[](sample.length);
     differedSample[0] = 0;
@@ -159,18 +158,6 @@ body{
     powerSpectrum.frequencyRange = frequencyRange;
     return powerSpectrum;
 }
-
-
-/++
-+/
-class SpectrumAnalyzer {
-    public{
-    }//public
-
-    private{
-        this(){};
-    }//private
-}//class SpectrumAnalyzer
 
 private{
     version(LDC){
