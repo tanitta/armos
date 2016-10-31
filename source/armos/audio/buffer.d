@@ -7,7 +7,7 @@ import derelict.vorbis.enc;
 import derelict.vorbis.file;
 
 import armos.audio.spectrum;
-
+import armos.audio.spectrumanalyzer:BpmDetectionSource;
 /++
 +/
 class Buffer {
@@ -55,10 +55,11 @@ class Buffer {
         ///
         Buffer load(Wave wave){
             import std.conv;
-            _sampleRate = wave.sampleRate.to!int;
+            _samplingRate = wave.sampleRate.to!int;
             _numChannels = wave.numChannels.to!int;
             _depth = wave.depth.to!int;
             _format = formatFrom(wave.numChannels, wave.depth);
+            _pcm = wave.data;
             
             if(!_channels) setupChannnels;
             
@@ -99,7 +100,7 @@ class Buffer {
             }
             byte[] data = dataApp.data;
             
-            _sampleRate = info.rate;
+            _samplingRate = info.rate;
             
             import std.range;
             auto pcmApp = appender!(short[]);
@@ -135,8 +136,8 @@ class Buffer {
         int id()const{return _id;}
         
         ///
-        int samplingRate()const{
-            return _sampleRate;
+        size_t samplingRate()const{
+            return _samplingRate;
         }
         
         ///
@@ -161,7 +162,7 @@ class Buffer {
         Buffer range(in float startSec, in float finishSec){
             _start  = startSec;
             _finish = finishSec;
-            float sampleRate = _sampleRate;
+            float sampleRate = _samplingRate;
             import std.conv;
             short[] rangedPcm;
             if(finishSec < 0f){
@@ -176,12 +177,12 @@ class Buffer {
                          _format, 
                          rangedPcm.ptr,
                          rangedPcm.length.to!int*2,
-                         _sampleRate);
+                         _samplingRate.to!int);
             return this;
         }
         
         ///
-        Spectrum!double spectrumAtIndex(T = short)(in size_t channelIndex, in size_t index, in size_t bufferSize)const
+        Spectrum!R spectrumAtIndex(R = double, T = short)(in size_t channelIndex, in size_t index, in size_t bufferSize)const
         in{
             assert(index < channelLength);
         }
@@ -195,7 +196,42 @@ class Buffer {
                 }
             }
             assert(result.length == bufferSize*2);
-            return spectrum!double(result, _sampleRate);
+            import armos.audio.spectrumanalyzer;
+            return analyzeSpectrum!R(result, _samplingRate);
+        }
+        
+        ///
+        Buffer detectBpm(in size_t bufferSize, in BpmDetectionSource sourceType = BpmDetectionSource.Beats)
+        in{
+            assert(0<channelLength);
+        }
+        body{
+            alias F = double;
+            //Merge channels.
+            F[] mergedSample = new F[](channelLength);
+            for (int i = 0; i < channelLength; i++) {
+                F sum = 0;
+                for (int c = 0; c < numChannels; c++) {
+                    sum += _channels[c][i];
+                }
+                mergedSample[i] = sum;
+            }
+            
+            import armos.audio.spectrumanalyzer;
+            immutable t = analyzeBpmAndPhase!double(mergedSample, _samplingRate, bufferSize, sourceType);
+            _bpm = t[0];
+            _phase= t[1];
+            return this;
+        }
+        
+        ///
+        float bpm()const{
+            return _bpm;
+        }
+        
+        ///
+        float phase()const{
+            return _phase;
         }
     }//public
 
@@ -203,14 +239,21 @@ class Buffer {
         int _id;
         short[] _pcm;
         short[][] _channels;
-        int _sampleRate;
+        size_t _samplingRate;
         int _numChannels;
         int _depth;
         float _start;
         float _finish;
         ALenum _format;
+        float _bpm;
+        float _phase;
         
-        void setupChannnels(){
+        void setupChannnels()
+        in{
+            assert(0 < _pcm.length);
+            assert(0 < _numChannels);
+        }
+        body{
             import std.range:Appender;
             import std.stdio;
             for (int c = 0; c < _numChannels; c++) {
@@ -229,32 +272,11 @@ class Buffer {
                 _channels[c] = channelApps[c].data;
             }
         }
+        
     }//private
 }//class Buffer
 
 private{
-    Spectrum!R spectrum(R, T)(T[] sample, in int samplingRate){
-        import std.numeric:fft;
-        import std.range:iota;
-        import std.algorithm:map;
-        import std.array:array;
-        import std.conv:to;
-        
-        auto windowLength = sample.length;
-        auto transformLength = windowLength;//TODO
-        
-        auto frequencyRange = transformLength.iota.map!(x=>x*(samplingRate/transformLength).to!R)[0..$/2].array;
-        
-        auto fx = fft(sample)[0..$/2];
-        auto powers = fx.map!(x=>(x*typeof(x)(x.re, -x.im)).re/transformLength).array;
-
-        Spectrum!R result;
-
-        result.samplingRate = samplingRate;
-        result.powers = powers;
-        result.frequencyRange = frequencyRange;
-        return result;
-    }
     
     ALenum formatFrom(size_t numChannels, size_t depth){
         ALenum f;

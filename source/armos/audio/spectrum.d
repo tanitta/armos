@@ -6,6 +6,7 @@ struct Spectrum(T){
     public{
         T   samplingRate;
         T[] powers;
+        T[] phases;
         T[] frequencyRange;
         
         T power(in T frequency){
