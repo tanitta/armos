@@ -216,15 +216,23 @@ class Buffer {
             alias F = double;
             
             //Merge channels.
-            F[] sample = new F[](channelLength);
+            F[] mergedSample = new F[](channelLength);
             for (int i = 0; i < channelLength; i++) {
                 F sum = 0;
                 for (int c = 0; c < numChannels; c++) {
                     sum += _channels[c][i];
                 }
-                sample[i] = sum;
+                mergedSample[i] = sum;
             }
-            assert(0<sample.length);
+            assert(0<mergedSample.length);
+            
+            //Calc difference between current frame and previous one.
+            F[] differedSample = new F[](channelLength);
+            differedSample[0] = 0;
+            for (int i = 1; i < channelLength; i++) {
+                import std.algorithm:max;
+                differedSample[i] = max(0.0, mergedSample[i] - mergedSample[i-1]);
+            }
             
             //Calculate each frame spectrums.
             Spectrum!F[] spectrums = new Spectrum!F[](channelLength/bufferSize);
@@ -241,7 +249,7 @@ class Buffer {
                         bufferSizedsample[j] = 0;
                     }else{
                         k = j + i*bufferSize - bufferSize*2;
-                        bufferSizedsample[j] = sample[k];
+                        bufferSizedsample[j] = differedSample[k];
                     }
                 }
                 
