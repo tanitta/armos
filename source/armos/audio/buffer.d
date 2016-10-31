@@ -13,6 +13,7 @@ import armos.audio.spectrum;
 enum BpmDetectionSource {
     Beats,
     // Tones
+    Volumes, 
 }//enum BpmDetectionSource
 
 /++
@@ -66,6 +67,7 @@ class Buffer {
             _numChannels = wave.numChannels.to!int;
             _depth = wave.depth.to!int;
             _format = formatFrom(wave.numChannels, wave.depth);
+            _pcm = wave.data;
             
             if(!_channels) setupChannnels;
             
@@ -206,7 +208,11 @@ class Buffer {
         }
         
         ///
-        auto detectBpm(in size_t bufferSize, in BpmDetectionSource sourceType = BpmDetectionSource.Beats){
+        auto detectBpm(in size_t bufferSize, in BpmDetectionSource sourceType = BpmDetectionSource.Beats)
+        in{
+            assert(0<channelLength);
+        }
+        body{
             alias F = double;
             
             //Merge channels.
@@ -218,13 +224,14 @@ class Buffer {
                 }
                 sample[i] = sum;
             }
+            assert(0<sample.length);
             
             //Calculate each frame spectrums.
             Spectrum!F[] spectrums = new Spectrum!F[](channelLength/bufferSize);
             for (int i = 0; i < channelLength/bufferSize; i++) {
                 import std.stdio;
                 import std.conv:to;
-                writeln((i*bufferSize).to!F/channelLength.to!F*100f, "%");
+                writeln("analyzing... ", (i*bufferSize).to!F/channelLength.to!F*100f, "%");
                 
                 F[] bufferSizedsample = new F[](bufferSize*2);
 
@@ -247,22 +254,30 @@ class Buffer {
                 case BpmDetectionSource.Beats:
                     foreach (size_t i, ref s; spectrums) {
                         import std.algorithm:sum;
-                        filteredSample[i] = s.powers[0..$/6].sum;
+                        filteredSample[i] = s.powers[0..$/108].sum;
                         import std.math;
                         assert(!isNaN(filteredSample[i]));
                     }
-                    import std.stdio;
-                    spectrums[0].frequencyRange[0..$/108].writeln;
+                    break;
+                    
+                case BpmDetectionSource.Volumes:
+                    foreach (size_t i, ref s; spectrums) {
+                        import std.algorithm:sum;
+                        filteredSample[i] = s.powers[0..$].sum;
+                        import std.math;
+                        assert(!isNaN(filteredSample[i]));
+                    }
                     break;
                 default:
                     assert(false);
             }
+            
             auto bpmSpectrum = analyze!F(filteredSample, _sampleRate/bufferSize);
             
-            //filter by common bpm range(60<= bpm <=240)
+            //filter by common bpm range.
             auto filteredSpectrum = Spectrum!F();
             {
-                auto r = bpmSpectrum.frequencyRange.arrayRange!("60<=a*60", "a*60<=240");
+                auto r = bpmSpectrum.frequencyRange.arrayRange!("60<=a*60", "a*60<=150");
                 immutable first = r[0];
                 immutable last= r[1]+1;
                 filteredSpectrum.samplingRate = bpmSpectrum.samplingRate;
@@ -271,7 +286,7 @@ class Buffer {
                 filteredSpectrum.phases = bpmSpectrum.phases[first..last];
             }
             
-            //sort by power
+            //Sort by power.
             import std.range:zip;
             import std.algorithm:sort;
             zip(filteredSpectrum.frequencyRange, filteredSpectrum.powers, filteredSpectrum.phases).sort!"a[1]>b[1]";
@@ -279,12 +294,22 @@ class Buffer {
             //Set bpm.
             _bpm = filteredSpectrum.frequencyRange[0]*60.0;
             
+            //Set phase.
+            immutable theta = filteredSpectrum.phases[0];
+            import std.math:PI;
+            _phase = ((theta<0.0)?theta+2.0*PI:theta)/(2.0*PI*filteredSpectrum.frequencyRange[0]);
+            
             return this;
         }
         
         ///
         float bpm()const{
             return _bpm;
+        }
+        
+        ///
+        float phase()const{
+            return _phase;
         }
     }//public
 
@@ -299,8 +324,14 @@ class Buffer {
         float _finish;
         ALenum _format;
         float _bpm;
+        float _phase;
         
-        void setupChannnels(){
+        void setupChannnels()
+        in{
+            assert(0 < _pcm.length);
+            assert(0 < _numChannels);
+        }
+        body{
             import std.range:Appender;
             import std.stdio;
             for (int c = 0; c < _numChannels; c++) {
