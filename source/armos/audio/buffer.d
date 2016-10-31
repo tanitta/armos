@@ -55,7 +55,7 @@ class Buffer {
         ///
         Buffer load(Wave wave){
             import std.conv;
-            _sampleRate = wave.sampleRate.to!int;
+            _samplingRate = wave.sampleRate.to!int;
             _numChannels = wave.numChannels.to!int;
             _depth = wave.depth.to!int;
             _format = formatFrom(wave.numChannels, wave.depth);
@@ -100,7 +100,7 @@ class Buffer {
             }
             byte[] data = dataApp.data;
             
-            _sampleRate = info.rate;
+            _samplingRate = info.rate;
             
             import std.range;
             auto pcmApp = appender!(short[]);
@@ -137,7 +137,7 @@ class Buffer {
         
         ///
         size_t samplingRate()const{
-            return _sampleRate;
+            return _samplingRate;
         }
         
         ///
@@ -162,7 +162,7 @@ class Buffer {
         Buffer range(in float startSec, in float finishSec){
             _start  = startSec;
             _finish = finishSec;
-            float sampleRate = _sampleRate;
+            float sampleRate = _samplingRate;
             import std.conv;
             short[] rangedPcm;
             if(finishSec < 0f){
@@ -177,7 +177,7 @@ class Buffer {
                          _format, 
                          rangedPcm.ptr,
                          rangedPcm.length.to!int*2,
-                         _sampleRate.to!int);
+                         _samplingRate.to!int);
             return this;
         }
         
@@ -197,7 +197,7 @@ class Buffer {
             }
             assert(result.length == bufferSize*2);
             import armos.audio.spectrumanalyzer;
-            return analyzeSpectrum!R(result, _sampleRate);
+            return analyzeSpectrum!R(result, _samplingRate);
         }
         
         ///
@@ -218,7 +218,7 @@ class Buffer {
             }
             
             import armos.audio.spectrumanalyzer;
-            immutable t = analyzeBpmAndPhase!double(mergedSample, _sampleRate, bufferSize, sourceType);
+            immutable t = analyzeBpmAndPhase!double(mergedSample, _samplingRate, bufferSize, sourceType);
             _bpm = t[0];
             _phase= t[1];
             return this;
@@ -239,7 +239,7 @@ class Buffer {
         int _id;
         short[] _pcm;
         short[][] _channels;
-        size_t _sampleRate;
+        size_t _samplingRate;
         int _numChannels;
         int _depth;
         float _start;
