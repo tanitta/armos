@@ -4,6 +4,7 @@ armos
 ====
 
 [![Dub version](https://img.shields.io/dub/v/armos.svg)](https://code.dlang.org/packages/armos)
+[![Dub downloads](https://img.shields.io/dub/dt/armos.svg)](https://code.dlang.org/packages/armos)
 [![Build Status](https://travis-ci.org/tanitta/armos.svg?branch=dev)](https://travis-ci.org/tanitta/armos)
 
 D言語によるクリエイティブコーディングのためのオープンソースライブラリです．
