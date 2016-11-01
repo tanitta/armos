@@ -4,3 +4,10 @@ copyright "Copyright © 2015, tanitta"
 authors "tanitta"
 dependency "armos" path="../../"
 
+buildType "optimized" {
+	buildOptions "optimize"
+}
+
+buildType "debug-profile" {
+	buildOptions "debugMode" "debugInfo" "profile"
+}
