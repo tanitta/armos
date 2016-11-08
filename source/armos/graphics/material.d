@@ -144,7 +144,7 @@ class DefaultMaterial : Material{
     ///
     this(){
         _shader = new armos.graphics.Shader;
-        _shader.loadSources(defaultVertesShaderSource, defaultFragmentShaderSource);
+        _shader.loadSources(defaultVertesShaderSource, "", defaultFragmentShaderSource);
     }
 }//class DefaultMaterial
 

@@ -188,7 +188,7 @@ class FboMaterial : Material{
     ///
     this(){
         _shader = new Shader;
-        _shader.loadSources(fboVertesShaderSource, fboFragmentShaderSource);
+        _shader.loadSources(fboVertesShaderSource, "", fboFragmentShaderSource);
     }
     
     private{
