@@ -10,6 +10,7 @@ import armos.graphics;
 class Shader {
     public{
         this(){
+            maximizeMaxGeometryOutputVertices;
             _programID = glCreateProgram();
         }
 
@@ -26,25 +27,34 @@ class Shader {
             Load the shader from shaderName
         +/
         Shader load(in string shaderName){
-            loadFiles(shaderName ~ ".vert", shaderName ~ ".frag");
+            loadFiles(shaderName ~ ".vert", shaderName ~ ".geom", shaderName ~ ".frag");
             return this;
         }
 
         /++
             Load the shader from path
         +/
-        Shader loadFiles(in string vertexShaderSourcePath, in string fragmentShaderSourcePath){
-            loadSources(vertexShaderSourcePath.loadedSource, fragmentShaderSourcePath.loadedSource);
+        Shader loadFiles(in string vertexShaderSourcePath, in string geometryShaderSourcePath, in string fragmentShaderSourcePath){
+            loadSources(vertexShaderSourcePath.loadedSource, geometryShaderSourcePath.loadedSource, fragmentShaderSourcePath.loadedSource);
             return this;
         }
         
         /++
             Load the shader from sources 
         +/
-        Shader loadSources(in string vertexShaderSource, in string fragmentShaderSource){
+        Shader loadSources(in string vertexShaderSource, in string geometryShaderSource, in string fragmentShaderSource){
             if(vertexShaderSource != ""){
                 addLog("load vertex shader");
                 loadShaderSource(vertexShaderSource, GL_VERTEX_SHADER);
+            }
+            
+            if(geometryShaderSource != ""){
+                addLog("load geometry shader");
+                loadShaderSource(geometryShaderSource, GL_GEOMETRY_SHADER);
+                glProgramParameteri(_programID, GL_GEOMETRY_INPUT_TYPE, _geometryInput.primitiveMode.getGLPrimitiveMode);
+                glProgramParameteri(_programID, GL_GEOMETRY_OUTPUT_TYPE, _geometryInput.primitiveMode.getGLPrimitiveMode);
+                import std.conv:to;
+                glProgramParameteri(_programID, GL_GEOMETRY_VERTICES_OUT, _maxGeometryOutputVertices.to!int);
             }
             
             if(fragmentShaderSource != ""){
@@ -328,6 +338,42 @@ class Shader {
         string[] attribNames()const{
             return _attribNames.keys;
         }
+        
+        ///
+        size_t maxGeometryOutputVertices()const{return _maxGeometryOutputVertices;}
+        
+        ///
+        Shader maxGeometryOutputVertices(in size_t vertices){
+            _maxGeometryOutputVertices = vertices;
+            return this;
+        }
+        
+        ///
+        Shader maximizeMaxGeometryOutputVertices(){
+            import std.conv;
+            int maxGeometryOutputVerticesTemp;
+            glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &maxGeometryOutputVerticesTemp);
+            _maxGeometryOutputVertices = maxGeometryOutputVerticesTemp;
+            return this;
+        }
+        
+        ///
+        PrimitiveMode geometryInput()const{
+            assert(_geometryInput.hasDefined, "Set geometryInput before loading shader");
+            return _geometryInput.primitiveMode;
+        }
+        
+        ///
+        Shader geometryInput(in PrimitiveMode p){_geometryInput.primitiveMode = p;return this;}
+        
+        ///
+        PrimitiveMode geometryOutput()const{
+            assert(_geometryInput.hasDefined, "Set geometryOutput before loading shader");
+            return _geometryOutput.primitiveMode;
+        }
+        
+        ///
+        Shader geometryOutput(in PrimitiveMode p){_geometryOutput.primitiveMode = p;return this;}
     }//public
 
     private{
@@ -336,6 +382,11 @@ class Shader {
         bool[string] _attribNames;
         bool _isLoaded = false;
         string _log;
+        
+        //geometry shader parameters
+        size_t _maxGeometryOutputVertices;
+        MustDefinedPrimitiveMode _geometryInput;
+        MustDefinedPrimitiveMode _geometryOutput;
 
         void addLog(in string str){
             _log ~= str ~ "\n";
@@ -497,9 +548,26 @@ private{
     string loadedSource(in string path){
         import armos.utils;
         immutable absolutePath = absolutePath(path);
-        import std.file;
-        return readText(absolutePath);
+        import std.file:exists, readText;
+        if(absolutePath.exists){
+            return readText(absolutePath);
+        }else{
+            return "";
+        }
     }
+    
+    struct MustDefinedPrimitiveMode{
+        public{
+           PrimitiveMode primitiveMode()const{assert(_hasDefined);return _primitiveMode;}
+           void primitiveMode(in PrimitiveMode p){_primitiveMode = p;_hasDefined = true;}
+           bool hasDefined()const{return _hasDefined;}
+        }//public
+
+        private{
+            bool _hasDefined = false;
+            PrimitiveMode _primitiveMode;
+        }//private
+    }//struct GeometryIO
 }
 
 static unittest{
@@ -508,3 +576,4 @@ static unittest{
     assert( glFunctionString!(float[], 3, 3).glFunctionNameString("glUniform") == "glUniformMatrix3fv" );
     assert( glFunctionString!(float[], 2, 3).glFunctionNameString("glUniform") == "glUniformMatrix2x3fv" );
 }
+

@@ -298,7 +298,7 @@ class NoTextureMaterial : Material{
     ///
     this(){
         _shader = new armos.graphics.Shader;
-        _shader.loadSources(noTextureVertesShaderSource, noTextureFragmentShaderSource);
+        _shader.loadSources(noTextureVertesShaderSource, "", noTextureFragmentShaderSource);
     }
 }//class NoTextureMaterial
 

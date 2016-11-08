@@ -17,6 +17,7 @@ env:
     - TEST_DIR=examples/primitives
     - TEST_DIR=examples/shader
     - TEST_DIR=examples/texture
+    - TEST_DIR=examples/geometryshader
 script:
     echo $TEST_DIR &&
     cd $TEST_DIR &&
