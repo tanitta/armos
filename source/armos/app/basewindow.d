@@ -259,6 +259,7 @@ class GLFWWindow : Window{
         void initEvents(BaseApp app, CoreEvents events){
             assert(events);
             addListener(events.keyPressed, app, &app.keyPressed);
+            addListener(events.keyReleased, app, &app.keyReleased);
             addListener(events.mouseMoved, app, &app.mouseMoved);
             addListener(events.mouseDragged, app, &app.mouseDragged);
             addListener(events.mouseReleased, app, &app.mouseReleased);
