@@ -12,6 +12,7 @@ env:
     - TEST_DIR=examples/fbo
     - TEST_DIR=examples/gui
     - TEST_DIR=examples/image
+    - TEST_DIR=examples/keyboard
     - TEST_DIR=examples/model
     - TEST_DIR=examples/noise
     - TEST_DIR=examples/primitives

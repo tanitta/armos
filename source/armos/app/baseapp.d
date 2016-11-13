@@ -236,4 +236,77 @@ class BaseApp{
         button = 押されたマウスのボタンを表します．
     +/
     void mousePressed(Vector2i position, int button){}
+    
+    ///
+    bool hasPressedKey(in KeyType key)const{
+        return !_hasHeldKeysPrevious[key] && _hasHeldKeysCurrent[key];
+    }
+    
+    ///
+    bool hasHeldKey(in KeyType key)const{
+        return _hasHeldKeysCurrent[key];
+    }
+    
+    ///
+    bool hasReleasedKey(in KeyType key)const{
+        return _hasHeldKeysPrevious[key] && !_hasHeldKeysCurrent[key];
+    }
+    
+    private{
+        bool[KeyType] _hasHeldKeysCurrent;
+        bool[KeyType] _hasHeldKeysPrevious;
+    }
+}
+
+void initHeldKeys(BaseApp app){
+    import std.traits:EnumMembers;
+    foreach (elem; [EnumMembers!KeyType]) {
+        app._hasHeldKeysCurrent[elem]  = false;
+        app._hasHeldKeysPrevious[elem] = false;
+    }
+}
+
+package void PressKey(BaseApp app, KeyType keyType){
+    app._hasHeldKeysCurrent[keyType] = true;
+}
+
+package void ReleaseKey(BaseApp app, KeyType keyType){
+    app._hasHeldKeysCurrent[keyType] = false;
+}
+
+package BaseApp updateKeys(BaseApp app){
+    import std.traits:EnumMembers;
+    foreach (elem; [EnumMembers!KeyType]) {
+        app._hasHeldKeysPrevious[elem] = app._hasHeldKeysCurrent[elem];
+    }
+    return app;
+}
+
+unittest{
+    auto app = new BaseApp;
+    app.initHeldKeys;
+    
+    assert(!app.hasHeldKey(KeyType.A));
+    assert(!app.hasPressedKey(KeyType.A));
+    assert(!app.hasReleasedKey(KeyType.A));
+    
+    app.updateKeys
+       .PressKey(KeyType.A);
+    
+    assert(app.hasHeldKey(KeyType.A));
+    assert(app.hasPressedKey(KeyType.A));
+    assert(!app.hasReleasedKey(KeyType.A));
+    
+    app.updateKeys;
+    
+    assert(app.hasHeldKey(KeyType.A));
+    assert(!app.hasPressedKey(KeyType.A));
+    assert(!app.hasReleasedKey(KeyType.A));
+    
+    app.updateKeys
+       .ReleaseKey(KeyType.A);
+    
+    assert(!app.hasHeldKey(KeyType.A));
+    assert(!app.hasPressedKey(KeyType.A));
+    assert(app.hasReleasedKey(KeyType.A));
 }

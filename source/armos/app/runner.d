@@ -91,6 +91,8 @@ class Runner {
         };
 
         void loop(){
+            _application.initHeldKeys;
+            
             _events.notifySetup();
             while(_isLoop){
                 loopOnce();
@@ -111,6 +113,7 @@ class Runner {
             if(_renderer){
                 _renderer.finishRender();
             }
+            _application.updateKeys;
             _window.pollEvents();
             _window.update();
         }

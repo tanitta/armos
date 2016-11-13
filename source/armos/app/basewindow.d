@@ -264,6 +264,10 @@ class GLFWWindow : Window{
             addListener(events.mouseReleased, app, &app.mouseReleased);
             addListener(events.mousePressed, app, &app.mousePressed);
             addListener(events.unicodeInputted, app, &app.unicodeInputted);
+            
+            import armos.utils:KeyType;
+            addListener(events.keyPressed,  app, delegate(ref KeyPressedEventArg message){app.PressKey(message.key);});
+            addListener(events.keyReleased, app, delegate(ref KeyReleasedEventArg message){app.ReleaseKey(message.key);});
         }
 
 
