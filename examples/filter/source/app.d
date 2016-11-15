@@ -30,7 +30,7 @@ class TestApp : ar.app.BaseApp{
         _fbo = new ar.graphics.Fbo;
         
         auto shader = (new ar.graphics.Shader).loadSources(
-            ar.graphics.defaultVertesShaderSource,
+            ar.graphics.defaultVertexShaderSource,
             "",
             offRegistrationFilterShaderSource
         );

@@ -298,11 +298,11 @@ class NoTextureMaterial : Material{
     ///
     this(){
         _shader = new armos.graphics.Shader;
-        _shader.loadSources(noTextureVertesShaderSource, "", noTextureFragmentShaderSource);
+        _shader.loadSources(noTextureVertexShaderSource, "", noTextureFragmentShaderSource);
     }
 }//class NoTextureMaterial
 
-private immutable string noTextureVertesShaderSource = q{
+private immutable string noTextureVertexShaderSource = q{
 #version 330
 
 uniform mat4 modelViewMatrix;

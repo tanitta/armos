@@ -225,14 +225,14 @@ class FboMaterial : Material{
     ///
     this(){
         _shader = new Shader;
-        _shader.loadSources(fboVertesShaderSource, "", fboFragmentShaderSource);
+        _shader.loadSources(fboVertexShaderSource, "", fboFragmentShaderSource);
     }
     
     private{
     }
 }//class FboMaterial
 
-private immutable string fboVertesShaderSource = q{
+private immutable string fboVertexShaderSource = q{
 #version 330
 
 uniform mat4 modelViewMatrix;
