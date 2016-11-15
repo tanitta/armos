@@ -38,6 +38,12 @@ class Fbo{
 
             _depthTexture = (new Texture).allocate(x, y, armos.graphics.ColorFormat.Depth)
                                          .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            
+            _colorTextureTmp = (new Texture).allocate(x, y, armos.graphics.ColorFormat.RGBA)
+                                            .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            
+            _depthTextureTmp = (new Texture).allocate(x, y, armos.graphics.ColorFormat.Depth)
+                                            .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
 
             rect = new Mesh;
 
@@ -158,13 +164,42 @@ class Fbo{
         int samples()const{
             return _samples;
         }
+        
+        ///
+        Fbo filteredBy(Material material){
+            begin;
+                _colorTextureTmp.begin;
+                    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
+                _colorTextureTmp.end;
+                _depthTextureTmp.begin;
+                    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
+                _depthTextureTmp.end;
+            end;
+            
+            material.texture("colorTexture", _colorTextureTmp)
+                    .texture("depthTexture", _depthTextureTmp);
+            
+            begin;
+                pushProjectionMatrix;
+                    loadProjectionMatrix(screenPerspectiveMatrix);
+                    material.begin;
+                        rect.drawFill;
+                    material.end;
+                popProjectionMatrix;
+            end;
+            
+            return this;
+        }
+        
     }//public
 
     private{
         int _savedId = 0;
         int _id = 0;
         Texture _colorTexture;
+        Texture _colorTextureTmp;
         Texture _depthTexture;
+        Texture _depthTextureTmp;
         Mesh rect = new Mesh;
         Material _material;
         int _samples = 1;
@@ -175,6 +210,8 @@ class Fbo{
             begin;
             _colorTexture.resize(_size*_samples);
             _depthTexture.resize(_size*_samples);
+            _colorTextureTmp.resize(_size*_samples);
+            _depthTextureTmp.resize(_size*_samples);
             end;
         }
     }//private

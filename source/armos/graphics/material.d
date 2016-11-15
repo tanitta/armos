@@ -148,7 +148,7 @@ class DefaultMaterial : Material{
     }
 }//class DefaultMaterial
 
-private immutable string defaultVertesShaderSource = q{
+immutable string defaultVertesShaderSource = q{
 #version 330
 
 uniform mat4 modelViewMatrix;
@@ -175,7 +175,7 @@ void main(void) {
 }
 };
 
-private immutable string defaultFragmentShaderSource = q{
+immutable string defaultFragmentShaderSource = q{
 #version 330
     
 in vec4 f_color;
