@@ -10,6 +10,7 @@ env:
     - TEST_DIR=examples/camera
     - TEST_DIR=examples/empty
     - TEST_DIR=examples/fbo
+    - TEST_DIR=examples/filter
     - TEST_DIR=examples/gui
     - TEST_DIR=examples/image
     - TEST_DIR=examples/keyboard
