@@ -45,23 +45,23 @@ class Fbo{
             _depthTextureTmp = (new Texture).allocate(x, y, armos.graphics.ColorFormat.Depth)
                                             .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
 
-            rect = new Mesh;
+            _rect = new Mesh;
 
-            rect.texCoords0 = [
+            _rect.texCoords0 = [
                 Vector4f(0f, 0f, 0.0, 1.0f),
                 Vector4f(0,  1f, 0.0, 1.0f),
                 Vector4f(1f, 1f, 0.0, 1.0f),
                 Vector4f(1f, 0,  0.0, 1.0f),
             ];
             
-            rect.vertices = [
+            _rect.vertices = [
                 Vector4f(0.0,   0.0,    0.0, 1.0f),
                 Vector4f(0.0,   height, 0.0, 1.0f),
                 Vector4f(width, height, 0.0, 1.0f),
                 Vector4f(width, 0.0,    0.0, 1.0f),
             ];
             
-            rect.indices = [
+            _rect.indices = [
                 0, 1, 2,
                 2, 3, 0,
             ];
@@ -108,7 +108,7 @@ class Fbo{
         +/
         Fbo draw(){
             _material.begin;
-            rect.drawFill;
+            _rect.drawFill;
             _material.end;
             return this;
         }
@@ -120,10 +120,10 @@ class Fbo{
         +/
         Fbo resize(in armos.math.Vector2i size){
             _size = size;
-            rect.vertices[1][1] = _size[1];
-            rect.vertices[2][0] = _size[0];
-            rect.vertices[2][1] = _size[1];
-            rect.vertices[3][0] = _size[0];
+            _rect.vertices[1][1] = _size[1];
+            _rect.vertices[2][0] = _size[0];
+            _rect.vertices[2][1] = _size[1];
+            _rect.vertices[3][0] = _size[0];
             
             resizeTextures;
             return this;
@@ -136,14 +136,14 @@ class Fbo{
         Fbo isFlip(in bool f){
             _isFlip = f;
             if(_isFlip){
-                rect.texCoords0 = [
+                _rect.texCoords0 = [
                     Vector4f(0f,  1f, 0.0, 1.0f),
                     Vector4f(0,   0f, 0.0, 1.0f),
                     Vector4f(1,   0,  0.0, 1.0f),
                     Vector4f(1.0, 1,  0.0, 1.0f),
                 ];
             }else{
-                rect.texCoords0 = [
+                _rect.texCoords0 = [
                     Vector4f(0f,  0f, 0.0, 1.0f),
                     Vector4f(0,   1f, 0.0, 1.0f),
                     Vector4f(1,   1,  0.0, 1.0f),
@@ -183,7 +183,7 @@ class Fbo{
                 pushProjectionMatrix;
                     loadProjectionMatrix(screenPerspectiveMatrix);
                     material.begin;
-                        rect.drawFill;
+                        _rect.drawFill;
                     material.end;
                 popProjectionMatrix;
             end;
@@ -200,7 +200,7 @@ class Fbo{
         Texture _colorTextureTmp;
         Texture _depthTexture;
         Texture _depthTextureTmp;
-        Mesh rect = new Mesh;
+        Mesh _rect = new Mesh;
         Material _material;
         int _samples = 1;
         bool _isFlip = false;
