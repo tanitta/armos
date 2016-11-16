@@ -38,24 +38,30 @@ class Fbo{
 
             _depthTexture = (new Texture).allocate(x, y, armos.graphics.ColorFormat.Depth)
                                          .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            
+            _colorTextureTmp = (new Texture).allocate(x, y, armos.graphics.ColorFormat.RGBA)
+                                            .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            
+            _depthTextureTmp = (new Texture).allocate(x, y, armos.graphics.ColorFormat.Depth)
+                                            .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
 
-            rect = new Mesh;
+            _rect = new Mesh;
 
-            rect.texCoords0 = [
+            _rect.texCoords0 = [
                 Vector4f(0f, 0f, 0.0, 1.0f),
                 Vector4f(0,  1f, 0.0, 1.0f),
                 Vector4f(1f, 1f, 0.0, 1.0f),
                 Vector4f(1f, 0,  0.0, 1.0f),
             ];
             
-            rect.vertices = [
+            _rect.vertices = [
                 Vector4f(0.0,   0.0,    0.0, 1.0f),
                 Vector4f(0.0,   height, 0.0, 1.0f),
                 Vector4f(width, height, 0.0, 1.0f),
                 Vector4f(width, 0.0,    0.0, 1.0f),
             ];
             
-            rect.indices = [
+            _rect.indices = [
                 0, 1, 2,
                 2, 3, 0,
             ];
@@ -102,7 +108,7 @@ class Fbo{
         +/
         Fbo draw(){
             _material.begin;
-            rect.drawFill;
+            _rect.drawFill;
             _material.end;
             return this;
         }
@@ -114,10 +120,10 @@ class Fbo{
         +/
         Fbo resize(in armos.math.Vector2i size){
             _size = size;
-            rect.vertices[1][1] = _size[1];
-            rect.vertices[2][0] = _size[0];
-            rect.vertices[2][1] = _size[1];
-            rect.vertices[3][0] = _size[0];
+            _rect.vertices[1][1] = _size[1];
+            _rect.vertices[2][0] = _size[0];
+            _rect.vertices[2][1] = _size[1];
+            _rect.vertices[3][0] = _size[0];
             
             resizeTextures;
             return this;
@@ -130,14 +136,14 @@ class Fbo{
         Fbo isFlip(in bool f){
             _isFlip = f;
             if(_isFlip){
-                rect.texCoords0 = [
+                _rect.texCoords0 = [
                     Vector4f(0f,  1f, 0.0, 1.0f),
                     Vector4f(0,   0f, 0.0, 1.0f),
                     Vector4f(1,   0,  0.0, 1.0f),
                     Vector4f(1.0, 1,  0.0, 1.0f),
                 ];
             }else{
-                rect.texCoords0 = [
+                _rect.texCoords0 = [
                     Vector4f(0f,  0f, 0.0, 1.0f),
                     Vector4f(0,   1f, 0.0, 1.0f),
                     Vector4f(1,   1,  0.0, 1.0f),
@@ -158,14 +164,43 @@ class Fbo{
         int samples()const{
             return _samples;
         }
+        
+        ///
+        Fbo filteredBy(Material material){
+            begin;
+                _colorTextureTmp.begin;
+                    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
+                _colorTextureTmp.end;
+                _depthTextureTmp.begin;
+                    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
+                _depthTextureTmp.end;
+            end;
+            
+            material.texture("colorTexture", _colorTextureTmp)
+                    .texture("depthTexture", _depthTextureTmp);
+            
+            begin;
+                pushProjectionMatrix;
+                    loadProjectionMatrix(screenPerspectiveMatrix);
+                    material.begin;
+                        _rect.drawFill;
+                    material.end;
+                popProjectionMatrix;
+            end;
+            
+            return this;
+        }
+        
     }//public
 
     private{
         int _savedId = 0;
         int _id = 0;
         Texture _colorTexture;
+        Texture _colorTextureTmp;
         Texture _depthTexture;
-        Mesh rect = new Mesh;
+        Texture _depthTextureTmp;
+        Mesh _rect = new Mesh;
         Material _material;
         int _samples = 1;
         bool _isFlip = false;
@@ -175,6 +210,8 @@ class Fbo{
             begin;
             _colorTexture.resize(_size*_samples);
             _depthTexture.resize(_size*_samples);
+            _colorTextureTmp.resize(_size*_samples);
+            _depthTextureTmp.resize(_size*_samples);
             end;
         }
     }//private
@@ -188,14 +225,14 @@ class FboMaterial : Material{
     ///
     this(){
         _shader = new Shader;
-        _shader.loadSources(fboVertesShaderSource, "", fboFragmentShaderSource);
+        _shader.loadSources(fboVertexShaderSource, "", fboFragmentShaderSource);
     }
     
     private{
     }
 }//class FboMaterial
 
-private immutable string fboVertesShaderSource = q{
+private immutable string fboVertexShaderSource = q{
 #version 330
 
 uniform mat4 modelViewMatrix;

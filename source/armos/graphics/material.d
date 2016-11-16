@@ -144,11 +144,11 @@ class DefaultMaterial : Material{
     ///
     this(){
         _shader = new armos.graphics.Shader;
-        _shader.loadSources(defaultVertesShaderSource, "", defaultFragmentShaderSource);
+        _shader.loadSources(defaultVertexShaderSource, "", defaultFragmentShaderSource);
     }
 }//class DefaultMaterial
 
-private immutable string defaultVertesShaderSource = q{
+immutable string defaultVertexShaderSource = q{
 #version 330
 
 uniform mat4 modelViewMatrix;
@@ -175,7 +175,7 @@ void main(void) {
 }
 };
 
-private immutable string defaultFragmentShaderSource = q{
+immutable string defaultFragmentShaderSource = q{
 #version 330
     
 in vec4 f_color;
