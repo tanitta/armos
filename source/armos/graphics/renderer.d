@@ -1105,6 +1105,7 @@ class Renderer {
         
         armos.graphics.Style   _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
+        armos.graphics.Shader[] _shaderStack;
         
         armos.graphics.Material[]     _materialStack;
         
@@ -1113,6 +1114,23 @@ class Renderer {
         
         bool _isBackgrounding = true;
     }//private
+}
+
+void pushShader(armos.graphics.Shader shader){
+    if(!currentRenderer)return;
+    currentRenderer._shaderStack ~= shader;
+    glUseProgram(shader.id);
+}
+
+void popShader(){
+    if(!currentRenderer)return;
+    import std.range;
+    glUseProgram(currentRenderer._shaderStack[$-1].id);
+    if (currentRenderer._shaderStack.length == 0) {
+        assert(0, "stack is empty");
+    }else{
+        currentRenderer._shaderStack.popBack;
+    }
 }
 
 ///

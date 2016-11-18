@@ -148,6 +148,78 @@ class DefaultMaterial : Material{
     }
 }//class DefaultMaterial
 
+///
+class AutoReloadMaterial : Material{
+    mixin MaterialImpl;
+    
+    import fswatch;
+    
+    ///
+    this(in string shaderPath){
+        _shaderName = shaderPath;
+        
+        import armos.utils.file;
+        _watcher = FileWatch(absolutePath("."), true);
+        
+        _shader = new armos.graphics.Shader;
+        _shader.load(_shaderName);
+    }
+    
+    ///
+    T begin(){
+            loadShaderUpdateIfModified;
+            pushMaterialStack(this);
+            
+            _shader.begin;
+            foreach (string key; _textures.keys) {
+                auto texture = _textures[key];
+                if(texture){
+                    texture.begin;
+                }
+            }
+            import std.algorithm;
+            import std.array;
+            import armos.math;
+            foreach (string key; _attrs.keys) {
+                _shader.uniform(key, _attrs[key]);
+            }
+            
+            foreach (int index, string key; _textures.keys){
+                _shader.uniformTexture(key, _textures[key], index);
+            }
+            return this;
+        }
+    
+    private{
+        string _shaderName;
+        FileWatch _watcher;
+        
+        void loadShaderUpdateIfModified(){
+            foreach (event; _watcher.getEvents()){
+                if(event.path == _shaderName ~ ".frag" ||
+                   event.path == _shaderName ~ ".geom" ||
+                   event.path == _shaderName ~ ".vert" 
+                ){
+                    if(event.type == FileChangeEventType.modify){
+                        //TODO
+                        auto shaderTmp = new armos.graphics.Shader; 
+                        import core.exception;
+                        try{
+                            shaderTmp.load(_shaderName);
+                        }catch(AssertError err){
+                            continue;
+                        }
+                        import std.stdio;
+                        if(!shaderTmp.isLoaded)shaderTmp.log.writeln;
+                        _shader = shaderTmp;
+                        // _shader.load(_shaderName);
+                    }
+                }
+            }
+        }
+    }
+}//class DefaultMaterial
+
 immutable string defaultVertexShaderSource = q{
 #version 330
 

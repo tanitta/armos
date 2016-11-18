@@ -15,7 +15,6 @@ class Shader {
         }
 
         ~this(){
-            _programID = glCreateProgram();
             glDeleteProgram(_programID);
         }
         
@@ -69,6 +68,7 @@ class Shader {
             import colorize;
             if (isLinked == GL_FALSE) {
                 addLog("link error".color(fg.red));
+                _isLoaded = false;
             }else{
                 _isLoaded = true;
             }
@@ -84,10 +84,7 @@ class Shader {
             Begin adapted process
         +/
         Shader begin(){
-            int savedProgramID;
-            glGetIntegerv(GL_CURRENT_PROGRAM,&savedProgramID);
-            _savedProgramIDs ~= savedProgramID;
-            glUseProgram(_programID);
+            pushShader(this);
             return this;
         }
 
@@ -95,13 +92,7 @@ class Shader {
             End adapted process
         +/
         Shader end(){
-            import std.range;
-            glUseProgram(_savedProgramIDs[$-1]);
-            if (_savedProgramIDs.length == 0) {
-                assert(0, "stack is empty");
-            }else{
-                _savedProgramIDs.popBack;
-            }
+            popShader;
             return this;
         }
 
@@ -378,7 +369,6 @@ class Shader {
 
     private{
         int _programID;
-        int[] _savedProgramIDs;
         bool[string] _attribNames;
         bool _isLoaded = false;
         string _log;
