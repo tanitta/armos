@@ -6,6 +6,7 @@ d:
 env:
     - TEST_DIR=.
     - TEST_DIR=examples/audio
+    - TEST_DIR=examples/autoreloadmaterial
     - TEST_DIR=examples/bitmapfont
     - TEST_DIR=examples/camera
     - TEST_DIR=examples/empty
