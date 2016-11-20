@@ -682,7 +682,7 @@ class Renderer {
         /++
         +/
         this(){
-            _fbo = new armos.graphics.Fbo;
+            _fbo = (new armos.graphics.Fbo);
             
             _bufferMesh   = new armos.graphics.BufferMesh;
             _materialStack ~= new armos.graphics.DefaultMaterial;
@@ -877,6 +877,7 @@ class Renderer {
         void startRender(){
             _projectionMatrixStack.push;
             _projectionMatrixStack.load(screenPerspectiveMatrix);
+            _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
             if(_isUseFbo){
                 _fbo.begin;
             }
@@ -888,24 +889,21 @@ class Renderer {
         /++
         +/
         void finishRender(){
+            armos.types.Color tmp = currentStyle.color;
+            bool isEnableDepthTest;
             if(_isUseFbo){
                 _fbo.end;
-                armos.types.Color tmp = currentStyle.color;
                 color(0xFFFFFF);
 
-                bool isEnableDepthTest;
                 glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
                 disableDepthTest;
-                
-                _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
-                
-                viewport();
-                _fbo.draw;
-                _projectionMatrixStack.pop;
-                color(tmp);
-                if(isEnableDepthTest){
-                    enableDepthTest;
-                }
+            }
+            viewport();
+            if(_isUseFbo) _fbo.draw;
+            _projectionMatrixStack.pop;
+            color(tmp);
+            if(isEnableDepthTest){
+                enableDepthTest;
             }
         };
 

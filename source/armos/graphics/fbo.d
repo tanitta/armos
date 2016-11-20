@@ -53,6 +53,7 @@ class Fbo{
                 Vector4f(1f, 1f, 0.0, 1.0f),
                 Vector4f(1f, 0,  0.0, 1.0f),
             ];
+            // isFlip(true);
             
             _rect.vertices = [
                 Vector4f(0.0,   0.0,    0.0, 1.0f),
@@ -80,11 +81,14 @@ class Fbo{
         /++
             FBOへの描画処理を開始します．
         +/
-        Fbo begin(){
+        Fbo begin(in bool setScreenPerspective = true){
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
             glBindFramebuffer(GL_FRAMEBUFFER, _id);
             Vector2i textureSize = _size*_samples;
             glViewport(0, 0, textureSize[0], textureSize[1]);
+            
+            pushProjectionMatrix;
+            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix);
             return this;
         }
 
@@ -92,6 +96,7 @@ class Fbo{
             FBOへの描画処理を終了します．
         +/
         Fbo end(){
+            popProjectionMatrix;
             glBindFramebuffer(GL_FRAMEBUFFER, _savedId);
             return this;
         }
@@ -180,12 +185,9 @@ class Fbo{
                     .texture("depthTexture", _depthTextureTmp);
             
             begin;
-                pushProjectionMatrix;
-                    loadProjectionMatrix(screenPerspectiveMatrix);
-                    material.begin;
-                        _rect.drawFill;
-                    material.end;
-                popProjectionMatrix;
+                material.begin;
+                    _rect.drawFill;
+                material.end;
             end;
             
             return this;

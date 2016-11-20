@@ -4,7 +4,7 @@ import derelict.opengl3.gl;
 
 class TestApp : ar.app.BaseApp{
 	override void setup(){
-		_fbo = new ar.graphics.Fbo;
+		_fbo = (new ar.graphics.Fbo);
 		_fbo.begin;
 			ar.graphics.fillBackground(32, 32, 32);
 		_fbo.end;
