@@ -55,6 +55,22 @@ class BaseApp{
         終了時に一度だけ呼ばれるメンバ関数です．
     +/
     void exit(){};
+    
+    ///
+    void windowResized(ref WindowResizeEventArg message){
+        windowResized(message.w, message.h);
+        windowResized(Vector2i(message.w, message.h));
+        windowResized;
+    }
+    
+    ///
+    void windowResized(){}
+    
+    ///
+    void windowResized(int w, int h){}
+    
+    ///
+    void windowResized(Vector2i size){}
 
     /++
         キーボードを押した際に呼ばれるメンバ関数です．

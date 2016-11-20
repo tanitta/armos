@@ -246,6 +246,7 @@ class GLFWWindow : Window{
         static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
             import armos.graphics;
             currentRenderer.resize();
+            currentEvents.notifyWindowResize(cast(int)width, cast(int)height);
         }
         
         void writeVersion(){
@@ -258,6 +259,7 @@ class GLFWWindow : Window{
         
         void initEvents(BaseApp app, CoreEvents events){
             assert(events);
+            addListener(events.windowResize, app, &app.windowResized);
             addListener(events.keyPressed, app, &app.keyPressed);
             addListener(events.keyReleased, app, &app.keyReleased);
             addListener(events.mouseMoved, app, &app.mouseMoved);
