@@ -18,6 +18,12 @@ interface Material{
         Material attr(string name, in Color c);
         
         ///
+        Material attr(string name, in Vector2f v);
+        
+        ///
+        Material attr(string name, in Vector3f v);
+        
+        ///
         Material attr(string name, in Vector4f v);
         
         ///
@@ -59,8 +65,24 @@ mixin template MaterialImpl(){
             import std.algorithm;
             import std.array;
             import armos.math;
-            foreach (string key; _attrs.keys) {
-                _shader.uniform(key, _attrs[key]);
+            foreach (string key; _attrF.keys) {
+                _shader.uniform(key, _attrF[key]);
+            }
+            
+            foreach (string key; _attrI.keys) {
+                _shader.uniform(key, _attrI[key]);
+            }
+            
+            foreach (string key; _attrV2f.keys) {
+                _shader.uniform(key, _attrV2f[key]);
+            }
+            
+            foreach (string key; _attrV3f.keys) {
+                _shader.uniform(key, _attrV3f[key]);
+            }
+            
+            foreach (string key; _attrV4f.keys) {
+                _shader.uniform(key, _attrV4f[key]);
             }
             
             foreach (int index, string key; _textures.keys){
@@ -82,23 +104,47 @@ mixin template MaterialImpl(){
             popMaterialStack;
             return this;
         }
+        
+        ///
+        T attr(string Name, in int v){
+            _attrI[Name] = v;
+            return this;
+        }
+        
+        ///
+        T attr(string Name, in float v){
+            _attrF[Name] = v;
+            return this;
+        }
+        
+        ///
+        T attr(string Name, in Vector2f v){
+            _attrV2f[Name] = v;
+            return this;
+        }
 
         ///
+        T attr(string Name, in Vector3f v){
+            _attrV3f[Name] = v;
+            return this;
+        }
+        
+        ///
         T attr(string Name, in Vector4f v){
-            _attrs[Name] = v;
+            _attrV4f[Name] = v;
             return this;
         }
         
         ///
         T attr(string Name, in Color c){
             import std.conv;
-            _attrs[Name] = Vector4f(c.r.to!float/255f, c.g.to!float/255f, c.b.to!float/255f, c.a.to!float/255f);
+            _attrV4f[Name] = Vector4f(c.r.to!float/255f, c.g.to!float/255f, c.b.to!float/255f, c.a.to!float/255f);
             return this;
         }
 
         ///
         ref Vector4f attr(string name){
-            return _attrs[name];
+            return _attrV4f[name];
         }
 
         ///
@@ -130,7 +176,11 @@ mixin template MaterialImpl(){
     }//public
 
     private{
-        Vector4f[string] _attrs;
+        int[string] _attrI;
+        float[string] _attrF;
+        Vector2f[string] _attrV2f;
+        Vector3f[string] _attrV3f;
+        Vector4f[string] _attrV4f;
         armos.graphics.Texture[string] _textures;
         armos.graphics.Shader _shader;
     }//private
@@ -180,13 +230,30 @@ class AutoReloadMaterial : Material{
             import std.algorithm;
             import std.array;
             import armos.math;
-            foreach (string key; _attrs.keys) {
-                _shader.uniform(key, _attrs[key]);
+            foreach (string key; _attrF.keys) {
+                _shader.uniform(key, _attrF[key]);
+            }
+            
+            foreach (string key; _attrI.keys) {
+                _shader.uniform(key, _attrI[key]);
+            }
+            
+            foreach (string key; _attrV2f.keys) {
+                _shader.uniform(key, _attrV2f[key]);
+            }
+            
+            foreach (string key; _attrV3f.keys) {
+                _shader.uniform(key, _attrV3f[key]);
+            }
+            
+            foreach (string key; _attrV4f.keys) {
+                _shader.uniform(key, _attrV4f[key]);
             }
             
             foreach (int index, string key; _textures.keys){
                 _shader.uniformTexture(key, _textures[key], index);
             }
+            
             return this;
         }
     
