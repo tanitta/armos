@@ -2,12 +2,12 @@ import std.stdio, std.math;
 static import ar = armos;
 
 class TestApp : ar.app.BaseApp{
-	ar.graphics.Shader _shader;
+    ar.graphics.Shader _shader;
     ar.graphics.Mesh _rect;
-	float c = 0;
-	
-	override void setup(){
-		_shader = (new ar.graphics.Shader).load("simple");
+    float c = 0;
+
+    override void setup(){
+        _shader = (new ar.graphics.Shader).load("simple");
         _shader.log.writeln;
         
         ar.graphics.currentMaterial.texture("tex", (new ar.graphics.Image).load("lena_std.tif").texture);
@@ -33,22 +33,21 @@ class TestApp : ar.app.BaseApp{
             0, 1, 2,
             2, 3, 0,
         ];
-	}
-	
-	override void update(){
-		c += 0.2;
-		_shader.uniform("time", c);
-	}
+    }
+
+    override void update(){
+        c += 0.2;
+        _shader.uniform("time", c);
+    }
     
     override void mouseMoved(ar.math.Vector2i p, int button){
         import std.conv:to;
-		_shader.uniform!float("shiftX", p.x);
-		_shader.uniform!float("shiftY", p.y);
+        _shader.uniform("shift", p.to!(ar.math.Vector2f));
     }
-	
-	override void draw(){
+
+    override void draw(){
         _rect.drawFill;
-	}
+    }
 }
 
 void main(){
