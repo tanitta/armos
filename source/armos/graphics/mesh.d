@@ -171,6 +171,7 @@ class Mesh {
             assert(this.primitiveMode == rhs.primitiveMode, "missmatch primitive mode");
             import std.algorithm;
             import std.conv;
+            import std.array:array;
             auto result = new Mesh;
             result.indices    = this.indices    ~ rhs.indices.map!(i => (i + this.vertices.length).to!int).array;
             result.vertices   = this.vertices   ~ rhs.vertices;
@@ -212,6 +213,7 @@ class Mesh {
             assert(this.primitiveMode == rhs.primitiveMode, "missmatch primitive mode");
             import std.algorithm;
             import std.conv;
+            import std.array:array;
             this.indices    ~= rhs.indices.map!(i => (i + this.vertices.length).to!int).array;
             this.vertices   ~= rhs.vertices;
             this.normals    ~= rhs.normals;
