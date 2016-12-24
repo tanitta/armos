@@ -9,13 +9,13 @@ import std.conv;
 class WindowConfig {
     public{
         int height()const{return _height;}
-        void height(in int h){_height = h;}
+        typeof(this) height(in int h){_height = h;return this;}
         
         int width()const{return _width;}
-        void width(in int h){_width = h;}
+        typeof(this) width(in int h){_width = h;return this;}
         
         Vector2i position()const{return _position;}
-        void position(in Vector2i p){_position = p;}
+        typeof(this) position(in Vector2i p){_position = p;return this;}
         
         int glVersionMajor()const{return _glVersion.major;}
         int glVersionMinor()const{return _glVersion.minor;}
@@ -24,24 +24,26 @@ class WindowConfig {
             return _glVersion;
         }
         
-        void glVersion(in string v){
+        typeof(this) glVersion(in string v){
             import std.algorithm;
             import std.array;
             const digits = v.split(".").map!(n => n.to!int).array;
             glVersion = SemVer(digits[0], digits[1], digits[2]);
+            return this;
         }
         
-        void glVersion(in SemVer v){
+        typeof(this) glVersion(in SemVer v){
             _glVersion = v;
+            return this;
         }
         
-        void glVersionMajor(in int versionMajor){_glVersion.major = versionMajor;}
-        void glVersionMinor(in int versionMinor){_glVersion.minor = versionMinor;}
+        typeof(this) glVersionMajor(in int versionMajor){_glVersion.major = versionMajor;return this;}
+        typeof(this) glVersionMinor(in int versionMinor){_glVersion.minor = versionMinor;return this;}
     }//public
 
     private{
-        int _height;
-        int _width;
+        int _height = 480;
+        int _width = 640;
         Vector2i _position;
         SemVer _glVersion = SemVer(3, 2, 0);
     }//private
