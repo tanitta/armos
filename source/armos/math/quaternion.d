@@ -354,6 +354,23 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 
 }
 
+/// 回転の差分のQuaternionを返します．
+Q rotationDifference(Q)(in Q from,  in Q to){
+    return from.inverse * to;
+}
+unittest{
+    auto qBegin= Quaternion!(double).angleAxis(PI*0.2, armos.math.Vector3d(0, 0, 1));
+    auto qEnd = Quaternion!(double).angleAxis(PI*0.5, armos.math.Vector3d(0, 0, 1));
+    
+    auto qAns = Quaternion!(double).angleAxis(PI*0.3, armos.math.Vector3d(0, 0, 1));
+    auto qResult = rotationDifference(qBegin, qEnd);
+    
+    assert(approxEqual(qResult[0], qAns[0]));
+    assert(approxEqual(qResult[1], qAns[1]));
+    assert(approxEqual(qResult[2], qAns[2]));
+    assert(approxEqual(qResult[3], qAns[3]));
+}
+
 /++
 球面線形補間(Sphercal Linear Interpolation)を行います．
 Params:
