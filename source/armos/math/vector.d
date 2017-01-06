@@ -443,6 +443,14 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         auto v3 = Vector3d(1.0 * cos(PI*1/6), 1.0 * sin(PI*1/6),0.0);
         auto v4 = Vector3d(2.0 * cos(PI*5/6), 2.0 * sin(PI*5/6),0.0);
         assert (approxEqual(v3.angle(v4),PI*2/3));
+
+        auto v5 = Vector2i(3,0);
+        auto v6 = Vector2i(0,-5);
+        assert (approxEqual(v5.angle(v6),PI/2));
+
+        auto v7 = Vector2i(3,0);
+        auto v8 = Vector2i(-5,-5);
+        assert (approxEqual(v7.angle(v8),PI*3/4));
     }
 
     /++
