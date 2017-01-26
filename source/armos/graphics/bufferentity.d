@@ -33,9 +33,11 @@ class BufferEntity {
             import std.algorithm;
             _bufferMesh.attr.keys.filter!(key => key!="index")
                                  .each!((key){
-                _bufferMesh.attr[key].begin;
-                _material.shader.attr(key);
-                _bufferMesh.attr[key].end;
+                 if(_bufferMesh.attr[key].size > 0){
+                     _bufferMesh.attr[key].begin;
+                     _material.shader.attr(key);
+                     _bufferMesh.attr[key].end;
+                 }
             });
             _bufferMesh.vao.end();
             return this;
