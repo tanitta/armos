@@ -99,6 +99,9 @@ class Buffer {
             return (_rootVao !is null);
         }
 
+        ///
+        size_t size()const{return _size;}
+
     }//public
 
     private{
