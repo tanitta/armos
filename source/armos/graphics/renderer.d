@@ -866,7 +866,7 @@ class Renderer {
         +/
         void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
             auto position = armos.math.Vector2f(0, 0);
-            auto size = armos.app.currentWindow.size();
+            auto size = armos.app.currentWindow.frameBufferSize();
             position[1] = size[1] - (position[1] + size[1]);
             glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
         }
