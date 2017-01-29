@@ -10,7 +10,7 @@ armos
 armos is a free and open source library for creative coding in D programming language.
 
 
-## Demo
+# Demo
 
 ```
 import armos.app;
@@ -35,56 +35,31 @@ class TestApp : BaseApp{
 
 void main(){run(new TestApp);}
 ```
+	
+	
+# Require
 
-
-## Require
-- [dmd](http://code.dlang.org/)
-- [ldc](http://code.dlang.org/)(optional)
 - [dub](http://code.dlang.org/)
-- GLFW3
-- OpenGL3
+- GLFW
+- SDL2(optional)
+- openGL3
 - FreeImage
-- OpenAL
-- libogg
-- libvorbis
-- Assimp
 
 
-## Install
-1. Install some packages to build with dlang.
-  - macOS
-  ```
-  brew install dmd dub
-  ```
+# Install
 
-1. Download this repository.
-  - via github
-  ```
-  git clone git@github.com:tanitta/armos.git
-  ```
-  ```
-  dub add-local <repository-path>
-  ```
-
-  - via dub(deprecated)
-  ```
-  dub fetch armos
-  ```
-
-
-1. Install dependency dynamic libraries.
-  - macOS
-  ```
-  brew install glfw3 assimp libogg libvorbis
-  ```
-
-## Usage  
-1. put the following dependency into your project's dub.sdl or dub.json.
-  ```
-  dependency "armos" version="~>0.0.1"
+1. To use this package, put the following dependency into your project's dub.sdl.
+	```
+	dependency "armos" version="~>0.0.1"
 	```
 
-## Why use D?
+2. Add to dub package.
+	```
+	dub build
+	```
+
+
+# Why use D?
 
 - Processing Speed : D is as fast as C++ programs.
 
@@ -97,19 +72,19 @@ void main(){run(new TestApp);}
 - Other point is [here](http://dlang.org/index.html)
 
 
-## ScreenShots
+# ScreenShots
 
-![ss1](https://github.com/tanitta/armos/blob/dev/ss/ss1.png)
+![ss0](https://41.media.tumblr.com/2297723261811b737966bc353aa3fb5b/tumblr_o1eruzJSFd1u9jb8mo1_1280.png)
 
-![ss2](https://github.com/tanitta/armos/blob/dev/ss/ss2.png)
+![ss1](https://41.media.tumblr.com/34ca170f2fc91b8b7d789faa6fd85ba3/tumblr_o1bl8yAazQ1u9jb8mo2_r1_1280.png)
 
 
-## Contribution
+# Contribution
 
-Contributions are very welcome!
+Contributions are very welcome! 
 
 1. Fork it
-2. Create your feature branch from dev branch (git checkout -b my-new-feature)
+2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
 5. Create new Pull Request
