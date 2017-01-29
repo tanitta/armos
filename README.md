@@ -75,7 +75,7 @@ void main(){run(new TestApp);}
 1. Install dependency dynamic libraries.
   - macOS
   ```
-  brew install glfw3 assimp libogg libvorbis
+  brew install glfw3 assimp freeimage libogg libvorbis
   ```
 
 ## Usage  
