@@ -38,8 +38,8 @@ void main(){run(new TestApp);}
 
 
 ## Require
-- [dmd](http://code.dlang.org/)
-- [ldc](http://code.dlang.org/)(optional)
+- [dmd](https://dlang.org/)
+- [ldc](https://github.com/ldc-developers/ldc)(optional)
 - [dub](http://code.dlang.org/)
 - GLFW3
 - OpenGL3
