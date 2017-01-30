@@ -1,31 +1,35 @@
 module armos.app.runner;
-static import armos.app;
-static import armos.utils;
-static import armos.events;
-static import armos.graphics;
+import armos.app;
+import armos.utils;
+import armos.events;
+import armos.graphics;
 
 /++
 armosのアプリケーションの更新を行うclassです．
 +/
-class Loop {
+class Runner {
     public{
-        armos.app.basewindow.Window window;
-        armos.graphics.Renderer renderer;
-        armos.app.BaseApp* application;
-
         /++
         +/
         this(){
-            fpscounter = new armos.utils.FpsCounter;
+            _fpsCounter = new FpsCounter;
+            _events = new CoreEvents;
         }
-
+        
         /++
             イベントループに入ります．
             Params:
             app = 更新されるアプリケーションです．
         +/
-        void run(WindowType)(armos.app.BaseApp app, armos.app.WindowConfig config){
+        void run(WindowType)(BaseApp app, WindowConfig config){
+            _application = app;
+            addListener(events.setup, app, &app.setup);
+            addListener(events.update, app, &app.update);
+            addListener(events.draw, app, &app.draw);
+            addListener(events.exit, app, &app.exit);
+            
             createWindow!(WindowType)(app, config);
+            
             loop();
         };
 
@@ -33,59 +37,96 @@ class Loop {
             現在のFPS(Frame Per Second)の使用率を返します．
         +/
         double fpsUseRate(){
-            return fpscounter.fpsUseRate;
+            return _fpsCounter.fpsUseRate;
         }
 
         /++
             FPS(Frame Per Second)を指定します．
         +/
-        void targetFps(double fps){
-            fpscounter.targetFps = fps;
+        void targetFps(in double fps){
+            _fpsCounter.targetFps = fps;
         }
+        
+        ///
+        double targetFps()const{
+            return _fpsCounter.targetFps;
+        }
+        
+        ///
+        double currentFps()const{
+            return _fpsCounter.currentFps;
+        }
+        
+        ///
+        Renderer renderer(){return _renderer;}
+        
+        ///
+        CoreEvents events(){return _events;};
+
+        ///
+        Window window(){return _window;}
     }//public
 
     private{
-        bool isLoop = true;
-        armos.utils.FpsCounter fpscounter;
+        BaseApp    _application;
+        CoreEvents _events;
+        Renderer   _renderer;
+        Window     _window;
 
-        void createWindow(WindowType)(armos.app.BaseApp app, armos.app.WindowConfig config){
-            window = new WindowType(app, config);
-            renderer = new armos.graphics.Renderer;
-            application = &app;
-            assert(window);
-            renderer.setup();
+        bool _isLoop = true;
+        FpsCounter _fpsCounter;
+
+        void createWindow(WindowType)(BaseApp app, WindowConfig config){
+            _window = new WindowType(app, _events, config);
+            
+            static if(WindowType.hasRenderer){
+                _renderer = new Renderer;
+            }
+            
+            assert(_window);
+            
+            if(_renderer){
+                _renderer.setup();
+            }
         };
 
         void loop(){
-            window.events.notifySetup();
-            while(isLoop){
+            _application.initHeldKeys;
+            
+            _events.notifySetup();
+            while(_isLoop){
                 loopOnce();
-                fpscounter.adjust();
-                fpscounter.newFrame();
-                isLoop = !window.shouldClose;
+                _fpsCounter.adjust();
+                _fpsCounter.newFrame();
+                _isLoop = !_window.shouldClose;
             }
-            window.events().notifyExit();
-            window.close();
+            _events.notifyExit();
+            _window.close();
         }
 
         void loopOnce(){
-            window.events().notifyUpdate();
-            renderer.startRender();
-            window.events().notifyDraw();
-            renderer.finishRender();
-            window.pollEvents();
-            window.update();
+            _events.notifyUpdate();
+            if(_renderer){
+                _renderer.startRender();
+            }
+            _events.notifyDraw();
+            if(_renderer){
+                _renderer.finishRender();
+            }
+            _application.updateKeys;
+            _window.pollEvents();
+            _window.update();
         }
 
     }//private
 }
-private Loop mainLoop_;
-Loop mainLoop() @property
+private Runner mainLoop_;
+Runner mainLoop() @property
 {
     return mainLoop_;
-    // static __gshared Loop instance;
+    // static __gshared Runner instance;
     // import std.concurrency : initOnce;
-    // return initOnce!instance(new Loop);
+    // return initOnce!instance(new Runner);
 }
 
 /++
@@ -94,12 +135,12 @@ Loop mainLoop() @property
     WindowType = 立ち上げるWindowの型を指定します．省略可能です．
     app = 立ち上げるアプリケーションを指定します．
 +/
-void run(WindowType = armos.app.GLFWWindow)(armos.app.BaseApp app, armos.app.WindowConfig config = null){
-    mainLoop_ = new Loop;
+void run(WindowType = GLFWWindow)(BaseApp app, WindowConfig config = null){
+    mainLoop_ = new Runner;
     if(!config){
-        config = new armos.app.WindowConfig();
+        config = new WindowConfig();
         with(config){
-            glVersion = 3.0;
+            glVersion = SemVer(3, 3, 0);
             width = 640;
             height = 480;
         }
@@ -117,6 +158,18 @@ double fpsUseRate(){
 /++
     FPS(Frame Per Second)を指定します．
 +/
-void targetFps(double fps){
+void targetFps(in double fps){
     mainLoop.targetFps(fps);
+}
+
+double targetFps(){
+    return mainLoop.targetFps;
+}
+
+CoreEvents currentEvents(){
+    return mainLoop.events;
+}
+
+double currentFps(){
+    return mainLoop.currentFps;
 }

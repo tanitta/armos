@@ -1,16 +1,22 @@
 {
-	"name": "armos",
-	"description": "Armos is a free and open source library for creative coding in D programming language.",
-	"copyright": "Copyright © 2015, tanitta",
-	"authors": ["tanitta"],
-	"license": "Boost",
-	"targetType": "library",
-	"dependencies": {
-		"derelict-sdl2": ">=1.9.7", 
-		"derelict-assimp3": ">=1.0.1", 
-		"derelict-glfw3": "2.0.0", 
-		"derelict-gl3": ">=1.0.18" , 
-		"derelict-ft": ">=1.0.2" ,
-		"derelict-fi": ">=2.0.2" 
-	},
+    "name": "armos",
+    "description": "Armos is a free and open source library for creative coding in D programming language.",
+    "copyright": "Copyright © 2015, tanitta",
+    "authors": ["tanitta"],
+    "license": "BSL-1.0",
+    "targetType": "library",
+    "dependencies": {
+        "derelict-sdl2": ">=1.9.7", 
+        "derelict-assimp3": ">=1.0.1", 
+        "derelict-glfw3": "1.1.0", 
+        "derelict-gl3": ">=1.0.18", 
+        "derelict-ft": ">=1.0.2",
+        "derelict-fi": ">=2.0.2",
+        "colorize": "~>1.0.5",
+        "derelict-al": "~>1.0.1",
+        "derelict-ogg": "~>1.0.1",
+        "derelict-vorbis": "~>1.0.1",
+        "fswatch": "~>0.2.0"
+    }, 
+	"dflags-ldc":["-disable-linker-strip-dead"]
 }

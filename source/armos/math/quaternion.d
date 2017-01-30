@@ -147,7 +147,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         Quaternion!(double) q2      = Quaternion!(double)(cos(0.2), v[0]*sin(0.2), v[1]*sin(0.2), v[2]*sin(0.2));
         Quaternion!(double) qResult = q1 * q2;
         Quaternion!(double) qAnswer = Quaternion!(double)(cos(0.3), v[0]*sin(0.3), v[1]*sin(0.3), v[2]*sin(0.3));
-        foreach (int i, value; qResult.vec.data) {
+        foreach (int i, value; qResult.vec.elements) {
             assert( approxEqual(value, qAnswer[i]) );
         }
     }
@@ -247,7 +247,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         auto qR = q.inverse;
         auto qA = Quaternion!(double)(0.5, 0, -0.5, 0);
 
-        foreach (int i, value; qR.vec.data) {
+        foreach (int i, value; qR.vec.elements) {
             assert( approxEqual(value, qA[i]) );
         }
     }
@@ -297,7 +297,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         auto vR = q.rotatedVector(v);
         auto vA = armos.math.Vector3d(0, 1, 0);
 
-        foreach (int i, value; vR.data) {
+        foreach (int i, value; vR.elements) {
             assert( approxEqual(value, vA[i]) );
         }
     }
@@ -322,7 +322,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         auto vR = q.rotatedVectorInversely(v);
         auto vA = armos.math.Vector3d(0, -1, 0);
 
-        foreach (int i, value; vR.data) {
+        foreach (int i, value; vR.elements) {
             assert( approxEqual(value, vA[i]) );
         }
     }
@@ -343,7 +343,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         auto vR = q.rotatedVector(v);
         auto vA = armos.math.Vector3d(0, 1, 0);
 
-        foreach (int i, value; vR.data) {
+        foreach (int i, value; vR.elements) {
             assert( approxEqual(value, vA[i]) );
         }
     }
@@ -352,6 +352,23 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         return slerp(Q.zero, this, gain);
     }
 
+}
+
+/// 回転の差分のQuaternionを返します．
+Q rotationDifference(Q)(in Q from,  in Q to){
+    return from.inverse * to;
+}
+unittest{
+    auto qBegin= Quaternion!(double).angleAxis(PI*0.2, armos.math.Vector3d(0, 0, 1));
+    auto qEnd = Quaternion!(double).angleAxis(PI*0.5, armos.math.Vector3d(0, 0, 1));
+    
+    auto qAns = Quaternion!(double).angleAxis(PI*0.3, armos.math.Vector3d(0, 0, 1));
+    auto qResult = rotationDifference(qBegin, qEnd);
+    
+    assert(approxEqual(qResult[0], qAns[0]));
+    assert(approxEqual(qResult[1], qAns[1]));
+    assert(approxEqual(qResult[2], qAns[2]));
+    assert(approxEqual(qResult[3], qAns[3]));
 }
 
 /++
@@ -392,7 +409,7 @@ unittest{
     auto vR = qSlerped.rotatedVector(v);
     auto vA = armos.math.Vector3d(-1, 0, 0);
 
-    foreach (int i, value; vR.data) {
+    foreach (int i, value; vR.elements) {
         assert( approxEqual(value, vA[i]) );
     }
 

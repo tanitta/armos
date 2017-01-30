@@ -1,7 +1,9 @@
 module armos.graphics.font;
-import armos.graphics;
+
 import derelict.freetype.ft;
-static import armos.math;
+import armos.graphics;
+import armos.math;
+import armos.types;
 
 /++
     読み込まれる文字を表します．
@@ -61,7 +63,7 @@ class Font{
             int dpi=0
         ){
             int fontId = 0;
-            // string filePath = armos.utils.toDataPath( fontName );
+            // string filePath = toDataPath( fontName );
             string filePath = "";
             FT_Error error = FT_New_Face( _library, filePath.ptr, fontId, &_face );
 
@@ -111,8 +113,8 @@ class Font{
         float _descenderHeight = 0.0;
         bool _useKerning;
         int _numCharacters = 0;
-        armos.types.Rectangle _glyphBBox;
-        armos.graphics.Texture _textureAtlas;
+        Rectangle _glyphBBox;
+        Texture _textureAtlas;
 
         /++
         +/
@@ -120,7 +122,7 @@ class Font{
             int border = 1;
             long areaSum=0;
             _characters = new Character[](_numCharacters);
-            armos.graphics.Bitmap!(char)[] expandedData = new armos.graphics.Bitmap!(char)[](_numCharacters);
+            Bitmap!(char)[] expandedData = new Bitmap!(char)[](_numCharacters);
 
             foreach (int i, ref character; _characters) {
                 int glyph = cast(char)(i+NUM_CHARACTER_TO_START);
@@ -143,7 +145,7 @@ class Font{
                 areaSum += cast(long)( (character.tW+border*2)*(character.tH+border*2) );
 
                 if(width==0 || height==0) continue;
-                expandedData[i].allocate(width, height, armos.graphics.ColorFormat.GrayAlpha);
+                expandedData[i].allocate(width, height, ColorFormat.GrayAlpha);
                 expandedData[i].setAllPixels(0, 255);
                 expandedData[i].setAllPixels(1, 0);
 
@@ -171,7 +173,7 @@ class Font{
 
         /++
         +/
-        bool packInTexture(in long areaSum, in int border, armos.graphics.Bitmap!(char)[] expandedData){
+        bool packInTexture(in long areaSum, in int border, Bitmap!(char)[] expandedData){
             import std.algorithm;
             bool compareCharacters(in Character c1, in Character c2){
                 if(c1.tH == c2.tH) return c1.tW > c2.tW;
@@ -180,10 +182,10 @@ class Font{
             auto sortedCharacter = _characters;
             sort!(compareCharacters)(sortedCharacter);
 
-            armos.math.Vector2i atlasSize = calcAtlasSize(areaSum, sortedCharacter, border);
+            Vector2i atlasSize = calcAtlasSize(areaSum, sortedCharacter, border);
 
-            armos.graphics.Bitmap!char atlasPixelsLuminanceAlpha;
-            atlasPixelsLuminanceAlpha.allocate(atlasSize[0], atlasSize[1], armos.graphics.ColorFormat.GrayAlpha);
+            Bitmap!char atlasPixelsLuminanceAlpha;
+            atlasPixelsLuminanceAlpha.allocate(atlasSize[0], atlasSize[1], ColorFormat.GrayAlpha);
             atlasPixelsLuminanceAlpha.setAllPixels(0,255);
             atlasPixelsLuminanceAlpha.setAllPixels(1,0);
 
@@ -192,7 +194,7 @@ class Font{
             int y=0;
             int maxRowHeight = cast(int)sortedCharacter[0].tH + border*2;
             for(int i = 0; i < cast(int)sortedCharacter.length; i++){
-                armos.graphics.Bitmap!(char)* charBitmap = &expandedData[cast(int)sortedCharacter[i].index];
+                Bitmap!(char)* charBitmap = &expandedData[cast(int)sortedCharacter[i].index];
 
                 if(x+cast(int)sortedCharacter[i].tW + border*2 > atlasSize[0]){
                     x = 0;
@@ -221,7 +223,7 @@ class Font{
 
         /++
         +/
-        armos.math.Vector2i calcAtlasSize(long areaSum, in Character[] sortedCharacter, int border){
+        Vector2i calcAtlasSize(long areaSum, in Character[] sortedCharacter, int border){
             import std.math;
             bool packed = false;
             float alpha = log(cast(float)areaSum)*1.44269;
@@ -249,7 +251,7 @@ class Font{
                     }
                 }
             }
-            return armos.math.Vector2i(w, h);
+            return Vector2i(w, h);
         }
 
         /++

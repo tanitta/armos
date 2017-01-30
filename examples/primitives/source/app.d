@@ -1,63 +1,71 @@
-import armos, std.stdio, std.math;
+static import ar = armos;
+import std.stdio, std.math;
 
-class TestApp : ar.BaseApp{
-	float c = 0;
-	ar.Camera camera = new ar.Camera();
-	
-	void setup(){
-		ar.enableDepthTest;
-		camera.position = ar.Vector3f(0, 0, -100);
-		camera.target= ar.Vector3f(0, 0, 0);
+class TestApp : ar.app.BaseApp{
+	override void setup(){
+		_camera.position = ar.math.Vector3f(0, 0, -100);
+		_camera.target= ar.math.Vector3f(0, 0, 0);
+        ar.graphics.samples = 2;
+        ar.graphics.enableDepthTest;
 	}
 	
-	void update(){
-		c += 1;
+	override void update(){
+		counter += 0.01;
 	}
 	
-	void drawPrimitiveExample(ar.Vector3f position, ar.Mesh mesh, ar.Color color){
-		ar.pushMatrix;
-		ar.translate(position);
-		ar.rotate(c, ar.Vector3f(1, 1, 1));
-		ar.setColor(color);
-		mesh.drawFill();
-		ar.setColor(ar.Color(0x16160e));
-		mesh.drawWireFrame();
-		ar.popMatrix;
-	}
-	
-	void draw(){
-		camera.begin;
+	override void draw(){
+		_camera.begin;
 		
 		drawPrimitiveExample(
-			ar.Vector3f(0, 0, 0),
-			ar.boxPrimitive(
-				ar.Vector3f(0, 0, 0),
-				ar.Vector3f(20, 20, 20)
+			ar.math.Vector3f(-40, 0, 0),
+			ar.graphics.boxPrimitive(
+				ar.math.Vector3f(0, 0, 0),
+				ar.math.Vector3f(20, 20, 20)
 			),
-			ar.Color(0xe4007f)
+			ar.types.Color(0xe4007f)
 		);
 		
 		drawPrimitiveExample(
-			ar.Vector3f(40, 0, 0),
-			ar.circlePrimitive(
-				ar.Vector3f(0, 0, 0),
+			ar.math.Vector3f(0, 0, 0),
+			ar.graphics.circlePrimitive(
+				ar.math.Vector3f(0, 0, 0),
 				10
 			),
-			ar.Color(0xffdc00)
+			ar.types.Color(0xffdc00)
 		);
-		
 		
 		drawPrimitiveExample(
-			ar.Vector3f(80, 0, 0),
-			ar.planePrimitive(
-				ar.Vector3f(0, 0, 0),
-				ar.Vector2f(20, 20),
+			ar.math.Vector3f(40, 0, 0),
+			ar.graphics.planePrimitive(
+				ar.math.Vector3f(0, 0, 0),
+				ar.math.Vector2f(20, 20),
 			),
-			ar.Color(0x00a1e9)
+			ar.types.Color(0x00a1e9)
 		);
 		
-		camera.end;
+		_camera.end;
 	}
+    
+    private{
+        float counter = 0;
+        ar.graphics.Camera _camera = new ar.graphics.DefaultCamera;
+
+        void drawPrimitiveExample(ar.math.Vector3f position, ar.graphics.Mesh mesh, ar.types.Color color){
+            ar.graphics.pushMatrix;
+            ar.graphics.translate(position);
+            ar.graphics.rotate(counter, ar.math.Vector3f(1, 1, 1));
+            ar.graphics.color(color);
+            mesh.drawFill();
+            ar.graphics.color(ar.types.Color(0x16160e));
+            mesh.drawWireFrame();
+            ar.graphics.popMatrix;
+        }
+    }
 }
 
-void main(){ar.run(new TestApp);}
+void main(){
+    version(unittest){
+    }else{
+        ar.app.run(new TestApp);
+    }
+}

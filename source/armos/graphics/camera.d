@@ -1,107 +1,228 @@
 module armos.graphics.camera;
+
 import armos.graphics;
 import armos.math;
-static import armos.events;
+import armos.events;
+
 /++
-Cameraを表すClassです．Cameraで写したい処理をbegin()とend()の間に記述します．
+Cameraを表すinterfaceです．Cameraで写したい処理をbegin()とend()の間に記述します．
 +/
-class Camera{
+interface Camera{
     public{
         /++
             projectionMatrixを取得します．
         +/
-        armos.math.Matrix4f projectionMatrix()const{return _projectionMatrix;}
+        Matrix4f projectionMatrix();
+        
+        /++
+            viewMatrixを取得します．
+        +/
+        Matrix4f viewMatrix();
 
         /++
             Cameraの位置を表します．
         +/
-        armos.math.Vector3f position = armos.math.Vector3f.zero;
-
+        Vector3f position();
+        
+        ///
+        Camera position(in Vector3f p);
+        
         /++
             Cameraが映す対象の位置を表します．
         +/
-        armos.math.Vector3f target = armos.math.Vector3f.zero;
+        Vector3f target();
+        
+        ///
+        Camera target(in Vector3f v);
 
         /++
             Cameraの方向を表します．
         +/
-        armos.math.Vector3f up = armos.math.Vector3f(0, 1, 0);
+        Vector3f up();
+        
+        ///
+        Camera up(in Vector3f v);
 
         /**
           Cameraの視野角を表します．単位はdegreeです．
          **/
-        double fov = 60;
+        double fov();
+        
+        ///
+        Camera fov(in double f);
 
         /++
             描画を行う最短距離です．
         +/
-        double nearDist = 0.1;
+        double nearDist();
+        
+        ///
+        Camera nearDist(in double n);
+        
+        /++
+            描画を行う最長距離です．
+        +/
+        double farDist();
+        
+        ///
+        Camera farDist(in double f);
+            
+        /++
+            Cameraで表示する処理を開始します．
+        +/
+        Camera begin();
+        
+        /++
+            Cameraで表示する処理を終了します．
+        +/
+        Camera end();
+    }//public
+}//interface Camera
+
+///
+class DefaultCamera: Camera{
+    mixin CameraImpl;
+}
+
+mixin template CameraImpl(){
+    private alias T = typeof(this);
+    public{
+        /++
+            projectionMatrixを取得します．
+        +/
+        Matrix4f projectionMatrix()const{return _projectionMatrix;}
+
+        ///
+        Matrix4f viewMatrix()const{return _viewMatrix;}
+        
+        /++
+            Cameraの位置を表します．
+        +/
+        Vector3f position()const{return _position;}
+        
+        ///
+        T position(in Vector3f p){_position = p; return this;}
+        
+
+        /++
+            Cameraが映す対象の位置を表します．
+        +/
+        Vector3f target()const{return _target;}
+        
+        ///
+        T target(in Vector3f v){_target = v; return this;}
+
+        /++
+            Cameraの方向を表します．
+        +/
+        Vector3f up()const{return _up;}
+        
+        ///
+        T up(in Vector3f v){_up = v; return this;}
+
+        /**
+          Cameraの視野角を表します．単位はdegreeです．
+         **/
+        double fov()const{return _fov;}
+        
+        ///
+        T fov(in double f){_fov = f; return this;}
+
+        /++
+            描画を行う最短距離です．
+        +/
+        double nearDist()const{return _nearDist;}
+        
+        ///
+        T nearDist(in double n){
+            _nearDist = n;
+            return this;
+        }
 
         /++
             描画を行う最長距離です．
         +/
-        double farDist = 10000;
+        double farDist()const{return _farDist;}
+        
+        ///
+        T farDist(in double f){
+            _farDist = f;
+            return this;
+        }
 
         /++
             Cameraで表示する処理を開始します．
         +/
-        void begin(){
-            armos.math.Matrix4f lookAt = armos.graphics.lookAtViewMatrix(
-                    position, 
-                    target, 
-                    up
+        T begin(){
+            _viewMatrix = lookAtViewMatrix(
+                    _position, 
+                    _target, 
+                    _up
                     );
 
-            armos.math.Matrix4f persp =  armos.graphics.perspectiveMatrix(
-                    fov,
-                    armos.app.windowAspect,
-                    nearDist,
-                    farDist
+            _projectionMatrix = perspectiveMatrix(
+                    _fov,
+                    windowAspect,
+                    _nearDist,
+                    _farDist
                     );
 
-            // armos.math.Matrix4f vFlip = armos.math.Matrix4f(
-            // 	[1,  0, 0, 0                       ],
-            // 	[0, -1, 0, armos.app.windowSize[1] ],
-            // 	[0, 0,  1, 0                       ],
-            // 	[0, 0,  0, 1                       ],
-            // );
-
-            _projectionMatrix = persp*lookAt;
-            armos.graphics.currentRenderer.bind(_projectionMatrix);
+            pushViewMatrix;
+            loadViewMatrix(_viewMatrix);
+            pushProjectionMatrix;
+            loadProjectionMatrix(_projectionMatrix);
+            multProjectionMatrix(scalingMatrix!float(1f, -1f, 1f));
+            return this;
         }
 
         /++
             Cameraで表示する処理を終了します．
         +/
-        void end(){
-            armos.graphics.currentRenderer.unbind();
+        T end(){
+            popViewMatrix;
+            popProjectionMatrix;
+            return this;
         }
     }
 
     private{
-        armos.math.Matrix4f _projectionMatrix;
+        Matrix4f _projectionMatrix;
+        Matrix4f _viewMatrix;
+        
+        Vector3f _position = Vector3f.zero;
+        Vector3f _target   = Vector3f.zero;
+        Vector3f _up       = Vector3f(0, 1, 0);
+        
+        double   _fov      = 60.0;
+        double   _nearDist = 0.1;
+        double   _farDist  = 10000.0;
     }
 }
+
+import armos.app;
+import armos.events;
 
 /++
     Deprecated: WIP
 +/
-static import armos.app;
-static import armos.events;
 class EasyCam : Camera{
-    alias N = float;
-    alias Q = Quaternion!(N);
-    alias V3 = Vector!(N, 3);
-    alias V4 = Vector!(N, 4);
-    alias M33 = Matrix!(N, 3, 3);
-    alias M44 = Matrix!(N, 4, 4);
-
+    mixin CameraImpl;
+    
+    private{
+        alias N = float;
+        alias Q = Quaternion!(N);
+        alias V3 = Vector!(N, 3);
+        alias V4 = Vector!(N, 4);
+        alias M33 = Matrix!(N, 3, 3);
+        alias M44 = Matrix!(N, 4, 4);
+    }
+    
     public{
         this(){
-            armos.events.addListener(armos.app.currentWindow.events.mouseMoved, this, &this.mouseMoved);
-            armos.events.addListener(armos.app.currentWindow.events.mouseReleased, this, &this.mouseReleased);
-            armos.events.addListener(armos.app.currentWindow.events.mousePressed, this, &this.mousePressed);
-            armos.events.addListener(armos.app.currentWindow.events.update, this, &this.update);
+            addListener(currentEvents.mouseMoved, this, &this.mouseMoved);
+            addListener(currentEvents.mouseReleased, this, &this.mouseReleased);
+            addListener(currentEvents.mousePressed, this, &this.mousePressed);
+            addListener(currentEvents.update, this, &this.update);
 
             reset;
         }
@@ -136,25 +257,26 @@ class EasyCam : Camera{
         V3 _currentMousePosition;
         V3 _mouseMovingDirection;
 
-        void mouseMoved(ref armos.events.MouseMovedEventArg message){
+        void mouseMoved(ref MouseMovedEventArg message){
             _currentMousePosition = V3(message.x, message.y, 0);
 
         }
 
-        void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+        void mouseReleased(ref MouseReleasedEventArg message){
             _isDrag = false;
         }
 
-        void mousePressed(ref armos.events.MousePressedEventArg message){
+        void mousePressed(ref MousePressedEventArg message){
             _isDrag = true;
         }
 
-        void update(ref armos.events.EventArg arg){
+        void update(ref EventArg arg){
             _oldMousePosition = _currentMousePosition;
             _mouseMovingDirection = _currentMousePosition - _oldMousePosition;
         }
     }//private
 }//class EasyCam
+
 unittest{
     assert(__traits(compiles, (){
                 auto cam = new EasyCam;

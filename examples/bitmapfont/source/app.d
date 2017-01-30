@@ -1,36 +1,42 @@
-import armos, std.stdio, std.math;
+static import ar = armos;
+import std.stdio, std.math;
 
-class TestApp : ar.BaseApp{
-	ar.BitmapFont font;
-	ar.Image dman;
-	void setup(){
-		font = new ar.BitmapFont;
-		font.load("font.png", 8, 8);
-		ar.blendMode = ar.BlendMode.Alpha;
+class TestApp : ar.app.BaseApp{
+	override void setup(){
+		_font = new ar.graphics.BitmapFont;
+		_font.load("font.png", 8, 8);
+		ar.graphics.blendMode = ar.graphics.BlendMode.Alpha;
 		
-		dman = new ar.Image;
-		dman.load("d-man.png");
-		dman.setMinMagFilter(ar.TextureFilter.Nearest);
+		_dman = new ar.graphics.Image;
+		_dman.load("d-man.png");
+		_dman.magFilter(ar.graphics.TextureMagFilter.Nearest);
 		
-		ar.setBackground(64, 64, 64);
+		ar.graphics.background(64, 64, 64);
 	}
 	
-	void update(){
-	}
-	
-	void draw(){
-		ar.pushMatrix;
-			ar.scale(2.0, 2.0, 1.0);
-			font.draw(
+	override void draw(){
+		ar.graphics.pushMatrix;
+			ar.graphics.scale(2.0, 2.0, 1.0);
+			_font.draw(
 				"armos is a free and open source library for\ncreative coding in D programming language.",
 				50, 10
 			);
 			
-			ar.translate(200, 80, 0);
-			ar.scale(2.0, 2.0, 1.0);
-			dman.draw(0, 0);
-		ar.popMatrix;
+			ar.graphics.translate(200, 80, 0);
+			ar.graphics.scale(2.0, 2.0, 1.0);
+			_dman.draw(0, 0);
+		ar.graphics.popMatrix;
 	}
+    
+    private{
+        ar.graphics.BitmapFont _font;
+        ar.graphics.Image _dman;
+    }
 }
 
-void main(){ar.run(new TestApp);}
+void main(){
+    version(unittest){
+    }else{
+        ar.app.run(new TestApp);
+    }
+}

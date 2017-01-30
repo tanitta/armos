@@ -1,18 +1,19 @@
 module armos.graphics.texture;
+
 import derelict.opengl3.gl;
 import armos.math.vector;
-static import armos.graphics;
+import armos.graphics;
 
 /++
     openGLのtextureを表すクラスです．
     初期化後，allocateして利用します．
     Example:
     ---
-        auto texture = new armos.graphics.Texture;
+        auto texture = new Texture;
         texture.allocate(256, 256);
         
-        auto rect = new armos.graphics.Mesh;
-        rect.primitiveMode = armos.graphics.PrimitiveMode.Quads;
+        auto rect = new Mesh;
+        rect.primitiveMode = PrimitiveMode.Quads;
         texture.begin;
             rect.addTexCoord(0, 1);rect.addVertex(0, 0, 0);
             rect.addTexCoord(0, 0);rect.addVertex(0, 1, 0);
@@ -35,12 +36,12 @@ class Texture {
         /++
         +/
         this(){
-            glEnable(GL_TEXTURE_2D);
-            glGenTextures(1 , cast(uint*)&_texID);
+            glEnable(GL_TEXTURE);
+            glGenTextures(1 , cast(uint*)&_id);
         }
 
         ~this(){
-            glDeleteTextures(1 , cast(uint*)&_texID);
+            glDeleteTextures(1 , cast(uint*)&_id);
         }
 
         /++
@@ -48,7 +49,7 @@ class Texture {
 
             textureのサイズを返します．
         +/
-        armos.math.Vector2i size()const{return _size;}
+        Vector2i size()const{return _size;}
 
         /++
         +/
@@ -65,29 +66,37 @@ class Texture {
         /++
             Return gl texture id.
         +/
-        int id()const{return _texID;}
+        int id()const{return _id;}
 
         /++
             Begin to bind the texture.
         +/
-        void begin(){
-            glGetIntegerv(GL_TEXTURE_BINDING_2D, &_savedTexID);
-            glBindTexture(GL_TEXTURE_2D , _texID);
+        Texture begin(){
+            glBindTexture(GL_TEXTURE_2D , _id);
+            return this;
         }
 
         /++
             End to bind the texture.
         +/
-        void end(){
-            glBindTexture(GL_TEXTURE_2D , _savedTexID);
+        Texture end(){
+            glBindTexture(GL_TEXTURE_2D , 0);
+            return this;
         }
+        
+        ///
+        Texture bind(){
+            glBindTexture(GL_TEXTURE_2D , _id);
+            return this;
+        };
 
         /++
             Resize texture.
         +/
-        void resize(in armos.math.Vector2i textureSize){
+        Texture resize(in Vector2i textureSize){
             _size = textureSize;
             allocate;
+            return this;
         };
 
         /++
@@ -102,8 +111,9 @@ class Texture {
         /++
             Set pixel of texture
         +/
-        void pixel(in ubyte v){
+        Texture pixel(in ubyte v){
             assert(_bitsPtr!=null);
+            return this;
         }
 
         /++
@@ -112,10 +122,11 @@ class Texture {
             w = width
             h = height
         +/
-        void allocate(in int w, in int h){
+        Texture allocate(in int w, in int h){
             _size[0] = w;
             _size[1] = h;
             allocate;
+            return this;
         }
 
         /++
@@ -124,11 +135,12 @@ class Texture {
             w = width
             h = height
         +/
-        void allocate(in int w, in int h, armos.graphics.ColorFormat format){
+        Texture allocate(in int w, in int h, ColorFormat format){
             _size[0] = w;
             _size[1] = h;
             _format = format;
             allocate;
+            return this;
         }
 
         /++
@@ -136,38 +148,39 @@ class Texture {
             Params:
             bitmap =
         +/
-        void allocate(armos.graphics.Bitmap!(char) bitmap){
+        Texture allocate(Bitmap!(char) bitmap){
             import std.math;
+            import std.array:appender;
+            
+            auto bitsApp = appender!(ubyte[]);
             if(bitmap.width != bitmap.height){
                 int side = cast( int )fmax(bitmap.width, bitmap.height);
-                armos.graphics.Bitmap!(char) squareBitmap;
+                Bitmap!(char) squareBitmap;
                 squareBitmap.allocate(side, side, bitmap.colorFormat);
-                for (int i = 0; i < bitmap.size[0]; i++) {
-                    for (int j = 0; j < bitmap.size[1]; j++) {
+                for (int j = 0; j < bitmap.size[1]; j++) {
+                    for (int i = 0; i < bitmap.size[0]; i++) {
                         squareBitmap.pixel(i, j, bitmap.pixel(i, j));
                     }
                 }
-                ubyte[] bits;
-                for (int i = 0; i < squareBitmap.size[0]; i++) {
-                    for (int j = 0; j < squareBitmap.size[1]; j++) {
+                for (int j = 0; j < squareBitmap.size[1]; j++) {
+                    for (int i = 0; i < squareBitmap.size[0]; i++) {
                         for (int k = 0; k < squareBitmap.numElements; k++) {
-                            bits ~= squareBitmap.pixel(i, j).element(k);
+                            bitsApp.put(squareBitmap.pixel(i, j).element(k));
                         }
                     }
                 }
-                allocate(bits, squareBitmap.size[0], squareBitmap.size[1], squareBitmap.colorFormat);
+                allocate(bitsApp.data, squareBitmap.size[0], squareBitmap.size[1], squareBitmap.colorFormat);
             }else{
-                ubyte[] bits;
-                for (int i = 0; i < bitmap.size[0]; i++) {
-                    for (int j = 0; j < bitmap.size[1]; j++) {
+                for (int j = 0; j < bitmap.size[1]; j++) {
+                    for (int i = 0; i < bitmap.size[0]; i++) {
                         for (int k = 0; k < bitmap.numElements; k++) {
-                            bits ~= bitmap.pixel(i, j).element(k);
+                            bitsApp.put(bitmap.pixel(i, j).element(k));
                         }
                     }
                 }
-                allocate(bits, bitmap.size[0], bitmap.size[1], bitmap.colorFormat);
+                allocate(bitsApp.data, bitmap.size[0], bitmap.size[1], bitmap.colorFormat);
             }
-
+            return this;
         }
 
         /++
@@ -177,66 +190,121 @@ class Texture {
             h    = height
             bits = image data
         +/
-        void allocate(ubyte[] bits, in int w, in int h, in armos.graphics.ColorFormat format){
+        Texture allocate(ubyte[] bits, in int w, in int h, in ColorFormat format){
             _size[0] = w;
             _size[1] = h;
             _bitsPtr = bits.ptr;
             allocate(format);
+            return this;
         }
 
         /++
             Allocate texture
         +/
-        void allocate(in armos.graphics.ColorFormat format){
+        Texture allocate(in ColorFormat format){
             _format = format;
             allocate();
+            return this;
         }
 
         /++
             Allocate texture
         +/
-        void allocate(){
-            GLuint internalFormat = armos.graphics.getGLInternalFormat(_format);
-            GLuint components= armos.graphics.numColorFormatElements(_format);
+        Texture allocate(){
+            GLuint internalFormat = getGLInternalFormat(_format);
             begin;
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexImage2D(
-                    GL_TEXTURE_2D, 0, components,
+                    GL_TEXTURE_2D, 0, internalFormat,
                     _size[0], _size[1],
                     0, internalFormat, GL_UNSIGNED_BYTE, cast(GLvoid*)_bitsPtr
                     );
             end;
+            return this;
         }
 
         /++
         +/
-        void setMinMagFilter(in TextureFilter minFilter, in TextureFilter magFilter){
+        Texture minMagFilter(in TextureMinFilter minFilter, in TextureMagFilter magFilter){
             begin;
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
             end;
+            return this;
         }
 
         /++
         +/
-        void setMinMagFilter(in TextureFilter filter){
-            setMinMagFilter(filter, filter);
+        Texture minFilter(in TextureMinFilter filter){
+            begin;
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+            end;
+            return this;
+        }
+        
+        ///
+        Texture magFilter(in TextureMagFilter filter){
+            begin;
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+            end;
+            return this;
+        }
+        
+        ///
+        Texture wrap(in TextureWrap p){
+            begin;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, p);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, p);
+            end;
+            return this;
+        }
+        
+        ///
+        Texture wrapS(in TextureWrap p){
+            begin;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, p);
+            end;
+            return this;
+        }
+        
+        ///
+        Texture wrapT(in TextureWrap p){
+            begin;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, p);
+            end;
+            return this;
         }
     }
 
     private{
-        int _savedTexID;
-        int _texID;
+        int _id;
         ubyte* _bitsPtr;
-        armos.math.Vector2i _size;
-        armos.graphics.ColorFormat _format;
+        Vector2i _size;
+        ColorFormat _format;
     }
 }
 
 /++
 +/
-enum TextureFilter{
+enum TextureMinFilter{
     Linear = GL_LINEAR,
-    Nearest = GL_NEAREST
+    Nearest = GL_NEAREST, 
+    NearestMipmapNearest = GL_NEAREST_MIPMAP_NEAREST,
+    NearestMipmapLinear  = GL_NEAREST_MIPMAP_LINEAR,
+    LinearMipmapNearest  = GL_LINEAR_MIPMAP_NEAREST,
+    LinearMipmapLinear   = GL_LINEAR_MIPMAP_LINEAR,
+}
+
+///
+enum TextureMagFilter{
+    Linear = GL_LINEAR,
+    Nearest = GL_NEAREST, 
+}
+
+
+///
+enum TextureWrap{
+    Clamp  = GL_CLAMP,
+    Repeat = GL_REPEAT,
 }

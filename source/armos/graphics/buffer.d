@@ -2,6 +2,7 @@ module armos.graphics.buffer;
 
 import derelict.opengl3.gl;
 import armos.graphics.vao;
+import armos.math;
 
 /++
 +/
@@ -49,12 +50,41 @@ class Buffer {
 
         /++
         +/
-        void set(Array)(Array array, in BufferUsageFrequency freq, in BufferUsageNature nature){
+        Buffer array(T)(in T[] array, in size_t dimention, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
+            if(array.length == 0)return this;
             begin;
-            auto size = array.length * array[0].sizeof;
-            glBufferData(_bufferType, size, array.ptr, usageEnum(freq, nature));
-            glVertexAttribPointer(0, 3, GL_FLOAT, GLfloat.sizeof * 2, 0, null);
+            
+            immutable currentSize = array.length * array[0].sizeof;
+            if(_size != currentSize){
+                _size = currentSize;
+                glBufferData(_bufferType, _size, array.ptr, usageEnum(freq, nature));
+            }else{
+                glBufferSubData(_bufferType, 0, _size, array.ptr);
+            }
+            
+            import std.conv;
+            if(_bufferType != BufferType.ElementArray){
+                glVertexAttribPointer(0,
+                                     dimention.to!int,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      0,
+                                      null,
+                                      );
+            }
             end;
+            return this;
+        }
+        
+        ///
+        Buffer array(V)(in V[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(isVector!V){
+            if(array.length == 0)return this;
+            V.elementType[] raw = new V.elementType[array.length*V.dimention];
+            for (size_t i = 0, pos = 0, len = array.length; i < len; ++i, pos += V.dimention) {
+                raw[pos .. pos + V.dimention] = array[i].elements[];
+            }
+            this.array(raw, V.dimention, freq, nature);
+            return this;
         }
 
         /++
@@ -69,6 +99,9 @@ class Buffer {
             return (_rootVao !is null);
         }
 
+        ///
+        size_t size()const{return _size;}
+
     }//public
 
     private{
@@ -76,6 +109,7 @@ class Buffer {
         int[] _savedIDs;
         BufferType _bufferType;
         Vao _rootVao;
+        size_t _size;
     }//private
 }//class Vbo
 

@@ -1,6 +1,7 @@
 module armos.app.baseapp;
-static import armos.events;
-static import armos.math;
+import armos.events;
+import armos.math;
+import armos.utils.keytype;
 
 /++
 armosの中心となるクラスです．プロジェクトを作成する際はこのクラスを継承して処理を記述していきます．
@@ -9,21 +10,21 @@ class BaseApp{
     /++
         事前処理を記述するメンバ関数です．initializerによる初期化が行われた後，一度だけ実行されます．
     +/
-    void setup(ref armos.events.EventArg arg){
+    void setup(ref EventArg arg){
         setup();
     }
 
     /++
         毎フレーム実行されるメンバ関数です．
     +/
-    void update(ref armos.events.EventArg arg){
+    void update(ref EventArg arg){
         update();
     }
 
     /++
         毎フレーム実行されるメンバ関数です．updateの次に呼ばれます．描画処理を記述します．
     +/
-    void draw(ref armos.events.EventArg arg){
+    void draw(ref EventArg arg){
         draw();
     }
 
@@ -46,7 +47,7 @@ class BaseApp{
     /++
         終了時に一度だけ呼ばれるメンバ関数です．
     +/
-    void exit(ref armos.events.EventArg arg){
+    void exit(ref EventArg arg){
         exit();
     };
 
@@ -54,40 +55,64 @@ class BaseApp{
         終了時に一度だけ呼ばれるメンバ関数です．
     +/
     void exit(){};
+    
+    ///
+    void windowResized(ref WindowResizeEventArg message){
+        windowResized(message.w, message.h);
+        windowResized(Vector2i(message.w, message.h));
+        windowResized;
+    }
+    
+    ///
+    void windowResized(){}
+    
+    ///
+    void windowResized(int w, int h){}
+    
+    ///
+    void windowResized(Vector2i size){}
 
     /++
         キーボードを押した際に呼ばれるメンバ関数です．
         Params:
         message = キーボードの状態が格納されたメッセージです．
     +/
-    void keyPressed(ref armos.events.KeyPressedEventArg message) {
+    void keyPressed(ref KeyPressedEventArg message){
+        import std.conv;
         keyPressed(message.key);
     }
-
+    
     /++
         キーボードを押した際に呼ばれるメンバ関数です．
         Params:
-        str = 離したキーのascii番号が格納されています．
+        key = 押したキーの種類を表すarmos.utils.KeyTypeが格納されています．
     +/
-    void keyPressed(int str) {
-    }
+    void keyPressed(KeyType key){}
 
     /++
         キーボードを離した際に呼ばれるメンバ関数です．
         Params:
         message = キーボードの状態が格納されたメッセージです．
     +/
-    void keyReleased(ref armos.events.KeyReleasedEventArg message) {
+    void keyReleased(ref KeyReleasedEventArg message){
+        import std.conv;
         keyReleased(message.key);
     }
-
+    
     /++
         キーボードを離した際に呼ばれるメンバ関数です．
         Params: 
-        str = 離したキーのascii番号が格納されています．
+        key = 離したキーの種類を表すarmos.utils.KeyTypeが格納されています．
     +/
-    void keyReleased(int str) {
+    void keyReleased(KeyType key){}
+    
+    ///
+    void unicodeInputted(ref UnicodeInputtedEventArg message){
+        unicodeInputted(message.key);
     }
+    
+    ///
+    void unicodeInputted(uint key){}
 
     /++
         マウス位置を表すプロパティです．
@@ -99,10 +124,10 @@ class BaseApp{
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mouseMoved(ref armos.events.MouseMovedEventArg message){
+    void mouseMoved(ref MouseMovedEventArg message){
         mouseMoved(message.x, message.y, message.button );
-        mouseMoved(armos.math.Vector2f(message.x, message.y), message.button);
-        mouseMoved(armos.math.Vector2i(message.x, message.y), message.button);
+        mouseMoved(Vector2f(message.x, message.y), message.button);
+        mouseMoved(Vector2i(message.x, message.y), message.button);
     }
 
     /++
@@ -118,23 +143,23 @@ class BaseApp{
         Params:
         position = マウスの座標を表します．
     +/
-    void mouseMoved(armos.math.Vector2f position, int button){}
+    void mouseMoved(Vector2f position, int button){}
 
     /++
         マウスが動いた際に呼ばれるメンバ関数です．
         Params:
         position = マウスの座標を表します．
     +/
-    void mouseMoved(armos.math.Vector2i position, int button){}
+    void mouseMoved(Vector2i position, int button){}
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
         Deprecated: 現在動作しません．
     +/
-    void mouseDragged(ref armos.events.MouseDraggedEventArg message){
+    void mouseDragged(ref MouseDraggedEventArg message){
         mouseDragged(message.x, message.y, message.button );
-        mouseDragged(armos.math.Vector2f(message.x, message.y), message.button);
-        mouseDragged(armos.math.Vector2i(message.x, message.y), message.button);
+        mouseDragged(Vector2f(message.x, message.y), message.button);
+        mouseDragged(Vector2i(message.x, message.y), message.button);
     }
 
     /++
@@ -147,13 +172,13 @@ class BaseApp{
         マウスがドラッグされた際に呼ばれるメンバ関数です．
         Deprecated: 現在動作しません．
     +/
-    void mouseDragged(armos.math.Vector2f position, int button){}
+    void mouseDragged(Vector2f position, int button){}
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
         Deprecated: 現在動作しません．
     +/
-    void mouseDragged(armos.math.Vector2i position, int button){}
+    void mouseDragged(Vector2i position, int button){}
 
 
     /++
@@ -161,10 +186,10 @@ class BaseApp{
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+    void mouseReleased(ref MouseReleasedEventArg message){
         mouseReleased(message.x, message.y, message.button );
-        mouseReleased(armos.math.Vector2f(message.x, message.y), message.button);
-        mouseReleased(armos.math.Vector2i(message.x, message.y), message.button);
+        mouseReleased(Vector2f(message.x, message.y), message.button);
+        mouseReleased(Vector2i(message.x, message.y), message.button);
     }
 
     /++
@@ -182,7 +207,7 @@ class BaseApp{
         position = マウスの座標を表します．
         button = 離れたマウスのボタンを表します．
     +/
-    void mouseReleased(armos.math.Vector2f position, int button){}
+    void mouseReleased(Vector2f position, int button){}
 
     /++
         マウスのボタンが離れた際に呼ばれるメンバ関数です．
@@ -190,17 +215,17 @@ class BaseApp{
         position = マウスの座標を表します．
         button = 離れたマウスのボタンを表します．
     +/
-    void mouseReleased(armos.math.Vector2i position, int button){}
+    void mouseReleased(Vector2i position, int button){}
 
     /++
         マウスのボタンが押された際に呼ばれるメンバ関数です．
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mousePressed(ref armos.events.MousePressedEventArg message){
+    void mousePressed(ref MousePressedEventArg message){
         mousePressed(message.x, message.y, message.button );
-        mousePressed(armos.math.Vector2f(message.x, message.y), message.button);
-        mousePressed(armos.math.Vector2i(message.x, message.y), message.button);
+        mousePressed(Vector2f(message.x, message.y), message.button);
+        mousePressed(Vector2i(message.x, message.y), message.button);
     }
 
     /++
@@ -218,7 +243,7 @@ class BaseApp{
         position = マウスの座標を表します．
         button = 押されたマウスのボタンを表します．
     +/
-    void mousePressed(armos.math.Vector2f position, int button){}
+    void mousePressed(Vector2f position, int button){}
 
     /++
         マウスのボタンが押された際に呼ばれるメンバ関数です．
@@ -226,5 +251,78 @@ class BaseApp{
         position = マウスの座標を表します．
         button = 押されたマウスのボタンを表します．
     +/
-    void mousePressed(armos.math.Vector2i position, int button){}
+    void mousePressed(Vector2i position, int button){}
+    
+    ///
+    bool hasPressedKey(in KeyType key)const{
+        return !_hasHeldKeysPrevious[key] && _hasHeldKeysCurrent[key];
+    }
+    
+    ///
+    bool hasHeldKey(in KeyType key)const{
+        return _hasHeldKeysCurrent[key];
+    }
+    
+    ///
+    bool hasReleasedKey(in KeyType key)const{
+        return _hasHeldKeysPrevious[key] && !_hasHeldKeysCurrent[key];
+    }
+    
+    private{
+        bool[KeyType] _hasHeldKeysCurrent;
+        bool[KeyType] _hasHeldKeysPrevious;
+    }
+}
+
+void initHeldKeys(BaseApp app){
+    import std.traits:EnumMembers;
+    foreach (elem; [EnumMembers!KeyType]) {
+        app._hasHeldKeysCurrent[elem]  = false;
+        app._hasHeldKeysPrevious[elem] = false;
+    }
+}
+
+package void PressKey(BaseApp app, KeyType keyType){
+    app._hasHeldKeysCurrent[keyType] = true;
+}
+
+package void ReleaseKey(BaseApp app, KeyType keyType){
+    app._hasHeldKeysCurrent[keyType] = false;
+}
+
+package BaseApp updateKeys(BaseApp app){
+    import std.traits:EnumMembers;
+    foreach (elem; [EnumMembers!KeyType]) {
+        app._hasHeldKeysPrevious[elem] = app._hasHeldKeysCurrent[elem];
+    }
+    return app;
+}
+
+unittest{
+    auto app = new BaseApp;
+    app.initHeldKeys;
+    
+    assert(!app.hasHeldKey(KeyType.A));
+    assert(!app.hasPressedKey(KeyType.A));
+    assert(!app.hasReleasedKey(KeyType.A));
+    
+    app.updateKeys
+       .PressKey(KeyType.A);
+    
+    assert(app.hasHeldKey(KeyType.A));
+    assert(app.hasPressedKey(KeyType.A));
+    assert(!app.hasReleasedKey(KeyType.A));
+    
+    app.updateKeys;
+    
+    assert(app.hasHeldKey(KeyType.A));
+    assert(!app.hasPressedKey(KeyType.A));
+    assert(!app.hasReleasedKey(KeyType.A));
+    
+    app.updateKeys
+       .ReleaseKey(KeyType.A);
+    
+    assert(!app.hasHeldKey(KeyType.A));
+    assert(!app.hasPressedKey(KeyType.A));
+    assert(app.hasReleasedKey(KeyType.A));
 }

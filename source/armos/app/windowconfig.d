@@ -1,6 +1,7 @@
 module armos.app.windowconfig;
 
-static import armos.math;
+import armos.math;
+import armos.utils.semver;
 import std.conv;
 
 /++
@@ -8,40 +9,51 @@ import std.conv;
 class WindowConfig {
     public{
         int height()const{return _height;}
-        void height(in int h){_height = h;}
+        typeof(this) height(in int h){_height = h;return this;}
         
         int width()const{return _width;}
-        void width(in int h){_width = h;}
+        typeof(this) width(in int h){_width = h;return this;}
         
-        armos.Vector2i position()const{return _position;}
-        void position(in armos.Vector2i p){_position = p;}
+        Vector2i position()const{return _position;}
+        typeof(this) position(in Vector2i p){_position = p;return this;}
         
-        int glVersionMajor()const{return _glVersionMajor;}
-        int glVersionMinor()const{return _glVersionMinor;}
+        int glVersionMajor()const{return _glVersion.major;}
+        int glVersionMinor()const{return _glVersion.minor;}
         
-        float glVersion()const{return _glVersionMajor.to!float + _glVersionMinor.to!float*0.1f;}
-        void glVersion(T)(in T v)if(__traits(isFloating, T)){
-            _glVersionMajor = v.to!int;
-            _glVersionMinor = ((v*10.0).to!int%10).to!int;
+        SemVer glVersion()const{
+            return _glVersion;
         }
         
-        void glVersionMajor(in int versionMajor){_glVersionMajor = versionMajor;}
-        void glVersionMinor(in int versionMinor){_glVersionMinor = versionMinor;}
+        typeof(this) glVersion(in string v){
+            import std.algorithm;
+            import std.array;
+            const digits = v.split(".").map!(n => n.to!int).array;
+            glVersion = SemVer(digits[0], digits[1], digits[2]);
+            return this;
+        }
+        
+        typeof(this) glVersion(in SemVer v){
+            _glVersion = v;
+            return this;
+        }
+        
+        typeof(this) glVersionMajor(in int versionMajor){_glVersion.major = versionMajor;return this;}
+        typeof(this) glVersionMinor(in int versionMinor){_glVersion.minor = versionMinor;return this;}
     }//public
 
     private{
-        int _height;
-        int _width;
-        armos.Vector2i _position;
-        int _glVersionMajor = 3;
-        int _glVersionMinor = 2;
+        int _height = 480;
+        int _width = 640;
+        Vector2i _position;
+        SemVer _glVersion = SemVer(3, 2, 0);
     }//private
 }//interface WindowConfig
 // WindowConfig should be able to handle float version.
+
 unittest{
     auto config = new WindowConfig;
-    config.glVersion = 3.3;
+    config.glVersion = "3.3.0";
     assert(config.glVersionMajor == 3);
     assert(config.glVersionMinor == 3);
-    assert(config.glVersion == 3.3f);
+    assert(config.glVersion.to!string == "3.3.0");
 }

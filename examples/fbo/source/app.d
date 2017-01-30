@@ -1,83 +1,88 @@
-import armos, std.stdio, std.math;
+static import ar = armos;
+import std.stdio, std.math;
 import derelict.opengl3.gl;
-class TestApp : ar.BaseApp{
-	ar.Fbo fbo;
-	ar.Mesh circle;
-	ar.Camera camera = new ar.Camera;
-	
-	float angle = 0;
 
-	struct Mouse{
-		ar.Vector2i oldPos;
-		ar.Vector2i currentPos;
-	}
-	Mouse mouse;
-	
-	struct Particle{
-		float mass = 1000.0;
-		ar.Vector2f position;
-		ar.Vector2f speed;
-	}
-	Particle particle;
-	
-	void setup(){
-		fbo = new ar.Fbo;
-		camera.position = ar.Vector3f(0, 0, -40);
-		circle = ar.circlePrimitive(ar.math.Vector3f(0, 0, 0), 1);
-		fbo.begin;
-			ar.setBackground(32, 32, 32);
-		fbo.end;
+class TestApp : ar.app.BaseApp{
+	override void setup(){
+		_fbo = (new ar.graphics.Fbo);
+		_fbo.begin;
+			ar.graphics.fillBackground(32, 32, 32);
+		_fbo.end;
+        
+		_circle = ar.graphics.circlePrimitive(ar.math.Vector3f(0, 0, 0), 1);
 	}
 	
-	void update(){
-		angle += 1;
+	override void update(){
+		_angle += 1;
 		float deltaTime = 1;
 		
-		with(particle){
-			ar.Vector2f d = cast(ar.Vector2f)mouse.currentPos - position;
-			ar.Vector2f force;
-			if( d.norm == 0 ){
-				force = ar.Vector2f(0, 0);
+		with(_particle){
+			ar.math.Vector2f d = cast(ar.math.Vector2f)_mouse.currentPos - position;
+			ar.math.Vector2f force;
+			if( d.norm < 20 ){
+				force = ar.math.Vector2f(0, 0);
 			}else{
 				force = mass/( d.norm*d.norm )*d.normalized;
 			}
-			force = force - speed * 0.001;
+			force = force - speed * 0.01;
 			speed = ( speed + force )*deltaTime;
 			position = ( position + speed )*deltaTime;
 		}
 		
-		mouse.oldPos = mouse.currentPos;
+		_mouse.oldPos = _mouse.currentPos;
 	}
 	
-	void draw(){
-		fbo.begin;
-		ar.setColor(255.0*sin(angle*0.1), 255.0*sin(angle*0.11+0.1), 255, 1);
-		ar.pushMatrix;
-			ar.translate(particle.position[0], particle.position[1], 0);
-			ar.scale(6+5.0*sin(angle*0.1));
-			circle.drawFill;
-		ar.popMatrix;
-		fbo.end;
+	override void draw(){
+		_fbo.begin;
+		ar.graphics.color(255.0*sin(_angle*0.1), 255.0*sin(_angle*0.11+0.1), 255, 1);
+		ar.graphics.pushMatrix;
+			ar.graphics.translate(_particle.position[0], _particle.position[1], 0);
+			ar.graphics.scale(6+5.0*sin(_angle*0.1));
+			_circle.drawFill;
+		ar.graphics.popMatrix;
+		_fbo.end;
 		
-		ar.setColor(255);
-		fbo.draw;
-		
-		( ar.fpsUseRate*100 ).writeln;
+		ar.graphics.color(255);
+		_fbo.draw;
 	}
-	void keyPressed(int key){
-		fbo.resize(ar.currentWindow.size);
-		fbo.begin;
-			ar.setBackground(32, 32, 32);
-		fbo.end;
-		particle.position = ar.Vector2f(0, 0);
-		particle.speed = ar.Vector2f(0, 0);
+	override void keyPressed(ar.utils.KeyType key){
+		_fbo.resize(ar.app.currentWindow.size);
+		_fbo.begin;
+			ar.graphics.background(32, 32, 32);
+		_fbo.end;
+		_particle.position = ar.math.Vector2f(0, 0);
+		_particle.speed = ar.math.Vector2f(0, 0);
 	}
 	
-	void mouseMoved(ar.Vector2i vec, int button){
-		mouse.currentPos = vec;
-		
+	override void mouseMoved(ar.math.Vector2i vec, int button){
+		_mouse.currentPos = vec;
 	}
 
+    private{
+        ar.graphics.Fbo _fbo;
+        ar.graphics.Mesh _circle;
+        
+        float _angle = 0;
+
+        struct Mouse{
+            ar.math.Vector2i oldPos;
+            ar.math.Vector2i currentPos;
+        }
+        Mouse _mouse;
+        
+        struct Particle{
+            float mass = 1000.0;
+            ar.math.Vector2f position = ar.math.Vector2f.zero;
+            ar.math.Vector2f speed = ar.math.Vector2f.zero;
+        }
+        Particle _particle;
+	
+    }
 }
 
-void main(){ar.run(new TestApp);}
+void main(){
+    version(unittest){
+    }else{
+        ar.app.run(new TestApp);
+    }
+}

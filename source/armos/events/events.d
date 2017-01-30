@@ -1,13 +1,17 @@
 module armos.events.events;
-static import armos.events;
-static import armos.utils;
+import armos.events;
+import armos.utils;
 
 class KeyPressedEventArg : armos.events.EventArg{
-    int key;
+    KeyType key;
 };
 
 class KeyReleasedEventArg : armos.events.EventArg{
-    int  key;
+    KeyType key;
+};
+
+class UnicodeInputtedEventArg : armos.events.EventArg{
+    uint  key;
 };
 
 @disable class MessageReceivedEventArg :armos.events.EventArg {}
@@ -62,6 +66,7 @@ class CoreEvents {
 
     armos.events.Event!(KeyPressedEventArg) keyPressed;
     armos.events.Event!(KeyReleasedEventArg) keyReleased;
+    armos.events.Event!(UnicodeInputtedEventArg) unicodeInputted;
 
     armos.events.Event!(MouseDraggedEventArg) mouseDragged;
     armos.events.Event!(MouseEnteredEventArg) mouseEntered;
@@ -86,6 +91,8 @@ class CoreEvents {
 
         keyPressed = new armos.events.Event!(KeyPressedEventArg);
         keyReleased = new armos.events.Event!(KeyReleasedEventArg);
+        
+        unicodeInputted = new armos.events.Event!(UnicodeInputtedEventArg);
 
         mouseDragged = new armos.events.Event!(MouseDraggedEventArg);
         mouseEntered = new armos.events.Event!(MouseEnteredEventArg);
@@ -118,16 +125,22 @@ class CoreEvents {
         armos.events.notifyEvent(exit, voidEventArg);
     };
 
-    void notifyKeyPressed(int key){
+    void notifyKeyPressed(KeyType key){
         auto obj = new KeyPressedEventArg;
         obj.key = key;
         armos.events.notifyEvent(keyPressed, obj);
     }
 
-    void notifyKeyReleased(int key){
+    void notifyKeyReleased(KeyType key){
         auto obj = new KeyReleasedEventArg;
         obj.key = key;
         armos.events.notifyEvent(keyReleased, obj);
+    }
+    
+    void notifyUnicodeInput(uint key){
+        auto obj = new UnicodeInputtedEventArg;
+        obj.key = key;
+        armos.events.notifyEvent(unicodeInputted, obj);
     }
 
     void notifyMouseDragged(int x, int y, int button){
@@ -197,7 +210,7 @@ unittest{
     auto core_events = new CoreEvents;
     bool executedSetup = false;
     int pressedKey = false;
-    static import armos.app;
+    import armos.app;
     class TestApp: armos.app.BaseApp {
         //i want to write like c++. the following is verbose...
         //should i use template mixin instead alias?
@@ -215,7 +228,7 @@ unittest{
         override void draw(){}
         
 
-        override void keyPressed(int key) {
+        override void keyPressed(KeyType key) {
             
             char str_key = cast(char)key;
             pressedKey = key;
@@ -227,7 +240,7 @@ unittest{
     armos.events.addListener(core_events.setup, app, &app.setup);
     armos.events.addListener(core_events.keyPressed, app, &app.keyPressed);
     core_events.notifySetup();
-    core_events.notifyKeyPressed('a');
+    core_events.notifyKeyPressed(KeyType.A);
     assert(executedSetup);
-    assert(pressedKey == 'a');
+    assert(pressedKey == KeyType.A);
 }

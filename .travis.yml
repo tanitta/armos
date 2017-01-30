@@ -1,0 +1,27 @@
+language: d
+    
+d:
+    - dmd
+    - ldc
+env:
+    - TEST_DIR=.
+    - TEST_DIR=examples/audio
+    - TEST_DIR=examples/autoreloadmaterial
+    - TEST_DIR=examples/bitmapfont
+    - TEST_DIR=examples/camera
+    - TEST_DIR=examples/empty
+    - TEST_DIR=examples/fbo
+    - TEST_DIR=examples/filter
+    - TEST_DIR=examples/gui
+    - TEST_DIR=examples/image
+    - TEST_DIR=examples/keyboard
+    - TEST_DIR=examples/model
+    - TEST_DIR=examples/noise
+    - TEST_DIR=examples/primitives
+    - TEST_DIR=examples/shader
+    - TEST_DIR=examples/texture
+    - TEST_DIR=examples/geometryshader
+script:
+    echo $TEST_DIR &&
+    cd $TEST_DIR &&
+    dub test --compiler=${DC}

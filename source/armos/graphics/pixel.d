@@ -52,10 +52,10 @@ GLuint getGLInternalFormat(in ColorFormat format){
     GLuint num;
     switch(format){
         case ColorFormat.Gray:
-            num = GL_LUMINANCE;
+            num = GL_RED;
             break;
         case ColorFormat.GrayAlpha:
-            num = GL_LUMINANCE_ALPHA;
+            num = GL_RG;
             break;
         case ColorFormat.RGB:
             num = GL_RGB;
@@ -73,7 +73,7 @@ GLuint getGLInternalFormat(in ColorFormat format){
             num = GL_DEPTH_COMPONENT;
             break;
         default: 
-            num = GL_LUMINANCE;
+            num = GL_RED;
             break;
     }
     return num;

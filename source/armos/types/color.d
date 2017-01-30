@@ -41,6 +41,14 @@ struct BaseColor(T, T Limit){
             b = armos.math.clamp(cast(T)blue, T(0), limit);
             a = armos.math.clamp(cast(T)alpha, T(0), limit);
         }
+        
+        this(V)(V v)if(isVector!(V) && V.dimention == 4){
+            import std.conv;
+            r = (v.x.to!float * limit.to!float).to!T;
+            g = (v.y.to!float * limit.to!float).to!T;
+            b = (v.z.to!float * limit.to!float).to!T;
+            a = (v.w.to!float * limit.to!float).to!T;
+        }
 
         /++
             色の加算を行います．

@@ -1,25 +1,29 @@
 module armos.graphics.model;
 
-static import armos.graphics;
-static import armos.math;
-static import armos.types;
+import armos.graphics;
+import armos.math;
+import armos.types;
 
 /++
 3Dモデルを読み込み，描画するclassです．
 +/
 class Model {
     public{
-        armos.graphics.Mesh[] meshes;
-        armos.graphics.Material[] materials;
+        Mesh[] meshes;
+        Material[] materials;
+        Entity[] entities;
 
         /++
             モデルを読み込みます．
 
             読み込み時にmeshはmaterial毎に分割されます．
         +/
-        void load(in string pathInDataDir){
-            meshes = (new AssimpModelLoader).load(pathInDataDir).meshes;
-            materials = (new AssimpModelLoader).load(pathInDataDir).materials;
+        Model load(in string pathInDataDir){
+            auto loadedModel = (new AssimpModelLoader).load(pathInDataDir);
+            meshes    = loadedModel.meshes;
+            materials = loadedModel.materials;
+            entities  = loadedModel.entities;
+            return this;
         }
 
         /++
@@ -41,36 +45,35 @@ class Model {
             Params:
             renderMode = 面，線，点のどれを描画するか指定します．
         +/
-        void draw(in armos.graphics.PolyRenderMode renderMode){
-            foreach (mesh; meshes) {
-                mesh.material.begin;
-                armos.graphics.pushStyle;
-                armos.graphics.setColor = mesh.material.diffuse;
-                armos.graphics.currentRenderer.draw(mesh, renderMode, false, false, false);
-                armos.graphics.popStyle;
-                mesh.material.end;
+        Model draw(in PolyRenderMode renderMode){
+            foreach (entity; entities) {
+                entity.draw(renderMode);
             }
+            return this;
         };
 
         /++
             modelをワイヤフレームで描画します．
         +/
-        void drawWireFrame(){
-            draw(armos.graphics.PolyRenderMode.WireFrame);
+        Model drawWireFrame(){
+            draw(PolyRenderMode.WireFrame);
+            return this;
         };
 
         /++
             modelの頂点を点で描画します．
         +/
-        void drawVertices(){
-            draw(armos.graphics.PolyRenderMode.Points);
+        Model drawVertices(){
+            draw(PolyRenderMode.Points);
+            return this;
         };
 
         /++
             meshの面を塗りつぶして描画します．
         +/
-        void drawFill(){
-            draw(armos.graphics.PolyRenderMode.Fill);
+        Model drawFill(){
+            draw(PolyRenderMode.Fill);
+            return this;
         };
 
     }//public
@@ -96,32 +99,16 @@ class AssimpModelLoader {
         /// modelを読み込みそれを返します．
         Model load(in string pathInDataDir){
             import std.string;
-            static import armos.utils;
-            _modelfilepath = armos.utils.absolutePath(pathInDataDir);
+            import armos.utils;
+            _modelfilepath = absolutePath(pathInDataDir);
 
             import derelict.assimp3.assimp;
             import std.stdio;
             DerelictASSIMP3.load();
 
             loadScene(_modelfilepath);
-
-
-            import std.stdio;
-
-            auto materials
-                = _scene.mMaterials[0 .. _scene.mNumMaterials]
-                .map!(m => createMaterial(m))
-                .array;
-
-            auto meshes
-                = _scene.mMeshes[0 .. _scene.mNumMeshes]
-                .map!(m => createMesh(m, materials))
-                .array;
-
-            auto model = new Model;
-            model.materials = materials;
-            model.meshes = meshes;
-            return model;
+            
+            return createdModel(_scene);
         }
 
         /// 読み込んだモデルを削除します．
@@ -172,36 +159,44 @@ class AssimpModelLoader {
         }
 
         ///
-        static armos.math.Vector3f fromAiVector3f(ref const( aiVector3D ) v){
-            return armos.math.Vector3f(v.x, v.y, v.z);
+        static Vector3f fromAiVector3f(ref const( aiVector3D ) v){
+            return Vector3f(v.x, v.y, v.z);
         }
 
-        static armos.math.Vector2f fromAiVector2f(ref const aiVector2D v){
-            return armos.math.Vector2f(v.x, v.y);
+        static Vector2f fromAiVector2f(ref const aiVector2D v){
+            return Vector2f(v.x, v.y);
+        }
+        
+        Model createdModel(const(aiScene)* scene)const{
+            import std.range;
+            auto model = new Model;
+            model.materials = scene.mMaterials[0 .. scene.mNumMaterials]
+                                   .map!(m => createdMaterial(m))
+                                   .array;
+
+            model.meshes    = scene.mMeshes[0 .. scene.mNumMeshes]
+                                   .map!(m => createdMesh(m))
+                                   .array;
+            
+            model.entities  = scene.mMeshes[0 .. scene.mNumMeshes]
+                                   .length
+                                   .iota
+                                   .map!( 
+                                           i => (new Entity).mesh(model.meshes[i])
+                                                                            .material(model.materials[scene.mMeshes[i].mMaterialIndex])
+                                        )
+                                   .array;
+            return model;
         }
 
-        ///set material
-        armos.graphics.Material createMaterial(const(aiMaterial)* material) const {
+        Material createdMaterial(const(aiMaterial)* material) const {
             aiString aiName;
             aiGetMaterialString(material, AI_MATKEY_NAME, 0, 0, &aiName);
             auto name = fromAiString(aiName);
 
 
-            auto mat= new armos.graphics.Material;
-            aiColor4D color;
-
-            //diffuse
-            aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
-            mat.diffuse = fromAiColor(color);
-
-            //speculer
-            aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
-            mat.speculer = fromAiColor(color);
-
-            //ambient
-            aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
-            mat.ambient = fromAiColor(color);
-
+            Material mat;
+            
             //texture
             aiString aiPath;
             if(
@@ -211,20 +206,37 @@ class AssimpModelLoader {
                         null, null, null, null, null 
                         ) ==  aiReturn_SUCCESS
               ){
-                auto image = new armos.graphics.Image;
+                auto image = new Image;
 
                 import std.path;
                 immutable string textureFileName = fromAiString( aiPath );
                 image.load(buildPath( dirName(_modelfilepath), textureFileName ));
-
-                mat.texture = image.texture;
+                
+                mat = new DefaultMaterial;
+                mat.texture("tex0", image.texture);
+            }else{
+                mat = new NoTextureMaterial;
             }
+            
+            aiColor4D color;
+
+            //diffuse
+            aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
+            mat.attr("diffuse", fromAiColor(color));
+
+            //speculer
+            aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
+            mat.attr("speculer", fromAiColor(color));
+
+            //ambient
+            aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
+            mat.attr("ambient", fromAiColor(color));
 
             return mat;
         }
 
-        ///
-        armos.graphics.Mesh createMesh(const(aiMesh)* mesh, armos.graphics.Material[] materials) const {
+        Mesh createdMesh(const(aiMesh)* mesh) const {
+        // Mesh createMesh(const(aiMesh)* mesh, Material[] materials) const {
             auto name = fromAiString(mesh.mName);
 
             auto vertices = 
@@ -232,45 +244,43 @@ class AssimpModelLoader {
                 .map!(v => fromAiVector3f(v))
                 .array;
 
-            const(armos.math.Vector3f)[] normals;
+            const(Vector3f)[] normals;
             if(mesh.mNormals !is null) {
                 normals = mesh.mNormals[0 .. mesh.mNumVertices]
                     .map!(n => fromAiVector3f(n))
                     .array;
             }
 
-            import std.stdio;
+            auto convertedMesh= new Mesh;
 
-            auto convertedMesh= new armos.graphics.Mesh;
-
-
-            for (int i = 0; i < mesh.mNumVertices; i++) {
-                auto texCoord = armos.graphics.TexCoord();
-                texCoord.u = mesh.mTextureCoords[0][i].x;
-                texCoord.v =  mesh.mTextureCoords[0][i].y;
-                // texCoord.u.writeln;
-                // texCoord.v.writeln;
-                convertedMesh.texCoords ~= texCoord;
+            if(mesh.mTextureCoords[0] !is null){
+                convertedMesh.texCoords = new Vector4f[mesh.mNumVertices];
+                for (int i = 0; i < mesh.mNumVertices; i++) {
+                    convertedMesh.texCoords[i] = Vector4f(mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y, 0f, 1f);
+                }
             }
-
-            convertedMesh.vertices = vertices.map!((armos.math.Vector3f vec){
-                    auto vert = armos.graphics.Vertex();
-                    vert.x = vec[0];
-                    vert.y = vec[1];
-                    vert.z = vec[2];
-                    return vert;
+            
+            convertedMesh.vertices = vertices.map!((Vector3f vec){
+                    return Vector4f(vec[0], vec[1], vec[2], 1f);
                     }).array;
 
+            auto totalIndices = 0;
+            foreach(f; mesh.mFaces[0 .. mesh.mNumFaces]) {
+                totalIndices += f.mNumIndices;
+            }
+            
+            convertedMesh.indices = new int[totalIndices];
+            auto indexCounter = 0;
             foreach(f; mesh.mFaces[0 .. mesh.mNumFaces]) {
                 immutable int numVertices =  f.mNumIndices;
                 foreach(i; f.mIndices[0 .. numVertices]){
-                    convertedMesh.addIndex(i);
+                    convertedMesh.indices[indexCounter] = i;
+                    indexCounter++;
                 }
             }
-
-            immutable mi = mesh.mMaterialIndex;
-            auto material = (mi < materials.length) ? materials[mi] : null;
-            convertedMesh.material = material;
+            // immutable mi = mesh.mMaterialIndex;
+            // auto material = (mi < materials.length) ? materials[mi] : null;
+            // convertedMesh.material = material;
 
             return convertedMesh;
         }
@@ -280,3 +290,48 @@ class AssimpModelLoader {
         string _modelfilepath;
     }//private
 }//class AssimpModelLoader
+
+///
+class NoTextureMaterial : Material{
+    mixin MaterialImpl;
+    
+    ///
+    this(){
+        _shader = new armos.graphics.Shader;
+        _shader.loadSources(noTextureVertexShaderSource, "", noTextureFragmentShaderSource);
+    }
+}//class NoTextureMaterial
+
+private immutable string noTextureVertexShaderSource = q{
+#version 330
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewProjectionMatrix;
+
+in vec4 vertex;
+in vec3 normal;
+in vec3 tangent;
+in vec4 color;
+
+out vec4 f_color;
+
+void main(void) {
+    gl_Position = modelViewProjectionMatrix * vertex;
+    f_color = color;
+}
+};
+
+private immutable string noTextureFragmentShaderSource = q{
+#version 330
+    
+in vec4 f_color;
+
+out vec4 fragColor;
+
+uniform vec4 diffuse;
+
+void main(void) {
+    fragColor = diffuse;
+}
+};

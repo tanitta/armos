@@ -1,28 +1,7 @@
 module armos.graphics.mesh;
 import armos.types;
-static import armos.math;
-static import armos.graphics;
-
-/++
-    テクスチャ座標を表すstructです．
-+/
-struct TexCoord{
-    float u, v;
-}
-
-/++
-    頂点座標を表すstructです．
-+/
-struct Vertex{
-    float x, y, z;
-}
-
-/++
-    法線ベクトルを表すstructです．
-+/
-struct Normal{
-    float x, y, z;
-}
+import armos.math;
+import armos.graphics;
 
 /++
     ポリゴンで構成された形状を表すclassです．
@@ -31,103 +10,81 @@ class Mesh {
     public{
         alias int IndexType;
 
-        bool isVertsChanged = false;
-        bool isFaceDirty= false;
+        bool isVertsChanged   = false;
+        bool isFaceDirty      = false;
         bool isIndicesChanged = false;
 
-        Vertex[] vertices;
-        Normal[] normals;
+        Vector4f[]    vertices;
+        Vector3f[]    normals;
+        Vector3f[]    tangents;
+        Vector4f[]    texCoords0;
+        Vector4f[]    texCoords1;
+        alias texCoords0         texCoords; 
         armos.types.FloatColor[] colors;
-        TexCoord[] texCoords;
-        IndexType[] indices;
-        armos.graphics.Material material;
+        IndexType[]              indices;
 
         /// テクスチャ座標の数を表します．
-        ulong numTexCoords()const{
+        size_t numTexCoords()const{
             return texCoords.length;
         }
 
         /// 頂点座標の数を表します．
-        ulong numVertices()const{
+        size_t numVertices()const{
             return vertices.length;
         }
 
         /// 法線ベクトルの数を表します．
-        ulong numNormals()const{
+        size_t numNormals()const{
             return normals.length;
         }
 
         /// 頂点インデックスの数を表します．
-        ulong numIndices()const{
+        size_t numIndices()const{
             return indices.length;
         }
 
         /// meshの描画モードを返します．
-        armos.graphics.PrimitiveMode primitiveMode()const{
-            return primitiveMode_;
+        PrimitiveMode primitiveMode()const{
+            return _primitiveMode;
         }
 
         /// meshの描画モードを指定します．
-        void primitiveMode(in armos.graphics.PrimitiveMode mode){
-            primitiveMode_ = mode;
+        Mesh primitiveMode(in PrimitiveMode mode){
+            _primitiveMode = mode;
+            return this;
         }
 
         /++
             テクスチャ座標を追加します．
         +/
-        void addTexCoord(in armos.math.Vector2f vec){
+        Mesh addTexCoord(in Vector2f vec){
             addTexCoord(vec[0], vec[1]);
+            return this;
         }
 
         /++
             テクスチャ座標を追加します．
         +/
-        void addTexCoord(in float u, in float v){
-            // glTexCoord2d(x, y);
-            auto texCoord = TexCoord();
-            texCoord.u = u;
-            texCoord.v = v;
-            texCoords ~= texCoord;
-        }
-
-        /++
-            テクスチャ座標を追加します．
-        +/
-        void addTexCoord(in armos.math.Vector2f vec, armos.graphics.Texture texture){
-            texture.begin;
-            // addTexCoord(vec[0], vec[1]);
-            texture.end;
-        }
-
-        /++
-            テクスチャ座標を追加します．
-            Deprecated: 現在動作しません．
-        +/
-        void addTexCoord(in float x, in float y, armos.graphics.Texture texture){
-            texture.begin;
-            // glTexCoord2d(x, y);
-            texture.end;
+        Mesh addTexCoord(in float u, in float v){
+            texCoords ~= Vector4f(u, v, 0f, 1f);
+            return this;
         }
 
         /++
             頂点座標を追加します．
         +/
-        void addVertex(const armos.math.Vector3f vec){
-            // vertices ~= [cast(armos.math.Vector3f)vec];
-            auto vertex = Vertex();
-            vertex.x = vec[0];
-            vertex.y = vec[1];
-            vertex.z = vec[2];
-            vertices ~= vertex;
+        Mesh addVertex(in Vector3f vec){
+            vertices ~= Vector4f(vec[0], vec[1], vec[2], 1);
             isVertsChanged = true;
             isFaceDirty = true;
+            return this;
         };
         unittest{
             auto mesh = new Mesh;
-            mesh.addVertex(armos.math.Vector3f(0, 1, 2));
-            mesh.addVertex(armos.math.Vector3f(3, 4, 5));
-            mesh.addVertex(armos.math.Vector3f(6, 7, 8));
-            assert(mesh.vertices[1].y == 4.0);
+            mesh.addVertex(Vector3f(0, 1, 2));
+            mesh.addVertex(Vector3f(3, 4, 5));
+            mesh.addVertex(Vector3f(6, 7, 8));
+            assert(mesh.vertices[1][1] == 4.0);
             assert(mesh.isFaceDirty);
             assert(mesh.isVertsChanged);
         }
@@ -135,35 +92,35 @@ class Mesh {
         /++
             頂点座標を追加します．
         +/
-        void addVertex(in float x, in float y, in float z){
-            addVertex(armos.math.Vector3f(x, y, z));
+        Mesh addVertex(in float x, in float y, in float z){
+            addVertex(Vector3f(x, y, z));
+            return this;
         }
 
         /++
             法線ベクトルを追加します．
         +/
-        void addNormal(const armos.math.Vector3f vec){
-            auto normal = Normal();
-            normal.x = vec[0];
-            normal.y = vec[1];
-            normal.z = vec[2];
-            normals ~= normal;
+        Mesh addNormal(in Vector3f vec){
+            normals ~= vec;
+            return this;
         }
 
         /++
             法線ベクトルを追加します．
         +/
-        void addNormal(in float x, in float y, in float z){
-            addNormal(armos.math.Vector3f(x, y, z));
+        Mesh addNormal(in float x, in float y, in float z){
+            addNormal(Vector3f(x, y, z));
+            return this;
         }
 
         /++
             頂点インデックスを追加します．
         +/
-        void addIndex(in IndexType index){
+        Mesh addIndex(in IndexType index){
             indices ~= index;
             isIndicesChanged = true;
             isFaceDirty = true;
+            return this;
         };
         unittest{
             auto mesh = new Mesh;
@@ -180,33 +137,127 @@ class Mesh {
             Params:
             renderMode = 面，線，点のどれを描画するか指定します．
         +/
-        void draw(in armos.graphics.PolyRenderMode renderMode){
-            armos.graphics.currentRenderer.draw(this, renderMode, false, false, false);
+        Mesh draw(in PolyRenderMode renderMode){
+            currentRenderer.draw(this, renderMode, false, false, false);
+            return this;
         };
 
         /++
             meshをワイヤフレームで描画します．
         +/
-        void drawWireFrame(){
-            draw(armos.graphics.PolyRenderMode.WireFrame);
+        Mesh drawWireFrame(){
+            draw(PolyRenderMode.WireFrame);
+            return this;
         };
 
         /++
             meshの頂点を点で描画します．
         +/
-        void drawVertices(){
-            draw(armos.graphics.PolyRenderMode.Points);
+        Mesh drawVertices(){
+            draw(PolyRenderMode.Points);
+            return this;
         };
 
         /++
             meshの面を塗りつぶして描画します．
         +/
-        void drawFill(){
-            draw(armos.graphics.PolyRenderMode.Fill);
+        Mesh drawFill(){
+            draw(PolyRenderMode.Fill);
+            return this;
         };
+        
+        ///
+        Mesh opBinary(string op:"~")(Mesh rhs){
+            assert(this.primitiveMode == rhs.primitiveMode, "missmatch primitive mode");
+            import std.algorithm;
+            import std.conv;
+            import std.array:array;
+            auto result = new Mesh;
+            result.indices    = this.indices    ~ rhs.indices.map!(i => (i + this.vertices.length).to!int).array;
+            result.vertices   = this.vertices   ~ rhs.vertices;
+            result.normals    = this.normals    ~ rhs.normals;
+            result.tangents   = this.tangents   ~ rhs.tangents;
+            result.texCoords0 = this.texCoords0 ~ rhs.texCoords0;
+            result.texCoords1 = this.texCoords1 ~ rhs.texCoords1;
+            result.colors     = this.colors     ~ rhs.colors;
+            return result;
+        }
+        
+        unittest{
+            alias V = Vector4f;
+            auto m1 = new Mesh;
+            m1.vertices = [
+                V(1, 0, 0, 1), 
+                V(0, 2, 0, 1), 
+                V(0, 0, 3, 1)
+            ];
+            m1.indices = [0, 1, 2];
+            
+            auto m2 = new Mesh;
+            m2.vertices = [
+                V(4, 0, 0, 1), 
+                V(0, 5, 0, 1), 
+                V(0, 0, 6, 1)
+            ];
+            m2.indices = [0, 1, 2];
+            
+            auto m3 = m1 ~ m2;
+            assert(m3.vertices.length == 6);
+            assert(m3.vertices == m1.vertices ~ m2.vertices);
+            assert(m3.indices.length  == m1.indices.length+m2.indices.length);
+            assert(m3.indices == [0, 1, 2, 3, 4, 5]);
+        }
+        
+        ///
+        void opOpAssign(string op:"~")(Mesh rhs){
+            assert(this.primitiveMode == rhs.primitiveMode, "missmatch primitive mode");
+            import std.algorithm;
+            import std.conv;
+            import std.array:array;
+            this.indices    ~= rhs.indices.map!(i => (i + this.vertices.length).to!int).array;
+            this.vertices   ~= rhs.vertices;
+            this.normals    ~= rhs.normals;
+            this.tangents   ~= rhs.tangents;
+            this.texCoords0 ~= rhs.texCoords0;
+            this.texCoords1 ~= rhs.texCoords1;
+            this.colors     ~= rhs.colors;
+        }
+        
+        unittest{
+            alias V = Vector4f;
+            auto m1 = new Mesh;
+            m1.vertices = [
+                V(1, 0, 0, 1), 
+                V(0, 2, 0, 1), 
+                V(0, 0, 3, 1)
+            ];
+            m1.indices = [0, 1, 2];
+            
+            auto m2 = new Mesh;
+            m2.vertices = [
+                V(4, 0, 0, 1), 
+                V(0, 5, 0, 1), 
+                V(0, 0, 6, 1)
+            ];
+            m2.indices = [0, 1, 2];
+            
+            m1 ~= m2;
+            assert(m1.vertices.length == 6);
+            assert(m1.vertices == [
+                V(1, 0, 0, 1), 
+                V(0, 2, 0, 1), 
+                V(0, 0, 3, 1)
+            ] ~ [
+                V(4, 0, 0, 1), 
+                V(0, 5, 0, 1), 
+                V(0, 0, 6, 1)
+            ]);
+            assert(m1.indices.length  == 6);
+            assert(m1.indices == [0, 1, 2, 3, 4, 5]);
+        }
     }//public
 
     private{
-        armos.graphics.PrimitiveMode primitiveMode_;
+        PrimitiveMode _primitiveMode = PrimitiveMode.Triangles;
     }//private
 }//class Mesh
