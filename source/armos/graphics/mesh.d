@@ -165,6 +165,34 @@ class Mesh {
             draw(PolyRenderMode.Fill);
             return this;
         };
+
+        ///
+        Mesh calcNormal(){
+            switch (_primitiveMode) {
+                case PrimitiveMode.Triangles:
+                    Vector3f[] normalSums = new Vector3f[numVertices];
+                    foreach (ref sum; normalSums) {
+                        sum = Vector3f.zero;
+                    }
+                    for (size_t i = 0; i < numIndices; i+=3){
+                        immutable v1 = vertices[indices[i]].xyz;
+                        immutable v2 = vertices[indices[i+1]].xyz;
+                        immutable v3 = vertices[indices[i+2]].xyz;
+                        immutable n = (v2-v1).vectorProduct(v3-v1).normalized;
+                        normalSums[indices[i]]   += n;
+                        normalSums[indices[i+1]] += n;
+                        normalSums[indices[i+2]] += n;
+                    }
+
+                    import std.algorithm:map;
+                    import std.array:array;
+                    normals = normalSums.map!(n => n.normalized).array;
+                    break;
+                default:
+                    return this;
+            }
+            return this;
+        }
         
         ///
         Mesh opBinary(string op:"~")(Mesh rhs){

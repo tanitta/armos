@@ -9,7 +9,7 @@ class Entity {
         ///
         Entity draw(in PolyRenderMode renderMode){
             _material.begin;
-            armos.graphics.currentRenderer.draw(_mesh, renderMode, false, false, false);
+            armos.graphics.currentRenderer.draw(_mesh, renderMode, true, true, true);
             _material.end;
             return this;
         };
