@@ -22,6 +22,7 @@ env:
     - TEST_DIR=examples/texture
     - TEST_DIR=examples/geometryshader
     - TEST_DIR=examples/audiocapture
+    - TEST_DIR=examples/gouraudshader
 script:
     echo $TEST_DIR &&
     cd $TEST_DIR &&
