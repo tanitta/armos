@@ -21,6 +21,7 @@ env:
     - TEST_DIR=examples/shader
     - TEST_DIR=examples/texture
     - TEST_DIR=examples/geometryshader
+    - TEST_DIR=examples/audiocapture
 script:
     echo $TEST_DIR &&
     cd $TEST_DIR &&

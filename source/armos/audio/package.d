@@ -6,4 +6,5 @@ public import armos.audio.source;
 public import armos.audio.buffer;
 public import armos.audio.spectrum;
 public import armos.audio.spectrumanalyzer;
+public import armos.audio.recorder;
 
