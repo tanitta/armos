@@ -682,7 +682,7 @@ class Renderer {
         /++
         +/
         this(){
-            _fbo = (new armos.graphics.Fbo);
+            _fbo = (new armos.graphics.Fbo).minFilter(TextureMinFilter.Linear);
             
             _bufferMesh   = new armos.graphics.BufferMesh;
             _materialStack ~= new armos.graphics.DefaultMaterial;

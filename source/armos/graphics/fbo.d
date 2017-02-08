@@ -129,7 +129,7 @@ class Fbo{
             _rect.vertices[2][0] = _size[0];
             _rect.vertices[2][1] = _size[1];
             _rect.vertices[3][0] = _size[0];
-            
+
             resizeTextures;
             return this;
         }
@@ -168,6 +168,24 @@ class Fbo{
         ///
         int samples()const{
             return _samples;
+        }
+
+        ///
+        Fbo minFilter(in TextureMinFilter filter){
+            _colorTexture.minFilter(filter);
+            _colorTextureTmp.minFilter(filter);
+            _depthTexture.minFilter(filter);
+            _depthTextureTmp.minFilter(filter);
+            return this;
+        }
+
+        ///
+        Fbo magFilter(in TextureMagFilter filter){
+            _colorTexture.magFilter(filter);
+            _colorTextureTmp.magFilter(filter);
+            _depthTexture.magFilter(filter);
+            _depthTextureTmp.magFilter(filter);
+            return this;
         }
         
         ///
@@ -214,6 +232,11 @@ class Fbo{
             _depthTexture.resize(_size*_samples);
             _colorTextureTmp.resize(_size*_samples);
             _depthTextureTmp.resize(_size*_samples);
+
+            // _colorTexture.resize(_size);
+            // _depthTexture.resize(_size);
+            // _colorTextureTmp.resize(_size);
+            // _depthTextureTmp.resize(_size);
             end;
         }
     }//private

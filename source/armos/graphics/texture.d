@@ -213,8 +213,8 @@ class Texture {
         Texture allocate(){
             GLuint internalFormat = getGLInternalFormat(_format);
             begin;
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _minFilter);
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _magFilter);
             glTexImage2D(
                     GL_TEXTURE_2D, 0, internalFormat,
                     _size[0], _size[1],
@@ -227,7 +227,9 @@ class Texture {
         /++
         +/
         Texture minMagFilter(in TextureMinFilter minFilter, in TextureMagFilter magFilter){
-            begin;
+            _minFilter = minFilter;
+            _magFilter = magFilter;
+            begin; 
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
             end;
@@ -237,6 +239,7 @@ class Texture {
         /++
         +/
         Texture minFilter(in TextureMinFilter filter){
+            _minFilter = filter;
             begin;
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
             end;
@@ -245,6 +248,7 @@ class Texture {
         
         ///
         Texture magFilter(in TextureMagFilter filter){
+            _magFilter = filter;
             begin;
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
             end;
@@ -282,6 +286,8 @@ class Texture {
         ubyte* _bitsPtr;
         Vector2i _size;
         ColorFormat _format;
+        TextureMinFilter _minFilter;
+        TextureMagFilter _magFilter;
     }
 }
 
