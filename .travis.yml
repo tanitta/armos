@@ -23,6 +23,7 @@ env:
     - TEST_DIR=examples/geometryshader
     - TEST_DIR=examples/audiocapture
     - TEST_DIR=examples/gouraudshader
+    - TEST_DIR=examples/phongshader
 script:
     echo $TEST_DIR &&
     cd $TEST_DIR &&
