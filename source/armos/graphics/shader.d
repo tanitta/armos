@@ -68,6 +68,7 @@ class Shader {
             import colorize;
             if (isLinked == GL_FALSE) {
                 addLog("link error".color(fg.red));
+                addLog(logProgram(_programID));
                 _isLoaded = false;
             }else{
                 _isLoaded = true;
@@ -419,6 +420,15 @@ class Shader {
             glGetShaderiv(id, GL_INFO_LOG_LENGTH, &strLength);
             char[] log = new char[strLength];
             glGetShaderInfoLog(id, strLength, null, log.ptr);
+            import std.string; import std.conv;
+            return log.ptr.fromStringz.to!string.chomp;
+        }
+
+        string logProgram(in int id)const{
+            int strLength;
+            glGetProgramiv(id, GL_INFO_LOG_LENGTH, &strLength);
+            char[] log = new char[strLength];
+            glGetProgramInfoLog(id, strLength, null, log.ptr);
             import std.string; import std.conv;
             return log.ptr.fromStringz.to!string.chomp;
         }
