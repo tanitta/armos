@@ -669,6 +669,11 @@ int samples(){
     
 }
 
+///
+armos.graphics.Fbo currentFbo(){
+    return currentRenderer._fbo;
+}
+
 /++
 +/
 class Renderer {
