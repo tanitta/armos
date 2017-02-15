@@ -164,10 +164,10 @@ class Shader {
             ----
             // Set variables to glsl uniform named "v".
             float a = 1.0;
-        float b = 2.0;
-        float c = 3.0;
-        shader.setUniform("v", a, b, c);
-        ----
+            float b = 2.0;
+            float c = 3.0;
+            shader.setUniform("v", a, b, c);
+            ----
         +/
         Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0])){
             if(_isLoaded){
@@ -482,8 +482,8 @@ private template glFunctionString(T, size_t DimC, size_t DimR = 1){
 
     public{
         static if(DimR == 1){
-            string glFunctionString(in string functionString){
-                return glFunctionNameString(functionString) ~ "(location, " ~ args ~ ");";
+            string glFunctionString(in string functionString, string variableName = "v"){
+                return glFunctionNameString(functionString) ~ "(location, " ~ args(variableName) ~ ");";
             }
         }
 
@@ -526,10 +526,10 @@ private template glFunctionString(T, size_t DimC, size_t DimR = 1){
             return str;
         }
 
-        string args(){
-            string argsStr = "v[0]";
+        string args(in string variableName){
+            string argsStr = variableName~"[0]";
             for (int i = 1; i < DimC; i++) {
-                argsStr ~= ", v[" ~ i.to!string~ "]";
+                argsStr ~= ", "~variableName~"[" ~ i.to!string~ "]";
             }
             return argsStr;
         }
