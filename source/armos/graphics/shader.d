@@ -159,6 +159,29 @@ class Shader {
         }
 
         /++
+            Set bool as int to uniform.
+            example:
+            ----
+            // Set variables to glsl uniform named "v".
+            bool a = 1.0;
+            bool b = 2.0;
+            bool c = 3.0;
+            shader.setUniform("v", a, b, c);
+            ----
+        +/
+        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && is(Args[0]==bool)){
+            if(_isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    mixin(glFunctionString!(int, v.length)("glUniform"));
+                }
+                end;
+            }
+            return this;
+        }
+
+        /++
             Set as an uniform.
             example:
             ----
@@ -169,7 +192,7 @@ class Shader {
             shader.setUniform("v", a, b, c);
             ----
         +/
-        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0])){
+        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0]) && !is(Args[0]==bool)){
             if(_isLoaded){
                 begin;
                 int location = uniformLocation(name);
