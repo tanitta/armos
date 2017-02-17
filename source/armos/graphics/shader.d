@@ -633,7 +633,6 @@ static unittest{
     assert( glFunctionString!(float, 3).normal("glUniform") == "glUniform3f(location, v[0], v[1], v[2]);");
     assert( glFunctionString!(float[], 3, 3).name("glUniform") == "glUniformMatrix3fv" );
     assert( glFunctionString!(float[], 2, 3).name("glUniform") == "glUniformMatrix2x3fv" );
-    //TODO add array case
     import std.stdio;
     glFunctionString!(float[], 1).array("glUniform", 2).writeln;
     assert( glFunctionString!(float[]).array("glUniform", 2) == "glUniform1fv(location, 2, v.ptr);");
