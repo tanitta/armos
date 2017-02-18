@@ -24,6 +24,7 @@ env:
     - TEST_DIR=examples/audiocapture
     - TEST_DIR=examples/gouraudshader
     - TEST_DIR=examples/phongshader
+    - TEST_DIR=examples/gaussianblur
 script:
     echo $TEST_DIR &&
     cd $TEST_DIR &&

@@ -68,6 +68,7 @@ class Shader {
             import colorize;
             if (isLinked == GL_FALSE) {
                 addLog("link error".color(fg.red));
+                addLog(logProgram(_programID));
                 _isLoaded = false;
             }else{
                 _isLoaded = true;
@@ -125,7 +126,7 @@ class Shader {
                 begin;
                 int location = uniformLocation(name);
                 if(location != -1){
-                    mixin(glFunctionString!(typeof(v[0]), v.elements.length)("glUniform"));
+                    mixin(glFunctionString!(typeof(v[0]), v.elements.length).normal("glUniform"));
                 }
                 end;
             }
@@ -150,7 +151,30 @@ class Shader {
                 begin;
                 int location = uniformLocation(name);
                 if(location != -1){
-                    mixin( glFunctionString!(typeof(m[0][0])[], m.rowSize, m.colSize).glFunctionNameString("glUniform") ~ "(location, 1, GL_FALSE, m.array.ptr);" );
+                    mixin( glFunctionString!(typeof(m[0][0])[], m.rowSize, m.colSize).name("glUniform") ~ "(location, 1, GL_FALSE, m.array.ptr);" );
+                }
+                end;
+            }
+            return this;
+        }
+
+        /++
+            Set bool as int to uniform.
+            example:
+            ----
+            // Set variables to glsl uniform named "v".
+            bool a = 1.0;
+            bool b = 2.0;
+            bool c = 3.0;
+            shader.setUniform("v", a, b, c);
+            ----
+        +/
+        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && is(Args[0]==bool)){
+            if(_isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    mixin(glFunctionString!(int, v.length).normal("glUniform"));
                 }
                 end;
             }
@@ -163,17 +187,45 @@ class Shader {
             ----
             // Set variables to glsl uniform named "v".
             float a = 1.0;
-        float b = 2.0;
-        float c = 3.0;
-        shader.setUniform("v", a, b, c);
-        ----
+            float b = 2.0;
+            float c = 3.0;
+            shader.setUniform("v", a, b, c);
+            ----
         +/
-        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0])){
+        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0]) && !is(Args[0]==bool)){
             if(_isLoaded){
                 begin;
                 int location = uniformLocation(name);
                 if(location != -1){
-                    mixin(glFunctionString!(typeof(v[0]), v.length)("glUniform"));
+                    mixin(glFunctionString!(typeof(v[0]), v.length).normal("glUniform"));
+                }
+                end;
+            }
+            return this;
+        }
+
+        ///
+        Shader uniformArray(T)(in string name, T[] v)if(is(T==bool)){
+            if(_isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    import std.conv:to;
+                    mixin(glFunctionString!(int[]).array("glUniform"));
+                }
+                end;
+            }
+            return this;
+        }
+
+        ///
+        Shader uniformArray(T)(in string name, T[] v)if(__traits(isArithmetic, T) && !is(T==bool)){
+            if(_isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    import std.conv:to;
+                    mixin(glFunctionString!(T[]).array("glUniform"));
                 }
                 end;
             }
@@ -423,6 +475,15 @@ class Shader {
             return log.ptr.fromStringz.to!string.chomp;
         }
 
+        string logProgram(in int id)const{
+            int strLength;
+            glGetProgramiv(id, GL_INFO_LOG_LENGTH, &strLength);
+            char[] log = new char[strLength];
+            glGetProgramInfoLog(id, strLength, null, log.ptr);
+            import std.string; import std.conv;
+            return log.ptr.fromStringz.to!string.chomp;
+        }
+
         int attribDim(in string name)
         out(dim){assert(dim>0);}
         body{
@@ -467,17 +528,21 @@ class Shader {
     }//private
 }//class Shader
 
-private template glFunctionString(T, size_t DimC, size_t DimR = 1){
+private template glFunctionString(T, size_t DimC = 1, size_t DimR = 1){
     import std.conv;
 
     public{
         static if(DimR == 1){
-            string glFunctionString(in string functionString){
-                return glFunctionNameString(functionString) ~ "(location, " ~ args ~ ");";
+            string normal(in string functionString, in string variableName = "v"){
+                return name(functionString) ~ "(location, " ~ args(variableName) ~ ");";
+            }
+
+            string array(in string functionString, in string variableName = "v"){
+                return name(functionString) ~ "(location, " ~ arrayArgs(variableName) ~ ");";
             }
         }
 
-        string glFunctionNameString(in string functionString){
+        string name(in string functionString){
             return functionString ~ suffix;
         }
     }//public
@@ -516,12 +581,16 @@ private template glFunctionString(T, size_t DimC, size_t DimR = 1){
             return str;
         }
 
-        string args(){
-            string argsStr = "v[0]";
+        string args(in string variableName){
+            string argsStr = variableName~"[0]";
             for (int i = 1; i < DimC; i++) {
-                argsStr ~= ", v[" ~ i.to!string~ "]";
+                argsStr ~= ", "~variableName~"[" ~ i.to!string~ "]";
             }
             return argsStr;
+        }
+
+        string arrayArgs(in string variableName){
+            return  variableName ~ ".length.to!int, " ~ variableName ~ ".ptr";
         }
 
         bool isMatrix(){
@@ -561,9 +630,11 @@ private{
 }
 
 static unittest{
+    assert( glFunctionString!(float, 3).normal("glUniform") == "glUniform3f(location, v[0], v[1], v[2]);");
+    assert( glFunctionString!(float[], 3, 3).name("glUniform") == "glUniformMatrix3fv" );
+    assert( glFunctionString!(float[], 2, 3).name("glUniform") == "glUniformMatrix2x3fv" );
     import std.stdio;
-    assert( glFunctionString!(float, 3)("glUniform") == "glUniform3f(location, v[0], v[1], v[2]);" );
-    assert( glFunctionString!(float[], 3, 3).glFunctionNameString("glUniform") == "glUniformMatrix3fv" );
-    assert( glFunctionString!(float[], 2, 3).glFunctionNameString("glUniform") == "glUniformMatrix2x3fv" );
+    assert( glFunctionString!(float[]).array("glUniform") == "glUniform1fv(location, v.length.to!int, v.ptr);");
 }
+
 
