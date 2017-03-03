@@ -63,7 +63,7 @@ void main(){run(new TestApp);}
   ```
 
 1. Download this repository.
-  - via github
+  - Latest(via github)
   ```
   git clone git@github.com:tanitta/armos.git
   ```
@@ -71,11 +71,10 @@ void main(){run(new TestApp);}
   dub add-local <repository-path>
   ```
 
-  - via dub(deprecated)
+  - Stable(via dub)
   ```
   dub fetch armos
   ```
-
 
 1. Install dependency dynamic libraries.
   - macOS
