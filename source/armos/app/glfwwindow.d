@@ -109,6 +109,11 @@ class GLFWWindow : Window{
         void select(){
             glfwMakeContextCurrent(_window);
         };
+
+        /// VerticalSync
+        void verticalSync(in bool f){
+            glfwSwapInterval(f);
+        };
     }//public
 
     private{

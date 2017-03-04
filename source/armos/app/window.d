@@ -68,6 +68,9 @@ interface Window{
         ///
         // void initEvents(BaseApp, CoreEvents);
         void select();
+
+        /// VerticalSync
+        void verticalSync(in bool);
     }//public
 }
 
@@ -151,4 +154,9 @@ void windowTitle(in string str){
 +/
 string windowTitle(){
     return currentWindow.name;
+}
+
+///
+void verticalSync(in bool f){
+    currentWindow.verticalSync = f;
 }
