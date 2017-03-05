@@ -691,11 +691,12 @@ class Renderer {
             
             _bufferMesh   = new armos.graphics.BufferMesh;
             _materialStack ~= new armos.graphics.DefaultMaterial;
-            auto bitmap = (new armos.graphics.Bitmap!(char)).allocate(2, 2, armos.graphics.ColorFormat.RGBA)
-                                                      .setAllPixels(0, 255)
-                                                      .setAllPixels(1, 255)
-                                                      .setAllPixels(2, 255)
-                                                      .setAllPixels(3, 255);
+            auto bitmap = (new armos.graphics.Bitmap!(char))
+                         .allocate(2, 2, armos.graphics.ColorFormat.RGBA)
+                         .setAllPixels(0, 255)
+                         .setAllPixels(1, 255)
+                         .setAllPixels(2, 255)
+                         .setAllPixels(3, 255);
             currentMaterial.texture("tex0", (new armos.graphics.Texture).allocate(bitmap));
             _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, currentMaterial);
             
@@ -881,7 +882,7 @@ class Renderer {
         +/
         void startRender(){
             _projectionMatrixStack.push;
-            _projectionMatrixStack.load(screenPerspectiveMatrix);
+            _projectionMatrixStack.load(screenPerspectiveMatrix(armos.app.windowSize[0], armos.app.windowSize[1]));
             _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
             if(_isUseFbo){
                 _fbo.begin;
@@ -1108,7 +1109,6 @@ class Renderer {
         
         armos.graphics.Style   _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
-        armos.graphics.Shader[] _shaderStack;
         
         armos.graphics.Material[]     _materialStack;
         
@@ -1119,33 +1119,11 @@ class Renderer {
     }//private
 }
 
-void pushShader(armos.graphics.Shader shader){
-    if(!currentRenderer)return;
-    currentRenderer._shaderStack ~= shader;
-    glUseProgram(shader.id);
-}
-
-void popShader(){
-    if(!currentRenderer)return;
-    import std.range;
-    glUseProgram(currentRenderer._shaderStack[$-1].id);
-    if (currentRenderer._shaderStack.length == 0) {
-        assert(0, "stack is empty");
-    }else{
-        currentRenderer._shaderStack.popBack;
-    }
-}
-
 ///
-armos.math.Matrix4f screenPerspectiveMatrix(in float width = -1, in float height = -1, in float fov = 60, in float nearDist = 0, in float farDist = 0){
+armos.math.Matrix4f screenPerspectiveMatrix(in float width, in float height, in float fov = 60, in float nearDist = 0, in float farDist = 0){
     float viewW, viewH;
-    if(width<0 || height<0){
-        viewW = armos.app.windowSize[0];
-        viewH = armos.app.windowSize[1];
-    }else{
-        viewW = width;
-        viewH = height;
-    }
+    viewW = width;
+    viewH = height;
 
     immutable float eyeX = viewW / 2.0;
     immutable float eyeY = viewH / 2.0;
@@ -1166,6 +1144,12 @@ armos.math.Matrix4f screenPerspectiveMatrix(in float width = -1, in float height
     );
     
     return persp*lookAt;
+}
+
+///
+armos.math.Matrix4f screenPerspectiveMatrix(V)(in V size, in float fov = 60, in float nearDist = 0, in float farDist = 0)if(isVector!V && V.dimention == 2){
+    import std.conv;
+    return screenPerspectiveMatrix(size.x.to!float, size.y.to!float, fov, nearDist, farDist);
 }
 
 ///

@@ -88,7 +88,8 @@ class Fbo{
             glViewport(0, 0, textureSize[0], textureSize[1]);
             
             pushProjectionMatrix;
-            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix);
+            import armos.app:windowSize;
+            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(windowSize));
             return this;
         }
 
