@@ -842,6 +842,8 @@ class Renderer {
         /++
         +/
         void setup(){
+            glEnable(GL_LINE_SMOOTH);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
             import std.conv;
             viewport(Vector2f.zero, armos.app.currentWindow.frameBufferSize.to!Vector2f);
 
