@@ -85,9 +85,6 @@ class Fbo{
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
             glBindFramebuffer(GL_FRAMEBUFFER, _id);
             Vector2i textureSize = _size*_samples;
-            import std.stdio;
-            writefln("%s", textureSize.x);
-            // textureSize.writeln;
             viewport(Vector2i.zero, textureSize);
             
             pushProjectionMatrix;
