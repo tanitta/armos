@@ -49,19 +49,19 @@ class Fbo{
 
             _rect.texCoords0 = [
                 Vector4f(0f, 0f, 0.0, 1.0f),
-                Vector4f(0,  1f, 0.0, 1.0f),
-                Vector4f(1f, 1f, 0.0, 1.0f),
                 Vector4f(1f, 0,  0.0, 1.0f),
+                Vector4f(1f, 1f, 0.0, 1.0f),
+                Vector4f(0,  1f, 0.0, 1.0f),
             ];
             // isFlip(true);
             
             _rect.vertices = [
                 Vector4f(0.0,   0.0,    0.0, 1.0f),
-                Vector4f(0.0,   height, 0.0, 1.0f),
-                Vector4f(width, height, 0.0, 1.0f),
                 Vector4f(width, 0.0,    0.0, 1.0f),
+                Vector4f(width, height, 0.0, 1.0f),
+                Vector4f(0.0,   height, 0.0, 1.0f),
             ];
-            
+
             _rect.indices = [
                 0, 1, 2,
                 2, 3, 0,
@@ -85,11 +85,14 @@ class Fbo{
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
             glBindFramebuffer(GL_FRAMEBUFFER, _id);
             Vector2i textureSize = _size*_samples;
-            glViewport(0, 0, textureSize[0], textureSize[1]);
+            import std.stdio;
+            writefln("%s", textureSize.x);
+            // textureSize.writeln;
+            viewport(Vector2i.zero, textureSize);
             
             pushProjectionMatrix;
             import armos.app:windowSize;
-            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(windowSize));
+            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(textureSize));
             return this;
         }
 
@@ -126,11 +129,10 @@ class Fbo{
         +/
         Fbo resize(in armos.math.Vector2i size){
             _size = size;
-            _rect.vertices[1][1] = _size[1];
+            _rect.vertices[1][0] = _size[0];
             _rect.vertices[2][0] = _size[0];
             _rect.vertices[2][1] = _size[1];
-            _rect.vertices[3][0] = _size[0];
-
+            _rect.vertices[3][1] = _size[1];
             resizeTextures;
             return this;
         }
@@ -143,17 +145,17 @@ class Fbo{
             _isFlip = f;
             if(_isFlip){
                 _rect.texCoords0 = [
-                    Vector4f(0f,  1f, 0.0, 1.0f),
-                    Vector4f(0,   0f, 0.0, 1.0f),
-                    Vector4f(1,   0,  0.0, 1.0f),
-                    Vector4f(1.0, 1,  0.0, 1.0f),
+                    Vector4f(0f, 1f, 0.0, 1.0f),
+                    Vector4f(1f, 1,  0.0, 1.0f),
+                    Vector4f(1f, 0f, 0.0, 1.0f),
+                    Vector4f(0,  0f, 0.0, 1.0f),
                 ];
             }else{
                 _rect.texCoords0 = [
-                    Vector4f(0f,  0f, 0.0, 1.0f),
-                    Vector4f(0,   1f, 0.0, 1.0f),
-                    Vector4f(1,   1,  0.0, 1.0f),
-                    Vector4f(1.0, 0,  0.0, 1.0f),
+                    Vector4f(0f, 0f, 0.0, 1.0f),
+                    Vector4f(1f, 0,  0.0, 1.0f),
+                    Vector4f(1f, 1f, 0.0, 1.0f),
+                    Vector4f(0,  1f, 0.0, 1.0f),
                 ];
             }
             return this;
@@ -233,11 +235,6 @@ class Fbo{
             _depthTexture.resize(_size*_samples);
             _colorTextureTmp.resize(_size*_samples);
             _depthTextureTmp.resize(_size*_samples);
-
-            // _colorTexture.resize(_size);
-            // _depthTexture.resize(_size);
-            // _colorTextureTmp.resize(_size);
-            // _depthTextureTmp.resize(_size);
             end;
         }
     }//private
