@@ -60,18 +60,18 @@ class GLFWWindow : Window{
         /++
             Windowのサイズを返します．
         +/
-        Vector2i size(){
+        Vector2i size()const{
             auto vec = Vector2i();
-            glfwGetWindowSize(_window, &vec[0], &vec[1]);
+            glfwGetWindowSize(cast(GLFWwindow*)(_window), &vec[0], &vec[1]);
             return vec;
         }
 
         /++
             Windowのframw bufferのサイズを返します．
         +/
-        Vector2i frameBufferSize(){
+        Vector2i frameBufferSize()const{
             auto vec = Vector2i();
-            glfwGetFramebufferSize(_window, &vec[0], &vec[1]);
+            glfwGetFramebufferSize(cast(GLFWwindow*)(_window), &vec[0], &vec[1]);
             return vec;
         }
 
@@ -108,6 +108,16 @@ class GLFWWindow : Window{
         
         void select(){
             glfwMakeContextCurrent(_window);
+        };
+
+        /// VerticalSync
+        void verticalSync(in bool f){
+            glfwSwapInterval(f);
+        };
+
+        ///
+        float pixelScreenCoordScale()const{
+            return frameBufferSize.x / size.x;
         };
     }//public
 

@@ -85,7 +85,10 @@ class Shader {
             Begin adapted process
         +/
         Shader begin(){
-            pushShader(this);
+            int savedID;
+            glGetIntegerv(GL_CURRENT_PROGRAM, &savedID);
+            _savedIDs ~= savedID;
+            glUseProgram(_programID);
             return this;
         }
 
@@ -93,7 +96,14 @@ class Shader {
             End adapted process
         +/
         Shader end(){
-            popShader;
+            // TODO
+            glUseProgram(_savedIDs[$-1]);
+            if (_savedIDs.length == 0) {
+                assert(0, "stack is empty");
+            }else{
+                import std.range;
+                _savedIDs.popBack;
+            }
             return this;
         }
 
@@ -424,6 +434,7 @@ class Shader {
         bool[string] _attribNames;
         bool _isLoaded = false;
         string _log;
+        int[] _savedIDs;
         
         //geometry shader parameters
         size_t _maxGeometryOutputVertices;

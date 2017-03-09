@@ -691,11 +691,12 @@ class Renderer {
             
             _bufferMesh   = new armos.graphics.BufferMesh;
             _materialStack ~= new armos.graphics.DefaultMaterial;
-            auto bitmap = (new armos.graphics.Bitmap!(char)).allocate(2, 2, armos.graphics.ColorFormat.RGBA)
-                                                      .setAllPixels(0, 255)
-                                                      .setAllPixels(1, 255)
-                                                      .setAllPixels(2, 255)
-                                                      .setAllPixels(3, 255);
+            auto bitmap = (new armos.graphics.Bitmap!(char))
+                         .allocate(2, 2, armos.graphics.ColorFormat.RGBA)
+                         .setAllPixels(0, 255)
+                         .setAllPixels(1, 255)
+                         .setAllPixels(2, 255)
+                         .setAllPixels(3, 255);
             currentMaterial.texture("tex0", (new armos.graphics.Texture).allocate(bitmap));
             _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, currentMaterial);
             
@@ -841,11 +842,16 @@ class Renderer {
         /++
         +/
         void setup(){
+            glEnable(GL_LINE_SMOOTH);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+            import std.conv;
+            viewport(Vector2f.zero, armos.app.currentWindow.frameBufferSize.to!Vector2f);
+
             if(_isUseFbo){
                 _fbo.begin;
             }
-            viewport();
-            fillBackground(currentStyle.backgroundColor );
+
+            fillBackground(currentStyle.backgroundColor);
 
             if(_isUseFbo){
                 _fbo.end;
@@ -856,7 +862,8 @@ class Renderer {
         +/
         void resize(){
             if(_isUseFbo){
-                _fbo.resize(armos.app.currentWindow.size);
+                import std.conv;
+                _fbo.resize((armos.app.currentWindow.frameBufferSize.to!Vector2f/armos.app.currentWindow.pixelScreenCoordScale).to!Vector2i);
                 _fbo.begin;
             }
 
@@ -869,20 +876,12 @@ class Renderer {
 
         /++
         +/
-        void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
-            auto position = armos.math.Vector2f(0, 0);
-            auto size = armos.app.currentWindow.frameBufferSize();
-            position[1] = size[1] - (position[1] + size[1]);
-            glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
-        }
-
-
-        /++
-        +/
         void startRender(){
             _projectionMatrixStack.push;
-            _projectionMatrixStack.load(screenPerspectiveMatrix);
-            _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
+            import std.conv;
+            auto windowSize = (armos.app.currentWindow.frameBufferSize.to!Vector2f/armos.app.currentWindow.pixelScreenCoordScale).to!Vector2i;
+            _projectionMatrixStack.load(screenPerspectiveMatrix(windowSize));
+            _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -windowSize.y, 0));
             if(_isUseFbo){
                 _fbo.begin;
             }
@@ -903,7 +902,10 @@ class Renderer {
                 glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
                 disableDepthTest;
             }
-            viewport();
+
+            import std.conv;
+            viewport(Vector2f.zero, armos.app.currentWindow.frameBufferSize.to!Vector2f);
+
             if(_isUseFbo) _fbo.draw;
             _projectionMatrixStack.pop;
             color(tmp);
@@ -1108,7 +1110,6 @@ class Renderer {
         
         armos.graphics.Style   _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
-        armos.graphics.Shader[] _shaderStack;
         
         armos.graphics.Material[]     _materialStack;
         
@@ -1119,37 +1120,32 @@ class Renderer {
     }//private
 }
 
-void pushShader(armos.graphics.Shader shader){
-    if(!currentRenderer)return;
-    currentRenderer._shaderStack ~= shader;
-    glUseProgram(shader.id);
+/++
++/
+void viewport(in float x, in float y, in float width, in float height, in bool vflip=true){
+    Vector2f position = armos.math.Vector2f(x, y);
+    import std.conv;
+    Vector2f size = armos.math.Vector2f(width, height);
+    viewport(position, size);
 }
 
-void popShader(){
-    if(!currentRenderer)return;
-    import std.range;
-    glUseProgram(currentRenderer._shaderStack[$-1].id);
-    if (currentRenderer._shaderStack.length == 0) {
-        assert(0, "stack is empty");
-    }else{
-        currentRenderer._shaderStack.popBack;
-    }
+/++
++/
+void viewport(V)(in V position, in V size, in bool vflip=true)if(isVector!V){
+    V pos = position;
+    if(vflip) pos[1] = size[1] - (pos[1] + size[1]);
+    glViewport(cast(int)pos[0], cast(int)pos[1], cast(int)size[0], cast(int)size[1]);
 }
 
 ///
-armos.math.Matrix4f screenPerspectiveMatrix(in float width = -1, in float height = -1, in float fov = 60, in float nearDist = 0, in float farDist = 0){
+armos.math.Matrix4f screenPerspectiveMatrix(in float width, in float height, in float fov = 60, in float nearDist = 0, in float farDist = 0){
     float viewW, viewH;
-    if(width<0 || height<0){
-        viewW = armos.app.windowSize[0];
-        viewH = armos.app.windowSize[1];
-    }else{
-        viewW = width;
-        viewH = height;
-    }
+    viewW = width;
+    viewH = height;
 
     immutable float eyeX = viewW / 2.0;
     immutable float eyeY = viewH / 2.0;
-    immutable float halfFov = PI * fov / 360;
+    immutable float halfFov = PI * fov / 360.0;
     immutable float theTan = tan(halfFov);
     immutable float dist = eyeY / theTan;
     immutable float aspect = viewW / viewH;
@@ -1166,6 +1162,12 @@ armos.math.Matrix4f screenPerspectiveMatrix(in float width = -1, in float height
     );
     
     return persp*lookAt;
+}
+
+///
+armos.math.Matrix4f screenPerspectiveMatrix(V)(in V size, in float fov = 60, in float nearDist = 0, in float farDist = 0)if(isVector!V && V.dimention == 2){
+    import std.conv;
+    return screenPerspectiveMatrix(size.x.to!float, size.y.to!float, fov, nearDist, farDist);
 }
 
 ///
