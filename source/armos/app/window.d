@@ -23,12 +23,12 @@ interface Window{
         /++
             サイズのプロパティです．
         +/
-        Vector2i size();
+        Vector2i size()const;
 
         /++
             サイズのプロパティです．
         +/
-        Vector2i frameBufferSize();
+        Vector2i frameBufferSize()const;
 
         /++
             イベントが発生している場合，登録されたイベントを実行します
@@ -71,6 +71,8 @@ interface Window{
 
         /// VerticalSync
         void verticalSync(in bool);
+
+        float pixelScreenCoordScale()const;
     }//public
 }
 
