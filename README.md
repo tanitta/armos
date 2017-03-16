@@ -86,7 +86,7 @@ void main(){run(new TestApp);}
 1. put the following dependency into your project's dub.sdl or dub.json.
   ```
   dependency "armos" version="~>0.0.1"
-	```
+  ```
 
 ## Why use D?
 
