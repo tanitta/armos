@@ -89,7 +89,7 @@ class Fbo{
             
             pushProjectionMatrix;
             import armos.app:windowSize;
-            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(textureSize));
+            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(_size));
             return this;
         }
 
