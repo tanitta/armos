@@ -81,7 +81,7 @@ class Buffer {
             if(array.length == 0)return this;
             V.elementType[] raw = new V.elementType[array.length*V.dimention];
             for (size_t i = 0, pos = 0, len = array.length; i < len; ++i, pos += V.dimention) {
-                raw[pos .. pos + V.dimention] = array[i].elements[];
+                raw[pos .. pos + V.dimention] = array[i].elements.arr[];
             }
             this.array(raw, V.dimention, freq, nature);
             return this;

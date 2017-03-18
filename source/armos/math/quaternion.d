@@ -147,7 +147,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         Quaternion!(double) q2      = Quaternion!(double)(cos(0.2), v[0]*sin(0.2), v[1]*sin(0.2), v[2]*sin(0.2));
         Quaternion!(double) qResult = q1 * q2;
         Quaternion!(double) qAnswer = Quaternion!(double)(cos(0.3), v[0]*sin(0.3), v[1]*sin(0.3), v[2]*sin(0.3));
-        foreach (int i, value; qResult.vec.elements) {
+        foreach (int i, value; qResult.vec.elements.arr) {
             assert( approxEqual(value, qAnswer[i]) );
         }
     }
@@ -247,7 +247,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         auto qR = q.inverse;
         auto qA = Quaternion!(double)(0.5, 0, -0.5, 0);
 
-        foreach (int i, value; qR.vec.elements) {
+        foreach (int i, value; qR.vec.elements.arr) {
             assert( approxEqual(value, qA[i]) );
         }
     }
@@ -297,7 +297,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         auto vR = q.rotatedVector(v);
         auto vA = armos.math.Vector3d(0, 1, 0);
 
-        foreach (int i, value; vR.elements) {
+        foreach (int i, value; vR.elements.arr) {
             assert( approxEqual(value, vA[i]) );
         }
     }
@@ -322,7 +322,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         auto vR = q.rotatedVectorInversely(v);
         auto vA = armos.math.Vector3d(0, -1, 0);
 
-        foreach (int i, value; vR.elements) {
+        foreach (int i, value; vR.elements.arr) {
             assert( approxEqual(value, vA[i]) );
         }
     }
@@ -343,7 +343,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         auto vR = q.rotatedVector(v);
         auto vA = armos.math.Vector3d(0, 1, 0);
 
-        foreach (int i, value; vR.elements) {
+        foreach (int i, value; vR.elements.arr) {
             assert( approxEqual(value, vA[i]) );
         }
     }
@@ -409,7 +409,7 @@ unittest{
     auto vR = qSlerped.rotatedVector(v);
     auto vA = armos.math.Vector3d(-1, 0, 0);
 
-    foreach (int i, value; vR.elements) {
+    foreach (int i, value; vR.elements.arr) {
         assert( approxEqual(value, vA[i]) );
     }
 
