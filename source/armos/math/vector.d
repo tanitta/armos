@@ -72,26 +72,31 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
 	private PackedElements zeroClear(in ref PackedElements elm) const {
 		PackedElements result;
-		static if (is(T == real)) {
-			result.arr[] = 0.0;
-		}
-		else static if (Dimention == 1) {
-			result.arr[0] = T(0);	
-		}
-	 	else {
-			if (__ctfe)
-				result.arr[] = T(0);
+		version(DigitalMars) {
+			static if (is(T == real)) {
+				result.arr[] = real(0);
+			}
+			else static if (Dimention == 1) {
+				result.arr[0] = T(0);	
+			}
 			else {
-				static if (XMMsNum == 1) {
-					result.vec = __simd(XMM.PXOR,elm.vec,elm.vec);
-				}
+				if (__ctfe)
+					result.arr[] = T(0);
 				else {
-					mixin(expandFor!("result.vec[%1$s] = __simd(XMM.PXOR,elm.vec[%1$s],elm.vec[%1$s]);",XMMsNum));
-				}
-				static if (Dimention == XMMsSize + 1) {
-					result.arr[$-1] = 0;
+					static if (XMMsNum == 1) {
+						result.vec = __simd(XMM.PXOR,elm.vec,elm.vec);
+					}
+					else {
+						mixin(expandFor!("result.vec[%1$s] = __simd(XMM.PXOR,elm.vec[%1$s],elm.vec[%1$s]);",XMMsNum));
+					}
+					static if (Dimention == XMMsSize + 1) {
+						result.arr[$-1] = 0;
+					}
 				}
 			}
+		}
+		version(LDC) {
+			result.arr[] = T(0);
 		}
 		return result;
 	}
