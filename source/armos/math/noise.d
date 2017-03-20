@@ -18,7 +18,7 @@ struct PerlinNoise(T, int Dim) {
         T eval(T[] args ...){
             import std.conv;
             V localCoord;
-            localCoord.elements = args;
+            localCoord.elements.arr = args;
             _vi = (localCoord.to!Vi%T(255));
             _vf = localCoord - localCoord.to!Vi.to!V;
             _faded = _vf.fade;
