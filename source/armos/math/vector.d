@@ -69,54 +69,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static assert(Vector!(int,6).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec[0]+y.vec[0];x.vec[1]+y.vec[1];}");
         static assert(Vector!(int,9).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec[0]+y.vec[0];x.vec[1]+y.vec[1];x.arr[$-1]+y.arr[$-1];}");
     }
-
-    private PackedElements zeroClear(in ref PackedElements elm) const {
-        PackedElements result;
-        version(DigitalMars) {
-            static if (is(T == real)) {
-                result.arr[] = real(0);
-            }
-            else static if (Dimention == 1) {
-                result.arr[0] = T(0);   
-            }
-            else {
-                if (__ctfe)
-                    result.arr[] = T(0);
-                else {
-                    static if (XMMsNum == 1) {
-                        result.vec = __simd(XMM.PXOR,elm.vec,elm.vec);
-                    }
-                    else {
-                        mixin(expandFor!("result.vec[%1$s] = __simd(XMM.PXOR,elm.vec[%1$s],elm.vec[%1$s]);",XMMsNum));
-                    }
-                    static if (Dimention == XMMsSize + 1) {
-                        result.arr[$-1] = 0;
-                    }
-                }
-            }
-        }
-        version(LDC) {
-            result.arr[] = T(0);
-        }
-        return result;
-    }
     unittest {
-        Vector!(int,1) v1;
-        v1.elements.arr = [1];
-        assert (v1.zeroClear(v1.elements).arr == [0]);
-
-        Vector!(int,3) v3;
-        v3.elements.arr = [1,2,3];
-        assert (v3.zeroClear(v3.elements).arr == [0,0,0]);
-
-        Vector!(int,7) v7;
-        v7.elements.arr = [1,2,3,4,5,6,7];
-        assert (v7.zeroClear(v7.elements).arr == [0,0,0,0,0,0,0]);
-
-        Vector!(int,9) v9;
-        v9.elements.arr = [1,2,3,4,5,6,7,8,9];
-        assert (v9.zeroClear(v9.elements).arr == [0,0,0,0,0,0,0,0,0]);
-
     }
 
     PackedElements elements;
