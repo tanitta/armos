@@ -5,11 +5,11 @@ import std.math;
 import std.stdio;
 
 version(D_SIMD) {
-	import core.simd;
-	enum SIMD_Enable = true;
+    import core.simd;
+    enum SIMD_Enable = true;
 }
 else {
-	enum SIMD_Enable = false;
+    enum SIMD_Enable = false;
 }
 
 /++
@@ -17,117 +17,117 @@ else {
 +/
 struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     private alias Vector!(T, Dimention) VectorType;
-	
-	enum XMMRegisterSize = 16;
-	enum PackSize = XMMRegisterSize / T.sizeof;
-	enum XMMsNum = Dimention % PackSize == 1 || Dimention % PackSize == 0 ?
-		Dimention / PackSize :
-		Dimention / PackSize + 1;
-	enum XMMsSize = XMMsNum * PackSize;
-	
-	union PackedElements{
-		T[Dimention] arr;
-		static if (!is(T == real) && Dimention > 1) {
-			static if (XMMsNum == 1){
-				__vector(T[PackSize]) vec;
-			}
-			else {
-				__vector(T[PackSize])[XMMsNum] vec;
-			}
-		}
-	}
+
+    enum XMMRegisterSize = 16;
+    enum PackSize = XMMRegisterSize / T.sizeof;
+    enum XMMsNum = Dimention % PackSize == 1 || Dimention % PackSize == 0 ?
+        Dimention / PackSize :
+        Dimention / PackSize + 1;
+    enum XMMsSize = XMMsNum * PackSize;
+
+    union PackedElements{
+        T[Dimention] arr;
+        static if (!is(T == real) && Dimention > 1) {
+            static if (XMMsNum == 1){
+                __vector(T[PackSize]) vec;
+            }
+            else {
+                __vector(T[PackSize])[XMMsNum] vec;
+            }
+        }
+    }
 
 
-	private template Compute (string Base) {
-		import std.format : format;
-		static if (Dimention > 1) {
-			enum XMMComputeBase = format("if(__ctfe){%s}else{%%s}",format(Base,"arr[]"));
-			static if (XMMsNum == 1) {
-				enum ComputeXMM = format(Base,"vec");
-			}
-			else {
-				enum ComputeXMM = expandFor!(format(Base,"vec[%1$d]"),XMMsNum);
-			}
-			static if (Dimention <= XMMsSize) {
-				enum Compute = format(XMMComputeBase,ComputeXMM);
-			}
-			else static if (Dimention == XMMsSize + 1) {
-				enum Compute = format(XMMComputeBase,ComputeXMM ~ format(Base,"arr[$-1]"));
-			}
-			else {
-				static assert (false,"illegal PackedElements!");
-			}
-		}
-		else {
-			enum Compute = format(Base,"arr[0]");
-		}
-	}
-	unittest {
-		static assert(Vector!(int,3).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec+y.vec;}");
-		static assert(Vector!(int,4).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec+y.vec;}");
-		static assert(Vector!(int,5).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec+y.vec;x.arr[$-1]+y.arr[$-1];}");
-		static assert(Vector!(int,6).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec[0]+y.vec[0];x.vec[1]+y.vec[1];}");
-		static assert(Vector!(int,9).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec[0]+y.vec[0];x.vec[1]+y.vec[1];x.arr[$-1]+y.arr[$-1];}");
-	}
+    private template Compute (string Base) {
+        import std.format : format;
+        static if (Dimention > 1) {
+            enum XMMComputeBase = format("if(__ctfe){%s}else{%%s}",format(Base,"arr[]"));
+            static if (XMMsNum == 1) {
+                enum ComputeXMM = format(Base,"vec");
+            }
+            else {
+                enum ComputeXMM = expandFor!(format(Base,"vec[%1$d]"),XMMsNum);
+            }
+            static if (Dimention <= XMMsSize) {
+                enum Compute = format(XMMComputeBase,ComputeXMM);
+            }
+            else static if (Dimention == XMMsSize + 1) {
+                enum Compute = format(XMMComputeBase,ComputeXMM ~ format(Base,"arr[$-1]"));
+            }
+            else {
+                static assert (false,"illegal PackedElements!");
+            }
+        }
+        else {
+            enum Compute = format(Base,"arr[0]");
+        }
+    }
+    unittest {
+        static assert(Vector!(int,3).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec+y.vec;}");
+        static assert(Vector!(int,4).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec+y.vec;}");
+        static assert(Vector!(int,5).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec+y.vec;x.arr[$-1]+y.arr[$-1];}");
+        static assert(Vector!(int,6).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec[0]+y.vec[0];x.vec[1]+y.vec[1];}");
+        static assert(Vector!(int,9).Compute!("x.%1$s+y.%1$s;") == "if(__ctfe){x.arr[]+y.arr[];}else{x.vec[0]+y.vec[0];x.vec[1]+y.vec[1];x.arr[$-1]+y.arr[$-1];}");
+    }
 
-	private PackedElements zeroClear(in ref PackedElements elm) const {
-		PackedElements result;
-		version(DigitalMars) {
-			static if (is(T == real)) {
-				result.arr[] = real(0);
-			}
-			else static if (Dimention == 1) {
-				result.arr[0] = T(0);	
-			}
-			else {
-				if (__ctfe)
-					result.arr[] = T(0);
-				else {
-					static if (XMMsNum == 1) {
-						result.vec = __simd(XMM.PXOR,elm.vec,elm.vec);
-					}
-					else {
-						mixin(expandFor!("result.vec[%1$s] = __simd(XMM.PXOR,elm.vec[%1$s],elm.vec[%1$s]);",XMMsNum));
-					}
-					static if (Dimention == XMMsSize + 1) {
-						result.arr[$-1] = 0;
-					}
-				}
-			}
-		}
-		version(LDC) {
-			result.arr[] = T(0);
-		}
-		return result;
-	}
-	unittest {
-		Vector!(int,1) v1;
-		v1.elements.arr = [1];
-		assert (v1.zeroClear(v1.elements).arr == [0]);
+    private PackedElements zeroClear(in ref PackedElements elm) const {
+        PackedElements result;
+        version(DigitalMars) {
+            static if (is(T == real)) {
+                result.arr[] = real(0);
+            }
+            else static if (Dimention == 1) {
+                result.arr[0] = T(0);   
+            }
+            else {
+                if (__ctfe)
+                    result.arr[] = T(0);
+                else {
+                    static if (XMMsNum == 1) {
+                        result.vec = __simd(XMM.PXOR,elm.vec,elm.vec);
+                    }
+                    else {
+                        mixin(expandFor!("result.vec[%1$s] = __simd(XMM.PXOR,elm.vec[%1$s],elm.vec[%1$s]);",XMMsNum));
+                    }
+                    static if (Dimention == XMMsSize + 1) {
+                        result.arr[$-1] = 0;
+                    }
+                }
+            }
+        }
+        version(LDC) {
+            result.arr[] = T(0);
+        }
+        return result;
+    }
+    unittest {
+        Vector!(int,1) v1;
+        v1.elements.arr = [1];
+        assert (v1.zeroClear(v1.elements).arr == [0]);
 
-		Vector!(int,3) v3;
-		v3.elements.arr = [1,2,3];
-		assert (v3.zeroClear(v3.elements).arr == [0,0,0]);
+        Vector!(int,3) v3;
+        v3.elements.arr = [1,2,3];
+        assert (v3.zeroClear(v3.elements).arr == [0,0,0]);
 
-		Vector!(int,7) v7;
-		v7.elements.arr = [1,2,3,4,5,6,7];
-		assert (v7.zeroClear(v7.elements).arr == [0,0,0,0,0,0,0]);
+        Vector!(int,7) v7;
+        v7.elements.arr = [1,2,3,4,5,6,7];
+        assert (v7.zeroClear(v7.elements).arr == [0,0,0,0,0,0,0]);
 
-		Vector!(int,9) v9;
-		v9.elements.arr = [1,2,3,4,5,6,7,8,9];
-		assert (v9.zeroClear(v9.elements).arr == [0,0,0,0,0,0,0,0,0]);
+        Vector!(int,9) v9;
+        v9.elements.arr = [1,2,3,4,5,6,7,8,9];
+        assert (v9.zeroClear(v9.elements).arr == [0,0,0,0,0,0,0,0,0]);
 
-	}
+    }
 
-	PackedElements elements;
-	
+    PackedElements elements;
+
     //T[Dimention] elements = T.init;
     ///
     enum int dimention = Dimention;
     unittest{
         static assert(Vector!(float, 3).dimention == 3);
     }
-    
+
     alias elementType = T;
     unittest{
         static assert(is(Vector!(float, 3).elementType == float));
@@ -175,12 +175,12 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     // pure const bool opEquals(Object vec){
-    // 	foreach (int index, T v; (cast(VectorType)vec).elements.arr) {
-    // 		if(v != this.elements.arr[index]){
-    // 			return false;
-    // 		}
-    // 	}
-    // 	return true;
+    //  foreach (int index, T v; (cast(VectorType)vec).elements.arr) {
+    //      if(v != this.elements.arr[index]){
+    //          return false;
+    //      }
+    //  }
+    //  return true;
     // }
     unittest{
         auto vec1 = Vector3d(1, 2, 3);
@@ -196,8 +196,8 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     enum VectorType zero = (){
-		VectorType v;
-		v.elements.arr[] = T(0);
+        VectorType v;
+        v.elements.arr[] = T(0);
         return v;
     }();
     unittest{
@@ -211,10 +211,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opNeg()const{
         auto result = VectorType();
-		static if (SIMD_Enable && !is(T == real))
-			mixin(Compute!("result.elements.%1$s = -elements.%1$s;"));
-		else
-        	result.elements.arr[] = -elements.arr[];
+        static if (SIMD_Enable && !is(T == real))
+            mixin(Compute!("result.elements.%1$s = -elements.%1$s;"));
+        else
+            result.elements.arr[] = -elements.arr[];
         return result;
     };
     unittest{
@@ -228,10 +228,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opAdd(in VectorType r)const{
         auto result = VectorType();
-		static if (SIMD_Enable && !is(T == real))
-			mixin(Compute!("result.elements.%1$s = elements.%1$s + r.elements.%1$s;"));
-		else
-        	result.elements.arr[] = elements.arr[] + r.elements.arr[];
+        static if (SIMD_Enable && !is(T == real))
+            mixin(Compute!("result.elements.%1$s = elements.%1$s + r.elements.%1$s;"));
+        else
+            result.elements.arr[] = elements.arr[] + r.elements.arr[];
         return result;
     }
     unittest{
@@ -248,10 +248,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opSub(in VectorType r)const{
         auto result = VectorType();
-		static if (SIMD_Enable && !is(T == real))
-			mixin(Compute!("result.elements.%1$s = elements.%1$s - r.elements.%1$s;"));
-		else
-        	result.elements.arr[] = elements.arr[] - r.elements.arr[];
+        static if (SIMD_Enable && !is(T == real))
+            mixin(Compute!("result.elements.%1$s = elements.%1$s - r.elements.%1$s;"));
+        else
+            result.elements.arr[] = elements.arr[] - r.elements.arr[];
         return result;
     }
     unittest{
@@ -263,13 +263,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opAdd(in T v)const{
         auto result = VectorType();
-		static if (SIMD_Enable && !is(T == real)) {
-			PackedElements packedV;
-			packedV.arr[] = v;
-			mixin(Compute!("result.elements.%1$s = elements.%1$s + packedV.%1$s;"));
-		}
-		else
-			result.elements.arr[] = elements.arr[] + v;
+        static if (SIMD_Enable && !is(T == real)) {
+            PackedElements packedV;
+            packedV.arr[] = v;
+            mixin(Compute!("result.elements.%1$s = elements.%1$s + packedV.%1$s;"));
+        }
+        else
+            result.elements.arr[] = elements.arr[] + v;
         return result;
     }
     unittest{
@@ -282,13 +282,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opSub(in T v)const{
         auto result = VectorType();
-		static if (SIMD_Enable && !is(T == real)) {
-			PackedElements packedV;
-			packedV.arr[] = v;
-			mixin(Compute!("result.elements.%1$s = elements.%1$s - packedV.%1$s;"));
-		}
-		else
-        	result.elements.arr[] = elements.arr[] - v;
+        static if (SIMD_Enable && !is(T == real)) {
+            PackedElements packedV;
+            packedV.arr[] = v;
+            mixin(Compute!("result.elements.%1$s = elements.%1$s - packedV.%1$s;"));
+        }
+        else
+            result.elements.arr[] = elements.arr[] - v;
         return result;
     }
     unittest{
@@ -300,13 +300,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opMul(in T v)const{
         auto result = VectorType();
-		static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort))) {
-			PackedElements packedV;
-			packedV.arr[] = v;
-			mixin(Compute!("result.elements.%1$s = elements.%1$s * cast(const)packedV.%1$s;"));
-		}
-		else
-        	result.elements.arr[] = elements.arr[] * v;
+        static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort))) {
+            PackedElements packedV;
+            packedV.arr[] = v;
+            mixin(Compute!("result.elements.%1$s = elements.%1$s * cast(const)packedV.%1$s;"));
+        }
+        else
+            result.elements.arr[] = elements.arr[] * v;
         return result;
     }
     unittest{
@@ -319,13 +319,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opDiv(in T v)const{
         auto result = VectorType();
-		static if (SIMD_Enable && (is(T == float) || is(T == double))) {
-			PackedElements packedV;
-			packedV.arr[] = v;
-			mixin(Compute!("result.elements.%1$s = elements.%1$s / packedV.%1$s;"));
-		}
-		else
-        	result.elements.arr[] = elements.arr[] / v;
+        static if (SIMD_Enable && (is(T == float) || is(T == double))) {
+            PackedElements packedV;
+            packedV.arr[] = v;
+            mixin(Compute!("result.elements.%1$s = elements.%1$s / packedV.%1$s;"));
+        }
+        else
+            result.elements.arr[] = elements.arr[] / v;
         return result;
     }
     unittest{
@@ -349,10 +349,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opMul(in VectorType v)const{
         auto result = VectorType();
-		static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort)))
-			mixin(Compute!("result.elements.%1$s = elements.%1$s * v.elements.%1$s;"));
-		else
-        	result.elements.arr[] = elements.arr[] * v.elements.arr[];
+        static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort)))
+            mixin(Compute!("result.elements.%1$s = elements.%1$s * v.elements.%1$s;"));
+        else
+            result.elements.arr[] = elements.arr[] * v.elements.arr[];
         return result;
     }
     unittest{
@@ -365,10 +365,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opDiv(in VectorType v)const{
         auto result = VectorType();
-		static if (SIMD_Enable && (is(T == float) || is(T == double)))
-			mixin(Compute!("result.elements.%1$s = elements.%1$s / v.elements.%1$s;"));
-		else
-        	result.elements.arr[] = elements.arr[] / v.elements.arr[];
+        static if (SIMD_Enable && (is(T == float) || is(T == double)))
+            mixin(Compute!("result.elements.%1$s = elements.%1$s / v.elements.%1$s;"));
+        else
+            result.elements.arr[] = elements.arr[] / v.elements.arr[];
         return result;
     }
     unittest{
@@ -393,10 +393,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opAddAssign(in VectorType v){
-		static if (SIMD_Enable && !is(T == real))
-			mixin(Compute!("elements.%1$s += v.elements.%1$s;"));
-		else
-        	elements.arr[] += v.elements.arr[];
+        static if (SIMD_Enable && !is(T == real))
+            mixin(Compute!("elements.%1$s += v.elements.%1$s;"));
+        else
+            elements.arr[] += v.elements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(1.0,2.0,3.0);
@@ -408,10 +408,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opSubAssign(in VectorType v){
-		static if (SIMD_Enable && !is(T == real))
-			mixin(Compute!("elements.%1$s -= v.elements.%1$s;"));
-		else
-        	elements.arr[] -= v.elements.arr[];
+        static if (SIMD_Enable && !is(T == real))
+            mixin(Compute!("elements.%1$s -= v.elements.%1$s;"));
+        else
+            elements.arr[] -= v.elements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(5.0,4.0,3.0);
@@ -423,13 +423,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opAddAssign(in T v){
-		static if (SIMD_Enable && !is(T == real)) {
-			PackedElements packedV;
-			packedV.arr[] = v;
-			mixin(Compute!("elements.%1$s += packedV.%1$s;"));
-		}
-		else
-        	elements.arr[] += v;
+        static if (SIMD_Enable && !is(T == real)) {
+            PackedElements packedV;
+            packedV.arr[] = v;
+            mixin(Compute!("elements.%1$s += packedV.%1$s;"));
+        }
+        else
+            elements.arr[] += v;
     }
     unittest{
         auto vec1 = Vector3d(1.0,2.0,3.0);
@@ -440,13 +440,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opSubAssign(in T v){
-		static if (SIMD_Enable && !is(T == real)) {
-			PackedElements packedV;
-			packedV.arr[] = v;
-			mixin(Compute!("elements.%1$s -= packedV.%1$s;"));
-		}
-		else
-        	elements.arr[] -= v;
+        static if (SIMD_Enable && !is(T == real)) {
+            PackedElements packedV;
+            packedV.arr[] = v;
+            mixin(Compute!("elements.%1$s -= packedV.%1$s;"));
+        }
+        else
+            elements.arr[] -= v;
     }
     unittest{
         auto vec1 = Vector3d(2.0,3.0,4.0);
@@ -468,13 +468,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opDivAssign(in T v){
-		static if (SIMD_Enable && (is(T == float) || is(T == double))) {
-			PackedElements packedV;
-			packedV.arr[] = v;
-			mixin(Compute!("elements.%1$s /= packedV.%1$s;"));
-		}
-		else
-        	elements.arr[] /= v;
+        static if (SIMD_Enable && (is(T == float) || is(T == double))) {
+            PackedElements packedV;
+            packedV.arr[] = v;
+            mixin(Compute!("elements.%1$s /= packedV.%1$s;"));
+        }
+        else
+            elements.arr[] /= v;
     }
     unittest{
         auto vec1 = Vector3d(3.0,4.0,5.0);
@@ -485,13 +485,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opMulAssign(in T v){
-		static if (SIMD_Enable && (is(T == float) && is(T == double) && is(T == short) && is(T == ushort))) {
-			PackedElements packedV;
-			packedV.arr[] = v;
-			mixin(Compute!("elements.%1$s *= packedV.%1$s;"));
-		}
-		else 
-        	elements.arr[] *= v;
+        static if (SIMD_Enable && (is(T == float) && is(T == double) && is(T == short) && is(T == ushort))) {
+            PackedElements packedV;
+            packedV.arr[] = v;
+            mixin(Compute!("elements.%1$s *= packedV.%1$s;"));
+        }
+        else 
+            elements.arr[] *= v;
     }
     unittest{
         auto vec1 = Vector3d(2.0,-1.0,1.0);
@@ -514,10 +514,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opDivAssign(in VectorType v){
-		static if (SIMD_Enable && (is(T == double) || is(T == float)))
-			mixin(Compute!("elements.%1$s /= v.elements.%1$s;"));
-		else
-        	elements.arr[] /= v.elements.arr[];
+        static if (SIMD_Enable && (is(T == double) || is(T == float)))
+            mixin(Compute!("elements.%1$s /= v.elements.%1$s;"));
+        else
+            elements.arr[] /= v.elements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(4.0,2.0,1.0);
@@ -529,10 +529,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opMulAssign(in VectorType v){
-		static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort)))
-			mixin(Compute!("elements.%1$s *= v.elements.%1$s;"));
-		else
-        	elements.arr[] *= v.elements.arr[];
+        static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort)))
+            mixin(Compute!("elements.%1$s *= v.elements.%1$s;"));
+        else
+            elements.arr[] *= v.elements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(3.0,2.0,1.0);
@@ -562,18 +562,18 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         Vectorのドット積を返します．
     +/
     T dotProduct(in VectorType v)const{
-		//v1 * v2 = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z ...
-		//product = (v1.x * v2.x, v1.y * v2.y, v1.z * v2.z)
-		import std.algorithm.iteration : map;
-		import std.range : iota,join;
-		import std.format : format;
-		auto product = this * v;
-		//expand to "auto result = product.elements.arr[0] + product.elements.arr[1] + product.elements.arr[2] + ..."
-		mixin("return "~Dimention
-						.iota
-						.map!(idx => format("product.elements.arr[%d]",idx))
-						.join('+')
-						~ ";");
+        //v1 * v2 = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z ...
+        //product = (v1.x * v2.x, v1.y * v2.y, v1.z * v2.z)
+        import std.algorithm.iteration : map;
+        import std.range : iota,join;
+        import std.format : format;
+        auto product = this * v;
+        //expand to "auto result = product.elements.arr[0] + product.elements.arr[1] + product.elements.arr[2] + ..."
+        mixin("return "~Dimention
+                        .iota
+                        .map!(idx => format("product.elements.arr[%d]",idx))
+                        .join('+')
+                        ~ ";");
     }
     unittest{
         auto vec1 = Vector3d(3.0, 2.0, 1.0);
@@ -621,15 +621,15 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         VectorとVectorの成す角を求めます
     +/
     auto angle(in VectorType v)const{
-		/+
-		v1 * v2 = |v1| * |v2| * cosθ
-		θ = acos((v1 * v2) / (|v1| * |v2|))
-		|v1| = √(v1.x^2 + v1.y^2 + v1.z^2 ...) = √(v1 * v1)
-		norm_product = |v1| * |v2| = √(v1*v1 * v2*v2)
-		dotProduct = v1 * v2
-		+/
-		auto innerProduct = dotProduct(v);
-		auto normProduct = dotProduct(this) * v.dotProduct(v);
+        /+
+        v1 * v2 = |v1| * |v2| * cosθ
+        θ = acos((v1 * v2) / (|v1| * |v2|))
+        |v1| = √(v1.x^2 + v1.y^2 + v1.z^2 ...) = √(v1 * v1)
+        norm_product = |v1| * |v2| = √(v1*v1 * v2*v2)
+        dotProduct = v1 * v2
+        +/
+        auto innerProduct = dotProduct(v);
+        auto normProduct = dotProduct(this) * v.dotProduct(v);
         static if (__traits(isIntegral,T)) {
             return acos(cast(float)innerProduct / sqrt(cast(float)normProduct));
         }
@@ -670,13 +670,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         Vectorを正規化します．
     +/
     void normalize(){
-		static if (SIMD_Enable && (is(T == float) || is(T == double))) {
-			PackedElements packedNorm;
-			packedNorm.arr[] = this.norm();
-			mixin(Compute!("this.elements.%1$s /= packedNorm.%1$s;"));
-		}
-		else
-        	this.elements.arr[] /= this.norm();
+        static if (SIMD_Enable && (is(T == float) || is(T == double))) {
+            PackedElements packedNorm;
+            packedNorm.arr[] = this.norm();
+            mixin(Compute!("this.elements.%1$s /= packedNorm.%1$s;"));
+        }
+        else
+            this.elements.arr[] /= this.norm();
     }
     unittest{
         auto vec1 = Vector3d(3.0, 2.0, 1.0);
@@ -861,14 +861,14 @@ unittest{
 
 
 private template expandFor(string stmt,size_t Limit) {
-	import std.algorithm.iteration : map;
-	import std.range : iota,repeat,join,zip;
-	import std.format : format;
-	enum expandFor = Limit
-					.iota
-					.map!(idx => format(stmt,idx))
-					.join;
+    import std.algorithm.iteration : map;
+    import std.range : iota,repeat,join,zip;
+    import std.format : format;
+    enum expandFor = Limit
+                    .iota
+                    .map!(idx => format(stmt,idx))
+                    .join;
 }
 unittest {
-	static assert (expandFor!("xs[%1$d] + ys[%1$d];",3) == "xs[0] + ys[0];xs[1] + ys[1];xs[2] + ys[2];");
+    static assert (expandFor!("xs[%1$d] + ys[%1$d];",3) == "xs[0] + ys[0];xs[1] + ys[1];xs[2] + ys[2];");
 }
