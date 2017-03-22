@@ -86,7 +86,7 @@ class Source{
         Source position(V)(in V p)if(isVector!(V) && V.dimention >= 3){
             alSource3f(_id, AL_POSITION, p[0], p[1], p[2]);
             _position[3] = 1f;
-            foreach (int i, e; p.elements) {
+            foreach (int i, e; p.elements.arr) {
                 _position[i] = e;
             }
             return this;
@@ -96,7 +96,7 @@ class Source{
         Source velocity (V)(in V v)if(isVector!(V) && V.dimention >= 3){
             alSource3f(_id, AL_VELOCITY, v[0], v[1], v[2]);
             _velocity[3] = 0f;
-            foreach (int i, e; v.elements) {
+            foreach (int i, e; v.elements.arr) {
                 _velocity[i] = e;
             }
             return this;

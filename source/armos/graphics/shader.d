@@ -136,7 +136,7 @@ class Shader {
                 begin;
                 int location = uniformLocation(name);
                 if(location != -1){
-                    mixin(glFunctionString!(typeof(v[0]), v.elements.length).normal("glUniform"));
+                    mixin(glFunctionString!(typeof(v[0]), v.elements.arr.length).normal("glUniform"));
                 }
                 end;
             }
