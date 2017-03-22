@@ -3,6 +3,7 @@ import std.stdio, std.math;
 
 class TestApp : ar.app.BaseApp{
 	override void setup(){
+        _camera = new ar.graphics.DefaultCamera;
 		_camera.position = ar.math.Vector3f(0, 0, -100);
 		_camera.target= ar.math.Vector3f(0, 0, 0);
         ar.graphics.samples = 2;
@@ -48,7 +49,7 @@ class TestApp : ar.app.BaseApp{
     
     private{
         float counter = 0;
-        ar.graphics.Camera _camera = new ar.graphics.DefaultCamera;
+        ar.graphics.Camera _camera;
 
         void drawPrimitiveExample(ar.math.Vector3f position, ar.graphics.Mesh mesh, ar.types.Color color){
             ar.graphics.pushMatrix;
