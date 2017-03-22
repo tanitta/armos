@@ -1,7 +1,7 @@
 module armos.graphics.bitmap;
 import armos.math;
 import armos.graphics;
-import std.experimental.ndslice;
+import mir.ndslice;
 /++
 Bitmapデータを表すstructです．
 画素を表すPixelの集合で構成されます．
@@ -166,7 +166,7 @@ struct Bitmap(T){
         }
         
         ///
-        Slice!(3LU, V*) sliced(V = float)(){
+        Slice!(Canonical, [3LU], V*) sliced(V = float)(){
             import std.range;
             import std.algorithm;
             import std.conv;
@@ -184,7 +184,7 @@ struct Bitmap(T){
                     }
                 }
             }
-            return data.sliced(_size[0], _size[1], numElements);
+            return data.sliced(_size[0], _size[1], numElements).canonical;
         }
     }
 
