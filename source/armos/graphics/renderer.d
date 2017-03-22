@@ -476,7 +476,7 @@ unittest{
             );
     import std.math;
     foreach (int i, ref r; m.elements) {
-        foreach (int j, ref c; r.elements.arr) {
+        foreach (int j, ref c; r.elements) {
             assert(approxEqual(c, ans[i][j]));
         }
     }
@@ -502,7 +502,7 @@ unittest{
     import std.math;
     immutable m = M.identity.rotate(PI, 0.0, 1.0, 0.0);
     foreach (int i, ref r; m.elements) {
-        foreach (int j, ref c; r.elements.arr) {
+        foreach (int j, ref c; r.elements) {
             assert(approxEqual(c, ans[i][j]));
         }
     }

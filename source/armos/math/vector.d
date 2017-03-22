@@ -72,9 +72,14 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     unittest {
     }
 
-    PackedElements elements;
+    PackedElements packedElements;
+        
+    // T[Dimention] elements = packedElements.arr[];
+    ref T[Dimention] elements()const{
+        return packedElements.arr[];
+    }
 
-    //T[Dimention] elements = T.init;
+    //T[Dimention] packedElements = T.init;
     ///
     enum int dimention = Dimention;
     unittest{
@@ -104,7 +109,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         assert(arr.length == 0 || arr.length == Dimention);
     }body{
             if(arr.length != 0){
-                elements.arr = arr;
+                packedElements.arr = arr;
             }
         }
 
@@ -112,13 +117,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     pure T opIndex(in int index)const{
-        return elements.arr[index];
+        return packedElements.arr[index];
     }
 
     /++
     +/
     ref T opIndex(in int index){
-        return elements.arr[index];
+        return packedElements.arr[index];
     }
     unittest{
         auto vec = Vector3d(1, 2, 3);
@@ -128,8 +133,8 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     // pure const bool opEquals(Object vec){
-    //  foreach (int index, T v; (cast(VectorType)vec).elements.arr) {
-    //      if(v != this.elements.arr[index]){
+    //  foreach (int index, T v; (cast(VectorType)vec).packedElements.arr) {
+    //      if(v != this.packedElements.arr[index]){
     //          return false;
     //      }
     //  }
@@ -150,7 +155,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     enum VectorType zero = (){
         VectorType v;
-        v.elements.arr[] = T(0);
+        v.packedElements.arr[] = T(0);
         return v;
     }();
     unittest{
@@ -165,9 +170,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     VectorType opNeg()const{
         auto result = VectorType();
         static if (SIMD_Enable && !is(T == real))
-            mixin(Compute!("result.elements.%1$s = -elements.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = -packedElements.%1$s;"));
         else
-            result.elements.arr[] = -elements.arr[];
+            result.packedElements.arr[] = -packedElements.arr[];
         return result;
     };
     unittest{
@@ -182,9 +187,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     VectorType opAdd(in VectorType r)const{
         auto result = VectorType();
         static if (SIMD_Enable && !is(T == real))
-            mixin(Compute!("result.elements.%1$s = elements.%1$s + r.elements.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = packedElements.%1$s + r.packedElements.%1$s;"));
         else
-            result.elements.arr[] = elements.arr[] + r.elements.arr[];
+            result.packedElements.arr[] = packedElements.arr[] + r.packedElements.arr[];
         return result;
     }
     unittest{
@@ -202,9 +207,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     VectorType opSub(in VectorType r)const{
         auto result = VectorType();
         static if (SIMD_Enable && !is(T == real))
-            mixin(Compute!("result.elements.%1$s = elements.%1$s - r.elements.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = packedElements.%1$s - r.packedElements.%1$s;"));
         else
-            result.elements.arr[] = elements.arr[] - r.elements.arr[];
+            result.packedElements.arr[] = packedElements.arr[] - r.packedElements.arr[];
         return result;
     }
     unittest{
@@ -219,10 +224,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && !is(T == real)) {
             PackedElements packedV;
             packedV.arr[] = v;
-            mixin(Compute!("result.elements.%1$s = elements.%1$s + packedV.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = packedElements.%1$s + packedV.%1$s;"));
         }
         else
-            result.elements.arr[] = elements.arr[] + v;
+            result.packedElements.arr[] = packedElements.arr[] + v;
         return result;
     }
     unittest{
@@ -238,10 +243,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && !is(T == real)) {
             PackedElements packedV;
             packedV.arr[] = v;
-            mixin(Compute!("result.elements.%1$s = elements.%1$s - packedV.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = packedElements.%1$s - packedV.%1$s;"));
         }
         else
-            result.elements.arr[] = elements.arr[] - v;
+            result.packedElements.arr[] = packedElements.arr[] - v;
         return result;
     }
     unittest{
@@ -256,10 +261,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort))) {
             PackedElements packedV;
             packedV.arr[] = v;
-            mixin(Compute!("result.elements.%1$s = elements.%1$s * cast(const)packedV.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = packedElements.%1$s * cast(const)packedV.%1$s;"));
         }
         else
-            result.elements.arr[] = elements.arr[] * v;
+            result.packedElements.arr[] = packedElements.arr[] * v;
         return result;
     }
     unittest{
@@ -275,10 +280,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && (is(T == float) || is(T == double))) {
             PackedElements packedV;
             packedV.arr[] = v;
-            mixin(Compute!("result.elements.%1$s = elements.%1$s / packedV.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = packedElements.%1$s / packedV.%1$s;"));
         }
         else
-            result.elements.arr[] = elements.arr[] / v;
+            result.packedElements.arr[] = packedElements.arr[] / v;
         return result;
     }
     unittest{
@@ -290,7 +295,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opMod(in T v)const{
         auto result = VectorType();
-        result.elements.arr[] = elements.arr[] % v;
+        result.packedElements.arr[] = packedElements.arr[] % v;
         return result;
     }
     unittest{
@@ -303,9 +308,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     VectorType opMul(in VectorType v)const{
         auto result = VectorType();
         static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort)))
-            mixin(Compute!("result.elements.%1$s = elements.%1$s * v.elements.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = packedElements.%1$s * v.packedElements.%1$s;"));
         else
-            result.elements.arr[] = elements.arr[] * v.elements.arr[];
+            result.packedElements.arr[] = packedElements.arr[] * v.packedElements.arr[];
         return result;
     }
     unittest{
@@ -319,9 +324,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     VectorType opDiv(in VectorType v)const{
         auto result = VectorType();
         static if (SIMD_Enable && (is(T == float) || is(T == double)))
-            mixin(Compute!("result.elements.%1$s = elements.%1$s / v.elements.%1$s;"));
+            mixin(Compute!("result.packedElements.%1$s = packedElements.%1$s / v.packedElements.%1$s;"));
         else
-            result.elements.arr[] = elements.arr[] / v.elements.arr[];
+            result.packedElements.arr[] = packedElements.arr[] / v.packedElements.arr[];
         return result;
     }
     unittest{
@@ -334,7 +339,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     VectorType opMod(in VectorType v)const{
         auto result = VectorType();
-        result.elements.arr[] = elements.arr[] % v.elements.arr[];
+        result.packedElements.arr[] = packedElements.arr[] % v.packedElements.arr[];
         return result;
     }
     unittest{
@@ -347,9 +352,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     void opAddAssign(in VectorType v){
         static if (SIMD_Enable && !is(T == real))
-            mixin(Compute!("elements.%1$s += v.elements.%1$s;"));
+            mixin(Compute!("packedElements.%1$s += v.packedElements.%1$s;"));
         else
-            elements.arr[] += v.elements.arr[];
+            packedElements.arr[] += v.packedElements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(1.0,2.0,3.0);
@@ -362,9 +367,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     void opSubAssign(in VectorType v){
         static if (SIMD_Enable && !is(T == real))
-            mixin(Compute!("elements.%1$s -= v.elements.%1$s;"));
+            mixin(Compute!("packedElements.%1$s -= v.packedElements.%1$s;"));
         else
-            elements.arr[] -= v.elements.arr[];
+            packedElements.arr[] -= v.packedElements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(5.0,4.0,3.0);
@@ -379,10 +384,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && !is(T == real)) {
             PackedElements packedV;
             packedV.arr[] = v;
-            mixin(Compute!("elements.%1$s += packedV.%1$s;"));
+            mixin(Compute!("packedElements.%1$s += packedV.%1$s;"));
         }
         else
-            elements.arr[] += v;
+            packedElements.arr[] += v;
     }
     unittest{
         auto vec1 = Vector3d(1.0,2.0,3.0);
@@ -396,10 +401,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && !is(T == real)) {
             PackedElements packedV;
             packedV.arr[] = v;
-            mixin(Compute!("elements.%1$s -= packedV.%1$s;"));
+            mixin(Compute!("packedElements.%1$s -= packedV.%1$s;"));
         }
         else
-            elements.arr[] -= v;
+            packedElements.arr[] -= v;
     }
     unittest{
         auto vec1 = Vector3d(2.0,3.0,4.0);
@@ -410,7 +415,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opModAssign(in T v){
-        elements.arr[] %= v;
+        packedElements.arr[] %= v;
     }
     unittest{
         auto vec1 = Vector3d(4.0,5.0,6.0);
@@ -424,10 +429,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && (is(T == float) || is(T == double))) {
             PackedElements packedV;
             packedV.arr[] = v;
-            mixin(Compute!("elements.%1$s /= packedV.%1$s;"));
+            mixin(Compute!("packedElements.%1$s /= packedV.%1$s;"));
         }
         else
-            elements.arr[] /= v;
+            packedElements.arr[] /= v;
     }
     unittest{
         auto vec1 = Vector3d(3.0,4.0,5.0);
@@ -441,10 +446,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && (is(T == float) && is(T == double) && is(T == short) && is(T == ushort))) {
             PackedElements packedV;
             packedV.arr[] = v;
-            mixin(Compute!("elements.%1$s *= packedV.%1$s;"));
+            mixin(Compute!("packedElements.%1$s *= packedV.%1$s;"));
         }
         else 
-            elements.arr[] *= v;
+            packedElements.arr[] *= v;
     }
     unittest{
         auto vec1 = Vector3d(2.0,-1.0,1.0);
@@ -455,7 +460,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
     +/
     void opModAssign(in VectorType v){
-        elements.arr[] %= v.elements.arr[];
+        packedElements.arr[] %= v.packedElements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(3.0,2.0,1.0);
@@ -468,9 +473,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     void opDivAssign(in VectorType v){
         static if (SIMD_Enable && (is(T == double) || is(T == float)))
-            mixin(Compute!("elements.%1$s /= v.elements.%1$s;"));
+            mixin(Compute!("packedElements.%1$s /= v.packedElements.%1$s;"));
         else
-            elements.arr[] /= v.elements.arr[];
+            packedElements.arr[] /= v.packedElements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(4.0,2.0,1.0);
@@ -483,9 +488,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     void opMulAssign(in VectorType v){
         static if (SIMD_Enable && (is(T == float) || is(T == double) || is(T == short) || is(T == ushort)))
-            mixin(Compute!("elements.%1$s *= v.elements.%1$s;"));
+            mixin(Compute!("packedElements.%1$s *= v.packedElements.%1$s;"));
         else
-            elements.arr[] *= v.elements.arr[];
+            packedElements.arr[] *= v.packedElements.arr[];
     }
     unittest{
         auto vec1 = Vector3d(3.0,2.0,1.0);
@@ -499,7 +504,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     T norm()const{
         import std.numeric : dotProduct;
-        immutable T sumsq = dotProduct(elements.arr, elements.arr);
+        immutable T sumsq = dotProduct(packedElements.arr, packedElements.arr);
 
         static if( is(T == int ) )
             return cast(int)sqrt(cast(float)sumsq);
@@ -521,10 +526,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         import std.range : iota,join;
         import std.format : format;
         auto product = this * v;
-        //expand to "auto result = product.elements.arr[0] + product.elements.arr[1] + product.elements.arr[2] + ..."
+        //expand to "auto result = product.packedElements.arr[0] + product.packedElements.arr[1] + product.packedElements.arr[2] + ..."
         mixin("return "~Dimention
                         .iota
-                        .map!(idx => format("product.elements.arr[%d]",idx))
+                        .map!(idx => format("product.packedElements.arr[%d]",idx))
                         .join('+')
                         ~ ";");
     }
@@ -549,7 +554,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
             assert(arg.length == Dimention-2);
         }body{
             auto return_vector = VectorType.zero;
-            foreach (int i, ref T v; return_vector.elements.arr) {
+            foreach (int i, ref T v; return_vector.packedElements.arr) {
                 auto matrix = armos.math.Matrix!(T, Dimention, Dimention)();
                 auto element_vector = VectorType.zero;
                 element_vector[i] = T(1);
@@ -626,10 +631,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (SIMD_Enable && (is(T == float) || is(T == double))) {
             PackedElements packedNorm;
             packedNorm.arr[] = this.norm();
-            mixin(Compute!("this.elements.%1$s /= packedNorm.%1$s;"));
+            mixin(Compute!("this.packedElements.%1$s /= packedNorm.%1$s;"));
         }
         else
-            this.elements.arr[] /= this.norm();
+            this.packedElements.arr[] /= this.norm();
     }
     unittest{
         auto vec1 = Vector3d(3.0, 2.0, 1.0);
@@ -641,7 +646,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         Vectorの要素を一次元配列で返します．
     +/
     T[Dimention] array()const{
-        return elements.arr;
+        return packedElements.arr;
     }
     unittest{
         auto vector = Vector3f(1, 2, 3);
@@ -659,9 +664,9 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         import std.stdio;
         for (int i = 0; i < Dimention ; i++) {
             static if( is(T == int ) )
-                writef("%d\t", elements.arr[i]);
+                writef("%d\t", packedElements.arr[i]);
             else
-                writef("%f\t", elements.arr[i]);
+                writef("%f\t", packedElements.arr[i]);
         }
         writef("\n");
     }
@@ -671,11 +676,11 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     +/
     CastType opCast(CastType)()const{
         auto vec = CastType();
-        if (vec.elements.arr.length != elements.arr.length) {
+        if (vec.packedElements.arr.length != packedElements.arr.length) {
             assert(0);
         }else{
-            foreach (int index, const T var; elements.arr) {
-                vec.elements.arr[index] = cast( typeof( vec.elements.arr[0] ) )elements.arr[index];
+            foreach (int index, const T var; packedElements.arr) {
+                vec.packedElements.arr[index] = cast( typeof( vec.packedElements.arr[0] ) )packedElements.arr[index];
             }
             return vec;
         }
@@ -701,11 +706,11 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static if (swizzle.length == 1) {
             enum index = coordName.indexOf(swizzle[0]);
             static if (index >= 0){
-                return elements.arr[index];
+                return packedElements.arr[index];
             }
         } else {
             enum int[] indecies = swizzle.map!(axis => coordName.indexOf(axis)).array;
-            mixin("return Vector!(T,swizzle.length)("~indecies.map!(index => "elements.arr["~index.to!string~"]").array.join(',')~");");
+            mixin("return Vector!(T,swizzle.length)("~indecies.map!(index => "packedElements.arr["~index.to!string~"]").array.join(',')~");");
         }
     }
     
@@ -715,7 +720,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         import std.string : indexOf;
         enum index = coordName.indexOf(swizzle[0]);
         static if (index >= 0) {
-            elements.arr[index] = v;
+            packedElements.arr[index] = v;
         }else{
             static assert (false);
         }
@@ -730,11 +735,11 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         import std.range : iota,zip;
         import std.algorithm.iteration : map,reduce;
         import std.traits;
-        static if (is(T == Unqual!(typeof(v.elements.arr[0])))){
+        static if (is(T == Unqual!(typeof(v.packedElements.arr[0])))){
             enum indecies = swizzle.map!(charcter => coordName.indexOf(charcter)).array;
             mixin(swizzle.length.iota
                         .zip(indecies)
-                        .map!(pair => "elements.arr["~pair[1].to!string~"] = v.elements.arr["~pair[0].to!string~"];")
+                        .map!(pair => "packedElements.arr["~pair[1].to!string~"] = v.packedElements.arr["~pair[0].to!string~"];")
                         .reduce!"a~b"
                         );
          }

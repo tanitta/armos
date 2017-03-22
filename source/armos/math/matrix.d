@@ -123,7 +123,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     static MatrixType zero(){
         auto zeroMatrix = MatrixType();
         foreach (ref v; zeroMatrix.elements) {
-            foreach (ref n; v.elements.arr) {
+            foreach (ref n; v.elements) {
                 n = T( 0 );
             }
         }
@@ -309,7 +309,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         auto result = VectorType();
         for (int targetRow = 0; targetRow < elements.length; targetRow++) {
             T sum = T(0);
-            foreach (elem; (elements[targetRow] * vec_r).elements.arr) {
+            foreach (elem; (elements[targetRow] * vec_r).elements) {
                 sum += elem;
             }
             result[targetRow] = sum;
