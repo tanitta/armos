@@ -3,7 +3,7 @@ import std.stdio, std.math, std.conv;
 static import ar = armos;
 
 class TestApp : ar.app.BaseApp{
-	ar.graphics.Camera camera = new ar.graphics.DefaultCamera();
+	ar.graphics.Camera camera;
 	ar.utils.Gui gui;
 	ar.graphics.Mesh mesh;
 	float _fpsUseRate = 0.0;
@@ -16,6 +16,7 @@ class TestApp : ar.app.BaseApp{
 	
 		
 	override void setup(){
+        camera = new ar.graphics.DefaultCamera();
 		ar.graphics.blendMode(ar.graphics.BlendMode.Alpha);
 		camera.position = ar.math.Vector3f(0, 0, -100);
 		camera.target= ar.math.Vector3f(0, 0, 0);
