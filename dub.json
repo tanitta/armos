@@ -7,7 +7,7 @@
     "targetType": "library",
     "dependencies": {
         "derelict-sdl2": ">=1.9.7", 
-        "derelict-assimp3": ">=1.0.1", 
+        "derelict-assimp3": "1.1.1", 
         "derelict-glfw3": "1.1.0", 
         "derelict-gl3": ">=1.0.18", 
         "derelict-ft": ">=1.0.2",
@@ -18,5 +18,10 @@
         "derelict-vorbis": "~>1.0.1",
         "fswatch": "~>0.2.0"
     }, 
-	"dflags-ldc":["-disable-linker-strip-dead"]
+	"dflags-ldc":["-disable-linker-strip-dead"],
+    "copyFiles-windows-x86": [
+        "libs/FreeImage/lib/win32/FreeImage.dll",
+        "libs/glfw/lib/win32/glfw3.dll",
+        "libs/assimp/lib/win32/assimp.dll"
+    ]
 }
