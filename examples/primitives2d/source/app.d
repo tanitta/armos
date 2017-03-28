@@ -27,9 +27,9 @@ class TestApp : ar.app.BaseApp{
 void main(){
     version(unittest){
     }else{
-        ar.app.WindowConfig windowConfig = (new ar.app.WindowConfig())
-            .width(640)
-            .height(480);
+        // Almost all methods in armos's classes and structs are chainable.
+        ar.app.WindowConfig windowConfig = (new ar.app.WindowConfig).width(640)
+                                                                    .height(480);
         ar.app.run(new TestApp, windowConfig);
     }
 }
