@@ -17,7 +17,8 @@ env:
     - TEST_DIR=examples/keyboard
     - TEST_DIR=examples/model
     - TEST_DIR=examples/noise
-    - TEST_DIR=examples/primitives
+    - TEST_DIR=examples/primitives2d
+    - TEST_DIR=examples/primitives3d
     - TEST_DIR=examples/shader
     - TEST_DIR=examples/texture
     - TEST_DIR=examples/geometryshader
