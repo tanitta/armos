@@ -174,9 +174,9 @@ class Font{
                         for (int x = 0; x < bitmap.width; ++x) {
                             auto index = x + y * bitmap.pitch;
                             auto c = bitmap.buffer[index];
-                            expandedData[i].pixel(x, y, 0, c);
-                            expandedData[i].pixel(x, y, 1, c);
-                            expandedData[i].pixel(x, y, 2, c);
+                            expandedData[i].pixel(x, y, 0, 255);
+                            expandedData[i].pixel(x, y, 1, 255);
+                            expandedData[i].pixel(x, y, 2, 255);
                             expandedData[i].pixel(x, y, 3, c);
                         }
                     }
