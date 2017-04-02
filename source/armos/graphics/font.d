@@ -37,7 +37,7 @@ struct Character{
 } 
 
 /++
-    Fontを読み込み，描画を行います．
+Fontを読み込み，描画を行います．
     Deprecated: 現在動作しません．
 +/
 class Font{
@@ -51,6 +51,8 @@ class Font{
                     _librariesInitialized = true;
                 }
             }
+            _mesh = new Mesh;
+            _mesh.primitiveMode = PrimitiveMode.Triangles;
         }
 
         ~this(){
@@ -104,7 +106,42 @@ class Font{
 
         /++
         +/
-        void drawString(string drawnString, int x, int y)const{}
+        void drawString(in string str, in int x, in int y){
+            import std.algorithm:map;
+            import std.array:array;
+            auto glyphs = str.map!(c => _characters[_glyphIndexMap[c]]).array;
+
+            _mesh.vertices  = new Vector4f[](str.length*4);
+            _mesh.texCoords0 = new Vector4f[](str.length*4);
+            _mesh.indices   = new int[](str.length*6);
+
+            float xShift = x;
+            float yShift = y;
+            foreach (uint i, glyph; glyphs) {
+                //TODO
+                xShift = xShift + glyph.width*2;
+            
+                _mesh.vertices[i*4]   = Vector4f(glyph.xmin+xShift, glyph.ymin+yShift, 0, 1);
+                _mesh.vertices[i*4+1] = Vector4f(glyph.xmax+xShift, glyph.ymin+yShift, 0, 1);
+                _mesh.vertices[i*4+2] = Vector4f(glyph.xmax+xShift, glyph.ymax+yShift, 0, 1);
+                _mesh.vertices[i*4+3] = Vector4f(glyph.xmin+xShift, glyph.ymax+yShift, 0, 1);
+            
+                _mesh.texCoords0[i*4]   = Vector4f(glyph.t1, glyph.v1, 0, 0);
+                _mesh.texCoords0[i*4+1] = Vector4f(glyph.t2, glyph.v1, 0, 0);
+                _mesh.texCoords0[i*4+2] = Vector4f(glyph.t2, glyph.v2, 0, 0);
+                _mesh.texCoords0[i*4+3] = Vector4f(glyph.t1, glyph.v2, 0, 0);
+            
+                _mesh.indices[i*6]   = i*4;
+                _mesh.indices[i*6+1] = i*4+1;
+                _mesh.indices[i*6+2] = i*4+2;
+                _mesh.indices[i*6+3] = i*4+2;
+                _mesh.indices[i*6+4] = i*4+3;
+                _mesh.indices[i*6+5] = i*4;
+            }
+            // _mesh.drawWireFrame;
+            currentMaterial.texture("tex0", _textureAtlas);
+            _mesh.drawFill;
+        }
 
         //TODO
         /++
@@ -123,6 +160,7 @@ class Font{
         static bool _librariesInitialized = false;
         static int _dpi = 96;
         Character[] _characters;
+        size_t[uint] _glyphIndexMap;
         FT_Face _face;
         int _fontSize;
         float _lineHeight = 0.0;
@@ -131,22 +169,24 @@ class Font{
         bool _useKerning;
         int _numCharacters = 0;
         Rectangle _glyphBBox;
+        Mesh _mesh;
         Texture _textureAtlas;
 
         /++
         +/
         void loadEachCharacters(in bool isAntiAliased){
-            int border = 1;
-            long areaSum=0;
+            int border = 4;
+            long areaSum = 0;
             _characters = new Character[](_numCharacters);
             Bitmap!(char)[] expandedData = new Bitmap!(char)[](_numCharacters);
 
             foreach (int i, ref character; _characters) {
-                int glyph = cast(char)(i+NUM_CHARACTER_TO_START);
+                uint glyph = cast(uint)(i+NUM_CHARACTER_TO_START);
+                _glyphIndexMap[glyph] = i;
                 if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
                 FT_Error error = FT_Load_Glyph( _face, FT_Get_Char_Index( _face, glyph ), isAntiAliased ?  FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
 
-                if (isAntiAliased == true){
+                if (isAntiAliased){
                     FT_Render_Glyph(_face.glyph, FT_RENDER_MODE_NORMAL);
                 }else{
                     FT_Render_Glyph(_face.glyph, FT_RENDER_MODE_MONO);
@@ -201,7 +241,7 @@ class Font{
                     }
                 }
             }
-            _textureAtlas = packInTexture(_characters, areaSum, border, expandedData);
+            _textureAtlas = _characters.packInTexture(areaSum, border, expandedData);
         }
     }//private
 }
@@ -212,7 +252,7 @@ private Texture packInTexture(ref Character[] characters, in long areaSum, in in
         if(c1.tH == c2.tH) return c1.tW > c2.tW;
         else return c1.tH > c2.tH;
     }
-    auto sortedCharacter = characters;
+    auto sortedCharacter = characters.dup;
     sort!(compareCharacters)(sortedCharacter);
 
     Vector2i atlasSize = calcAtlasSize(areaSum, sortedCharacter, border);
@@ -237,10 +277,10 @@ private Texture packInTexture(ref Character[] characters, in long areaSum, in in
             maxRowHeight = cast(int)sortedCharacter[i].tH + border*2;
         }
 
-        characters[sortedCharacter[i].index].t1		= cast( float )(x + border)/cast( float )(atlasSize[0]);
-        characters[sortedCharacter[i].index].v1		= cast( float )(y + border)/cast( float )(atlasSize[1]);
-        characters[sortedCharacter[i].index].t2		= float(characters[sortedCharacter[i].index].tW + x + border)/float(atlasSize[0]);
-        characters[sortedCharacter[i].index].v2		= float(characters[sortedCharacter[i].index].tH + y + border)/float(atlasSize[1]);
+        characters[sortedCharacter[i].index].t1 = cast( float )(x + border)/cast( float )(atlasSize[0]);
+        characters[sortedCharacter[i].index].v1 = cast( float )(y + border)/cast( float )(atlasSize[1]);
+        characters[sortedCharacter[i].index].t2 = cast(float)(characters[sortedCharacter[i].index].tW + x + border)/cast(float)(atlasSize[0]);
+        characters[sortedCharacter[i].index].v2 = cast(float)(characters[sortedCharacter[i].index].tH + y + border)/cast(float)(atlasSize[1]);
         charBitmap.pasteInto(atlasPixelsLuminanceAlpha,x+border,y+border);
         x+= cast(int)sortedCharacter[i].tW + border*2;
     }
@@ -259,20 +299,20 @@ private Vector2i calcAtlasSize(long areaSum, in Character[] sortedCharacter, int
         int x=0;
         int y=0;
         int maxRowHeight = cast(int)sortedCharacter[0].tH + border*2;
-        for(int i=0; i<cast(int)sortedCharacter.length; i++){
-            if(x+sortedCharacter[i].tW + border*2>w){
+        packed = true;
+        foreach (ref c; sortedCharacter) {
+            import std.conv:to;
+            if(x+c.tW + border*2 > w){
                 x = 0;
                 y += maxRowHeight;
-                maxRowHeight = cast(int)sortedCharacter[i].tH + border*2;
+                maxRowHeight = c.tH.to!int + border*2;
                 if(y + maxRowHeight > h){
                     alpha++;
+                    packed = false;
                     break;
                 }
             }
-            x+= cast(int)sortedCharacter[i].tW + border*2;
-            if(i==cast(int)sortedCharacter.length-1){
-                packed = true;
-            }
+            x += c.tW.to!int + border*2;
         }
     }
     return Vector2i(w, h);
