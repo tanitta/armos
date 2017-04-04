@@ -8,9 +8,9 @@ import armos.types;
 /++
     読み込まれる文字を表します．
 +/
-struct Character{
-    int index;
-    int glyph;
+struct Glyph{
+    size_t index;
+    uint glyph;
     int height;
     int width;
     int bearingX, bearingY;
@@ -19,7 +19,7 @@ struct Character{
     float tW,tH;
     float t1,t2,v1,v2;
 
-    void setupInfo(in int index, in int glyph, in FT_Face face){
+    void setupInfo(in size_t index, in uint glyph, in FT_Face face){
         this.index = index;
         this.glyph = glyph;
         height     = cast(int)face.glyph.metrics.height >>6;
@@ -38,7 +38,6 @@ struct Character{
 
 /++
 Fontを読み込み，描画を行います．
-    Deprecated: 現在動作しません．
 +/
 class Font{
     private alias This = typeof(this);
@@ -76,16 +75,16 @@ class Font{
             if(dpi!=0) _dpi = dpi;
             
             FT_Set_Char_Size( _face, fontSize << 6, fontSize << 6, _dpi, _dpi);
-            float fontUnitScale = (cast(float)fontSize * _dpi) / (72 * _face.units_per_EM);
-            _lineHeight = _face.height * fontUnitScale;
-            _ascenderHeight = _face.ascender * fontUnitScale;
-            _descenderHeight = _face.descender * fontUnitScale;
+            _fontUnitScale = (cast(float)fontSize * _dpi) / (72 * _face.units_per_EM);
+            _lineHeight = _face.height * _fontUnitScale;
+            _ascenderHeight = _face.ascender * _fontUnitScale;
+            _descenderHeight = _face.descender * _fontUnitScale;
             
             _glyphBBox.set(
-                    _face.bbox.xMin * fontUnitScale,
-                    _face.bbox.yMin * fontUnitScale,
-                    (_face.bbox.xMax - _face.bbox.xMin) * fontUnitScale,
-                    (_face.bbox.yMax - _face.bbox.yMin) * fontUnitScale
+                    _face.bbox.xMin * _fontUnitScale,
+                    _face.bbox.yMin * _fontUnitScale,
+                    (_face.bbox.xMax - _face.bbox.xMin) * _fontUnitScale,
+                    (_face.bbox.yMax - _face.bbox.yMin) * _fontUnitScale
                     );
             
             _useKerning = FT_HAS_KERNING( _face );
@@ -98,60 +97,52 @@ class Font{
             }
             return this;
         }
-        
-        unittest{
-            Font font = new Font;
-            font.load("/Library/Fonts/Futura.ttc", 16);
-        }
 
         /++
         +/
-        void drawString(in string str, in int x, in int y){
-            import std.algorithm:map;
-            import std.array:array;
-            auto glyphs = str.map!(c => _characters[_glyphIndexMap[c]]).array;
-
-            _mesh.vertices  = new Vector4f[](str.length*4);
+        This drawString(in string str, in int x, in int y){
+            _mesh.vertices   = new Vector4f[](str.length*4);
             _mesh.texCoords0 = new Vector4f[](str.length*4);
-            _mesh.indices   = new int[](str.length*6);
+            _mesh.indices    = new int[](str.length*6);
 
             float xShift = x;
-            float yShift = y;
-            foreach (uint i, glyph; glyphs) {
-                //TODO
-                xShift = xShift + glyph.width*2;
-            
-                _mesh.vertices[i*4]   = Vector4f(glyph.xmin+xShift, glyph.ymin+yShift, 0, 1);
-                _mesh.vertices[i*4+1] = Vector4f(glyph.xmax+xShift, glyph.ymin+yShift, 0, 1);
-                _mesh.vertices[i*4+2] = Vector4f(glyph.xmax+xShift, glyph.ymax+yShift, 0, 1);
-                _mesh.vertices[i*4+3] = Vector4f(glyph.xmin+xShift, glyph.ymax+yShift, 0, 1);
-            
-                _mesh.texCoords0[i*4]   = Vector4f(glyph.t1, glyph.v1, 0, 0);
-                _mesh.texCoords0[i*4+1] = Vector4f(glyph.t2, glyph.v1, 0, 0);
-                _mesh.texCoords0[i*4+2] = Vector4f(glyph.t2, glyph.v2, 0, 0);
-                _mesh.texCoords0[i*4+3] = Vector4f(glyph.t1, glyph.v2, 0, 0);
-            
-                _mesh.indices[i*6]   = i*4;
-                _mesh.indices[i*6+1] = i*4+1;
-                _mesh.indices[i*6+2] = i*4+2;
-                _mesh.indices[i*6+3] = i*4+2;
-                _mesh.indices[i*6+4] = i*4+3;
-                _mesh.indices[i*6+5] = i*4;
+            float yShift = y + _lineHeight;
+            int previousCharacter = 0;
+            foreach (size_t i, c; str) {
+                switch (c) {
+                    case '\n':
+                        yShift += _lineHeight;
+                        xShift = x;
+                        previousCharacter = 0;
+                        break;
+                    case '\t':
+                        xShift += toCharacter(' ').advance * _letterSpace * 4;
+                        previousCharacter = c;
+                        break;
+                    case ' ':
+                        xShift += toCharacter(' ').advance * _letterSpace;
+                        previousCharacter = c;
+                        break;
+                    default:
+                        auto glyph = _characters[_glyphIndexMap[c]];
+                        if(previousCharacter>0){
+                            xShift += kerning(c,previousCharacter);
+                        }
+                        _mesh.setCharacterToStringMesh(glyph, i, xShift, yShift);
+                        xShift += glyph.advance*_letterSpace;
+                        previousCharacter = c;
+                }
             }
-            // _mesh.drawWireFrame;
+            _mesh.drawWireFrame;
             currentMaterial.texture("tex0", _textureAtlas);
             _mesh.drawFill;
+            return this;
         }
 
         //TODO
         /++
         +/
-        void drawStringAsShapes(string drawnString, int x, int y)const{}
-
-        //TODO
-        Texture texture(){
-            return _textureAtlas;
-        }
+        // void drawStringAsShapes(string drawnString, int x, int y)const{}
     }//public
 
     private{
@@ -159,28 +150,42 @@ class Font{
         static FT_Library _library;
         static bool _librariesInitialized = false;
         static int _dpi = 96;
-        Character[] _characters;
+        Glyph[] _characters;
         size_t[uint] _glyphIndexMap;
         FT_Face _face;
         int _fontSize;
+        float _fontUnitScale;
         float _lineHeight = 0.0;
         float _ascenderHeight = 0.0;
         float _descenderHeight = 0.0;
+        float _letterSpace = 1f;
         bool _useKerning;
         int _numCharacters = 0;
         Rectangle _glyphBBox;
         Mesh _mesh;
         Texture _textureAtlas;
 
-        /++
-        +/
+        float kerning(in uint c, in uint previousCharacter){
+            if(FT_HAS_KERNING( _face )){
+                FT_Vector v;
+                FT_Get_Kerning(_face, FT_Get_Char_Index(_face, c), FT_Get_Char_Index(_face, previousCharacter), 1, &v);
+                return v.x * _fontUnitScale;
+            }else{
+                return 0;
+            }
+        }
+
+        Glyph toCharacter(char c){
+            return _characters[_glyphIndexMap[c]];
+        }
+
         void loadEachCharacters(in bool isAntiAliased){
             int border = 4;
             long areaSum = 0;
-            _characters = new Character[](_numCharacters);
+            _characters = new Glyph[](_numCharacters);
             Bitmap!(char)[] expandedData = new Bitmap!(char)[](_numCharacters);
 
-            foreach (int i, ref character; _characters) {
+            foreach (size_t i, ref character; _characters) {
                 uint glyph = cast(uint)(i+NUM_CHARACTER_TO_START);
                 _glyphIndexMap[glyph] = i;
                 if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
@@ -246,9 +251,29 @@ class Font{
     }//private
 }
 
-private Texture packInTexture(ref Character[] characters, in long areaSum, in int border, Bitmap!(char)[] expandedData){
+private void setCharacterToStringMesh(Mesh mesh, in Glyph glyph, in size_t index, in float x, in float y){
+    mesh.vertices[index*4]   = Vector4f(glyph.xmin+x, glyph.ymin+y, 0, 1);
+    mesh.vertices[index*4+1] = Vector4f(glyph.xmax+x, glyph.ymin+y, 0, 1);
+    mesh.vertices[index*4+2] = Vector4f(glyph.xmax+x, glyph.ymax+y, 0, 1);
+    mesh.vertices[index*4+3] = Vector4f(glyph.xmin+x, glyph.ymax+y, 0, 1);
+
+    mesh.texCoords0[index*4]   = Vector4f(glyph.t1, glyph.v1, 0, 0);
+    mesh.texCoords0[index*4+1] = Vector4f(glyph.t2, glyph.v1, 0, 0);
+    mesh.texCoords0[index*4+2] = Vector4f(glyph.t2, glyph.v2, 0, 0);
+    mesh.texCoords0[index*4+3] = Vector4f(glyph.t1, glyph.v2, 0, 0);
+
+    import std.conv;
+    mesh.indices[index*6]   = (index*4).to!(Mesh.IndexType);
+    mesh.indices[index*6+1] = (index*4+1).to!(Mesh.IndexType);
+    mesh.indices[index*6+2] = (index*4+2).to!(Mesh.IndexType);
+    mesh.indices[index*6+3] = (index*4+2).to!(Mesh.IndexType);
+    mesh.indices[index*6+4] = (index*4+3).to!(Mesh.IndexType);
+    mesh.indices[index*6+5] = (index*4).to!(Mesh.IndexType);
+}
+
+private Texture packInTexture(ref Glyph[] characters, in long areaSum, in int border, Bitmap!(char)[] expandedData){
     import std.algorithm;
-    bool compareCharacters(in Character c1, in Character c2){
+    bool compareCharacters(in Glyph c1, in Glyph c2){
         if(c1.tH == c2.tH) return c1.tW > c2.tW;
         else return c1.tH > c2.tH;
     }
@@ -287,7 +312,7 @@ private Texture packInTexture(ref Character[] characters, in long areaSum, in in
     return (new Texture).allocate(atlasPixelsLuminanceAlpha);
 }
 
-private Vector2i calcAtlasSize(long areaSum, in Character[] sortedCharacter, int border){
+private Vector2i calcAtlasSize(long areaSum, in Glyph[] sortedCharacter, int border){
     import std.math;
     bool packed = false;
     float alpha = log(cast(float)areaSum)*1.44269;
@@ -316,27 +341,4 @@ private Vector2i calcAtlasSize(long areaSum, in Character[] sortedCharacter, int
         }
     }
     return Vector2i(w, h);
-}
-
-/++
-    Fontを読み込みます
-    Deprecated: 現在動作しません．
-+/
-class FontLoader{
-    public{
-        /++
-        +/
-        void loadFont(
-            string fontName, int fontSize, 
-            bool isAntiAliased=false,
-            bool isFullCharacterSet=false,
-            bool makeContours=false,
-            float simplifyAmt=0.3f,
-            int dpi=0
-        ){
-
-        }
-    }//public
-
-    private{}//private
 }
