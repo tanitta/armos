@@ -15,7 +15,7 @@
         "colorize": "~>1.0.5",
         "derelict-al": "~>1.0.1",
         "derelict-ogg": "~>1.0.1",
-        "derelict-vorbis": "~>1.0.1",
+        "derelict-vorbis": "1.0.2",
         "fswatch": "~>0.2.0"
     }, 
 	"dflags-ldc":["-disable-linker-strip-dead"],
