@@ -1,7 +1,7 @@
 module armos.graphics.bitmap;
 import armos.math;
 import armos.graphics;
-import std.experimental.ndslice;
+
 /++
 Bitmapデータを表すstructです．
 画素を表すPixelの集合で構成されます．
@@ -164,28 +164,6 @@ struct Bitmap(T){
         ColorFormat colorFormat()const{
             return _colorFormat;
         }
-        
-        ///
-        Slice!(3LU, V*) sliced(V = float)(){
-            import std.range;
-            import std.algorithm;
-            import std.conv;
-            
-            V[] data = new V[_size.x*_size.y*numElements];
-            
-            foreach (int indexPixel, ref pixel; _data) {
-                foreach (int indexElement, ref index; numElements.iota.array) {
-                    size_t slicedIndex = indexElement + indexPixel*numElements;
-                    static if(__traits(isFloating, T)){
-                        data[slicedIndex] = pixel.element(index);
-                    }else{
-                        import std.conv;
-                        data[slicedIndex] = pixel.element(index).to!V/T.max.to!V;
-                    }
-                }
-            }
-            return data.sliced(_size[0], _size[1], numElements);
-        }
     }
 
     private{
@@ -194,76 +172,3 @@ struct Bitmap(T){
         armos.graphics.ColorFormat _colorFormat;
     }
 }
-
-///
-Bitmap!T asBitmap(T, S)(S slice, in armos.graphics.ColorFormat colorFormat){
-    Bitmap!T bitmap;
-    import std.conv;
-    bitmap.allocate(slice.length!1.to!int, slice.length!0.to!int, colorFormat);
-    for (size_t x = 0; x < slice.length!1; x++) {
-        for (size_t y = 0; y < slice.length!0; y++) {
-            for (size_t e = 0; e < slice.length!2; e++) {
-                alias SliceElement = DeepElementType!(S);
-                size_t index = x+y*(slice.length!1);
-                T level;
-                static if(__traits(isFloating, T)){
-                    static if(__traits(isFloating, SliceElement)){
-                        level = slice[y, x, e];
-                    }else{
-                        level = slice[y, x, e].to!float/SliceElement.max.to!float;
-                    }
-                }else{
-                    static if(__traits(isFloating, SliceElement)){
-                        level = (slice[y, x, e]*T.max.to!SliceElement).to!T;
-                    }else{
-                        level = slice[y, x, e].to!T;
-                    }
-                }
-                bitmap._data[index].element(e.to!int, level);
-            }
-        }
-    }
-    return bitmap;
-}
-
-unittest{
-    Bitmap!char bitmapA;
-    bitmapA.allocate(4, 4, ColorFormat.RGBA)
-           .pixel(0, 0, 0, 22)
-           .pixel(1, 0, 0, 128)
-           .pixel(2, 0, 1, 32);
-    
-    auto slice = bitmapA.sliced!float;
-    auto bitmapB = slice.asBitmap!char(ColorFormat.RGBA);
-    
-    assert(bitmapA.pixel(0, 0) == bitmapB.pixel(0, 0));
-    assert(bitmapA.pixel(1, 0) == bitmapB.pixel(1, 0));
-    assert(bitmapA.pixel(2, 0) == bitmapB.pixel(2, 0));
-}
-
-unittest{
-    Bitmap!char bitmap;
-    bitmap.allocate(4, 4, ColorFormat.RGBA)
-          .pixel(0, 0, 0, 0)
-          .pixel(1, 0, 0, 0)
-          .pixel(2, 0, 1, 0);
-    
-    auto slice = bitmap.sliced!float;
-    assert(slice[0, 0, 0] == 0.0f);
-    assert(slice[0, 1, 0] == 0.0f);
-    assert(slice[0, 2, 1] == 0.0f);
-}
-
-unittest{
-    Bitmap!float bitmap;
-    bitmap.allocate(4, 4, ColorFormat.RGBA)
-          .pixel(0, 0, 0, 0.5f)
-          .pixel(1, 0, 0, 0.5f)
-          .pixel(2, 0, 1, 0.5f);
-    
-    auto slice = bitmap.sliced!float;
-    assert(slice[0, 0, 0] == 0.5f);
-    assert(slice[0, 1, 0] == 0.5f);
-    assert(slice[0, 2, 1] == 0.5f);
-}
-
