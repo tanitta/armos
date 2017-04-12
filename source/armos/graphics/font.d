@@ -101,6 +101,8 @@ class Font{
         /++
         +/
         This drawString(in string str, in int x, in int y){
+            if (str.length == 0) return this;
+
             _mesh.vertices   = new Vector4f[](str.length*4);
             _mesh.texCoords0 = new Vector4f[](str.length*4);
             _mesh.indices    = new int[](str.length*6);
