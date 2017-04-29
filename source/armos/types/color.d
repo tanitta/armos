@@ -30,9 +30,9 @@ struct BaseColor(T, T Limit){
             char g255 = (hexColor >> 8) & 0xff;
             char b255 = (hexColor >> 0) & 0xff;
             import std.conv:to;
-            r = r255.to!float/255.0f;
-            g = g255.to!float/255.0f;
-            b = b255.to!float/255.0f;
+            r = (r255.to!float*limit/255.0f).to!T;
+            g = (g255.to!float*limit/255.0f).to!T;
+            b = (b255.to!float*limit/255.0f).to!T;
             a = cast(T)alpha;
         }
 
