@@ -157,12 +157,12 @@ void background(const armos.types.Color color){
 /++
 +/
 void background(const float gray){
-    currentRenderer.background = armos.types.Color(gray, gray, gray, 255);
+    currentRenderer.background = armos.types.Color(gray, gray, gray, 1);
 }
 
 /++
 +/
-void background(in float r, in float g, in float b, in float a = 255){
+void background(in float r, in float g, in float b, in float a = 1){
     currentRenderer.background = armos.types.Color(r, g, b, a);
 }
 
@@ -178,10 +178,10 @@ void fillBackground(const armos.types.Color color){
 
 ///
 void fillBackground(const float gray){
-    currentRenderer.fillBackground = armos.types.Color(gray, gray, gray, 255);
+    currentRenderer.fillBackground = armos.types.Color(gray, gray, gray, 1);
 }
 ///
-void fillBackground(in float r, in float g, in float b, in float a = 255){
+void fillBackground(in float r, in float g, in float b, in float a = 1){
     currentRenderer.fillBackground = armos.types.Color(r, g, b, a);
 }
 
@@ -198,7 +198,7 @@ void clear(in armos.types.Color c){
 
 /++
 +/
-void color(in float r, in float g, in float b, in float a = 255){
+void color(in float r, in float g, in float b, in float a = 1){
     currentRenderer.color = armos.types.Color(r, g, b, a);
 }
 
@@ -211,7 +211,7 @@ void color(const armos.types.Color c){
 /++
 +/
 void color(const float gray){
-    currentRenderer.color = armos.types.Color(gray, gray, gray, 255);
+    currentRenderer.color = armos.types.Color(gray, gray, gray, 1);
 }
 
 /++
@@ -271,11 +271,11 @@ void drawAxis(
         ){
     pushStyle;{
         lineWidth = 2.0;
-        color(255, 0, 0);
+        color(1, 0, 0);
         drawLine(-size*0.5, 0.0, 0.0, size, 0.0,  0.0);
-        color(0, 255, 0);
+        color(0, 1, 0);
         drawLine(0.0, -size*0.5, 0.0, 0.0,  size, 0.0);
-        color(0, 0, 255);
+        color(0, 0, 1);
         drawLine(0.0, 0.0, -size*0.5, 0.0,  0.0,  size);
     }popStyle;
 }
@@ -290,17 +290,17 @@ void drawGrid(
         pushMatrix;{
             rotate(90.0, 0, 0, 1);
             if(x){
-                color(255, 0, 0);
+                color(1, 0, 0);
                 drawGridPlane(stepSize, numberOfSteps);
             }
             rotate(-90.0, 0, 0, 1);
             if(y){
-                color(0, 255, 0);
+                color(0, 1, 0);
                 drawGridPlane(stepSize, numberOfSteps);
             }
             rotate(90.0, 1, 0, 0);
             if(z){
-                color(0, 0, 255);
+                color(0, 0, 1);
                 drawGridPlane(stepSize, numberOfSteps);
             }
         }popMatrix;
@@ -705,7 +705,6 @@ class Renderer {
             _projectionMatrixStack.push;
             _textureMatrixStack.push;
             
-            // color(armos.types.Color(255, 255, 255, 255));
         }
         
         /++
@@ -718,7 +717,10 @@ class Renderer {
         +/
         void background(in armos.types.Color color){
             _currentStyle.backgroundColor = cast(armos.types.Color)color;
-            glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
+            glClearColor(color.r/Color.limit,
+                         color.g/Color.limit, 
+                         color.b/Color.limit,
+                         color.a/Color.limit);
         }
         
         ///
@@ -738,8 +740,8 @@ class Renderer {
         void color(in armos.types.Color c){
             import std.conv:to;
             _currentStyle.color = cast(armos.types.Color)c; 
-            _materialStack[0].attr("diffuse", armos.math.Vector4f(c.r.to!float/255.0,c.g.to!float/255.0,c.b.to!float/255.0,c.a.to!float/255.0));
-            glColor4f(c.r/255.0,c.g/255.0,c.b/255.0,c.a/255.0);
+            _materialStack[0].attr("diffuse", armos.math.Vector4f(c.r.to!float,c.g.to!float,c.b.to!float,c.a.to!float)/Color.limit);
+            glColor4f(c.r/Color.limit,c.g/Color.limit,c.b/Color.limit,c.a/Color.limit);
         }
 
         /++

@@ -46,11 +46,11 @@ class Gui {
             _style = new Style;
             _style.font = new BitmapFont;
             _style.font.load("font.png", 8, 8);
-            _style.colors["font1"] = Color(200, 200, 200);
-            _style.colors["font2"] = Color(105, 105, 105);
-            _style.colors["background"] = Color(40, 40, 40, 200);
-            _style.colors["base1"] = Color(64, 64, 64);
-            _style.colors["base2"] = Color(150, 150, 150);
+            _style.colors["font1"] = Color(200.0/255.0, 200.0/255.0, 200.0/255.0);
+            _style.colors["font2"] = Color(105.0/255.0, 105.0/255.0, 105.0/255.0);
+            _style.colors["background"] = Color(40.0/255.0, 40.0/255.0, 40.0/255.0, 200.0/255.0);
+            _style.colors["base1"] = Color(0.25, 0.25, 0.25);
+            _style.colors["base2"] = Color(150.0/255.0, 150.0/255.0, 150.0/255.0);
             _style.width = 256;
         }
 

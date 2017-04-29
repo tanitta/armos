@@ -16,9 +16,9 @@ class TestApp : ar.app.BaseApp{
     override void update(){
         immutable n =(_source.currentPlaybackTime + _buffer.phase)%(1.0/_buffer.bpm*60.0) ;
         if( -0.1 < n && n < 0.1){
-            ar.graphics.color = ar.types.Color(255, 255/3, 255/2);
+            ar.graphics.color = ar.types.Color(1, 1f/3f, 1f/2f);
         }else{
-            ar.graphics.color = ar.types.Color(128/2, 128/3, 128);
+            ar.graphics.color = ar.types.Color(0.5f/2, 0.5f/3, 0.5);
         }
     }
 

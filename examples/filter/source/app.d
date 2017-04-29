@@ -50,7 +50,7 @@ class TestApp : ar.app.BaseApp{
         _camera.position = ar.math.Vector3f(-0.5*sin(counter), 0.1, -0.5*cos(counter));
         
         _fbo.begin;scope(exit)_fbo.end;
-        ar.graphics.fillBackground(ar.types.Color(32, 32, 32));
+        ar.graphics.fillBackground(ar.types.Color(0.125, 0.125, 0.125));
         _camera.begin;scope(exit)_camera.end;
         _model.drawFill;
     }
