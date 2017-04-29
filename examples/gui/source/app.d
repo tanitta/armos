@@ -58,7 +58,9 @@ class TestApp : ar.app.BaseApp{
 		camera.begin;
 		ar.graphics.pushMatrix;
 		ar.graphics.rotate(f, 1, 1, 1);
-			ar.graphics.color(i, 255-i, i*0.5);
+			ar.graphics.color(i.to!float/255.0,
+                              (255.0-i).to!float/255.0,
+                              (i/2).to!float/255.0);
 			if(isFill){
 				mesh.drawFill;
 			}else{

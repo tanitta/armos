@@ -138,7 +138,7 @@ mixin template MaterialImpl(){
         ///
         T attr(string Name, in Color c){
             import std.conv;
-            _attrV4f[Name] = Vector4f(c.r.to!float/255f, c.g.to!float/255f, c.b.to!float/255f, c.a.to!float/255f);
+            _attrV4f[Name] = Vector4f(c.r.to!float/c.limit, c.g.to!float/c.limit, c.b.to!float/c.limit, c.a.to!float/c.limit);
             return this;
         }
 

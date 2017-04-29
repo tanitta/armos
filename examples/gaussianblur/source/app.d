@@ -136,7 +136,7 @@ class TestApp : ar.app.BaseApp{
         counter += 0.01;
         
         _fbo.begin;
-            ar.graphics.fillBackground(ar.types.Color(32, 32, 32));
+            ar.graphics.fillBackground(ar.types.Color(0.125, 0.125, 0.125));
             _camera.begin;scope(exit)_camera.end;
             ar.graphics.pushMatrix;scope(exit)ar.graphics.popMatrix;
             ar.graphics.rotate(counter, 0, 1, 0);
