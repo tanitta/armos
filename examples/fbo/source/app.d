@@ -58,6 +58,10 @@ class TestApp : ar.app.BaseApp{
 		_mouse.currentPos = vec;
 	}
 
+	override void windowResized(ar.math.Vector2i size){
+        _fbo.resize(size);
+    }
+
     private{
         ar.graphics.Fbo _fbo;
         ar.graphics.Mesh _circle;
