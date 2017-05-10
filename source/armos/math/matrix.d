@@ -530,6 +530,41 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     }
 
     /++
+        自身を別の型のMatrixへキャストしたものを返します．キャスト後の型は元のMatrixのRowSize, ColSizeが等しくある必要があります．
+    +/
+    CastedType opCast(CastedType)()const if(CastedType.rowSize == typeof(this).rowSize && CastedType.colSize == typeof(this).colSize){
+        auto mat = CastedType();
+        foreach (int index, const var; this.elements) {
+            mat.elements[index] = cast(CastedType.VectorType)elements[index];
+        }
+        return mat;
+    }
+    unittest{
+        auto m_f= Matrix3f(
+                [1, 4, 7], 
+                [2, 5, 8], 
+                [3, 6, 9]
+        );
+
+        auto m_i= Matrix3i.zero;
+        
+        m_i = cast(Matrix3i)m_f;
+        
+        assert(m_i[0][0] == 1);
+
+        //Invalid cast. Different size.
+        assert(!__traits(compiles, {
+            auto m_f= Matrix3f(
+                    [1, 4, 7], 
+                    [2, 5, 8], 
+                    [3, 6, 9]
+            );
+            auto m_i= Matrix4i.zero;
+            vec_i = cast(Vector3i)vec_f;
+        }));
+    }
+
+    /++
     +/
     void print()const{
         import std.stdio;

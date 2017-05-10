@@ -674,17 +674,14 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     /++
         自身を別の型のVectorへキャストしたものを返します．キャスト後の型は元のVectorと同じ次元である必要があります．
     +/
-    CastType opCast(CastType)()const{
+    CastType opCast(CastType)()const if(CastType.dimention == dimention){
         auto vec = CastType();
-        if (vec.packedElements.arr.length != packedElements.arr.length) {
-            assert(0);
-        }else{
-            foreach (int index, const T var; packedElements.arr) {
-                vec.packedElements.arr[index] = cast( typeof( vec.packedElements.arr[0] ) )packedElements.arr[index];
-            }
-            return vec;
+        foreach (int index, const T var; packedElements.arr) {
+            vec.packedElements.arr[index] = cast( typeof( vec.packedElements.arr[0] ) )packedElements.arr[index];
         }
+        return vec;
     }
+
     unittest{
         auto vec_f = Vector3f(2.5, 0, 0);
         auto vec_i = Vector3i(0, 0, 0);
@@ -692,6 +689,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         vec_i = cast(Vector3i)vec_f;
 
         assert(vec_i[0] == 2);
+
+        //Invalid cast. Different size.
+        assert(!__traits(compiles, {
+            auto vec_f = Vector2f(2.5, 0);
+            auto vec_i = Vector3i(0, 0, 0);
+            vec_i = cast(Vector3i)vec_f;
+        }));
     }
 
     /++
