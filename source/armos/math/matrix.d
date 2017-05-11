@@ -563,26 +563,6 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
             vec_i = cast(Vector3i)vec_f;
         }));
     }
-
-    /++
-    +/
-    void print()const{
-        import std.stdio;
-        for (int i = 0; i < RowSize ; i++) {
-            for (int j = 0; j < ColSize ; j++) {
-                writef("%f\t", elements[i][j]);
-            }
-            writef("\n");
-        }
-    }
-    unittest{
-        // auto matrix = Matrix3f(
-        // 		[1, 4, 7], 
-        // 		[2, 5, 8], 
-        // 		[3, 6, 9]
-        // 		);
-        // matrix.print;
-    }
 }
 
 alias Matrix!(int, 2, 2) Matrix2i;
