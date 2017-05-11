@@ -658,17 +658,10 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
     }
 
     /++
-        Vectorを標準出力に渡します
     +/
-    void print()const{
-        import std.stdio;
-        for (int i = 0; i < Dimention ; i++) {
-            static if( is(T == int ) )
-                writef("%d\t", packedElements.arr[i]);
-            else
-                writef("%f\t", packedElements.arr[i]);
-        }
-        writef("\n");
+    string toString()const{
+        import std.conv;
+        return typeid(this).to!string ~ "(" ~ packedElements.arr.to!string ~ ")";
     }
 
     /++
