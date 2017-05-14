@@ -168,6 +168,15 @@ class AssimpModelLoader {
         }
         
         Model createdModel(const(aiScene)* scene)const{
+            import std.stdio;
+            auto t = _scene.mRootNode.mTransformation;
+            Matrix4f rootTransformation = Matrix4f([
+                [t.a1, t.a2, t.a3, t.a4], 
+                [t.b1, t.b2, t.b3, t.b4], 
+                [t.c1, t.c2, t.c3, t.c4], 
+                [t.d1, t.d2, t.d3, t.d4], 
+            ]);
+
             import std.range;
             auto model = new Model;
             model.materials = scene.mMaterials[0 .. scene.mNumMaterials]
@@ -175,7 +184,7 @@ class AssimpModelLoader {
                                    .array;
 
             model.meshes    = scene.mMeshes[0 .. scene.mNumMeshes]
-                                   .map!(m => createdMesh(m))
+                                   .map!(m => createdMesh(m, rootTransformation))
                                    .array;
             
             model.entities  = scene.mMeshes[0 .. scene.mNumMeshes]
@@ -235,7 +244,7 @@ class AssimpModelLoader {
             return mat;
         }
 
-        Mesh createdMesh(const(aiMesh)* mesh) const {
+        Mesh createdMesh(const(aiMesh)* mesh, Matrix4f matrix) const {
         // Mesh createMesh(const(aiMesh)* mesh, Material[] materials) const {
             auto name = fromAiString(mesh.mName);
 
@@ -243,6 +252,10 @@ class AssimpModelLoader {
                 mesh.mVertices[0 .. mesh.mNumVertices]
                 .map!(v => fromAiVector3f(v))
                 .array;
+            foreach (ref v3; vertices) {
+                auto v4 = Vector4f(v3.x, v3.y, v3.z, 0);
+                v3 = (matrix*v4).xyz;
+            }
 
             const(Vector3f)[] normals;
             if(mesh.mNormals !is null) {
