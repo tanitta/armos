@@ -116,13 +116,13 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
 
     /++
     +/
-    pure T opIndex(in int index)const{
+    pure T opIndex(in size_t index)const{
         return packedElements.arr[index];
     }
 
     /++
     +/
-    ref T opIndex(in int index){
+    ref T opIndex(in size_t index){
         return packedElements.arr[index];
     }
     unittest{
@@ -549,7 +549,17 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         Vectorのベクトル積(クロス積，外積)を返します．
         Dimentionが3以上の場合のみ使用できます．
     +/
-    static if (Dimention >= 3)
+    static if (Dimention == 3){
+        VectorType vectorProduct(in VectorType v)const{
+            return VectorType(
+                elements[1]*v[2] - elements[2]*v[1], 
+                elements[2]*v[0] - elements[0]*v[2], 
+                elements[0]*v[1] - elements[1]*v[0], 
+            );
+        }
+    }
+
+    static if (Dimention > 3){
         VectorType vectorProduct(in VectorType[] arg ...)const in{
             assert(arg.length == Dimention-2);
         }body{
@@ -568,6 +578,7 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
             }
             return return_vector;
         }
+    }
     unittest{
         auto vector0 = Vector3f(1, 2, 3);
         auto vector1 = Vector3f(4, 5, 6);

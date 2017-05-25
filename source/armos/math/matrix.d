@@ -49,7 +49,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
     /++
     +/
-    pure VectorType opIndex(in int index)const{
+    pure VectorType opIndex(in size_t index)const{
         return elements[index];
     }
     unittest{
@@ -66,7 +66,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
     /++
     +/
-    ref VectorType opIndex(in int index){
+    ref VectorType opIndex(in size_t index){
         return elements[index];
     }
     unittest{
@@ -253,7 +253,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     MatrixType opMul(in T v)const{
         auto result = MatrixType();
         foreach (int index, const VectorType var; elements) {
-            result[index] = this[index]*v;
+            result[index] = var*v;
         }
         return result;
     }

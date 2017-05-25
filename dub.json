@@ -18,7 +18,6 @@
         "derelict-vorbis": "1.0.2",
         "fswatch": "~>0.2.0"
     }, 
-	"dflags-ldc":["-disable-linker-strip-dead"],
     "copyFiles-windows-x86": [
         "libs/FreeImage/lib/win32/FreeImage.dll",
         "libs/glfw/lib/win32/glfw3.dll",
