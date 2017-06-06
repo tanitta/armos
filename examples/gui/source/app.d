@@ -26,6 +26,12 @@ class TestApp : ar.app.BaseApp{
 			.add(new ar.utils.Partition(" "))
 			.add(new ar.utils.Label("armos-gui-example"))
 			.add(new ar.utils.Partition)
+			.add(new ar.utils.Slider!int("slider!int", i, 0, 255))
+			.add(new ar.utils.Slider!float("slider!float", f, 0, 255))
+			.add(new ar.utils.Partition)
+			.add(new ar.utils.ToggleButton("isFill", isFill))
+			.add(new ar.utils.ToggleButton("isFill", isFill))
+			.add(new ar.utils.Partition)
 		)
 		.add(
 			(new ar.utils.List)
@@ -34,13 +40,8 @@ class TestApp : ar.app.BaseApp{
 			.add(new ar.utils.Partition)
 			.add(new ar.utils.MovingGraph!float("fpsUseRate", _fpsUseRate, 0.0, 100.0))
 			.add(new ar.utils.Partition)
-			.add(new ar.utils.Slider!int("slider!int", i, 0, 255))
-			.add(new ar.utils.Slider!float("slider!float", f, 0, 255))
-			.add(new ar.utils.Partition)
 			.add(new ar.utils.MovingGraph!float("x", cX, -2, 2))
 			.add(new ar.utils.MovingGraphXY!float("x", cX, -2, 2, "y", cY, -2, 2))
-			.add(new ar.utils.ToggleButton("isFill", isFill))
-			.add(new ar.utils.ToggleButton("isFill", isFill))
 			.add(new ar.utils.Partition)
 		);
 		
