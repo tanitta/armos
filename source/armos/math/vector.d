@@ -506,10 +506,11 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         import std.numeric : dotProduct;
         immutable T sumsq = dotProduct(packedElements.arr, packedElements.arr);
 
-        static if( is(T == int ) )
-            return cast(int)sqrt(cast(float)sumsq);
-        else
+        static if(__traits(isFloating, T)){
             return sqrt(sumsq);
+        }else{
+            return cast(T)sqrt(cast(float)sumsq);
+        }
     }
     unittest{
         auto result = Vector3d(3.0, 2.0, 1.0);
