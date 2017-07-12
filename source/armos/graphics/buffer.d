@@ -14,7 +14,7 @@ class Buffer {
         +/
         this(in BufferType bufferType){
             glGenBuffers(1, cast(uint*)&_id);
-            _bufferType = bufferType;
+            _type = bufferType;
         }
 
         ~this(){
@@ -27,16 +27,16 @@ class Buffer {
             if(hasVao) _rootVao.begin;
 
             int savedID;
-            glGetIntegerv(bindingEnum(_bufferType), &savedID);
+            glGetIntegerv(bindingEnum(_type), &savedID);
             _savedIDs ~= savedID;
-            glBindBuffer(_bufferType, _id);
+            glBindBuffer(_type, _id);
         }
 
         /++
         +/
         void end(){
             import std.range;
-            glBindBuffer(_bufferType, _savedIDs[$-1]);
+            glBindBuffer(_type, _savedIDs[$-1]);
             if (_savedIDs.length == 0) {
                 assert(0, "stack is empty");
             }else{
@@ -57,13 +57,13 @@ class Buffer {
             immutable currentSize = array.length * array[0].sizeof;
             if(_size != currentSize){
                 _size = currentSize;
-                glBufferData(_bufferType, _size, array.ptr, usageEnum(freq, nature));
+                glBufferData(_type, _size, array.ptr, usageEnum(freq, nature));
             }else{
-                glBufferSubData(_bufferType, 0, _size, array.ptr);
+                glBufferSubData(_type, 0, _size, array.ptr);
             }
             
             import std.conv;
-            if(_bufferType != BufferType.ElementArray){
+            if(_type != BufferType.ElementArray){
                 glVertexAttribPointer(0,
                                      dimention.to!int,
                                       GL_FLOAT,
@@ -102,12 +102,14 @@ class Buffer {
         ///
         size_t size()const{return _size;}
 
+        ///
+        BufferType type()const{return _type;}
     }//public
 
     private{
         int _id;
         int[] _savedIDs;
-        BufferType _bufferType;
+        BufferType _type;
         Vao _rootVao;
         size_t _size;
     }//private
