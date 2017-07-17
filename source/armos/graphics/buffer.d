@@ -50,7 +50,7 @@ class Buffer {
 
         /++
         +/
-        Buffer array(T)(in T[] array, in size_t dimention, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
+        Buffer array(T)(in T[] array, in size_t dimention = 0, in BufferUsageFrequency freq = BufferUsageFrequency.Dynamic, in BufferUsageNature nature =  BufferUsageNature.Draw)if(__traits(isArithmetic, T)){
             if(array.length == 0)return this;
             begin;
             
@@ -65,7 +65,7 @@ class Buffer {
             import std.conv;
             if(_type != BufferType.ElementArray){
                 glVertexAttribPointer(0,
-                                     dimention.to!int,
+                                      dimention.to!int,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       0,
@@ -77,7 +77,7 @@ class Buffer {
         }
         
         ///
-        Buffer array(V)(in V[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(isVector!V){
+        Buffer array(V)(in V[] array, in BufferUsageFrequency freq = BufferUsageFrequency.Dynamic, in BufferUsageNature nature =  BufferUsageNature.Draw)if(isVector!V){
             if(array.length == 0)return this;
             V.elementType[] raw = new V.elementType[array.length*V.dimention];
             for (size_t i = 0, pos = 0, len = array.length; i < len; ++i, pos += V.dimention) {

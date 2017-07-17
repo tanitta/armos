@@ -22,5 +22,5 @@ public import armos.graphics.bitmapfont;
 public import armos.graphics.material;
 public import armos.graphics.entity;
 public import armos.graphics.model;
-public import armos.graphics.bundle;
+public import armos.graphics.bufferbundle;
 public import armos.graphics.bufferentity;
