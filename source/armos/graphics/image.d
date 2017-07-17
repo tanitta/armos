@@ -60,7 +60,7 @@ class Image {
                 isInitializedFreeImage = true;
             }
             _material = (new DefaultMaterial);
-            _material.attr("diffuse", Vector4f(1, 1, 1, 1));
+            _material.uniform("diffuse", Vector4f(1, 1, 1, 1));
         }
 
         /++

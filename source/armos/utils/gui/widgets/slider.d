@@ -42,7 +42,7 @@ class Slider(T) : Widget{
             }else if(__traits(isFloating, *_var)){
                 varString = format("%f", *_var).to!string;
             }
-            _style.font.material.attr("diffuse", _style.colors["font1"]);
+            _style.font.material.uniform("diffuse", _style.colors["font1"]);
             
             _style.font.draw(_name ~ " : " ~ varString, _style.font.width, 0);
 
