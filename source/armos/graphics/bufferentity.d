@@ -41,6 +41,14 @@ class BufferEntity {
                                     });
             return this;
         }
+
+        BufferEntity updateBuffers(){
+            import std.algorithm;
+            _bufferBundle.attrs.keys.each!((key){
+                    _bufferBundle.attr(key).updateGlBuffer;
+                    });
+            return this;
+        }
         
         ///
         void begin(){
@@ -93,6 +101,7 @@ class BufferEntity {
         }
         
         void draw(){
+            updateBuffers;
             updateShaderAttribs;
             drawWithoutUpdate;
         }
@@ -108,7 +117,6 @@ class BufferEntity {
             _material.shader.uniform("projectionMatrix", projectionMatrix);
             _material.shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
             _material.shader.uniform("textureMatrix", textureMatrix);
-            
             _material.shader.enableAttribs();
                 int elements;
                 import derelict.opengl3.gl;
