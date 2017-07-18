@@ -38,12 +38,6 @@ class Vao {
                 _savedIDs.popBack;
             }
         }
-
-        /++
-        +/
-        void set(Buffer buffer){
-            buffer.vao = this;
-        }
     }//public
 
     private{
