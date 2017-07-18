@@ -19,6 +19,7 @@ class Buffer {
             _type = bufferType;
         }
 
+        ///
         ~this(){
             glDeleteBuffers(1, cast(uint*)&_id);
         }
@@ -26,8 +27,6 @@ class Buffer {
         /++
         +/
         void begin(){
-            if(hasVao) _rootVao.begin;
-
             int savedID;
             glGetIntegerv(bindingEnum(_type), &savedID);
             _savedIDs ~= savedID;
@@ -44,15 +43,13 @@ class Buffer {
             }else{
                 _savedIDs.popBack;
             }
-
-            if(hasVao){
-                _rootVao.end;
-            }
         }
 
-        /++
-        +/
-        Buffer array(T)(in T[] array, in size_t dimention = 1, in BufferUsageFrequency freq = BufferUsageFrequency.Dynamic, in BufferUsageNature nature =  BufferUsageNature.Draw)if(__traits(isArithmetic, T)){
+        ///
+        Buffer array(T)(in T[] array, in size_t dimention = 1,
+                        in BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+                        in BufferUsageNature    nature = BufferUsageNature.Draw)
+        if(__traits(isArithmetic, T)){
             if(array.length == 0)return this;
 
             _array     = Algebraic!(const(int)[], const(float)[], const(double)[])(array);
@@ -65,7 +62,10 @@ class Buffer {
         }
         
         ///
-        Buffer array(V)(in V[] array, in BufferUsageFrequency freq = BufferUsageFrequency.Dynamic, in BufferUsageNature nature =  BufferUsageNature.Draw)if(isVector!V){
+        Buffer array(V)(in V[] array,
+                        in BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+                        in BufferUsageNature    nature = BufferUsageNature.Draw)
+        if(isVector!V){
             if(array.length == 0)return this;
             V.elementType[] raw = new V.elementType[array.length*V.dimention];
             for (size_t i = 0, pos = 0, len = array.length; i < len; ++i, pos += V.dimention) {
@@ -87,35 +87,19 @@ class Buffer {
             return this;
         }
 
-        /++
-        +/
-        void vao(Vao o){
-            _rootVao = o;
-        }
-
-        /++
-        +/
-        bool hasVao(){
-            return (_rootVao !is null);
-        }
-
         ///
         size_t size()const{return _size;}
 
         ///
         BufferType type()const{return _type;}
-
-        
     }//public
 
     private{
         int _id;
         int[] _savedIDs;
         BufferType _type;
-        Vao _rootVao;
         size_t _size;
         size_t _dimention;
-        // BufferDataType _dataType;
         BufferUsageFrequency _freq;
         BufferUsageNature _nature;
         Algebraic!(const(int)[], const(float)[], const(double)[]) _array;
