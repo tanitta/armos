@@ -3,6 +3,7 @@ module armos.graphics.bufferbundle;
 import armos.graphics.vao;
 import armos.graphics.mesh;
 import armos.graphics.buffer;
+import armos.math;
 
 /++
 +/
@@ -11,13 +12,6 @@ class BufferBundle {
         ///
         this(){
             _vao    = new armos.graphics.Vao;
-            // attr["vertex"]    = new Buffer(BufferType.Array);
-            // attr["normal"]    = new Buffer(BufferType.Array);
-            // attr["tangent"]   = new Buffer(BufferType.Array);
-            // attr["texCoord0"] = new Buffer(BufferType.Array);
-            // attr["texCoord1"] = new Buffer(BufferType.Array);
-            // attr["color"]     = new Buffer(BufferType.Array);
-            // attr["index"]    = new Buffer(BufferType.ElementArray);
         }
         
         ///
@@ -29,6 +23,24 @@ class BufferBundle {
         ///
         auto attr(in string name, Buffer buffer){
             attrs[name] = buffer;
+            return this;
+        }
+
+        ///
+        auto attr(T)(in string name, T[] vectorArray,
+                     in BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+                     in BufferUsageNature    nature = BufferUsageNature.Draw)
+        if(isVector!T){
+            attrs[name].array(vectorArray, freq, nature);
+            return this;
+        }
+
+        ///
+        auto attr(V)(in string name, V[] array, in size_t numDimentions = 1,
+                     in BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+                     in BufferUsageNature    nature = BufferUsageNature.Draw)
+        if(__traits(isArithmetic, V)){
+            attrs[name].array(array, numDimentions, freq, nature);
             return this;
         }
 
