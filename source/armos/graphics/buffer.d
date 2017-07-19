@@ -118,13 +118,19 @@ class Buffer {
             
             import std.conv;
             if(_type != BufferType.ElementArray){
+                static if(is(T == const(float))){
+                    GLenum glDataType = GL_FLOAT;
+                }else static if(is(T == const(double))){
+                    GLenum glDataType = GL_DOUBLE;
+                }else static if(is(T == const(int))){
+                    GLenum glDataType = GL_INT;
+                }
                 glVertexAttribPointer(0,
                                       _dimention.to!int,
-                                      GL_FLOAT,
+                                      glDataType,
                                       GL_FALSE,
                                       0,
-                                      null,
-                                      );
+                                      null);
             }
             end;
         }
