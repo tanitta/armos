@@ -53,7 +53,7 @@ class MovingGraphXY(T) : Widget{
                 varStringX = format("%f", *_varX).to!string;
                 varStringY = format("%f", *_varY).to!string;
             }
-            _style.font.material.attr("diffuse", _style.colors["font1"]);
+            _style.font.material.uniform("diffuse", _style.colors["font1"]);
             _style.font.draw(_nameX ~ " : " ~ varStringX, _style.font.width, 0);
             _style.font.draw(_nameY ~ " : " ~ varStringY, _style.font.width, _style.font.height);
 

@@ -65,7 +65,7 @@ class TestApp : ar.app.BaseApp{
         shader.log.writeln;
         
         _gourandShadingMaterial = (new ar.graphics.DefaultMaterial).shader(shader);
-        _gourandShadingMaterial.attr("lightDirection", ar.math.Vector3f(0.5, 0.5, 0.5).normalized);
+        _gourandShadingMaterial.uniform("lightDirection", ar.math.Vector3f(0.5, 0.5, 0.5).normalized);
         
         _model = (new ar.graphics.Model).load("bunny.fbx");
         import std.algorithm:each;
@@ -88,7 +88,7 @@ class TestApp : ar.app.BaseApp{
         import std.conv:to;
         float u = x.to!float/ar.app.windowSize.x.to!float - 0.5f;
         float v = y.to!float/ar.app.windowSize.y.to!float - 0.5f;
-        _gourandShadingMaterial.attr("lightDirection", ar.math.Vector3f(u, v, 0.1).normalized);
+        _gourandShadingMaterial.uniform("lightDirection", ar.math.Vector3f(u, v, 0.1).normalized);
     }
     
     private{

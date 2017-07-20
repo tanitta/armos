@@ -172,7 +172,7 @@ struct BaseColor(T, T Limit){
             assert(cColor.b.to!int == 0);
         }
 
-        F opCast(F)()const if(is(F == BaseColor!(typeof( F.r ), F.limit))){
+        F opCast(F)()const if(!isVector!F && is(F == BaseColor!(typeof( F.r ), F.limit))){
             import std.conv:to;
             F castedColor= F(0, 0, 0, 0);
             float c = cast(float)castedColor.limit / cast(float)limit;
@@ -192,6 +192,11 @@ struct BaseColor(T, T Limit){
             auto fColor = BaseColor!(float, 1.0f)(0.5, 0.0, 0.0, 1.0);
             assert(approxEqual( ( cast(BaseColor!(char, 255))cColor ).r, 128));
         }
+
+        
+        CastType opCast(CastType)()const if(isVector!CastType && CastType.dimention == 4 && is(CastType.elementType == T)){
+            return CastType!(T, 4)(r, g, b, a);
+        }
     }//public
 
     private{
@@ -199,8 +204,8 @@ struct BaseColor(T, T Limit){
 }//struct BaseColor
 
 /++
-色を表すstructです．1byteの色深度を持ちます．
-最小値は0，最大値は255です．
+色を表すstructです．
+最小値は0，最大値は1です．
 +/
 alias BaseColor!(float, 1.0f) Color;
 unittest{

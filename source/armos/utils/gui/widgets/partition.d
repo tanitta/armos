@@ -23,7 +23,7 @@ class Partition : Widget{
 
             color(_style.colors["background"]);
             drawRectangle(0, 0, _style.width, _style.font.height*2);
-            _style.font.material.attr("diffuse", _style.colors["font2"]);
+            _style.font.material.uniform("diffuse", _style.colors["font2"]);
             string str;
             for (int i = 0; i < _style.width/_style.font.width/_str.length; i++) {
                 str ~= _str;

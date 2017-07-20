@@ -231,15 +231,15 @@ class AssimpModelLoader {
 
             //diffuse
             aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
-            mat.attr("diffuse", fromAiColor(color));
+            mat.uniform("diffuse", fromAiColor(color));
 
             //speculer
             aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
-            mat.attr("speculer", fromAiColor(color));
+            mat.uniform("speculer", fromAiColor(color));
 
             //ambient
             aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
-            mat.attr("ambient", fromAiColor(color));
+            mat.uniform("ambient", fromAiColor(color));
 
             return mat;
         }

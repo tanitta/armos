@@ -18,9 +18,9 @@ class BufferEntity {
         }
         
         ///
-        this(BufferMesh bufferMesh, Material material){
+        this(BufferBundle bufferBundle, Material material){
             _material = material;
-            _bufferMesh = bufferMesh;
+            _bufferBundle = bufferBundle;
             updateShaderAttribs();
         }
         
@@ -29,53 +29,60 @@ class BufferEntity {
         
         ///
         BufferEntity updateShaderAttribs(){
-            _bufferMesh.vao.begin();
+            auto scopedVao = _bufferBundle.vao.scoped;
             import std.algorithm;
-            _bufferMesh.attr.keys.filter!(key => key!="index")
-                                 .each!((key){
-                 if(_bufferMesh.attr[key].size > 0){
-                     _bufferMesh.attr[key].begin;
-                     _material.shader.attr(key);
-                     _bufferMesh.attr[key].end;
-                 }
-            });
-            _bufferMesh.vao.end();
+            _bufferBundle.attrs.keys.filter!(key => _bufferBundle.attrs[key].type!=BufferType.ElementArray && _bufferBundle.attrs[key].type!=BufferType.DrawIndirect)
+                                    .each!((key){
+                                        if(_bufferBundle.attrs[key].size > 0){
+                                            _bufferBundle.attrs[key].begin;
+                                            _material.shader.attr(key);
+                                            _bufferBundle.attrs[key].end;
+                                        }
+                                    });
+            return this;
+        }
+
+        BufferEntity updateBuffers(){
+            import std.algorithm;
+            _bufferBundle.attrs.keys.each!((key){
+                    _bufferBundle.attr(key).updateGlBuffer;
+                    });
             return this;
         }
         
         ///
         void begin(){
             _material.begin;
-            _bufferMesh.vao.begin;
+            _bufferBundle.vao.begin;
         }
         
         ///
         void end(){
-            _bufferMesh.vao.end;
+            _bufferBundle.vao.end;
             _material.end;
         }
         
         ///
-        const(BufferMesh) bufferMesh(){
-            return _bufferMesh;
+        BufferBundle bufferBundle(){
+            return _bufferBundle;
         }
         
         ///
-        BufferEntity bufferMesh(BufferMesh bm){
-            _bufferMesh = bm;
+        BufferEntity bufferBundle(BufferBundle bb){
+            _bufferBundle = bb;
             if(_material && _material.shader) updateShaderAttribs();
             return this;
         }
         
         ///
         BufferEntity mesh(Mesh mesh, in BufferUsageFrequency freq, in BufferUsageNature nature){
-            _bufferMesh = new BufferMesh(mesh, freq, nature);
+            _bufferBundle = new BufferMesh(mesh, freq, nature);
             if(_material && _material.shader) updateShaderAttribs();
             return this;
         }
         
         ///
-        const(Material) material(){
+        Material material(){
             return _material;
         }
         
@@ -89,22 +96,27 @@ class BufferEntity {
         BufferEntity shader(Shader shader){
             if(_material)_material = new DefaultMaterial;
             _material.shader = shader;
-            if(_bufferMesh) updateShaderAttribs();
+            if(_bufferBundle) updateShaderAttribs();
             return this;
         }
         
-        ///
         void draw(){
-            const scopedVao      = scoped(_bufferMesh.vao);
+            updateBuffers;
+            updateShaderAttribs;
+            drawWithoutUpdate;
+        }
+
+        ///
+        void drawWithoutUpdate(){
+            const scopedVao      = scoped(_bufferBundle.vao);
             const scopedMaterial = scoped(_material);
-            const iboScope       = scoped(_bufferMesh.attr["index"]);
-            
+            const iboScope       = scoped(_bufferBundle.attrs["index"]);
+
             import armos.graphics.renderer;
             _material.shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
             _material.shader.uniform("projectionMatrix", projectionMatrix);
             _material.shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
             _material.shader.uniform("textureMatrix", textureMatrix);
-            
             _material.shader.enableAttribs();
                 int elements;
                 import derelict.opengl3.gl;
@@ -156,7 +168,7 @@ class BufferEntity {
     }//public
 
     private{
-        armos.graphics.BufferMesh _bufferMesh;
+        armos.graphics.BufferBundle _bufferBundle;
         armos.graphics.Material _material;
         armos.graphics.PrimitiveMode _primitiveMode = armos.graphics.PrimitiveMode.Triangles;
     }//private

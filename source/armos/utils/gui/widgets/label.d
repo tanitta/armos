@@ -23,7 +23,7 @@ class Label : Widget{
 
             color(_style.colors["background"]);
             drawRectangle(0, 0, _style.width, _style.font.height*2);
-            _style.font.material.attr("diffuse", _style.colors["font1"]);
+            _style.font.material.uniform("diffuse", _style.colors["font1"]);
             _style.font.draw(_str, _style.font.width, 0);
         };
     }//public

@@ -4,6 +4,7 @@ import derelict.opengl3.gl;
 import armos.graphics;
 import armos.types;
 import armos.math.vector;
+import armos.utils.scoped;
 
 /++
     Frame Buffer Objectを表すclassです．
@@ -19,13 +20,13 @@ class Fbo{
 
         /++
         +/
-        this(in armos.math.Vector2i size){
+        this(V2)(in V2 size){
             this(size[0], size[1]);
         }
 
         /++
         +/
-        this(in int width, in int height){
+        this(T)(in T width, in T height){
             _size = Vector2i(width, height);
             Vector2i textureSize = _size * _samples;
             int x = textureSize.x;
@@ -57,9 +58,9 @@ class Fbo{
             
             _rect.vertices = [
                 Vector4f(0.0,   0.0,    0.0, 1.0f),
-                Vector4f(width, 0.0,    0.0, 1.0f),
-                Vector4f(width, height, 0.0, 1.0f),
-                Vector4f(0.0,   height, 0.0, 1.0f),
+                Vector4f(_size.x, 0.0,    0.0, 1.0f),
+                Vector4f(_size.x, _size.y, 0.0, 1.0f),
+                Vector4f(0.0,   _size.y, 0.0, 1.0f),
             ];
 
             _rect.indices = [
@@ -190,23 +191,24 @@ class Fbo{
         
         ///
         Fbo filteredBy(Material material){
-            begin;
-                _colorTextureTmp.begin;
+            {
+                auto scopedFbo = scoped(this);
+                {
+                    auto scopedColor = scoped(_colorTextureTmp);
                     glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
-                _colorTextureTmp.end;
-                _depthTextureTmp.begin;
+                }
+                {
+                    auto scopedDepth= scoped(_depthTextureTmp);
                     glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
-                _depthTextureTmp.end;
-            end;
+                }
+            }
             
             material.texture("colorTexture", _colorTextureTmp)
                     .texture("depthTexture", _depthTextureTmp);
             
-            begin;
-                material.begin;
-                    _rect.drawFill;
-                material.end;
-            end;
+            auto scopedFbo = scoped(this);
+            auto scopedMaterial = scoped(material);
+            _rect.drawFill;
             
             return this;
         }
@@ -216,10 +218,12 @@ class Fbo{
     private{
         int _savedId = 0;
         int _id = 0;
+
         Texture _colorTexture;
         Texture _colorTextureTmp;
         Texture _depthTexture;
         Texture _depthTextureTmp;
+
         Mesh _rect = new Mesh;
         Material _material;
         int _samples = 1;
