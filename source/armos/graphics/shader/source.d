@@ -41,6 +41,9 @@ class Source {
             import std.string;
             import std.array;
             lines = rawText.splitLines.map!((l){auto r=Line();r.origin = this;r.content = l;return r;}).array;
+            foreach (size_t i, ref line; lines) {
+                line.numOrigineLines = i+1;
+            }
 
             size_t currentLineIndex;
             while(currentLineIndex < lines.length){
@@ -136,6 +139,7 @@ unittest{
 struct Line {
     public{
         Source origin;
+        size_t numOrigineLines;;
         string content;
         auto expand(in Source[] searchable){
         }
