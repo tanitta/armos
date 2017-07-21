@@ -4,6 +4,7 @@ import derelict.opengl3.gl;
 import armos.math.vector;
 import armos.math.matrix;
 import armos.graphics;
+import armos.graphics.shader.source;
 
 /++
 +/
@@ -25,40 +26,78 @@ class Shader {
         /++
             Load the shader from shaderName
         +/
-        Shader load(in string shaderName){
-            loadFiles(shaderName ~ ".vert", shaderName ~ ".geom", shaderName ~ ".frag");
+        Shader load(in string shaderName, in string[] paths = []){
+            import armos.utils.file;
+            string absVertPath = (shaderName ~ ".vert").absolutePath;
+            string absGeomPath = (shaderName ~ ".geom").absolutePath;
+            string absFragPath = (shaderName ~ ".frag").absolutePath;
+            import std.file;
+            if(!absVertPath.exists) absVertPath = "";
+            if(!absGeomPath.exists) absGeomPath = "";
+            if(!absFragPath.exists) absFragPath = "";
+            loadFiles(absVertPath,
+                      absGeomPath,
+                      absFragPath,
+                      paths);
             return this;
         }
 
         /++
             Load the shader from path
         +/
-        Shader loadFiles(in string vertexShaderSourcePath, in string geometryShaderSourcePath, in string fragmentShaderSourcePath){
-            loadSources(vertexShaderSourcePath.loadedSource, geometryShaderSourcePath.loadedSource, fragmentShaderSourcePath.loadedSource);
+        Shader loadFiles(in string vertexShaderSourcePath, in string geometryShaderSourcePath, in string fragmentShaderSourcePath, in string[] paths = []){
+            loadSources((vertexShaderSourcePath   != "")?(Source.load(vertexShaderSourcePath)):   null,
+                        (geometryShaderSourcePath != "")?(Source.load(geometryShaderSourcePath)): null,
+                        (fragmentShaderSourcePath != "")?(Source.load(fragmentShaderSourcePath)): null,
+                        paths);
             return this;
         }
         
+        ///
+        Shader loadSources(in string vertexShaderSourceText, in string geometryShaderSourceText, in string fragmentShaderSourceText, in string[] paths = []){
+            Source vertexShaderSource;
+            Source geometryShaderSource;
+            Source fragmentShaderSource;
+
+            if(vertexShaderSourceText != ""){
+                vertexShaderSource = new Source(vertexShaderSourceText, "root.vert", "");
+            }
+            if(geometryShaderSourceText != ""){
+                geometryShaderSource = new Source(geometryShaderSourceText, "root.geom", "");
+            }
+            if(fragmentShaderSourceText != ""){
+                fragmentShaderSource = new Source(fragmentShaderSourceText, "root.vert", "");
+            }
+
+            loadSources(vertexShaderSource, geometryShaderSource, fragmentShaderSource, paths);
+
+            return this;
+        }
+
         /++
             Load the shader from sources 
         +/
-        Shader loadSources(in string vertexShaderSource, in string geometryShaderSource, in string fragmentShaderSource){
-            if(vertexShaderSource != ""){
+        Shader loadSources(Source vertexShaderSource, Source geometryShaderSource, Source fragmentShaderSource, in string[] paths = []){
+            if(vertexShaderSource){
                 addLog("load vertex shader");
-                loadShaderSource(vertexShaderSource, GL_VERTEX_SHADER);
+                vertexShaderSource.expand(paths);
+                loadShaderSource(vertexShaderSource.expanded, GL_VERTEX_SHADER);
             }
             
-            if(geometryShaderSource != ""){
+            if(geometryShaderSource){
                 addLog("load geometry shader");
-                loadShaderSource(geometryShaderSource, GL_GEOMETRY_SHADER);
+                geometryShaderSource.expand(paths);
+                loadShaderSource(geometryShaderSource.expanded, GL_GEOMETRY_SHADER);
                 glProgramParameteri(_programID, GL_GEOMETRY_INPUT_TYPE, _geometryInput.primitiveMode.getGLPrimitiveMode);
                 glProgramParameteri(_programID, GL_GEOMETRY_OUTPUT_TYPE, _geometryInput.primitiveMode.getGLPrimitiveMode);
                 import std.conv:to;
                 glProgramParameteri(_programID, GL_GEOMETRY_VERTICES_OUT, _maxGeometryOutputVertices.to!int);
             }
             
-            if(fragmentShaderSource != ""){
+            if(fragmentShaderSource){
                 addLog("load fragment shader");
-                loadShaderSource(fragmentShaderSource, GL_FRAGMENT_SHADER);
+                fragmentShaderSource.expand(paths);
+                loadShaderSource(fragmentShaderSource.expanded, GL_FRAGMENT_SHADER);
             }
 
             glLinkProgram(_programID);

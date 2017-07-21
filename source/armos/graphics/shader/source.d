@@ -64,6 +64,12 @@ class Source {
             }
             return this;
         }
+
+        string expanded()const{
+            import std.array;
+            import std.algorithm;
+            return lines.map!(l => l.content).join('\n');
+        }
     }//public
 
     string rawText;
