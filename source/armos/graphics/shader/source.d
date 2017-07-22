@@ -41,9 +41,8 @@ class Source {
             import std.string;
             import std.array;
             lines = rawText.splitLines.map!((l){auto r=Line();r.origin = this;r.content = l;return r;}).array;
-            foreach (size_t i, ref line; lines) {
-                line.numOrigineLines = i+1;
-            }
+
+            dependencies = [];
 
             size_t currentLineIndex;
             while(currentLineIndex < lines.length){
@@ -77,6 +76,16 @@ class Source {
     string path;
     Line[] lines;
 
+    /// WARNING: duplicatable
+    Source[] dependencies;
+
+    /// WARNING: duplicatable
+    Source[] allDependencies(){
+        import std.algorithm;
+        import std.array;
+        return dependencies.map!(src => src.allDependencies).join.array ~ dependencies;
+    }
+
     private{
         size_t includeSource(in size_t currentLineIndex, in string[] paths, Source[] searchableList){
             const line = lines[currentLineIndex];
@@ -102,8 +111,21 @@ class Source {
 
             Source includingTargetSource = Source.load(absIncludingTargetPath);
             includingTargetSource.expand(paths, searchableList);
-            this.lines = this.lines[0..currentLineIndex] ~ includingTargetSource.lines ~ this.lines[currentLineIndex+1..$];
-            lineLength = includingTargetSource.lines.length;
+            dependencies ~= includingTargetSource;
+
+            Line LineSpecificationBegin = {origin: includingTargetSource,
+                                           content: "#line 1 " ~ absIncludingTargetPath};
+            import std.conv;
+            Line LineSpecificationEnd   = {origin: this,
+                                           content: "#line " ~ (currentLineIndex+1).to!string ~ " " ~ path};
+
+            this.lines = this.lines[0..currentLineIndex] ~ 
+                         LineSpecificationBegin ~ 
+                         includingTargetSource.lines ~ 
+                         LineSpecificationEnd ~ 
+                         this.lines[currentLineIndex+1..$];
+
+            lineLength = includingTargetSource.lines.length + 2;
             return lineLength;
         }
     }//private
@@ -136,8 +158,8 @@ unittest{
                                      "..", "..", "..", "..",
                                      "test", "graphics", "shader", "precompiler", "include");
     assert(dir.exists);
-
-    assert(Source.load(buildPath(dir, "source_a.frag")).expand.lines.length == 7);
+    
+    assert(Source.load(buildPath(dir, "source_a.frag")).expand.lines.length == 11);
 }
 
 /++
@@ -145,7 +167,6 @@ unittest{
 struct Line {
     public{
         Source origin;
-        size_t numOrigineLines;;
         string content;
         auto expand(in Source[] searchable){
         }

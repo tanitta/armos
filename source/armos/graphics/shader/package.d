@@ -31,6 +31,7 @@ class Shader {
             string absVertPath = (shaderName ~ ".vert").absolutePath;
             string absGeomPath = (shaderName ~ ".geom").absolutePath;
             string absFragPath = (shaderName ~ ".frag").absolutePath;
+
             import std.file;
             if(!absVertPath.exists) absVertPath = "";
             if(!absGeomPath.exists) absGeomPath = "";
@@ -45,7 +46,11 @@ class Shader {
         /++
             Load the shader from path
         +/
-        Shader loadFiles(in string vertexShaderSourcePath, in string geometryShaderSourcePath, in string fragmentShaderSourcePath, in string[] paths = []){
+        Shader loadFiles(in string vertexShaderSourcePath,
+                         in string geometryShaderSourcePath,
+                         in string fragmentShaderSourcePath,
+                         in string[] paths = [])
+        {
             loadSources((vertexShaderSourcePath   != "")?(Source.load(vertexShaderSourcePath)):   null,
                         (geometryShaderSourcePath != "")?(Source.load(geometryShaderSourcePath)): null,
                         (fragmentShaderSourcePath != "")?(Source.load(fragmentShaderSourcePath)): null,
@@ -54,7 +59,11 @@ class Shader {
         }
         
         ///
-        Shader loadSources(in string vertexShaderSourceText, in string geometryShaderSourceText, in string fragmentShaderSourceText, in string[] paths = []){
+        Shader loadSources(in string vertexShaderSourceText,
+                           in string geometryShaderSourceText,
+                           in string fragmentShaderSourceText,
+                           in string[] paths = [])
+        {
             Source vertexShaderSource;
             Source geometryShaderSource;
             Source fragmentShaderSource;
@@ -77,7 +86,15 @@ class Shader {
         /++
             Load the shader from sources 
         +/
-        Shader loadSources(Source vertexShaderSource, Source geometryShaderSource, Source fragmentShaderSource, in string[] paths = []){
+        Shader loadSources(Source vertexShaderSource,
+                           Source geometryShaderSource,
+                           Source fragmentShaderSource,
+                           in string[] paths = [])
+        {
+            _vertRootSource = vertexShaderSource;
+            _geomRootSource = geometryShaderSource;
+            _fragRootSource = fragmentShaderSource;
+
             if(vertexShaderSource){
                 addLog("load vertex shader");
                 vertexShaderSource.expand(paths);
@@ -474,6 +491,10 @@ class Shader {
         bool _isLoaded = false;
         string _log;
         int[] _savedIDs;
+
+        Source _vertRootSource;
+        Source _geomRootSource;
+        Source _fragRootSource;
         
         //geometry shader parameters
         size_t _maxGeometryOutputVertices;

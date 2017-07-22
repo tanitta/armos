@@ -1,3 +1,3 @@
 #include "nested/source_c.frag"
 
-void funcB(){}
+void funcB1(){}
