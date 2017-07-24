@@ -32,13 +32,13 @@ class BufferMesh : BufferBundle{
         
         this(){
             super();
-            attrs["vertex"]    = new Buffer(BufferType.Array);
-            attrs["normal"]    = new Buffer(BufferType.Array);
-            attrs["tangent"]   = new Buffer(BufferType.Array);
-            attrs["texCoord0"] = new Buffer(BufferType.Array);
-            attrs["texCoord1"] = new Buffer(BufferType.Array);
-            attrs["color"]     = new Buffer(BufferType.Array);
-            attrs["index"]    = new Buffer(BufferType.ElementArray);
+            attrs["vertex"]    = new Buffer(BufferType.Array);        // Vector4f
+            attrs["normal"]    = new Buffer(BufferType.Array);        // Vector3f
+            attrs["tangent"]   = new Buffer(BufferType.Array);        // Vector3f
+            attrs["texCoord0"] = new Buffer(BufferType.Array);        // Vector4f
+            attrs["texCoord1"] = new Buffer(BufferType.Array);        // Vector4f
+            attrs["color"]     = new Buffer(BufferType.Array);        // Vector4f
+            attrs["index"]     = new Buffer(BufferType.ElementArray); // int
         }
         
         ///
