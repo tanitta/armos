@@ -91,9 +91,12 @@ class Shader {
                            Source fragmentShaderSource,
                            in string[] paths = [])
         {
-            _vertRootSource = vertexShaderSource;
-            _geomRootSource = geometryShaderSource;
-            _fragRootSource = fragmentShaderSource;
+            if(_programID){
+                glDeleteProgram(_programID);
+                _programID = glCreateProgram();
+                _isLoaded = false;
+                _attribNames.clear;
+            }
 
             if(vertexShaderSource){
                 addLog("load vertex shader");
@@ -492,10 +495,6 @@ class Shader {
         string _log;
         int[] _savedIDs;
 
-        Source _vertRootSource;
-        Source _geomRootSource;
-        Source _fragRootSource;
-        
         //geometry shader parameters
         size_t _maxGeometryOutputVertices;
         MustDefinedPrimitiveMode _geometryInput;
