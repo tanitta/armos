@@ -49,6 +49,7 @@ class Source {
             import std.process;
             auto command = "echo " ~ "\"" ~ rawText ~"\"" ~ " | " ~ glslifyPath;
             auto result = executeShell(command, null, Config.none, size_t.max, absolutePath.dirName);
+            assert(!result.status, command ~ "\n" ~ result.output);
             _expanded = result.output;
             return this;
         }
