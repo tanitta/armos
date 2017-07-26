@@ -4,7 +4,7 @@
     "copyright": "Copyright © 2015, tanitta",
     "authors": ["tanitta"],
     "license": "BSL-1.0",
-    "targetType": "library",
+    "targetType": "autodetect",
     "dependencies": {
         "derelict-sdl2": ">=1.9.7", 
         "derelict-assimp3": "1.1.1", 
