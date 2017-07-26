@@ -34,40 +34,28 @@ class Source {
 
         ///
         Source expand(in string[] paths = [], Source[] searchableList = []){
-            Source[string] searchableHash;
-            import std.algorithm;
-            searchableList.each!(source => searchableHash[source.name] = source);
-
-            import std.string;
-            import std.array;
-            lines = rawText.splitLines.map!((l){auto r=Line();r.origin = this;r.content = l;return r;}).array;
-
-            dependencies = [];
-
-            size_t currentLineIndex;
-            while(currentLineIndex < lines.length){
-                const line = lines[currentLineIndex];
-                size_t increment = 1;
-                if(line.content.isMacroStatement){
-                    switch (line.content.macroNameFrom) {
-                        case "include":
-                            increment = includeSource(currentLineIndex, paths, searchableList);
-                            break;
-                        case "import":
-                            //TODO
-                            break;
-                        default: break;
-                    }
-                }
-                currentLineIndex += increment;
+            import armos.utils.file;
+            import std.path;
+            import std.file;
+            string absolutePath;
+            if(isAbsolute(path)){
+                absolutePath = path;
+            }else{
+                absolutePath = buildPath(thisExePath.dirName, path);
             }
+
+            string glslifyPath = buildPath(thisExePath.dirName, "node_modules", "glslify", "bin.js");
+
+            import std.process;
+            auto command = "echo " ~ "\"" ~ rawText ~"\"" ~ " | " ~ glslifyPath;
+            auto result = executeShell(command, null, Config.none, size_t.max, absolutePath.dirName);
+            _expanded = result.output;
             return this;
         }
 
+        ///
         string expanded()const{
-            import std.array;
-            import std.algorithm;
-            return lines.map!(l => l.content).join('\n');
+            return _expanded;
         }
     }//public
 
@@ -75,6 +63,7 @@ class Source {
     string name;
     string path;
     Line[] lines;
+    string _expanded;
 
     /// WARNING: duplicatable
     Source[] dependencies;
