@@ -44,7 +44,7 @@ class Source {
                 absolutePath = buildPath(thisExePath.dirName, path);
             }
 
-            string glslifyPath = buildPath(thisExePath.dirName, "node_modules", "glslify", "bin.js");
+            string glslifyPath = "glslify";
 
             import std.process;
             auto command = "echo " ~ "\"" ~ rawText ~"\"" ~ " | " ~ glslifyPath;

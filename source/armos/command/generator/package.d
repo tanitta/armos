@@ -137,7 +137,9 @@ private void setupMainAppSource(in ProjectConfig config){
 
 private void setupGlslify(in ProjectConfig config){
     import std.process;
+    if(execute(["which", "glslify"]).status != 0){
+        execute(["npm", "install", "-g", "glslify"], null, Config.none, size_t.max, config.path); 
+    }
     execute(["npm", "init", "-y"], null, Config.none, size_t.max, config.path); 
-    execute(["npm", "install", "--save-dev", "glslify"], null, Config.none, size_t.max, config.path); 
 }
 
