@@ -36,6 +36,11 @@ class TestApp : BaseApp{
 void main(){run(new TestApp);}
 ```
 
+## Platform
+
+- Linux
+- macOS
+- Windows
 
 ## Require
 
