@@ -142,14 +142,15 @@ version(unittest){
 }
 
 unittest{
-    import std.path;
-    import std.file;
-    string dir = buildNormalizedPath(__FILE_FULL_PATH__.dirName,
-                                     "..", "..", "..", "..",
-                                     "test", "graphics", "shader", "precompiler", "include");
-    assert(dir.exists);
-    
-    assert(Source.load(buildPath(dir, "source_a.frag")).expand.lines.length == 11);
+    //TODO
+    // import std.path;
+    // import std.file;
+    // string dir = buildNormalizedPath(__FILE_FULL_PATH__.dirName,
+    //                                  "..", "..", "..", "..",
+    //                                  "test", "graphics", "shader", "precompiler", "include");
+    // assert(dir.exists);
+    //
+    // assert(Source.load(buildPath(dir, "source_a.frag")).expand.lines.length == 11);
 }
 
 /++
