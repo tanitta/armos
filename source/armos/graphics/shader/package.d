@@ -69,13 +69,13 @@ class Shader {
             Source fragmentShaderSource;
 
             if(vertexShaderSourceText != ""){
-                vertexShaderSource = new Source(vertexShaderSourceText, "root.vert", "");
+                vertexShaderSource = new Source(vertexShaderSourceText, "main.vert", "");
             }
             if(geometryShaderSourceText != ""){
-                geometryShaderSource = new Source(geometryShaderSourceText, "root.geom", "");
+                geometryShaderSource = new Source(geometryShaderSourceText, "main.geom", "");
             }
             if(fragmentShaderSourceText != ""){
-                fragmentShaderSource = new Source(fragmentShaderSourceText, "root.vert", "");
+                fragmentShaderSource = new Source(fragmentShaderSourceText, "main.vert", "");
             }
 
             loadSources(vertexShaderSource, geometryShaderSource, fragmentShaderSource, paths);
