@@ -39,7 +39,7 @@ class TestApp : ar.app.BaseApp{
         
         _offRegistrationFilter = (new ar.graphics.DefaultMaterial).shader(shader);
         
-        _model = (new ar.graphics.Model).load("bunny.fbx");
+        _model = (new ar.graphics.Model).load("data/bunny.fbx");
     }
 
     override void update(){

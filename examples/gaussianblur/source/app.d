@@ -124,7 +124,7 @@ class TestApp : ar.app.BaseApp{
         _gaussianblurShadingMaterial = (new GaussianBlur!10);
         _fbo = new ar.graphics.Fbo;
         
-        _model = (new ar.graphics.Model).load("bunny.fbx");
+        _model = (new ar.graphics.Model).load("data/bunny.fbx");
         // import std.algorithm:each;
         // _model.entities.each!(e => e.mesh.calcNormal);
         // _model.entities.each!(e => e.material = _gaussianblurShadingMaterial);
