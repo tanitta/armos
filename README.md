@@ -43,9 +43,11 @@ void main(){run(new TestApp);}
 - Windows
 
 ## Require
+
 - [dmd](https://dlang.org/)
 - [ldc](https://github.com/ldc-developers/ldc)(optional)
 - [dub](http://code.dlang.org/)
+- npm
 - GLFW3
 - OpenGL3
 - FreeImage
@@ -56,37 +58,54 @@ void main(){run(new TestApp);}
 
 
 ## Install
+
 1. Install some packages to build with dlang.
   - macOS
   ```
-  brew install dmd dub
+  $ brew install dmd dub
   ```
 
-1. Download this repository.
+2. Download this repository.
   - Latest(via github)
   ```
-  git clone git@github.com:tanitta/armos.git
+  $ git clone git@github.com:tanitta/armos.git
   ```
   ```
-  dub add-local <repository-path>
+  $ dub add-local <repository-path>
   ```
 
   - Stable(via dub)
   ```
-  dub fetch armos
+  $ dub fetch armos
   ```
 
-1. Install dependency dynamic libraries.
+3. Install dependency dynamic libraries and npm for glsl package management.
   - macOS
   ```
-  brew install glfw3 assimp freeimage libogg libvorbis
+  $ brew install glfw3 assimp freeimage libogg libvorbis npm
   ```
 
-## Usage  
-1. put the following dependency into your project's dub.sdl or dub.json.
-  ```
-  dependency "armos" version="~>0.0.1"
-  ```
+## Usage
+
+Generate new project.
+
+```
+$ dub run armos -- generate project <projectpath>
+```
+
+We recoment to set alias. (This command: `$ dub list | grep "armos"` will find a package  path of armos)
+
+```
+alias armos="path/to/armos"
+```
+
+Or, add to aleady existing package.
+
+put the following dependency into your project's dub.sdl or dub.json.
+
+```
+dependency "armos" version="~>0.0.1"
+```
 
 ## Why use D?
 
