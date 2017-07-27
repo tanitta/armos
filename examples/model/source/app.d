@@ -8,7 +8,7 @@ class TestApp : ar.app.BaseApp{
         _camera = (new ar.graphics.DefaultCamera).position(ar.math.Vector3f(0, 0, -40))
                                                .target(ar.math.Vector3f.zero);
         
-        _model  = (new ar.graphics.Model).load("bunny.fbx");
+        _model  = (new ar.graphics.Model).load("data/bunny.fbx");
 	}
 	
 	override void update(){

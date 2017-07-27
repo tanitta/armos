@@ -11,12 +11,12 @@ class TestApp : ar.app.BaseApp{
                  .target(ar.math.Vector3f.zero);
 
         _model  = (new ar.graphics.Model)
-                 .load("teapot.fbx");
+                 .load("data/teapot.fbx");
         
         _model.materials[0].shader = (new ar.graphics.Shader)
                                     .geometryInput(ar.graphics.PrimitiveMode.Triangles)
                                     .geometryOutput(ar.graphics.PrimitiveMode.Triangles)
-                                    .load("simple");
+                                    .load("data/simple");
     }
 
     override void update(){

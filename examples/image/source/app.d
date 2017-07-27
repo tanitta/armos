@@ -4,9 +4,9 @@ class TestApp : ar.app.BaseApp{
 	override void setup(){
 		ar.graphics.blendMode = ar.graphics.BlendMode.Alpha;
 		
-		_imageLena = (new ar.graphics.Image).load("lena_std.tif");
+		_imageLena = (new ar.graphics.Image).load("data/lena_std.tif");
 		
-		_imageDman = (new ar.graphics.Image).load("d-man.png")
+		_imageDman = (new ar.graphics.Image).load("data/d-man.png")
                                             .minMagFilter(ar.graphics.TextureMinFilter.Nearest, ar.graphics.TextureMagFilter.Nearest);
 		_imageFromArray = new ar.graphics.Image;
 		ubyte[100*100] array;

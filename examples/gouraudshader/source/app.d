@@ -67,7 +67,7 @@ class TestApp : ar.app.BaseApp{
         _gourandShadingMaterial = (new ar.graphics.DefaultMaterial).shader(shader);
         _gourandShadingMaterial.uniform("lightDirection", ar.math.Vector3f(0.5, 0.5, 0.5).normalized);
         
-        _model = (new ar.graphics.Model).load("bunny.fbx");
+        _model = (new ar.graphics.Model).load("data/bunny.fbx");
         import std.algorithm:each;
         _model.entities.each!(e => e.mesh.calcNormal);
         _model.entities.each!(e => e.material = _gourandShadingMaterial);
