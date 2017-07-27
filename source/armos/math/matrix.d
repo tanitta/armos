@@ -49,7 +49,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
     /++
     +/
-    pure VectorType opIndex(in int index)const{
+    pure VectorType opIndex(in size_t index)const{
         return elements[index];
     }
     unittest{
@@ -66,7 +66,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
     /++
     +/
-    ref VectorType opIndex(in int index){
+    ref VectorType opIndex(in size_t index){
         return elements[index];
     }
     unittest{
@@ -253,7 +253,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     MatrixType opMul(in T v)const{
         auto result = MatrixType();
         foreach (int index, const VectorType var; elements) {
-            result[index] = this[index]*v;
+            result[index] = var*v;
         }
         return result;
     }
@@ -530,23 +530,38 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     }
 
     /++
+        自身を別の型のMatrixへキャストしたものを返します．キャスト後の型は元のMatrixのRowSize, ColSizeが等しくある必要があります．
     +/
-    void print()const{
-        import std.stdio;
-        for (int i = 0; i < RowSize ; i++) {
-            for (int j = 0; j < ColSize ; j++) {
-                writef("%f\t", elements[i][j]);
-            }
-            writef("\n");
+    CastedType opCast(CastedType)()const if(CastedType.rowSize == typeof(this).rowSize && CastedType.colSize == typeof(this).colSize){
+        auto mat = CastedType();
+        foreach (int index, const var; this.elements) {
+            mat.elements[index] = cast(CastedType.VectorType)elements[index];
         }
+        return mat;
     }
     unittest{
-        // auto matrix = Matrix3f(
-        // 		[1, 4, 7], 
-        // 		[2, 5, 8], 
-        // 		[3, 6, 9]
-        // 		);
-        // matrix.print;
+        auto m_f= Matrix3f(
+                [1, 4, 7], 
+                [2, 5, 8], 
+                [3, 6, 9]
+        );
+
+        auto m_i= Matrix3i.zero;
+        
+        m_i = cast(Matrix3i)m_f;
+        
+        assert(m_i[0][0] == 1);
+
+        //Invalid cast. Different size.
+        assert(!__traits(compiles, {
+            auto m_f= Matrix3f(
+                    [1, 4, 7], 
+                    [2, 5, 8], 
+                    [3, 6, 9]
+            );
+            auto m_i= Matrix4i.zero;
+            vec_i = cast(Vector3i)vec_f;
+        }));
     }
 }
 

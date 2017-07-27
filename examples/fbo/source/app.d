@@ -6,7 +6,7 @@ class TestApp : ar.app.BaseApp{
 	override void setup(){
 		_fbo = (new ar.graphics.Fbo);
 		_fbo.begin;
-			ar.graphics.fillBackground(32, 32, 32);
+			ar.graphics.fillBackground(0.125, 0.125, 0.125);
 		_fbo.end;
         
 		_circle = ar.graphics.circlePrimitive(ar.math.Vector3f(0, 0, 0), 1);
@@ -34,7 +34,7 @@ class TestApp : ar.app.BaseApp{
 	
 	override void draw(){
 		_fbo.begin;
-		ar.graphics.color(255.0*sin(_angle*0.1), 255.0*sin(_angle*0.11+0.1), 255, 1);
+		ar.graphics.color(sin(_angle*0.1)*0.5+0.5, sin(_angle*0.11+0.1)*0.5+0.5, 1, 1);
 		ar.graphics.pushMatrix;
 			ar.graphics.translate(_particle.position[0], _particle.position[1], 0);
 			ar.graphics.scale(6+5.0*sin(_angle*0.1));
@@ -42,13 +42,13 @@ class TestApp : ar.app.BaseApp{
 		ar.graphics.popMatrix;
 		_fbo.end;
 		
-		ar.graphics.color(255);
+		ar.graphics.color(1);
 		_fbo.draw;
 	}
 	override void keyPressed(ar.utils.KeyType key){
 		_fbo.resize(ar.app.currentWindow.size);
 		_fbo.begin;
-			ar.graphics.background(32, 32, 32);
+			ar.graphics.background(0.125, 0.125, 0.125);
 		_fbo.end;
 		_particle.position = ar.math.Vector2f(0, 0);
 		_particle.speed = ar.math.Vector2f(0, 0);
@@ -57,6 +57,10 @@ class TestApp : ar.app.BaseApp{
 	override void mouseMoved(ar.math.Vector2i vec, int button){
 		_mouse.currentPos = vec;
 	}
+
+	override void windowResized(ar.math.Vector2i size){
+        _fbo.resize(size);
+    }
 
     private{
         ar.graphics.Fbo _fbo;

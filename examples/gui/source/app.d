@@ -3,7 +3,7 @@ import std.stdio, std.math, std.conv;
 static import ar = armos;
 
 class TestApp : ar.app.BaseApp{
-	ar.graphics.Camera camera = new ar.graphics.DefaultCamera();
+	ar.graphics.Camera camera;
 	ar.utils.Gui gui;
 	ar.graphics.Mesh mesh;
 	float _fpsUseRate = 0.0;
@@ -16,6 +16,7 @@ class TestApp : ar.app.BaseApp{
 	
 		
 	override void setup(){
+        camera = new ar.graphics.DefaultCamera();
 		ar.graphics.blendMode(ar.graphics.BlendMode.Alpha);
 		camera.position = ar.math.Vector3f(0, 0, -100);
 		camera.target= ar.math.Vector3f(0, 0, 0);
@@ -25,6 +26,12 @@ class TestApp : ar.app.BaseApp{
 			.add(new ar.utils.Partition(" "))
 			.add(new ar.utils.Label("armos-gui-example"))
 			.add(new ar.utils.Partition)
+			.add(new ar.utils.Slider!int("slider!int", i, 0, 255))
+			.add(new ar.utils.Slider!float("slider!float", f, 0, 255))
+			.add(new ar.utils.Partition)
+			.add(new ar.utils.ToggleButton("isFill", isFill))
+			.add(new ar.utils.ToggleButton("isFill", isFill))
+			.add(new ar.utils.Partition)
 		)
 		.add(
 			(new ar.utils.List)
@@ -33,13 +40,8 @@ class TestApp : ar.app.BaseApp{
 			.add(new ar.utils.Partition)
 			.add(new ar.utils.MovingGraph!float("fpsUseRate", _fpsUseRate, 0.0, 100.0))
 			.add(new ar.utils.Partition)
-			.add(new ar.utils.Slider!int("slider!int", i, 0, 255))
-			.add(new ar.utils.Slider!float("slider!float", f, 0, 255))
-			.add(new ar.utils.Partition)
 			.add(new ar.utils.MovingGraph!float("x", cX, -2, 2))
 			.add(new ar.utils.MovingGraphXY!float("x", cX, -2, 2, "y", cY, -2, 2))
-			.add(new ar.utils.ToggleButton("isFill", isFill))
-			.add(new ar.utils.ToggleButton("isFill", isFill))
 			.add(new ar.utils.Partition)
 		);
 		
@@ -57,7 +59,9 @@ class TestApp : ar.app.BaseApp{
 		camera.begin;
 		ar.graphics.pushMatrix;
 		ar.graphics.rotate(f, 1, 1, 1);
-			ar.graphics.color(i, 255-i, i*0.5);
+			ar.graphics.color(i.to!float/255.0,
+                              (255.0-i).to!float/255.0,
+                              (i/2).to!float/255.0);
 			if(isFill){
 				mesh.drawFill;
 			}else{

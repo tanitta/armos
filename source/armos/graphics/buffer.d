@@ -3,6 +3,8 @@ module armos.graphics.buffer;
 import derelict.opengl3.gl;
 import armos.graphics.vao;
 import armos.math;
+import std.variant;
+
 
 /++
 +/
@@ -14,9 +16,10 @@ class Buffer {
         +/
         this(in BufferType bufferType){
             glGenBuffers(1, cast(uint*)&_id);
-            _bufferType = bufferType;
+            _type = bufferType;
         }
 
+        ///
         ~this(){
             glDeleteBuffers(1, cast(uint*)&_id);
         }
@@ -24,92 +27,113 @@ class Buffer {
         /++
         +/
         void begin(){
-            if(hasVao) _rootVao.begin;
-
             int savedID;
-            glGetIntegerv(bindingEnum(_bufferType), &savedID);
+            glGetIntegerv(bindingEnum(_type), &savedID);
             _savedIDs ~= savedID;
-            glBindBuffer(_bufferType, _id);
+            glBindBuffer(_type, _id);
         }
 
         /++
         +/
         void end(){
             import std.range;
-            glBindBuffer(_bufferType, _savedIDs[$-1]);
+            glBindBuffer(_type, _savedIDs[$-1]);
             if (_savedIDs.length == 0) {
                 assert(0, "stack is empty");
             }else{
                 _savedIDs.popBack;
             }
-
-            if(hasVao){
-                _rootVao.end;
-            }
         }
 
-        /++
-        +/
-        Buffer array(T)(in T[] array, in size_t dimention, in BufferUsageFrequency freq, in BufferUsageNature nature)if(__traits(isArithmetic, T)){
+        ///
+        Buffer array(T)(in T[] array, in size_t dimention = 1,
+                        in BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+                        in BufferUsageNature    nature = BufferUsageNature.Draw)
+        if(__traits(isArithmetic, T)){
             if(array.length == 0)return this;
-            begin;
-            
-            immutable currentSize = array.length * array[0].sizeof;
-            if(_size != currentSize){
-                _size = currentSize;
-                glBufferData(_bufferType, _size, array.ptr, usageEnum(freq, nature));
-            }else{
-                glBufferSubData(_bufferType, 0, _size, array.ptr);
-            }
-            
-            import std.conv;
-            if(_bufferType != BufferType.ElementArray){
-                glVertexAttribPointer(0,
-                                     dimention.to!int,
-                                      GL_FLOAT,
-                                      GL_FALSE,
-                                      0,
-                                      null,
-                                      );
-            }
-            end;
+
+            _array     = Algebraic!(const(int)[], const(float)[], const(double)[])(array);
+            _dimention = dimention;
+            _freq      = freq;
+            _nature    = nature;
+
+            updateGlBuffer;
             return this;
         }
         
         ///
-        Buffer array(V)(in V[] array, in BufferUsageFrequency freq, in BufferUsageNature nature)if(isVector!V){
+        Buffer array(V)(in V[] array,
+                        in BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+                        in BufferUsageNature    nature = BufferUsageNature.Draw)
+        if(isVector!V){
             if(array.length == 0)return this;
             V.elementType[] raw = new V.elementType[array.length*V.dimention];
             for (size_t i = 0, pos = 0, len = array.length; i < len; ++i, pos += V.dimention) {
-                raw[pos .. pos + V.dimention] = array[i].elements[];
+                raw[pos .. pos + V.dimention] = array[i].elements;
             }
             this.array(raw, V.dimention, freq, nature);
             return this;
         }
 
-        /++
-        +/
-        void vao(Vao o){
-            _rootVao = o;
-        }
-
-        /++
-        +/
-        bool hasVao(){
-            return (_rootVao !is null);
+        ///
+        Buffer updateGlBuffer(){
+            if(_array.type == typeid(const(float)[])){
+                updateGlBuffer!(const(float));
+            }else if(_array.type == typeid(const(double)[])){
+                updateGlBuffer!(const(double));
+            }else if(_array.type == typeid(const(int)[])){
+                updateGlBuffer!(const(int));
+            }
+            return this;
         }
 
         ///
         size_t size()const{return _size;}
 
+        ///
+        BufferType type()const{return _type;}
     }//public
 
     private{
         int _id;
         int[] _savedIDs;
-        BufferType _bufferType;
-        Vao _rootVao;
+        BufferType _type;
         size_t _size;
+        size_t _dimention;
+        BufferUsageFrequency _freq;
+        BufferUsageNature _nature;
+        Algebraic!(const(int)[], const(float)[], const(double)[]) _array;
+
+        void updateGlBuffer(T)(){
+            auto arr = _array.get!(T[]);
+            begin;
+            immutable currentSize = arr.length * arr[0].sizeof;
+             
+            if(_size != currentSize){
+                _size = currentSize;
+                glBufferData(_type, _size, arr.ptr, usageEnum(_freq, _nature));
+            }else{
+                glBufferSubData(_type, 0, _size, arr.ptr);
+            }
+            
+            import std.conv;
+            if(_type != BufferType.ElementArray){
+                static if(is(T == const(float))){
+                    GLenum glDataType = GL_FLOAT;
+                }else static if(is(T == const(double))){
+                    GLenum glDataType = GL_DOUBLE;
+                }else static if(is(T == const(int))){
+                    GLenum glDataType = GL_INT;
+                }
+                glVertexAttribPointer(0,
+                                      _dimention.to!int,
+                                      glDataType,
+                                      GL_FALSE,
+                                      0,
+                                      null);
+            }
+            end;
+        }
     }//private
 }//class Vbo
 

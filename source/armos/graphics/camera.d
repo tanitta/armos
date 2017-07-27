@@ -85,6 +85,9 @@ class DefaultCamera: Camera{
 }
 
 mixin template CameraImpl(){
+    import armos.math;
+    import armos.graphics;
+    import armos.app;
     private alias T = typeof(this);
     public{
         /++

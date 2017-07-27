@@ -11,7 +11,7 @@ class TestApp : ar.app.BaseApp{
 		_dman.load("d-man.png");
 		_dman.magFilter(ar.graphics.TextureMagFilter.Nearest);
 		
-		ar.graphics.background(64, 64, 64);
+		ar.graphics.background(0.25, 0.25, 0.25);
 	}
 	
 	override void draw(){

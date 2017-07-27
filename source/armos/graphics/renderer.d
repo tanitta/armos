@@ -157,12 +157,12 @@ void background(const armos.types.Color color){
 /++
 +/
 void background(const float gray){
-    currentRenderer.background = armos.types.Color(gray, gray, gray, 255);
+    currentRenderer.background = armos.types.Color(gray, gray, gray, 1);
 }
 
 /++
 +/
-void background(in float r, in float g, in float b, in float a = 255){
+void background(in float r, in float g, in float b, in float a = 1){
     currentRenderer.background = armos.types.Color(r, g, b, a);
 }
 
@@ -178,10 +178,10 @@ void fillBackground(const armos.types.Color color){
 
 ///
 void fillBackground(const float gray){
-    currentRenderer.fillBackground = armos.types.Color(gray, gray, gray, 255);
+    currentRenderer.fillBackground = armos.types.Color(gray, gray, gray, 1);
 }
 ///
-void fillBackground(in float r, in float g, in float b, in float a = 255){
+void fillBackground(in float r, in float g, in float b, in float a = 1){
     currentRenderer.fillBackground = armos.types.Color(r, g, b, a);
 }
 
@@ -198,7 +198,7 @@ void clear(in armos.types.Color c){
 
 /++
 +/
-void color(in float r, in float g, in float b, in float a = 255){
+void color(in float r, in float g, in float b, in float a = 1){
     currentRenderer.color = armos.types.Color(r, g, b, a);
 }
 
@@ -211,7 +211,7 @@ void color(const armos.types.Color c){
 /++
 +/
 void color(const float gray){
-    currentRenderer.color = armos.types.Color(gray, gray, gray, 255);
+    currentRenderer.color = armos.types.Color(gray, gray, gray, 1);
 }
 
 /++
@@ -271,11 +271,11 @@ void drawAxis(
         ){
     pushStyle;{
         lineWidth = 2.0;
-        color(255, 0, 0);
+        color(1, 0, 0);
         drawLine(-size*0.5, 0.0, 0.0, size, 0.0,  0.0);
-        color(0, 255, 0);
+        color(0, 1, 0);
         drawLine(0.0, -size*0.5, 0.0, 0.0,  size, 0.0);
-        color(0, 0, 255);
+        color(0, 0, 1);
         drawLine(0.0, 0.0, -size*0.5, 0.0,  0.0,  size);
     }popStyle;
 }
@@ -290,17 +290,17 @@ void drawGrid(
         pushMatrix;{
             rotate(90.0, 0, 0, 1);
             if(x){
-                color(255, 0, 0);
+                color(1, 0, 0);
                 drawGridPlane(stepSize, numberOfSteps);
             }
             rotate(-90.0, 0, 0, 1);
             if(y){
-                color(0, 255, 0);
+                color(0, 1, 0);
                 drawGridPlane(stepSize, numberOfSteps);
             }
             rotate(90.0, 1, 0, 0);
             if(z){
-                color(0, 0, 255);
+                color(0, 0, 1);
                 drawGridPlane(stepSize, numberOfSteps);
             }
         }popMatrix;
@@ -669,6 +669,11 @@ int samples(){
     
 }
 
+///
+armos.graphics.Fbo currentFbo(){
+    return currentRenderer._fbo;
+}
+
 /++
 +/
 class Renderer {
@@ -682,15 +687,16 @@ class Renderer {
         /++
         +/
         this(){
-            _fbo = (new armos.graphics.Fbo);
+            _fbo = (new armos.graphics.Fbo).minFilter(TextureMinFilter.Linear);
             
             _bufferMesh   = new armos.graphics.BufferMesh;
             _materialStack ~= new armos.graphics.DefaultMaterial;
-            auto bitmap = (new armos.graphics.Bitmap!(char)).allocate(2, 2, armos.graphics.ColorFormat.RGBA)
-                                                      .setAllPixels(0, 255)
-                                                      .setAllPixels(1, 255)
-                                                      .setAllPixels(2, 255)
-                                                      .setAllPixels(3, 255);
+            auto bitmap = (new armos.graphics.Bitmap!(char))
+                         .allocate(2, 2, armos.graphics.ColorFormat.RGBA)
+                         .setAllPixels(0, 255)
+                         .setAllPixels(1, 255)
+                         .setAllPixels(2, 255)
+                         .setAllPixels(3, 255);
             currentMaterial.texture("tex0", (new armos.graphics.Texture).allocate(bitmap));
             _bufferEntity = new armos.graphics.BufferEntity(_bufferMesh, currentMaterial);
             
@@ -699,7 +705,6 @@ class Renderer {
             _projectionMatrixStack.push;
             _textureMatrixStack.push;
             
-            // color(armos.types.Color(255, 255, 255, 255));
         }
         
         /++
@@ -712,7 +717,10 @@ class Renderer {
         +/
         void background(in armos.types.Color color){
             _currentStyle.backgroundColor = cast(armos.types.Color)color;
-            glClearColor(color.r/255.0,color.g/255.0,color.b/255.0,color.a/255.0);
+            glClearColor(color.r/Color.limit,
+                         color.g/Color.limit, 
+                         color.b/Color.limit,
+                         color.a/Color.limit);
         }
         
         ///
@@ -732,8 +740,8 @@ class Renderer {
         void color(in armos.types.Color c){
             import std.conv:to;
             _currentStyle.color = cast(armos.types.Color)c; 
-            _materialStack[0].attr("diffuse", armos.math.Vector4f(c.r.to!float/255.0,c.g.to!float/255.0,c.b.to!float/255.0,c.a.to!float/255.0));
-            glColor4f(c.r/255.0,c.g/255.0,c.b/255.0,c.a/255.0);
+            _materialStack[0].uniform("diffuse", armos.math.Vector4f(c.r.to!float,c.g.to!float,c.b.to!float,c.a.to!float)/Color.limit);
+            glColor4f(c.r/Color.limit,c.g/Color.limit,c.b/Color.limit,c.a/Color.limit);
         }
 
         /++
@@ -836,11 +844,16 @@ class Renderer {
         /++
         +/
         void setup(){
+            glEnable(GL_LINE_SMOOTH);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+            import std.conv;
+            viewport(Vector2f.zero, armos.app.currentWindow.frameBufferSize.to!Vector2f);
+
             if(_isUseFbo){
                 _fbo.begin;
             }
-            viewport();
-            fillBackground(currentStyle.backgroundColor );
+
+            fillBackground(currentStyle.backgroundColor);
 
             if(_isUseFbo){
                 _fbo.end;
@@ -851,7 +864,8 @@ class Renderer {
         +/
         void resize(){
             if(_isUseFbo){
-                _fbo.resize(armos.app.currentWindow.size);
+                import std.conv;
+                _fbo.resize((armos.app.currentWindow.frameBufferSize.to!Vector2f/armos.app.currentWindow.pixelScreenCoordScale).to!Vector2i);
                 _fbo.begin;
             }
 
@@ -864,20 +878,12 @@ class Renderer {
 
         /++
         +/
-        void viewport(in float x = 0, in float y = 0, in float width = -1, in float height = -1, in bool vflip=true){
-            auto position = armos.math.Vector2f(0, 0);
-            auto size = armos.app.currentWindow.frameBufferSize();
-            position[1] = size[1] - (position[1] + size[1]);
-            glViewport(cast(int)position[0], cast(int)position[1], cast(int)size[0], cast(int)size[1]);
-        }
-
-
-        /++
-        +/
         void startRender(){
             _projectionMatrixStack.push;
-            _projectionMatrixStack.load(screenPerspectiveMatrix);
-            _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -armos.app.windowSize[1], 0));
+            import std.conv;
+            auto windowSize = (armos.app.currentWindow.frameBufferSize.to!Vector2f/armos.app.currentWindow.pixelScreenCoordScale).to!Vector2i;
+            _projectionMatrixStack.load(screenPerspectiveMatrix(windowSize));
+            _projectionMatrixStack.mult(scalingMatrix!float(1f, -1f, 1f)*translationMatrix!float(0, -windowSize.y, 0));
             if(_isUseFbo){
                 _fbo.begin;
             }
@@ -898,7 +904,10 @@ class Renderer {
                 glGetBooleanv(GL_DEPTH_TEST, cast(ubyte*)&isEnableDepthTest);
                 disableDepthTest;
             }
-            viewport();
+
+            import std.conv;
+            viewport(Vector2f.zero, armos.app.currentWindow.frameBufferSize.to!Vector2f);
+
             if(_isUseFbo) _fbo.draw;
             _projectionMatrixStack.pop;
             color(tmp);
@@ -922,11 +931,11 @@ class Renderer {
             const scopedVao    = scoped(_bufferMesh.vao);
             const scopedMaterial = scoped(currentMaterial);
             
-            _bufferMesh.attr["vertex"].array(vertices, freq, nature);
+            _bufferMesh.attrs["vertex"].array(vertices, freq, nature);
             
-            _bufferMesh.attr["vertex"].begin;
+            _bufferMesh.attrs["vertex"].begin;
             shader.attr("vertex");
-            _bufferMesh.attr["vertex"].end;
+            _bufferMesh.attrs["vertex"].end;
             
             shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
             shader.uniform("projectionMatrix", projectionMatrix);
@@ -1014,13 +1023,13 @@ class Renderer {
             const scopedVao = scoped(_bufferMesh.vao);
             
             //set attr
-            _bufferMesh.attr["vertex"].array(vertices, freq, nature);
-            if(useNormals) _bufferMesh.attr["normal"].array(normals, freq, nature);
+            _bufferMesh.attrs["vertex"].array(vertices, freq, nature);
+            if(useNormals) _bufferMesh.attrs["normal"].array(normals, freq, nature);
             import std.algorithm;
             import std.array;
-            if(useColors) _bufferMesh.attr["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
-            _bufferMesh.attr["texCoord0"].array(texCoords, freq, nature);
-            _bufferMesh.attr["index"].array(indices, 0, freq, nature);
+            if(useColors) _bufferMesh.attrs["color"].array(colors.map!(c => armos.math.Vector4f(c.r, c.g, c.b, c.a)).array, freq, nature);
+            _bufferMesh.attrs["texCoord0"].array(texCoords, freq, nature);
+            _bufferMesh.attrs["index"].array(indices, 0, freq, nature);
             
             _bufferEntity.updateShaderAttribs;
                 
@@ -1103,7 +1112,6 @@ class Renderer {
         
         armos.graphics.Style   _currentStyle = armos.graphics.Style();
         armos.graphics.Style[] _styleStack;
-        armos.graphics.Shader[] _shaderStack;
         
         armos.graphics.Material[]     _materialStack;
         
@@ -1114,37 +1122,32 @@ class Renderer {
     }//private
 }
 
-void pushShader(armos.graphics.Shader shader){
-    if(!currentRenderer)return;
-    currentRenderer._shaderStack ~= shader;
-    glUseProgram(shader.id);
+/++
++/
+void viewport(in float x, in float y, in float width, in float height, in bool vflip=true){
+    Vector2f position = armos.math.Vector2f(x, y);
+    import std.conv;
+    Vector2f size = armos.math.Vector2f(width, height);
+    viewport(position, size);
 }
 
-void popShader(){
-    if(!currentRenderer)return;
-    import std.range;
-    glUseProgram(currentRenderer._shaderStack[$-1].id);
-    if (currentRenderer._shaderStack.length == 0) {
-        assert(0, "stack is empty");
-    }else{
-        currentRenderer._shaderStack.popBack;
-    }
+/++
++/
+void viewport(V)(in V position, in V size, in bool vflip=true)if(isVector!V){
+    V pos = position;
+    if(vflip) pos[1] = size[1] - (pos[1] + size[1]);
+    glViewport(cast(int)pos[0], cast(int)pos[1], cast(int)size[0], cast(int)size[1]);
 }
 
 ///
-armos.math.Matrix4f screenPerspectiveMatrix(in float width = -1, in float height = -1, in float fov = 60, in float nearDist = 0, in float farDist = 0){
+armos.math.Matrix4f screenPerspectiveMatrix(in float width, in float height, in float fov = 60, in float nearDist = 0, in float farDist = 0){
     float viewW, viewH;
-    if(width<0 || height<0){
-        viewW = armos.app.windowSize[0];
-        viewH = armos.app.windowSize[1];
-    }else{
-        viewW = width;
-        viewH = height;
-    }
+    viewW = width;
+    viewH = height;
 
     immutable float eyeX = viewW / 2.0;
     immutable float eyeY = viewH / 2.0;
-    immutable float halfFov = PI * fov / 360;
+    immutable float halfFov = PI * fov / 360.0;
     immutable float theTan = tan(halfFov);
     immutable float dist = eyeY / theTan;
     immutable float aspect = viewW / viewH;
@@ -1161,6 +1164,12 @@ armos.math.Matrix4f screenPerspectiveMatrix(in float width = -1, in float height
     );
     
     return persp*lookAt;
+}
+
+///
+armos.math.Matrix4f screenPerspectiveMatrix(V)(in V size, in float fov = 60, in float nearDist = 0, in float farDist = 0)if(isVector!V && V.dimention == 2){
+    import std.conv;
+    return screenPerspectiveMatrix(size.x.to!float, size.y.to!float, fov, nearDist, farDist);
 }
 
 ///

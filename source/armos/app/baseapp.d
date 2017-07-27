@@ -267,10 +267,20 @@ class BaseApp{
     bool hasReleasedKey(in KeyType key)const{
         return _hasHeldKeysPrevious[key] && !_hasHeldKeysCurrent[key];
     }
+
+    final void exitApp(){
+        _shouldClose = true;
+    }
+
+    final bool shouldClose(){
+        return _shouldClose;
+    }
+
     
     private{
         bool[KeyType] _hasHeldKeysCurrent;
         bool[KeyType] _hasHeldKeysPrevious;
+        bool _shouldClose = false;
     }
 }
 

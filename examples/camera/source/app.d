@@ -3,6 +3,7 @@ import std.stdio, std.math;
 
 class TestApp : ar.app.BaseApp{
 	override void setup(){
+        _camera = new ar.graphics.DefaultCamera;
 		_camera.position = ar.math.Vector3f(0, 0, -40);
 		_camera.target= ar.math.Vector3f(0, 0, 0);
 	}
@@ -25,7 +26,7 @@ class TestApp : ar.app.BaseApp{
     
     private{
         float _counter = 0f;
-        ar.graphics.Camera _camera = new ar.graphics.DefaultCamera;
+        ar.graphics.Camera _camera;
 	
     }
 }

@@ -15,19 +15,25 @@ interface Material{
         Material end();
         
         ///
-        Material attr(string name, in Color c);
+        Material uniform(in string name, in int i);
         
         ///
-        Material attr(string name, in Vector2f v);
+        Material uniform(in string name, in float f);
+
+        ///
+        Material uniform(in string name, in Color c);
         
         ///
-        Material attr(string name, in Vector3f v);
+        Material uniform(in string name, in Vector2f v);
         
         ///
-        Material attr(string name, in Vector4f v);
+        Material uniform(in string name, in Vector3f v);
         
         ///
-        ref Vector4f attr(string name);
+        Material uniform(in string name, in Vector4f v);
+        
+        ///
+        ref Vector4f uniform(in string name);
         
         ///
         Material texture(in string name, armos.graphics.Texture tex);
@@ -42,7 +48,7 @@ interface Material{
         Material shader(armos.graphics.Shader s);
         
         ///
-        Material loadImage(in string pathInDataDir);
+        Material loadImage(in string pathInDataDir, in string name);
     }//public
 
 }//interface Material
@@ -50,9 +56,12 @@ interface Material{
 ///
 mixin template MaterialImpl(){
     alias T = typeof(this);
+    import armos.math;
+    import armos.types:Color;
     public{
         ///
         T begin(){
+            import armos.graphics:pushMaterialStack;
             pushMaterialStack(this);
             
             _shader.begin;
@@ -64,25 +73,24 @@ mixin template MaterialImpl(){
             }
             import std.algorithm;
             import std.array;
-            import armos.math;
-            foreach (string key; _attrF.keys) {
-                _shader.uniform(key, _attrF[key]);
+            foreach (string key; _uniformsF.keys) {
+                _shader.uniform(key, _uniformsF[key]);
             }
             
-            foreach (string key; _attrI.keys) {
-                _shader.uniform(key, _attrI[key]);
+            foreach (string key; _uniformsI.keys) {
+                _shader.uniform(key, _uniformsI[key]);
             }
             
-            foreach (string key; _attrV2f.keys) {
-                _shader.uniform(key, _attrV2f[key]);
+            foreach (string key; _uniformsV2f.keys) {
+                _shader.uniform(key, _uniformsV2f[key]);
             }
             
-            foreach (string key; _attrV3f.keys) {
-                _shader.uniform(key, _attrV3f[key]);
+            foreach (string key; _uniformsV3f.keys) {
+                _shader.uniform(key, _uniformsV3f[key]);
             }
             
-            foreach (string key; _attrV4f.keys) {
-                _shader.uniform(key, _attrV4f[key]);
+            foreach (string key; _uniformsV4f.keys) {
+                _shader.uniform(key, _uniformsV4f[key]);
             }
             
             foreach (int index, string key; _textures.keys){
@@ -101,50 +109,51 @@ mixin template MaterialImpl(){
             }
             _shader.end;
             
+            import armos.graphics:popMaterialStack;
             popMaterialStack;
             return this;
         }
         
         ///
-        T attr(string Name, in int v){
-            _attrI[Name] = v;
+        T uniform(in string Name, in int v){
+            _uniformsI[Name] = v;
             return this;
         }
         
         ///
-        T attr(string Name, in float v){
-            _attrF[Name] = v;
+        T uniform(in string Name, in float v){
+            _uniformsF[Name] = v;
             return this;
         }
         
         ///
-        T attr(string Name, in Vector2f v){
-            _attrV2f[Name] = v;
+        T uniform(in string Name, in Vector2f v){
+            _uniformsV2f[Name] = v;
             return this;
         }
 
         ///
-        T attr(string Name, in Vector3f v){
-            _attrV3f[Name] = v;
+        T uniform(in string Name, in Vector3f v){
+            _uniformsV3f[Name] = v;
             return this;
         }
         
         ///
-        T attr(string Name, in Vector4f v){
-            _attrV4f[Name] = v;
+        T uniform(in string Name, in Vector4f v){
+            _uniformsV4f[Name] = v;
             return this;
         }
         
         ///
-        T attr(string Name, in Color c){
+        T uniform(in string Name, in Color c){
             import std.conv;
-            _attrV4f[Name] = Vector4f(c.r.to!float/255f, c.g.to!float/255f, c.b.to!float/255f, c.a.to!float/255f);
+            _uniformsV4f[Name] = Vector4f(c.r.to!float/c.limit, c.g.to!float/c.limit, c.b.to!float/c.limit, c.a.to!float/c.limit);
             return this;
         }
 
         ///
-        ref Vector4f attr(string name){
-            return _attrV4f[name];
+        ref Vector4f uniform(in string name){
+            return _uniformsV4f[name];
         }
 
         ///
@@ -168,19 +177,20 @@ mixin template MaterialImpl(){
         }
 
         ///
-        T loadImage(in string pathInDataDir){
+        T loadImage(in string pathInDataDir, in string name){
             auto image = new armos.graphics.Image();
             image.load(pathInDataDir);
+            texture(name, image.texture);
             return this;
         }
     }//public
 
     private{
-        int[string] _attrI;
-        float[string] _attrF;
-        Vector2f[string] _attrV2f;
-        Vector3f[string] _attrV3f;
-        Vector4f[string] _attrV4f;
+        int[string] _uniformsI;
+        float[string] _uniformsF;
+        Vector2f[string] _uniformsV2f;
+        Vector3f[string] _uniformsV3f;
+        Vector4f[string] _uniformsV4f;
         armos.graphics.Texture[string] _textures;
         armos.graphics.Shader _shader;
     }//private
@@ -197,6 +207,32 @@ class DefaultMaterial : Material{
         _shader.loadSources(defaultVertexShaderSource, "", defaultFragmentShaderSource);
     }
 }//class DefaultMaterial
+
+/++
++/
+class CustomShaderMaterial : Material{
+    mixin MaterialImpl;
+    static CustomShaderMaterial loadFiles(in string shaderName){
+        auto mat = new CustomShaderMaterial();
+        mat.shader = new armos.graphics.Shader;
+        mat.shader.load(shaderName);
+        return mat;
+    }
+
+    static CustomShaderMaterial loadFiles(in string vertShaderPath, in string geomShaderPath, in string fragShaderPath){
+        auto mat = new CustomShaderMaterial();
+        mat.shader = new armos.graphics.Shader;
+        mat.shader.loadFiles(vertShaderPath, geomShaderPath, fragShaderPath);
+        return mat;
+    }
+
+    static CustomShaderMaterial loadString(in string vertShaderPath, in string geomShaderPath, in string fragShaderPath){
+        auto mat = new CustomShaderMaterial();
+        mat.shader = new armos.graphics.Shader;
+        mat.shader.loadSources(vertShaderPath, geomShaderPath, fragShaderPath);
+        return mat;
+    }
+}//class CustomShaderMaterial
 
 ///
 class AutoReloadMaterial : Material{
@@ -230,24 +266,24 @@ class AutoReloadMaterial : Material{
             import std.algorithm;
             import std.array;
             import armos.math;
-            foreach (string key; _attrF.keys) {
-                _shader.uniform(key, _attrF[key]);
+            foreach (string key; _uniformsF.keys) {
+                _shader.uniform(key, _uniformsF[key]);
             }
             
-            foreach (string key; _attrI.keys) {
-                _shader.uniform(key, _attrI[key]);
+            foreach (string key; _uniformsI.keys) {
+                _shader.uniform(key, _uniformsI[key]);
             }
             
-            foreach (string key; _attrV2f.keys) {
-                _shader.uniform(key, _attrV2f[key]);
+            foreach (string key; _uniformsV2f.keys) {
+                _shader.uniform(key, _uniformsV2f[key]);
             }
             
-            foreach (string key; _attrV3f.keys) {
-                _shader.uniform(key, _attrV3f[key]);
+            foreach (string key; _uniformsV3f.keys) {
+                _shader.uniform(key, _uniformsV3f[key]);
             }
             
-            foreach (string key; _attrV4f.keys) {
-                _shader.uniform(key, _attrV4f[key]);
+            foreach (string key; _uniformsV4f.keys) {
+                _shader.uniform(key, _uniformsV4f[key]);
             }
             
             foreach (int index, string key; _textures.keys){

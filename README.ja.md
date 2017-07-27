@@ -10,7 +10,7 @@ armos
 D言語によるクリエイティブコーディングのためのオープンソースライブラリです．
 
 
-# Demo
+## Demo
 
 ```
 import armos.app;
@@ -37,29 +37,78 @@ void main(){run(new TestApp);}
 ```
 
 
-# Require
+## Require
 
+- [dmd](https://dlang.org/)
+- [ldc](https://github.com/ldc-developers/ldc)(optional)
 - [dub](http://code.dlang.org/)
-- GLFW
-- SDL2(optional)
-- openGL3
+- npm
+- GLFW3
+- OpenGL3
 - FreeImage
+- OpenAL
+- libogg
+- libvorbis
+- Assimp
 
+## Install
 
-# Install
+1. dlangのビルドのためにパッケージを入れます．
+  - macOS
+  ```
+  $ brew install dmd dub
+  ```
 
-1. このpackageを利用できるようにするため，dubのプロジェクトのdub.sdlに以下の記述を追加します．
-	```
-	dependency "armos" version="~>0.0.1"
-	```
+2. このリポジトリをダウンロードします．
+  - 最新版(github)
+  ```
+  $ git clone git@github.com:tanitta/armos.git
+  ```
+  ```
+  $ dub add-local <repository-path>
+  ```
 
-2. ライブラリのビルドを行います
-	```
-	dub build
-	```
-	
-	
-# Why use D?
+  - 安定版(dub)
+  ```
+  $ dub fetch armos
+  ```
+
+3. ダイナミックライブラリと and glslのパッケージの管理のためにnpmをインストールします．
+  - macOS
+  ```
+  $ brew install glfw3 assimp freeimage libogg libvorbis npm
+  ```
+
+## Usage
+
+新規にProjectを生成します．
+
+```
+$ dub run armos -- generate project <projectpath>
+```
+
+armosへのaliasを設定することをオススメします． (`$ dub list | grep "armos"`コマンドでarmosのパスを調べることができます)
+
+```
+alias armos="path/to/armos"
+```
+
+または，既に存在するパッケージに追加することもできます．
+以下の依存関係を既存のプロジェクトのdub.sdlまたはdub.jsonのdependencies sectionへ追記します．
+
+- dub.json
+
+  ```
+  "armos": "~>0.1.0"
+  ```
+
+- dub.sdl
+
+  ```
+  dependency "armos" version="~>0.0.1"
+  ```
+
+## Why use D?
 
 - 処理速度 : D言語はC++と同程度の速度で動作します．
 
@@ -72,14 +121,14 @@ void main(){run(new TestApp);}
 - [その他のDの特徴](http://www.kmonos.net/alang/d/overview.html)
 
 
-# ScreenShots
+## ScreenShots
 
 ![ss0](https://41.media.tumblr.com/2297723261811b737966bc353aa3fb5b/tumblr_o1eruzJSFd1u9jb8mo1_1280.png)
 
 ![ss1](https://41.media.tumblr.com/34ca170f2fc91b8b7d789faa6fd85ba3/tumblr_o1bl8yAazQ1u9jb8mo2_r1_1280.png)
 
 
-# Contribution
+## Contribution
 
 1. このリポジトリをForkします
 2. feature branch を作ってください(git checkout -b my-new-feature)

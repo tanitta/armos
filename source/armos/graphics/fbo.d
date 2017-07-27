@@ -4,6 +4,7 @@ import derelict.opengl3.gl;
 import armos.graphics;
 import armos.types;
 import armos.math.vector;
+import armos.utils.scoped;
 
 /++
     Frame Buffer Objectを表すclassです．
@@ -19,13 +20,13 @@ class Fbo{
 
         /++
         +/
-        this(in armos.math.Vector2i size){
+        this(V2)(in V2 size){
             this(size[0], size[1]);
         }
 
         /++
         +/
-        this(in int width, in int height){
+        this(T)(in T width, in T height){
             _size = Vector2i(width, height);
             Vector2i textureSize = _size * _samples;
             int x = textureSize.x;
@@ -49,19 +50,19 @@ class Fbo{
 
             _rect.texCoords0 = [
                 Vector4f(0f, 0f, 0.0, 1.0f),
-                Vector4f(0,  1f, 0.0, 1.0f),
-                Vector4f(1f, 1f, 0.0, 1.0f),
                 Vector4f(1f, 0,  0.0, 1.0f),
+                Vector4f(1f, 1f, 0.0, 1.0f),
+                Vector4f(0,  1f, 0.0, 1.0f),
             ];
             // isFlip(true);
             
             _rect.vertices = [
                 Vector4f(0.0,   0.0,    0.0, 1.0f),
-                Vector4f(0.0,   height, 0.0, 1.0f),
-                Vector4f(width, height, 0.0, 1.0f),
-                Vector4f(width, 0.0,    0.0, 1.0f),
+                Vector4f(_size.x, 0.0,    0.0, 1.0f),
+                Vector4f(_size.x, _size.y, 0.0, 1.0f),
+                Vector4f(0.0,   _size.y, 0.0, 1.0f),
             ];
-            
+
             _rect.indices = [
                 0, 1, 2,
                 2, 3, 0,
@@ -85,10 +86,11 @@ class Fbo{
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
             glBindFramebuffer(GL_FRAMEBUFFER, _id);
             Vector2i textureSize = _size*_samples;
-            glViewport(0, 0, textureSize[0], textureSize[1]);
+            viewport(Vector2i.zero, textureSize);
             
             pushProjectionMatrix;
-            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix);
+            import armos.app:windowSize;
+            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(_size));
             return this;
         }
 
@@ -125,11 +127,10 @@ class Fbo{
         +/
         Fbo resize(in armos.math.Vector2i size){
             _size = size;
-            _rect.vertices[1][1] = _size[1];
+            _rect.vertices[1][0] = _size[0];
             _rect.vertices[2][0] = _size[0];
             _rect.vertices[2][1] = _size[1];
-            _rect.vertices[3][0] = _size[0];
-            
+            _rect.vertices[3][1] = _size[1];
             resizeTextures;
             return this;
         }
@@ -142,17 +143,17 @@ class Fbo{
             _isFlip = f;
             if(_isFlip){
                 _rect.texCoords0 = [
-                    Vector4f(0f,  1f, 0.0, 1.0f),
-                    Vector4f(0,   0f, 0.0, 1.0f),
-                    Vector4f(1,   0,  0.0, 1.0f),
-                    Vector4f(1.0, 1,  0.0, 1.0f),
+                    Vector4f(0f, 1f, 0.0, 1.0f),
+                    Vector4f(1f, 1,  0.0, 1.0f),
+                    Vector4f(1f, 0f, 0.0, 1.0f),
+                    Vector4f(0,  0f, 0.0, 1.0f),
                 ];
             }else{
                 _rect.texCoords0 = [
-                    Vector4f(0f,  0f, 0.0, 1.0f),
-                    Vector4f(0,   1f, 0.0, 1.0f),
-                    Vector4f(1,   1,  0.0, 1.0f),
-                    Vector4f(1.0, 0,  0.0, 1.0f),
+                    Vector4f(0f, 0f, 0.0, 1.0f),
+                    Vector4f(1f, 0,  0.0, 1.0f),
+                    Vector4f(1f, 1f, 0.0, 1.0f),
+                    Vector4f(0,  1f, 0.0, 1.0f),
                 ];
             }
             return this;
@@ -169,26 +170,45 @@ class Fbo{
         int samples()const{
             return _samples;
         }
+
+        ///
+        Fbo minFilter(in TextureMinFilter filter){
+            _colorTexture.minFilter(filter);
+            _colorTextureTmp.minFilter(filter);
+            _depthTexture.minFilter(filter);
+            _depthTextureTmp.minFilter(filter);
+            return this;
+        }
+
+        ///
+        Fbo magFilter(in TextureMagFilter filter){
+            _colorTexture.magFilter(filter);
+            _colorTextureTmp.magFilter(filter);
+            _depthTexture.magFilter(filter);
+            _depthTextureTmp.magFilter(filter);
+            return this;
+        }
         
         ///
         Fbo filteredBy(Material material){
-            begin;
-                _colorTextureTmp.begin;
+            {
+                auto scopedFbo = scoped(this);
+                {
+                    auto scopedColor = scoped(_colorTextureTmp);
                     glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
-                _colorTextureTmp.end;
-                _depthTextureTmp.begin;
+                }
+                {
+                    auto scopedDepth= scoped(_depthTextureTmp);
                     glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
-                _depthTextureTmp.end;
-            end;
+                }
+            }
             
             material.texture("colorTexture", _colorTextureTmp)
                     .texture("depthTexture", _depthTextureTmp);
             
-            begin;
-                material.begin;
-                    _rect.drawFill;
-                material.end;
-            end;
+            auto scopedFbo = scoped(this);
+            auto scopedMaterial = scoped(material);
+            _rect.drawFill;
             
             return this;
         }
@@ -198,10 +218,12 @@ class Fbo{
     private{
         int _savedId = 0;
         int _id = 0;
+
         Texture _colorTexture;
         Texture _colorTextureTmp;
         Texture _depthTexture;
         Texture _depthTextureTmp;
+
         Mesh _rect = new Mesh;
         Material _material;
         int _samples = 1;

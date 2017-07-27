@@ -4,10 +4,10 @@
     "copyright": "Copyright © 2015, tanitta",
     "authors": ["tanitta"],
     "license": "BSL-1.0",
-    "targetType": "library",
+    "targetType": "autodetect",
     "dependencies": {
         "derelict-sdl2": ">=1.9.7", 
-        "derelict-assimp3": ">=1.0.1", 
+        "derelict-assimp3": "1.1.1", 
         "derelict-glfw3": "1.1.0", 
         "derelict-gl3": ">=1.0.18", 
         "derelict-ft": ">=1.0.2",
@@ -15,8 +15,13 @@
         "colorize": "~>1.0.5",
         "derelict-al": "~>1.0.1",
         "derelict-ogg": "~>1.0.1",
-        "derelict-vorbis": "~>1.0.1",
-        "fswatch": "~>0.2.0"
+        "derelict-vorbis": "1.0.2",
+        "fswatch": "~>0.2.0", 
+        "dub": "~>1.4.0"
     }, 
-	"dflags-ldc":["-disable-linker-strip-dead"]
+    "copyFiles-windows-x86": [
+        "libs/FreeImage/lib/win32/FreeImage.dll",
+        "libs/glfw/lib/win32/glfw3.dll",
+        "libs/assimp/lib/win32/assimp.dll"
+    ]
 }

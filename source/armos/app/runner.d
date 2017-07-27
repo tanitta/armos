@@ -98,7 +98,7 @@ class Runner {
                 loopOnce();
                 _fpsCounter.adjust();
                 _fpsCounter.newFrame();
-                _isLoop = !_window.shouldClose;
+                _isLoop = !_window.shouldClose&&!_application.shouldClose;
             }
             _events.notifyExit();
             _window.close();

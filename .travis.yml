@@ -11,16 +11,22 @@ env:
     - TEST_DIR=examples/camera
     - TEST_DIR=examples/empty
     - TEST_DIR=examples/fbo
+    - TEST_DIR=examples/font
     - TEST_DIR=examples/filter
     - TEST_DIR=examples/gui
     - TEST_DIR=examples/image
     - TEST_DIR=examples/keyboard
     - TEST_DIR=examples/model
     - TEST_DIR=examples/noise
-    - TEST_DIR=examples/primitives
+    - TEST_DIR=examples/primitives2d
+    - TEST_DIR=examples/primitives3d
     - TEST_DIR=examples/shader
     - TEST_DIR=examples/texture
     - TEST_DIR=examples/geometryshader
+    - TEST_DIR=examples/audiocapture
+    - TEST_DIR=examples/gouraudshader
+    - TEST_DIR=examples/phongshader
+    - TEST_DIR=examples/gaussianblur
 script:
     echo $TEST_DIR &&
     cd $TEST_DIR &&

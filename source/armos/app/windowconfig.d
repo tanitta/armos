@@ -8,22 +8,46 @@ import std.conv;
 +/
 class WindowConfig {
     public{
+        ///
         int height()const{return _height;}
+
+        ///
         typeof(this) height(in int h){_height = h;return this;}
         
+        ///
         int width()const{return _width;}
+
+        ///
         typeof(this) width(in int h){_width = h;return this;}
         
+        ///
         Vector2i position()const{return _position;}
+
+        ///
         typeof(this) position(in Vector2i p){_position = p;return this;}
+
+        ///
+        Vector2i size()const{return Vector2i(_height, _width);}
+
+        ///
+        typeof(this) size(in Vector2i p){
+            _width = p.y;
+            _height = p.x;
+            return this;
+        }
         
+        ///
         int glVersionMajor()const{return _glVersion.major;}
+
+        ///
         int glVersionMinor()const{return _glVersion.minor;}
         
+        ///
         SemVer glVersion()const{
             return _glVersion;
         }
         
+        ///
         typeof(this) glVersion(in string v){
             import std.algorithm;
             import std.array;
@@ -32,12 +56,16 @@ class WindowConfig {
             return this;
         }
         
+        ///
         typeof(this) glVersion(in SemVer v){
             _glVersion = v;
             return this;
         }
         
+        ///
         typeof(this) glVersionMajor(in int versionMajor){_glVersion.major = versionMajor;return this;}
+
+        ///
         typeof(this) glVersionMinor(in int versionMinor){_glVersion.minor = versionMinor;return this;}
     }//public
 
