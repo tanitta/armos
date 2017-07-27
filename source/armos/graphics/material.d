@@ -56,6 +56,8 @@ interface Material{
 ///
 mixin template MaterialImpl(){
     alias T = typeof(this);
+    import armos.math;
+    import armos.types:Color;
     public{
         ///
         T begin(){
@@ -71,7 +73,6 @@ mixin template MaterialImpl(){
             }
             import std.algorithm;
             import std.array;
-            import armos.math;
             foreach (string key; _uniformsF.keys) {
                 _shader.uniform(key, _uniformsF[key]);
             }
@@ -206,6 +207,32 @@ class DefaultMaterial : Material{
         _shader.loadSources(defaultVertexShaderSource, "", defaultFragmentShaderSource);
     }
 }//class DefaultMaterial
+
+/++
++/
+class CustomShaderMaterial : Material{
+    mixin MaterialImpl;
+    static CustomShaderMaterial loadFiles(in string shaderName){
+        auto mat = new CustomShaderMaterial();
+        mat.shader = new armos.graphics.Shader;
+        mat.shader.load(shaderName);
+        return mat;
+    }
+
+    static CustomShaderMaterial loadFiles(in string vertShaderPath, in string geomShaderPath, in string fragShaderPath){
+        auto mat = new CustomShaderMaterial();
+        mat.shader = new armos.graphics.Shader;
+        mat.shader.loadFiles(vertShaderPath, geomShaderPath, fragShaderPath);
+        return mat;
+    }
+
+    static CustomShaderMaterial loadString(in string vertShaderPath, in string geomShaderPath, in string fragShaderPath){
+        auto mat = new CustomShaderMaterial();
+        mat.shader = new armos.graphics.Shader;
+        mat.shader.loadSources(vertShaderPath, geomShaderPath, fragShaderPath);
+        return mat;
+    }
+}//class CustomShaderMaterial
 
 ///
 class AutoReloadMaterial : Material{

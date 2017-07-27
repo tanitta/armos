@@ -16,7 +16,8 @@
         "derelict-al": "~>1.0.1",
         "derelict-ogg": "~>1.0.1",
         "derelict-vorbis": "1.0.2",
-        "fswatch": "~>0.2.0"
+        "fswatch": "~>0.2.0", 
+        "dub": "~>1.4.0"
     }, 
     "copyFiles-windows-x86": [
         "libs/FreeImage/lib/win32/FreeImage.dll",
