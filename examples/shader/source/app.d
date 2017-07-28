@@ -7,10 +7,10 @@ class TestApp : ar.app.BaseApp{
     float c = 0;
 
     override void setup(){
-        _shader = (new ar.graphics.Shader).load("simple");
+        _shader = (new ar.graphics.Shader).load("data/simple");
         _shader.log.writeln;
         
-        ar.graphics.currentMaterial.texture("tex", (new ar.graphics.Image).load("lena_std.tif").texture);
+        ar.graphics.currentMaterial.texture("tex", (new ar.graphics.Image).load("data/lena_std.tif").texture);
         ar.graphics.currentMaterial.shader = _shader;
         
         _rect = new ar.graphics.Mesh;

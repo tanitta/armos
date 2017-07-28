@@ -5,7 +5,7 @@ string toDataPath(in string fileName, in bool makeAbsolute = true){
     import std.string;
     import std.file;
     import std.path;
-    return buildPath(thisExePath.dirName, "data", fileName);
+    return buildPath(thisExePath.dirName, fileName);
 }
 
 /++

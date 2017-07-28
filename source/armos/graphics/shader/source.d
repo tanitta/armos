@@ -58,6 +58,12 @@ class Source {
         string expanded()const{
             return _expanded;
         }
+
+        ///
+        size_t numLines()const{
+            import std.string;
+            return _expanded.split("\n").length;
+        }
     }//public
 
     string rawText;

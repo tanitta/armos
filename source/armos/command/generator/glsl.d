@@ -87,7 +87,8 @@ auto generateGlslSources(string[] args){
 }
 
 private string generateVertSource(in string type){
-    return `# version 330
+    return `#version 330
+
 // Enable to load package via glslify
 // #pragma glslify: noise = require(glsl-noise/simplex/2d)
 
@@ -128,7 +129,8 @@ private string generateGeomSource(in string type){
 }
 
 private string generateFragSource(in string type){
-    return `# version 330
+    return `#version 330
+
 // Enable to load package via glslify
 // #pragma glslify: noise = require(glsl-noise/simplex/2d)
 

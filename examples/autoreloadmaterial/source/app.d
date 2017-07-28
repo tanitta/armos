@@ -29,9 +29,9 @@ class TestApp : ar.app.BaseApp{
         
         _fbo = new ar.graphics.Fbo;
         
-        _simpleMaterial = new ar.graphics.AutoReloadMaterial("simple");
+        _simpleMaterial = new ar.graphics.AutoReloadMaterial("data/simple");
         
-        _model = (new ar.graphics.Model).load("bunny.fbx");
+        _model = (new ar.graphics.Model).load("data/bunny.fbx");
     }
 
     override void update(){
