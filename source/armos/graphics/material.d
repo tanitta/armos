@@ -253,73 +253,77 @@ class AutoReloadMaterial : Material{
     
     ///
     T begin(){
-            loadShaderUpdateIfModified;
-            pushMaterialStack(this);
-            
-            _shader.begin;
-            foreach (string key; _textures.keys) {
-                auto texture = _textures[key];
-                if(texture){
-                    texture.begin;
+        updateShader;
+        pushMaterialStack(this);
+
+        _shader.begin;
+        foreach (string key; _textures.keys) {
+            auto texture = _textures[key];
+            if(texture){
+                texture.begin;
+            }
+        }
+        import std.algorithm;
+        import std.array;
+        import armos.math;
+        foreach (string key; _uniformsF.keys) {
+            _shader.uniform(key, _uniformsF[key]);
+        }
+
+        foreach (string key; _uniformsI.keys) {
+            _shader.uniform(key, _uniformsI[key]);
+        }
+
+        foreach (string key; _uniformsV2f.keys) {
+            _shader.uniform(key, _uniformsV2f[key]);
+        }
+
+        foreach (string key; _uniformsV3f.keys) {
+            _shader.uniform(key, _uniformsV3f[key]);
+        }
+
+        foreach (string key; _uniformsV4f.keys) {
+            _shader.uniform(key, _uniformsV4f[key]);
+        }
+
+        foreach (int index, string key; _textures.keys){
+            _shader.uniformTexture(key, _textures[key], index);
+        }
+
+        return this;
+    }
+
+    void updateShader(){
+        foreach (event; _watcher.getEvents()){
+            if(event.path == _shaderName ~ ".frag" ||
+                    event.path == _shaderName ~ ".geom" ||
+                    event.path == _shaderName ~ ".vert" 
+              ){
+                if(event.type == FileChangeEventType.modify){
+                    // //TODO
+                    // auto shaderTmp = new armos.graphics.Shader; 
+                    bool isLoaded = false;
+                    do{
+                        import core.exception;
+                        try{
+                            _shader.clearLog;
+                            _shader.load(_shaderName);
+                            import std.stdio;
+                            _shader.log.writeln;
+                            isLoaded = true;
+                        }catch(AssertError err){
+                            isLoaded = false;
+                        }
+                    }while(!isLoaded);
                 }
             }
-            import std.algorithm;
-            import std.array;
-            import armos.math;
-            foreach (string key; _uniformsF.keys) {
-                _shader.uniform(key, _uniformsF[key]);
-            }
-            
-            foreach (string key; _uniformsI.keys) {
-                _shader.uniform(key, _uniformsI[key]);
-            }
-            
-            foreach (string key; _uniformsV2f.keys) {
-                _shader.uniform(key, _uniformsV2f[key]);
-            }
-            
-            foreach (string key; _uniformsV3f.keys) {
-                _shader.uniform(key, _uniformsV3f[key]);
-            }
-            
-            foreach (string key; _uniformsV4f.keys) {
-                _shader.uniform(key, _uniformsV4f[key]);
-            }
-            
-            foreach (int index, string key; _textures.keys){
-                _shader.uniformTexture(key, _textures[key], index);
-            }
-            
-            return this;
         }
+    }
     
     private{
         string _shaderName;
         FileWatch _watcher;
         
-        void loadShaderUpdateIfModified(){
-            foreach (event; _watcher.getEvents()){
-                if(event.path == _shaderName ~ ".frag" ||
-                   event.path == _shaderName ~ ".geom" ||
-                   event.path == _shaderName ~ ".vert" 
-                ){
-                    if(event.type == FileChangeEventType.modify){
-                        //TODO
-                        auto shaderTmp = new armos.graphics.Shader; 
-                        import core.exception;
-                        try{
-                            shaderTmp.load(_shaderName);
-                        }catch(AssertError err){
-                            continue;
-                        }
-                        import std.stdio;
-                        if(!shaderTmp.isLoaded)shaderTmp.log.writeln;
-                        _shader = shaderTmp;
-                        // _shader.load(_shaderName);
-                    }
-                }
-            }
-        }
     }
 }//class DefaultMaterial
 

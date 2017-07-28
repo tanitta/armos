@@ -24,6 +24,11 @@ class Shader {
             return this._log;
         }
 
+        Shader clearLog(){
+            _log = [];
+            return this;
+        }
+
         /++
             Load the shader from shaderName
         +/
