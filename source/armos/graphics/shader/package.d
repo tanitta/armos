@@ -5,6 +5,7 @@ import armos.math.vector;
 import armos.math.matrix;
 import armos.graphics;
 import armos.graphics.shader.source;
+import colorize;
 
 /++
 +/
@@ -20,7 +21,7 @@ class Shader {
         }
         
         string log()const{
-            return _log;
+            return this._log;
         }
 
         /++
@@ -98,38 +99,69 @@ class Shader {
                 _attribNames.clear;
             }
 
+            addLog("#### Vertex Shader Source ####".color(mode.bold));
             if(vertexShaderSource){
-                addLog("load vertex shader");
+                addLog("Expanding vertex shader...");
                 vertexShaderSource.expand(paths);
-                loadShaderSource(vertexShaderSource.expanded, GL_VERTEX_SHADER);
+                addLog(("Expanded vertex shader (%d lines)".format(vertexShaderSource.numLines)).color(fg.green));
+                addLog("Loading vertex shader...");
+                bool isCompiled = loadShaderSource(vertexShaderSource.expanded, GL_VERTEX_SHADER);
+                if(isCompiled){
+                    addLog("Finish loading vertex shader successfully.".color(fg.green).color(mode.bold));
+                }else{
+                    addLog("Failed loading vertex shader".color(fg.red).color(mode.bold));
+                }
+            }else{
+                addLog("Skip vertex shader");
             }
             
+            addLog("#### Geometry Shader Source ####".color(mode.bold));
             if(geometryShaderSource){
-                addLog("load geometry shader");
+                addLog("Expanding geometry shader...");
                 geometryShaderSource.expand(paths);
-                loadShaderSource(geometryShaderSource.expanded, GL_GEOMETRY_SHADER);
+                addLog(("Expanded geometry shader (%d lines)".format(geometryShaderSource.numLines)).color(fg.green));
+                addLog("Loading geometry shader..");
+                bool isCompiled = loadShaderSource(geometryShaderSource.expanded, GL_GEOMETRY_SHADER);
+                if(isCompiled){
+                    addLog("Finish loading geometry shader successfully.".color(fg.green).color(mode.bold));
+                }else{
+                    addLog("Failed loading geometry shader".color(fg.red).color(mode.bold));
+                }
                 glProgramParameteri(_programID, GL_GEOMETRY_INPUT_TYPE, _geometryInput.primitiveMode.getGLPrimitiveMode);
                 glProgramParameteri(_programID, GL_GEOMETRY_OUTPUT_TYPE, _geometryInput.primitiveMode.getGLPrimitiveMode);
                 import std.conv:to;
                 glProgramParameteri(_programID, GL_GEOMETRY_VERTICES_OUT, _maxGeometryOutputVertices.to!int);
+            }else{
+                addLog("Skip geometry shader");
             }
             
+            addLog("#### Fragment Shader Source ####".color(mode.bold));
             if(fragmentShaderSource){
-                addLog("load fragment shader");
+                addLog("Expanding fragment shader...");
                 fragmentShaderSource.expand(paths);
-                loadShaderSource(fragmentShaderSource.expanded, GL_FRAGMENT_SHADER);
+                addLog(("Expanded fragment shader (%d lines)".format(fragmentShaderSource.numLines)).color(fg.green));
+                addLog("Loading fragment shader...");
+                bool isCompiled = loadShaderSource(fragmentShaderSource.expanded, GL_FRAGMENT_SHADER);
+                if(isCompiled){
+                    addLog("Finish loading fragment  shader successfully.".color(fg.green).color(mode.bold));
+                }else{
+                    addLog("Failed loading fragment  shader".color(fg.red).color(mode.bold));
+                }
+            }else{
+                addLog("Skip fragment shader");
             }
 
+            addLog("#### Link Sources ####".color(mode.bold));
             glLinkProgram(_programID);
 
             int isLinked;
             glGetProgramiv(_programID, GL_LINK_STATUS, &isLinked);
-            import colorize;
             if (isLinked == GL_FALSE) {
-                addLog("link error".color(fg.red));
+                addLog("Link error.".color(fg.red).color(mode.bold));
                 addLog(logProgram(_programID));
                 _isLoaded = false;
             }else{
+                addLog("Link success.".color(fg.green).color(mode.bold));
                 _isLoaded = true;
             }
             return this;
@@ -501,23 +533,25 @@ class Shader {
         MustDefinedPrimitiveMode _geometryOutput;
 
         void addLog(in string str){
-            _log ~= str ~ "\n";
+            this._log ~= (str ~ "\n");
         }
 
-        void loadShaderFile(in string shaderPath, GLuint shaderType){
+        bool loadShaderFile(in string shaderPath, GLuint shaderType){
             auto shaderSource = loadedSource(shaderPath);
-            loadShaderSource(shaderSource, shaderType);
+            return loadShaderSource(shaderSource, shaderType);
         }
         
-        void loadShaderSource(in string shaderSource, GLuint shaderType){
+        bool loadShaderSource(in string shaderSource, GLuint shaderType){
             int shaderID = glCreateShader(shaderType);
             scope(exit) glDeleteShader(shaderID);
 
-            compile(shaderID, shaderSource);
+            bool isCompleted = compile(shaderID, shaderSource);
+            if(!isCompleted)return false;
             glAttachShader(_programID, shaderID);
+            return true;
         }
 
-        void compile(in int id, in string source){
+        bool compile(in int id, in string source){
             const char* sourcePtr = source.ptr;
             const int sourceLength = cast(int)source.length;
 
@@ -531,8 +565,10 @@ class Shader {
             if (isCompiled == GL_FALSE) {
                 addLog("compile error".color(fg.red));
                 addLog(logShader(id));
+                return false;
             }else{
                 addLog("compile success".color(fg.green));
+                return true;
             }
         }
 
