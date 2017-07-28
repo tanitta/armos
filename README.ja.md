@@ -84,6 +84,11 @@ void main(){run(new TestApp);}
   $ brew install glfw3 assimp freeimage libogg libvorbis npm
   ```
 
+4. armosをビルドします．
+  ```
+  $ dub build armos
+  ```
+
 ## Usage
 
 新規にProjectを生成します．
