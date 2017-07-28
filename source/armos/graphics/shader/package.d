@@ -114,7 +114,8 @@ class Shader {
             }else{
                 addLog("Skip vertex shader");
             }
-            
+            addLog("");
+
             addLog("#### Geometry Shader Source ####".color(mode.bold));
             if(geometryShaderSource){
                 addLog("Expanding geometry shader...");
@@ -134,6 +135,8 @@ class Shader {
             }else{
                 addLog("Skip geometry shader");
             }
+
+            addLog("");
             
             addLog("#### Fragment Shader Source ####".color(mode.bold));
             if(fragmentShaderSource){
@@ -151,6 +154,8 @@ class Shader {
                 addLog("Skip fragment shader");
             }
 
+            addLog("");
+
             addLog("#### Link Sources ####".color(mode.bold));
             glLinkProgram(_programID);
 
@@ -164,6 +169,9 @@ class Shader {
                 addLog("Link success.".color(fg.green).color(mode.bold));
                 _isLoaded = true;
             }
+
+            addLog("");
+
             return this;
         }
 
