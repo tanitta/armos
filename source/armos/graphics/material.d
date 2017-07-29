@@ -61,56 +61,13 @@ mixin template MaterialImpl(){
     public{
         ///
         T begin(){
-            import armos.graphics:pushMaterialStack;
-            pushMaterialStack(this);
-            
-            _shader.begin;
-            foreach (string key; _textures.keys) {
-                auto texture = _textures[key];
-                if(texture){
-                    texture.begin;
-                }
-            }
-            import std.algorithm;
-            import std.array;
-            foreach (string key; _uniformsF.keys) {
-                _shader.uniform(key, _uniformsF[key]);
-            }
-            
-            foreach (string key; _uniformsI.keys) {
-                _shader.uniform(key, _uniformsI[key]);
-            }
-            
-            foreach (string key; _uniformsV2f.keys) {
-                _shader.uniform(key, _uniformsV2f[key]);
-            }
-            
-            foreach (string key; _uniformsV3f.keys) {
-                _shader.uniform(key, _uniformsV3f[key]);
-            }
-            
-            foreach (string key; _uniformsV4f.keys) {
-                _shader.uniform(key, _uniformsV4f[key]);
-            }
-            
-            foreach (int index, string key; _textures.keys){
-                _shader.uniformTexture(key, _textures[key], index);
-            }
+            beginDefault;
             return this;
         }
 
         ///
         T end(){
-            foreach (string key; _textures.keys) {
-                auto texture = _textures[key];
-                if(texture){
-                    texture.end;
-                }
-            }
-            _shader.end;
-            
-            import armos.graphics:popMaterialStack;
-            popMaterialStack;
+            endDefault;
             return this;
         }
         
@@ -193,8 +150,66 @@ mixin template MaterialImpl(){
         Vector4f[string] _uniformsV4f;
         armos.graphics.Texture[string] _textures;
         armos.graphics.Shader _shader;
+
+        ///
+        T beginDefault(){
+            import armos.graphics:pushMaterialStack;
+            pushMaterialStack(this);
+            _shader.begin;
+            _textures.begin;
+            sendUniformsToShader;
+            return this;
+        }
+
+        ///
+        T endDefault(){
+            _textures.end;
+            _shader.end;
+            
+            import armos.graphics:popMaterialStack;
+            popMaterialStack;
+            return this;
+        }
+
+        T sendUniformsToShader(){
+            _uniformsF.sendTo(_shader);
+            _uniformsI.sendTo(_shader);
+            _uniformsV2f.sendTo(_shader);
+            _uniformsV3f.sendTo(_shader);
+            _uniformsV4f.sendTo(_shader);
+            _textures.sendTo(_shader);
+            return this;
+        }
     }//private
    
+}
+
+void begin(armos.graphics.Texture[string] textures){
+    foreach (string key; textures.keys) {
+        auto texture = textures[key];
+        if(texture){
+            texture.begin;
+        }
+    }
+}
+
+void end(armos.graphics.Texture[string] textures){
+    foreach_reverse (string key; textures.keys) {
+        auto texture = textures[key];
+        if(texture){
+            texture.end;
+        }
+    }
+}
+
+void sendTo(U:E[K], E, K)(U uniform, armos.graphics.Shader shader){
+    foreach (int i, string key; uniform.keys) {
+        static if(is(E == armos.graphics.Texture)){
+            shader.uniformTexture(key, uniform[key], i);
+        }else{
+            shader.uniform(key, uniform[key]);
+        }
+    }
 }
 
 ///
@@ -253,77 +268,27 @@ class AutoReloadMaterial : Material{
     
     ///
     T begin(){
-        updateShader;
-        pushMaterialStack(this);
-
-        _shader.begin;
-        foreach (string key; _textures.keys) {
-            auto texture = _textures[key];
-            if(texture){
-                texture.begin;
-            }
-        }
-        import std.algorithm;
-        import std.array;
-        import armos.math;
-        foreach (string key; _uniformsF.keys) {
-            _shader.uniform(key, _uniformsF[key]);
-        }
-
-        foreach (string key; _uniformsI.keys) {
-            _shader.uniform(key, _uniformsI[key]);
-        }
-
-        foreach (string key; _uniformsV2f.keys) {
-            _shader.uniform(key, _uniformsV2f[key]);
-        }
-
-        foreach (string key; _uniformsV3f.keys) {
-            _shader.uniform(key, _uniformsV3f[key]);
-        }
-
-        foreach (string key; _uniformsV4f.keys) {
-            _shader.uniform(key, _uniformsV4f[key]);
-        }
-
-        foreach (int index, string key; _textures.keys){
-            _shader.uniformTexture(key, _textures[key], index);
-        }
-
+        checkAndUpdateShader;
+        beginDefault;
         return this;
     }
 
-    void updateShader(){
-        foreach (event; _watcher.getEvents()){
-            if(event.path == _shaderName ~ ".frag" ||
-                    event.path == _shaderName ~ ".geom" ||
-                    event.path == _shaderName ~ ".vert" 
-              ){
-                if(event.type == FileChangeEventType.modify){
-                    // //TODO
-                    // auto shaderTmp = new armos.graphics.Shader; 
-                    bool isLoaded = false;
-                    do{
-                        import core.exception;
-                        try{
-                            _shader.clearLog;
-                            _shader.load(_shaderName);
-                            import std.stdio;
-                            _shader.log.writeln;
-                            isLoaded = true;
-                        }catch(AssertError err){
-                            isLoaded = false;
-                        }
-                    }while(!isLoaded);
-                }
-            }
-        }
-    }
-    
     private{
         string _shaderName;
         FileWatch _watcher;
-        
+
+        T checkAndUpdateShader(){
+            foreach (event; _watcher.getEvents()){
+                if(event.type == FileChangeEventType.modify && (event.path == _shaderName ~ ".frag" ||
+                                                                event.path == _shaderName ~ ".geom" ||
+                                                                event.path == _shaderName ~ ".vert") 
+                ){
+                    _shader.clearLog;
+                    _shader.load(_shaderName);
+                }
+            }
+            return this;
+        }
     }
 }//class DefaultMaterial
 
