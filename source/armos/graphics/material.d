@@ -265,30 +265,44 @@ class AutoReloadMaterial : Material{
         _shader = new armos.graphics.Shader;
         _shader.load(_shaderName);
     }
-    
+
     ///
-    T begin(){
-        checkAndUpdateShader;
-        beginDefault;
+    bool hasReloaded()const{
+        return _hasReloaded;
+    }
+
+    ///
+    T checkAndUpdateShader(){
+        _hasReloaded = false;
+        bool hasGotEvents;
+        FileChangeEvent[] events;
+        do{
+            hasGotEvents = true;
+            import std.exception;
+            try{
+                events = _watcher.getEvents();
+            }catch(Exception e){
+                hasGotEvents = false;
+            }
+        }while(!hasGotEvents);
+
+        foreach (event; events){
+            if(event.type == FileChangeEventType.modify && (event.path == _shaderName ~ ".frag" ||
+                        event.path == _shaderName ~ ".geom" ||
+                        event.path == _shaderName ~ ".vert") 
+              ){
+                _shader.clearLog
+                       .load(_shaderName);
+                _hasReloaded = _hasReloaded||true;
+            }
+        }
         return this;
     }
 
     private{
         string _shaderName;
+        bool _hasReloaded = false;
         FileWatch _watcher;
-
-        T checkAndUpdateShader(){
-            foreach (event; _watcher.getEvents()){
-                if(event.type == FileChangeEventType.modify && (event.path == _shaderName ~ ".frag" ||
-                                                                event.path == _shaderName ~ ".geom" ||
-                                                                event.path == _shaderName ~ ".vert") 
-                ){
-                    _shader.clearLog;
-                    _shader.load(_shaderName);
-                }
-            }
-            return this;
-        }
     }
 }//class DefaultMaterial
 
