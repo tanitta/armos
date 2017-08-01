@@ -370,16 +370,14 @@ void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
     multModelMatrix(translationMatrix(x.to!float, y.to!float, z.to!float));
 }
 
-/++
-+/
-void translate(armos.math.Vector3f vec){
-    multModelMatrix(translationMatrix(vec[0], vec[1], vec[2]));
+///
+void translate(V:VT!(T, D), alias VT, T, int D)(in V vec)if(armos.math.isVector!(V) && __traits(isArithmetic, T) && D == 3){
+    translate(vec[0], vec[1], vec[2]);
 }
 
-/++
-+/
-void translate(armos.math.Vector3d vec){
-    multModelMatrix(translationMatrix!(float)(vec[0], vec[1], vec[2]));
+///
+void translate(V:VT!(T, D), alias VT, T, int D)(in V vec)if(armos.math.isVector!(V) && __traits(isArithmetic, T) && D == 2){
+    translate(vec[0], vec[1], T(0));
 }
 
 ///
