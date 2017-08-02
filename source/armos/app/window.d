@@ -66,7 +66,8 @@ interface Window{
         void name(in string str);
         
         ///
-        // void initEvents(BaseApp, CoreEvents);
+        void initEvents(BaseApp, CoreEvents);
+
         void select();
 
         /// VerticalSync
@@ -122,7 +123,7 @@ mixin template BaseWindow(){
     現在のWindowを返す関数です．
 +/
 Window currentWindow(){
-    return mainLoop.window;
+    return mainLoop.currentWindow;
 }
 
 /++

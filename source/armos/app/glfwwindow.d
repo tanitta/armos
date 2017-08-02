@@ -18,7 +18,7 @@ class GLFWWindow : Window{
             Params:
             apprication = Windowとひも付けされるアプリケーションです．
         +/
-        this(BaseApp apprication, CoreEvents events, WindowConfig config){
+        this(WindowConfig config, GLFWwindow* sharedContext = null){
             DerelictGL.load();
             DerelictGLFW3.load();
 
@@ -33,7 +33,7 @@ class GLFWWindow : Window{
                 glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             }
 
-            _window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, null);
+            _window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, sharedContext);
             if(!_window){close;}
 
             glfwMakeContextCurrent(_window);
@@ -44,7 +44,6 @@ class GLFWWindow : Window{
                 DerelictGL.reload();
             }
 
-            initEvents(apprication, events);
             initGLFWEvents();
 
             glfwSwapInterval(0);
@@ -119,6 +118,26 @@ class GLFWWindow : Window{
         float pixelScreenCoordScale()const{
             return frameBufferSize.x / size.x;
         };
+
+        void initEvents(BaseApp app, CoreEvents events){
+            assert(events);
+            addListener(events.windowResize, app, &app.windowResized);
+            addListener(events.keyPressed, app, &app.keyPressed);
+            addListener(events.keyReleased, app, &app.keyReleased);
+            addListener(events.mouseMoved, app, &app.mouseMoved);
+            addListener(events.mouseDragged, app, &app.mouseDragged);
+            addListener(events.mouseReleased, app, &app.mouseReleased);
+            addListener(events.mousePressed, app, &app.mousePressed);
+            addListener(events.unicodeInputted, app, &app.unicodeInputted);
+            
+            import armos.utils:KeyType;
+            addListener(events.keyPressed,  app, delegate(ref KeyPressedEventArg message){app.PressKey(message.key);});
+            addListener(events.keyReleased, app, delegate(ref KeyReleasedEventArg message){app.ReleaseKey(message.key);});
+        }
+
+        GLFWwindow* context(){
+            return _window;
+        }
     }//public
 
     private{
@@ -172,21 +191,6 @@ class GLFWWindow : Window{
             writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
         };
         
-        void initEvents(BaseApp app, CoreEvents events){
-            assert(events);
-            addListener(events.windowResize, app, &app.windowResized);
-            addListener(events.keyPressed, app, &app.keyPressed);
-            addListener(events.keyReleased, app, &app.keyReleased);
-            addListener(events.mouseMoved, app, &app.mouseMoved);
-            addListener(events.mouseDragged, app, &app.mouseDragged);
-            addListener(events.mouseReleased, app, &app.mouseReleased);
-            addListener(events.mousePressed, app, &app.mousePressed);
-            addListener(events.unicodeInputted, app, &app.unicodeInputted);
-            
-            import armos.utils:KeyType;
-            addListener(events.keyPressed,  app, delegate(ref KeyPressedEventArg message){app.PressKey(message.key);});
-            addListener(events.keyReleased, app, delegate(ref KeyReleasedEventArg message){app.ReleaseKey(message.key);});
-        }
 
 
         void initGLFWEvents(){

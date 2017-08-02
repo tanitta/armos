@@ -4,9 +4,12 @@ import armos.utils;
 import armos.events;
 import armos.graphics;
 
+import std.algorithm;
 /++
 armosのアプリケーションの更新を行うclassです．
 +/
+
+
 class Runner {
     public{
         /++
@@ -14,6 +17,7 @@ class Runner {
         this(){
             _fpsCounter = new FpsCounter;
             _events = new CoreEvents;
+            _windowCollection = new WindowCollection;
         }
         
         /++
@@ -21,16 +25,33 @@ class Runner {
             Params:
             app = 更新されるアプリケーションです．
         +/
-        void run(WindowType)(BaseApp app, WindowConfig config){
+        void register(WindowType)(BaseApp app, Window window){
             _application = app;
             addListener(events.setup, app, &app.setup);
             addListener(events.update, app, &app.update);
             addListener(events.draw, app, &app.draw);
             addListener(events.exit, app, &app.exit);
             
-            createWindow!(WindowType)(app, config);
-            
-            loop();
+            {
+                window.initEvents(_application, _events);
+                _windowCollection.add("master", window);
+                _windowCollection.select("master");
+            }
+
+            // {
+            //     Window window = new WindowType(app, _events, config);
+            //     _windowCollection.add("sub", window);
+            //     _windowCollection.select("master");
+            // }
+
+            static if(WindowType.hasRenderer){
+                _renderer = new Renderer;
+            }
+
+            if(_renderer){
+                _renderer.setup();
+            }
+
         };
 
         /++
@@ -64,31 +85,23 @@ class Runner {
         CoreEvents events(){return _events;};
 
         ///
-        Window window(){return _window;}
+        Window currentWindow()out(window){
+            assert(window);
+        }body{
+            return _windowCollection.current;
+        }
     }//public
 
     private{
         BaseApp    _application;
         CoreEvents _events;
         Renderer   _renderer;
-        Window     _window;
+        WindowCollection     _windowCollection;
 
         bool _isLoop = true;
         FpsCounter _fpsCounter;
 
-        void createWindow(WindowType)(BaseApp app, WindowConfig config){
-            _window = new WindowType(app, _events, config);
-            
-            static if(WindowType.hasRenderer){
-                _renderer = new Renderer;
-            }
-            
-            assert(_window);
-            
-            if(_renderer){
-                _renderer.setup();
-            }
-        };
+
 
         void loop(){
             _application.initHeldKeys;
@@ -98,10 +111,11 @@ class Runner {
                 loopOnce();
                 _fpsCounter.adjust();
                 _fpsCounter.newFrame();
-                _isLoop = !_window.shouldClose&&!_application.shouldClose;
+                import std.functional;
+                _isLoop = _windowCollection.windows.map!(w => !w.shouldClose).fold!("a||b")(false)&&!_application.shouldClose;
             }
             _events.notifyExit();
-            _window.close();
+            _windowCollection.windows.each!(w => w.close());
         }
 
         void loopOnce(){
@@ -114,8 +128,8 @@ class Runner {
                 _renderer.finishRender();
             }
             _application.updateKeys;
-            _window.pollEvents();
-            _window.update();
+            _windowCollection.windows.each!(w => w.pollEvents());
+            _windowCollection.windows.each!(w => w.update());
         }
 
     }//private
@@ -145,8 +159,23 @@ void run(WindowType = GLFWWindow)(BaseApp app, WindowConfig config = null){
             height = 480;
         }
     }
-    mainLoop.run!(WindowType)(app, config);
+    Window window = new WindowType(config);
+    mainLoop.register!(WindowType)(app, window);
+    mainLoop.loop;
 }
+
+// void run(WindowType = GLFWWindow)(BaseApp app, Window window){
+//     mainLoop_ = new Runner;
+//     if(!config){
+//         config = new WindowConfig();
+//         with(config){
+//             glVersion = SemVer(3, 3, 0);
+//             width = 640;
+//             height = 480;
+//         }
+//     }
+//     mainLoop.run!(WindowType)(app, config);
+// }
 
 /++
     現在のFPS(Frame Per Second)の使用率を返します．
