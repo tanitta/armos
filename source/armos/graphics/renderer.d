@@ -685,8 +685,6 @@ class Renderer {
         /++
         +/
         this(){
-            _fbo = (new armos.graphics.Fbo).minFilter(TextureMinFilter.Linear);
-            
             _bufferMesh   = new armos.graphics.BufferMesh;
             _materialStack ~= new armos.graphics.DefaultMaterial;
             auto bitmap = (new armos.graphics.Bitmap!(char))
@@ -702,7 +700,6 @@ class Renderer {
             _viewMatrixStack.push;
             _projectionMatrixStack.push;
             _textureMatrixStack.push;
-            
         }
         
         /++
@@ -842,6 +839,7 @@ class Renderer {
         /++
         +/
         void setup(){
+            _fbo = (new armos.graphics.Fbo).minFilter(TextureMinFilter.Linear);
             glEnable(GL_LINE_SMOOTH);
             glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
             import std.conv;

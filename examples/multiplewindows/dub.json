@@ -1,0 +1,12 @@
+{
+    "authors": [
+        "tanitta"
+    ],
+    "copyright": "Copyright © 2017, tanitta",
+    "dependencies": {
+        "armos": {"path":"../../"}
+    },
+    "description": "A minimal D application.",
+    "license": "proprietary",
+    "name": "multiplewindows"
+}

@@ -3,6 +3,7 @@ module armos.app.window;
 import armos.events;
 import armos.math;
 import armos.app;
+import armos.graphics.renderer;
 
 /++
 armosで用いるWindowsの雛形となるinterfaceです．新たにWindowを実装する際はこのinterfaceを継承することでrunnerから実行できます．
@@ -35,10 +36,16 @@ interface Window{
         +/
         void pollEvents();
 
+        ///
+        void setup();
+
         /++
             Windowを更新します．
         +/
         void update();
+
+        ///
+        void draw();
 
         /++
             Windowを閉じます．
@@ -66,13 +73,20 @@ interface Window{
         void name(in string str);
         
         ///
-        // void initEvents(BaseApp, CoreEvents);
+        void initEvents(BaseApp);
+
         void select();
 
         /// VerticalSync
         void verticalSync(in bool);
 
         float pixelScreenCoordScale()const;
+
+        ///
+        CoreEvents events();
+
+        ///
+        Renderer renderer();
     }//public
 }
 
@@ -122,7 +136,7 @@ mixin template BaseWindow(){
     現在のWindowを返す関数です．
 +/
 Window currentWindow(){
-    return mainLoop.window;
+    return mainLoop.currentWindow;
 }
 
 /++
