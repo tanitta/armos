@@ -44,13 +44,16 @@ class SubApp : ar.app.BaseApp{
 }//class SubApp
 
 void main(){
-    auto config = new ar.app.WindowConfig();
-    auto window1 = new ar.app.GLFWWindow(config);
-    auto window2 = new ar.app.GLFWWindow(config);
-    auto window3 = new ar.app.GLFWWindow(config, window2.context); //share context.
+    version(unittest){
+    }else{
+        auto config = new ar.app.WindowConfig();
+        auto window1 = new ar.app.GLFWWindow(config);
+        auto window2 = new ar.app.GLFWWindow(config);
+        auto window3 = new ar.app.GLFWWindow(config, window2.context); //share context.
 
-    ar.app.mainLoop.register(new MainApp, window1)
-                   .register(new SubApp,  window2)
-                   .register(new SubApp,  window3)
-                   .loop; // call loop function after application and window registations.
+        ar.app.mainLoop.register(new MainApp, window1)
+                       .register(new SubApp,  window2)
+                       .register(new SubApp,  window3)
+                       .loop; // call loop function after application and window registations.
+    }
 }
