@@ -25,7 +25,7 @@ class Runner {
             Params:
             app = 更新されるアプリケーションです．
         +/
-        Runner register(BaseApp app, Window window){
+        Runner register(Application app, Window window){
             addListener(window.events.setup,  app, &app.setup);
             addListener(window.events.update, app, &app.update);
             addListener(window.events.draw,   app, &app.draw);
@@ -85,7 +85,6 @@ class Runner {
             foreach (winapp; _appsCollection.byPair) {
                 auto window = winapp[0];
                 auto app    = winapp[1];
-                app.initHeldKeys;
                 select(window);
                 window.setup;
             }
@@ -129,7 +128,6 @@ class Runner {
                 select(window);
                 window.update();
                 window.draw();
-                app.updateKeys;
                 window.pollEvents;
             }
             _appsCollection.keys.each!(w => w.pollEvents());
@@ -167,7 +165,7 @@ Runner mainLoop() @property {
     WindowType = 立ち上げるWindowの型を指定します．省略可能です．
     app = 立ち上げるアプリケーションを指定します．
 +/
-void run(WindowType = GLFWWindow)(BaseApp app, WindowConfig config = null){
+void run(WindowType = GLFWWindow)(Application app, WindowConfig config = null){
     // mainLoop_ = new Runner;
     if(!config){
         config = new WindowConfig();
@@ -183,7 +181,7 @@ void run(WindowType = GLFWWindow)(BaseApp app, WindowConfig config = null){
     mainLoop.loop;
 }
 
-// void run(WindowType = GLFWWindow)(BaseApp app, Window window){
+// void run(WindowType = GLFWWindow)(Application app, Window window){
 //     mainLoop_ = new Runner;
 //     if(!config){
 //         config = new WindowConfig();

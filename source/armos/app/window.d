@@ -73,7 +73,7 @@ interface Window{
         void name(in string str);
         
         ///
-        void initEvents(BaseApp);
+        void initEvents(Application);
 
         void select();
 

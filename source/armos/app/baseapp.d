@@ -1,4 +1,5 @@
 module armos.app.baseapp;
+import armos.app.application;
 import armos.events;
 import armos.math;
 import armos.utils.keytype;
@@ -6,11 +7,12 @@ import armos.utils.keytype;
 /++
 armosの中心となるクラスです．プロジェクトを作成する際はこのクラスを継承して処理を記述していきます．
 +/
-class BaseApp{
+class BaseApp: Application{
     /++
         事前処理を記述するメンバ関数です．initializerによる初期化が行われた後，一度だけ実行されます．
     +/
     void setup(ref EventArg arg){
+        this.initHeldKeys;
         setup();
     }
 
@@ -26,6 +28,7 @@ class BaseApp{
     +/
     void draw(ref EventArg arg){
         draw();
+        this.updateKeys;
     }
 
     /++
@@ -80,6 +83,7 @@ class BaseApp{
     void keyPressed(ref KeyPressedEventArg message){
         import std.conv;
         keyPressed(message.key);
+        this.PressKey(message.key);
     }
     
     /++
@@ -97,6 +101,7 @@ class BaseApp{
     void keyReleased(ref KeyReleasedEventArg message){
         import std.conv;
         keyReleased(message.key);
+        this.ReleaseKey(message.key);
     }
     
     /++
@@ -128,6 +133,8 @@ class BaseApp{
         mouseMoved(message.x, message.y, message.button );
         mouseMoved(Vector2f(message.x, message.y), message.button);
         mouseMoved(Vector2i(message.x, message.y), message.button);
+        mouseX = message.x;
+        mouseY = message.y;
     }
 
     /++

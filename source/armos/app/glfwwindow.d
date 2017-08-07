@@ -138,7 +138,7 @@ class GLFWWindow : Window{
             return frameBufferSize.x / size.x;
         };
 
-        void initEvents(BaseApp app){
+        void initEvents(Application app){
             assert(_events);
             addListener(_events.windowResize, app, &app.windowResized);
             addListener(_events.keyPressed, app, &app.keyPressed);
@@ -148,10 +148,6 @@ class GLFWWindow : Window{
             addListener(_events.mouseReleased, app, &app.mouseReleased);
             addListener(_events.mousePressed, app, &app.mousePressed);
             addListener(_events.unicodeInputted, app, &app.unicodeInputted);
-            
-            import armos.utils:KeyType;
-            addListener(_events.keyPressed,  app, delegate(ref KeyPressedEventArg message){app.PressKey(message.key);});
-            addListener(_events.keyReleased, app, delegate(ref KeyReleasedEventArg message){app.ReleaseKey(message.key);});
         }
 
         CoreEvents events(){return _events;}
