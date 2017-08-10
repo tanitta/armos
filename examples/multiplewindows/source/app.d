@@ -8,9 +8,13 @@ class MainApp : ar.app.BaseApp{
 
     override void update(){}
 
-    override void draw(){ "MainApp".writeln; }
+    override void draw(){ 
+        ar.graphics.fillBackground(0, 1, 1, 1);
+    }
 
-    override void keyPressed(ar.utils.KeyType key){}
+    override void keyPressed(ar.utils.KeyType key){
+        "MainApp".writeln;
+    }
 
     override void keyReleased(ar.utils.KeyType key){}
 
@@ -19,6 +23,8 @@ class MainApp : ar.app.BaseApp{
     override void mousePressed(ar.math.Vector2i position, int button){}
 
     override void mouseReleased(ar.math.Vector2i position, int button){}
+
+    override void windowResized(ar.math.Vector2i size){}
 }
 
 /++
@@ -30,9 +36,13 @@ class SubApp : ar.app.BaseApp{
 
     override void update(){}
 
-    override void draw(){ "SubApp".writeln; }
+    override void draw(){ 
+        ar.graphics.fillBackground(1, 1, 0, 1);
+    }
 
-    override void keyPressed(ar.utils.KeyType key){}
+    override void keyPressed(ar.utils.KeyType key){
+        "SubApp".writeln;
+    }
 
     override void keyReleased(ar.utils.KeyType key){}
 
@@ -41,6 +51,8 @@ class SubApp : ar.app.BaseApp{
     override void mousePressed(ar.math.Vector2i position, int button){}
 
     override void mouseReleased(ar.math.Vector2i position, int button){}
+
+    override void windowResized(ar.math.Vector2i size){}
 }//class SubApp
 
 void main(){

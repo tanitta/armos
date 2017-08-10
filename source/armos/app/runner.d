@@ -110,6 +110,11 @@ class Runner {
             }
             return this;
         }
+
+        void select(Window window){
+            window.select;
+            _currentWindow = window;
+        }
     }//public
 
     private{
@@ -128,7 +133,6 @@ class Runner {
                 select(window);
                 window.update();
                 window.draw();
-                window.pollEvents;
             }
             _appsCollection.keys.each!(w => w.pollEvents());
             
@@ -146,10 +150,6 @@ class Runner {
             shouldRemoves.each!(w => _appsCollection.remove(w));
         }
 
-        void select(Window window){
-            window.select;
-            _currentWindow = window;
-        }
     }//private
 }
 
