@@ -37,6 +37,8 @@ class GLFWWindow : Window{
             _window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, sharedContext);
             if(!_window){close;}
 
+            GLFWWindow.glfwWindowToArmosWindow[_window] = this;
+
             glfwMakeContextCurrent(_window);
 
             if(config.glVersion >= SemVer("3.2.0")){
@@ -55,6 +57,10 @@ class GLFWWindow : Window{
 
 
             _renderer = new Renderer;
+        }
+
+        ~this(){
+            GLFWWindow.glfwWindowToArmosWindow.remove(_window);
         }
 
         void size(Vector2i size){
@@ -165,6 +171,7 @@ class GLFWWindow : Window{
         Renderer _renderer;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
             import std.conv;
             import armos.utils.keytype;
             if(action == GLFW_PRESS){
@@ -175,6 +182,7 @@ class GLFWWindow : Window{
         }
         
         static extern(C) void charCallbackFunction(GLFWwindow* window, uint key){
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
             currentEvents.notifyUnicodeInput(key);
             // if(action == GLFW_PRESS){
             //     currentEvents.notifyKeyPressed(key);
@@ -184,10 +192,13 @@ class GLFWWindow : Window{
         }
 
         static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
             currentEvents.notifyMouseMoved(cast(int)xpos, cast(int)ypos, 0);
         }
 
         static extern(C ) void mouseButtonFunction(GLFWwindow* window, int button, int action, int mods){
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
+
             double xpos, ypos;
             glfwGetCursorPos(window, &xpos, &ypos);
 
@@ -200,6 +211,7 @@ class GLFWWindow : Window{
 
         static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
             import armos.graphics;
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
             currentRenderer.resize();
             currentEvents.notifyWindowResize(cast(int)width, cast(int)height);
         }
@@ -222,5 +234,8 @@ class GLFWWindow : Window{
             glfwSetMouseButtonCallback(_window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
             glfwSetWindowSizeCallback(_window, cast(GLFWwindowsizefun)&resizeWindowFunction);
         }
+
+        static Window[GLFWwindow*] glfwWindowToArmosWindow;
     }//private
 }
+
