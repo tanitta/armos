@@ -123,15 +123,15 @@ class BufferEntity {
                 glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
                 import std.conv;
                 immutable int size = (elements/GLuint.sizeof).to!int;
-                glDrawElements(_primitiveMode.getGLPrimitiveMode, size, GL_UNSIGNED_INT, null);
+                glDrawElements(_primitiveMode, size, GL_UNSIGNED_INT, null);
             _material.shader.disableAttribs();
         }
         
         void draw(in armos.graphics.PolyRenderMode renderMode){
             import derelict.opengl3.gl;
-            glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(renderMode));
+            glPolygonMode(GL_FRONT_AND_BACK, renderMode);
             draw;
-            glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(currentStyle.polyRenderMode));
+            glPolygonMode(GL_FRONT_AND_BACK, currentStyle.polyRenderMode);
         }
         
         /++

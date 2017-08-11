@@ -11,31 +11,31 @@ import armos.types;
 ポリゴンのレンダリング方法を表します
 +/
 enum PolyRenderMode {
-    Points,/// 頂点のみ描画します．
-    WireFrame,/// 線のみ描画します．
-    Fill,/// 面を塗りつぶして描画します．
+    Points    = GL_POINTS, /// 頂点のみ描画します．
+    WireFrame = GL_LINE,   /// 線のみ描画します．
+    Fill      = GL_FILL,   /// 面を塗りつぶして描画します．
 }
 
 /++
 ポリゴンのプリミティブを指定します．
 +/
 enum PrimitiveMode{
-    Triangles,
-    TriangleStrip,
-    TriangleFan,
-    Lines,
-    LineStrip,
-    LineLoop,
-    Points,
+    Triangles     = GL_TRIANGLES,
+    TriangleStrip = GL_TRIANGLE_STRIP,
+    TriangleFan   = GL_TRIANGLE_FAN,
+    Lines         = GL_LINES,
+    LineStrip     = GL_LINE_STRIP,
+    LineLoop      = GL_LINE_LOOP,
+    Points        = GL_POINTS,
 }
 
 /++
 openGLで扱うMatrixの種類を表します．
 +/
 enum MatrixMode{
-    ModelView,
-    Projection,
-    Texture
+    ModelView  = GL_MODELVIEW,
+    Projection = GL_PROJECTION,
+    Texture    = GL_TEXTURE
 }
 
 /++
@@ -46,76 +46,6 @@ enum BlendMode{
     Add,
     Screen,
     Subtract
-}
-
-/++
-+/
-GLuint getGLPrimitiveMode(PrimitiveMode mode){
-    GLuint return_mode;
-    switch (mode) {
-        case PrimitiveMode.Triangles:
-            return_mode = GL_TRIANGLES;
-            break;
-        case PrimitiveMode.TriangleStrip:
-            return_mode =  GL_TRIANGLE_STRIP;
-            break;
-        case PrimitiveMode.TriangleFan:
-            return_mode =  GL_TRIANGLE_FAN;
-            break;
-        case PrimitiveMode.Lines:
-            return_mode =  GL_LINES;
-            break;
-        case PrimitiveMode.LineStrip:
-            return_mode =  GL_LINE_STRIP;
-            break;
-        case PrimitiveMode.LineLoop:
-            return_mode =  GL_LINE_LOOP;
-            break;
-        case PrimitiveMode.Points:
-            return_mode =  GL_POINTS;
-            break;
-        default : assert(0);
-
-    }
-    return return_mode;
-}
-
-/++
-+/
-GLuint getGLPolyRenderMode(PolyRenderMode mode){
-    GLuint return_mode;
-    switch (mode) {
-        case PolyRenderMode.Points:
-            return_mode = GL_POINTS;
-            break;
-        case PolyRenderMode.WireFrame:
-            return_mode = GL_LINE;
-            break;
-        case PolyRenderMode.Fill:
-            return_mode = GL_FILL;
-            break;
-        default : assert(0);
-    }
-    return return_mode;
-}
-
-/++
-+/
-GLuint getGLMatrixMode(MatrixMode mode){
-    GLuint return_mode;
-    switch (mode) {
-        case MatrixMode.ModelView:
-            return_mode = GL_MODELVIEW;
-            break;
-        case MatrixMode.Projection:
-            return_mode = GL_PROJECTION;
-            break;
-        case MatrixMode.Texture:
-            return_mode = GL_TEXTURE;
-            break;
-        default : assert(0);
-    }
-    return return_mode;
 }
 
 /++
@@ -1029,9 +959,9 @@ class Renderer {
             
             _bufferEntity.updateShaderAttribs;
                 
-            glPolygonMode(GL_FRONT_AND_BACK, armos.graphics.getGLPolyRenderMode(renderMode));
+            glPolygonMode(GL_FRONT_AND_BACK, renderMode);
             _bufferEntity.primitiveMode(primitiveMode).draw();
-            glPolygonMode(GL_FRONT_AND_BACK, getGLPolyRenderMode(_currentStyle.polyRenderMode));
+            glPolygonMode(GL_FRONT_AND_BACK, _currentStyle.polyRenderMode);
         }
 
         /++
