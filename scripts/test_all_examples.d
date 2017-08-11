@@ -25,14 +25,15 @@ import std.stdio;
 +/
 class TestCase {
     public{
-        this(in string examplePath, in Compiler compilerName){
+        this(in string examplePath, in Compiler compilerName, in string skipRegistry = "none"){
             _path = examplePath;
             _compilerName = compilerName;
+            _skipRegistry = skipRegistry;
         }
 
         typeof(this) test(){
             import std.stdio : writeln;
-            string[] command = ["dub", "test"];
+            string[] command = ["dub", "test", "--skip-registry="~ _skipRegistry];
             switch (_compilerName) {
                 case Compiler.dmd:
                     break;
@@ -72,6 +73,7 @@ class TestCase {
         TestStatus _status = TestStatus.Waiting;
         string _path;
         string _output;
+        string _skipRegistry;
         Compiler _compilerName;
     }//private
 }//struct TestCase
@@ -100,7 +102,7 @@ void main() {
 
     foreach (compiler; compilers) {
         foreach (testDir; testDirs) {
-            auto testCase = new TestCase(testDir, compiler.to!Compiler);
+            auto testCase = new TestCase(testDir, compiler.to!Compiler, testDir=="."?"none":"standard");
             testCases ~= testCase;
         }
     }
