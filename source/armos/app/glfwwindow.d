@@ -19,7 +19,7 @@ class GLFWWindow : Window{
             Params:
             apprication = Windowとひも付けされるアプリケーションです．
         +/
-        this(WindowConfig config, GLFWwindow* sharedContext = null){
+        this(WindowConfig config = new WindowConfig, GLFWwindow* sharedContext = null){
             DerelictGL.load();
             DerelictGLFW3.load();
 
