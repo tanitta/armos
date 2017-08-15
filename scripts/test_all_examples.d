@@ -33,7 +33,7 @@ class TestCase {
 
         typeof(this) test(){
             import std.stdio : writeln;
-            string[] command = ["dub", "test", "--skip-registry="~ _skipRegistry];
+            string[] command = ["dub", "test", "-f", "--skip-registry="~ _skipRegistry];
             switch (_compilerName) {
                 case Compiler.dmd:
                     break;
