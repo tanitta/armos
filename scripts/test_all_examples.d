@@ -45,6 +45,7 @@ class TestCase {
             }
             import std.process;
             string workingDir = __FILE__.dirName.buildPath("..", _path).absolutePath;
+            execute(["dub", "clear"], null, Config.none, size_t.max, workingDir);
             auto dub = execute(command, null, Config.none, size_t.max, workingDir);
             _status = (dub.status == 0)?TestStatus.Green:TestStatus.Red;
             _output = dub.output;
