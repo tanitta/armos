@@ -14,23 +14,24 @@ struct MidiMessage{
 +/
 class MidiStream {
     public{
-        static this(){
+        // static this(){
+        //     DerelictPortMidi.load();
+        //     DerelictPortTime.load();
+        // }
+        //
+        // static ~this(){
+        // }
+
+        this(int id = -1, in size_t bufferSize = 1024){
             DerelictPortMidi.load();
             DerelictPortTime.load();
-        }
-
-        static ~this(){
-        }
-
-        static auto inputStream(in int id = defaultInputDeviceId(), in size_t bufferSize = 1024){
-            auto stream = new MidiStream;
-            auto e = Pm_OpenInput(&stream._stream,
+            if(id == -1) id = defaultInputDeviceId();
+            auto e = Pm_OpenInput(&_stream,
                                   id,
                                   null,
                                   bufferSize,
                                   null,
                                   null);
-            return stream;
         }
 
         static int defaultInputDeviceId(){
@@ -60,7 +61,6 @@ class MidiStream {
     }//public
 
     private{
-        this(){}
         ~this(){
             if(!_hasClosed){
                 close;

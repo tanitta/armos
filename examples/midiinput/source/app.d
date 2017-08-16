@@ -2,7 +2,7 @@ static import ar = armos;
 
 class MainApp : ar.app.BaseApp{
     override void setup(){
-        _stream = ar.communication.MidiStream.inputStream;
+        _stream = new ar.communication.MidiStream();
     }
 
     override void update(){
