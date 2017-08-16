@@ -25,11 +25,11 @@ class MidiStream {
         static auto inputStream(in int id = defaultInputDeviceId(), in size_t bufferSize = 1024){
             auto stream = new MidiStream;
             auto e = Pm_OpenInput(&stream._stream,
-                                     id,
-                                     null,
-                                     bufferSize,
-                                     null,
-                                     null);
+                                  id,
+                                  null,
+                                  bufferSize,
+                                  null,
+                                  null);
             return stream;
         }
 
@@ -48,17 +48,15 @@ class MidiStream {
             auto buffer = new PmEvent[](max);
             auto numEvents = Pm_Read(_stream, buffer.ptr, max);
             auto events = new MidiMessage[](numEvents);
-
             foreach (size_t i, ref event; events) {
                 import std.conv:to;
-                event.timestamp= buffer[i].timestamp.to!long;
-                event.status = buffer[i].message.to!long & 0xFF;
-                event.data1= (buffer[i].message.to!long>>8) & 0xFF;
-                event.data2= (buffer[i].message.to!long>>16) & 0xFF;
+                event.timestamp = buffer[i].timestamp.to!long;
+                event.status    = buffer[i].message.to!long & 0xFF;
+                event.data1     = (buffer[i].message.to!long>>8) & 0xFF;
+                event.data2     = (buffer[i].message.to!long>>16) & 0xFF;
             }
             return events;
         }
-        // read(){return this;}
     }//public
 
     private{
