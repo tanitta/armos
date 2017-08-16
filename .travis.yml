@@ -28,6 +28,7 @@ env:
     - TEST_DIR=examples/phongshader
     - TEST_DIR=examples/gaussianblur
     - TEST_DIR=examples/multiplewindows
+    - TEST_DIR=examples/midiinput
 script:
     echo $TEST_DIR &&
     cd $TEST_DIR &&

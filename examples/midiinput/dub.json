@@ -1,0 +1,11 @@
+{
+    "authors": [
+        "tanitta"
+    ],
+    "dependencies": {
+        "armos":{"path":"../../" } 
+    },
+    "description": "A minimal D application.",
+    "license": "proprietary",
+    "name": "midiinput"
+}
