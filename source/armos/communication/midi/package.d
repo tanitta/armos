@@ -14,14 +14,6 @@ struct MidiMessage{
 +/
 class MidiStream {
     public{
-        // static this(){
-        //     DerelictPortMidi.load();
-        //     DerelictPortTime.load();
-        // }
-        //
-        // static ~this(){
-        // }
-
         this(int id = -1, in size_t bufferSize = 1024){
             DerelictPortMidi.load();
             DerelictPortTime.load();
