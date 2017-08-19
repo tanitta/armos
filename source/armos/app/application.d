@@ -77,10 +77,10 @@ interface Application{
     bool hasPressedKey(in KeyType key)const;
 
     ///
-    bool hasHeldKey(in KeyType key);
+    bool hasHeldKey(in KeyType key)const;
 
     ///
-    bool hasReleasedKey(in KeyType key);
+    bool hasReleasedKey(in KeyType key)const;
 
     ///
     void exitApp();
