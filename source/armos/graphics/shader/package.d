@@ -133,8 +133,8 @@ class Shader {
                 }else{
                     addLog("Failed loading geometry shader".color(fg.red).color(mode.bold));
                 }
-                glProgramParameteri(_programID, GL_GEOMETRY_INPUT_TYPE, _geometryInput.primitiveMode.getGLPrimitiveMode);
-                glProgramParameteri(_programID, GL_GEOMETRY_OUTPUT_TYPE, _geometryInput.primitiveMode.getGLPrimitiveMode);
+                glProgramParameteri(_programID, GL_GEOMETRY_INPUT_TYPE, _geometryInput.primitiveMode);
+                glProgramParameteri(_programID, GL_GEOMETRY_OUTPUT_TYPE, _geometryInput.primitiveMode);
                 import std.conv:to;
                 glProgramParameteri(_programID, GL_GEOMETRY_VERTICES_OUT, _maxGeometryOutputVertices.to!int);
             }else{

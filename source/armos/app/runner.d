@@ -4,16 +4,20 @@ import armos.utils;
 import armos.events;
 import armos.graphics;
 
+import std.algorithm;
+import std.array;
+
 /++
 armosのアプリケーションの更新を行うclassです．
 +/
+
+
 class Runner {
     public{
         /++
         +/
         this(){
             _fpsCounter = new FpsCounter;
-            _events = new CoreEvents;
         }
         
         /++
@@ -21,16 +25,15 @@ class Runner {
             Params:
             app = 更新されるアプリケーションです．
         +/
-        void run(WindowType)(BaseApp app, WindowConfig config){
-            _application = app;
-            addListener(events.setup, app, &app.setup);
-            addListener(events.update, app, &app.update);
-            addListener(events.draw, app, &app.draw);
-            addListener(events.exit, app, &app.exit);
+        Runner register(Application app, Window window){
+            addListener(window.events.setup,  app, &app.setup);
+            addListener(window.events.update, app, &app.update);
+            addListener(window.events.draw,   app, &app.draw);
+            addListener(window.events.exit,   app, &app.exit);
             
-            createWindow!(WindowType)(app, config);
-            
-            loop();
+            window.initEvents(app);
+            _appsCollection.add(app, window);
+            return this;
         };
 
         /++
@@ -58,75 +61,102 @@ class Runner {
         }
         
         ///
-        Renderer renderer(){return _renderer;}
+        Renderer renderer()out(renderer){
+            assert(renderer);
+        }body{
+            return currentWindow.renderer;
+        }
         
         ///
-        CoreEvents events(){return _events;};
+        Window currentWindow()out(window){
+            assert(window);
+        }body{
+            return _currentWindow;
+        }
+
+        CoreEvents currentEvents()out(events){
+            assert(events);
+        }body{
+            return currentWindow.events;
+        }
 
         ///
-        Window window(){return _window;}
-    }//public
-
-    private{
-        BaseApp    _application;
-        CoreEvents _events;
-        Renderer   _renderer;
-        Window     _window;
-
-        bool _isLoop = true;
-        FpsCounter _fpsCounter;
-
-        void createWindow(WindowType)(BaseApp app, WindowConfig config){
-            _window = new WindowType(app, _events, config);
-            
-            static if(WindowType.hasRenderer){
-                _renderer = new Renderer;
+        Runner loop(){
+            foreach (winapp; _appsCollection.byPair) {
+                auto window = winapp[0];
+                auto app    = winapp[1];
+                select(window);
+                window.setup;
             }
-            
-            assert(_window);
-            
-            if(_renderer){
-                _renderer.setup();
-            }
-        };
 
-        void loop(){
-            _application.initHeldKeys;
-            
-            _events.notifySetup();
-            while(_isLoop){
+            bool isLoop = true;
+            while(isLoop){
                 loopOnce();
                 _fpsCounter.adjust();
                 _fpsCounter.newFrame();
-                _isLoop = !_window.shouldClose&&!_application.shouldClose;
+                import std.functional;
+                //TODO
+                // isLoop = _appsCollection.byPair.map!(p => !p[0].shouldClose).fold!("a||b")(false)&&!_application.shouldClose;
+                // isLoop = _appsCollection.byPair.map!(p => !p[0].shouldClose).fold!("a||b")(false)&&!_application.shouldClose;
+                isLoop = _appsCollection.keys.length > 0;
             }
-            _events.notifyExit();
-            _window.close();
+
+            foreach (winapp; _appsCollection.byPair) {
+                auto window = winapp[0];
+                auto app    = winapp[1];
+                select(window);
+                // window.events.notifyExit();
+                // window.close;
+            }
+            return this;
         }
 
+        void select(Window window){
+            window.select;
+            _currentWindow = window;
+        }
+    }//public
+
+    private{
+        // Renderer   _renderer;
+        AppCollection _appsCollection;
+        Window _currentWindow;
+
+        FpsCounter _fpsCounter;
+
+
+
         void loopOnce(){
-            _events.notifyUpdate();
-            if(_renderer){
-                _renderer.startRender();
+            foreach (winapp; _appsCollection.byPair) {
+                auto window = winapp[0];
+                auto app    = winapp[1];
+                select(window);
+                window.update();
+                window.draw();
             }
-            _events.notifyDraw();
-            if(_renderer){
-                _renderer.finishRender();
+            _appsCollection.keys.each!(w => w.pollEvents());
+            
+            Window[] shouldRemoves;
+            foreach (winapp; _appsCollection.byPair) {
+                auto window = winapp[0];
+                auto app    = winapp[1];
+
+                if(window.shouldClose||app.shouldClose){
+                    window.events.notifyExit();
+                    window.close;
+                    shouldRemoves ~= window;
+                }
             }
-            _application.updateKeys;
-            _window.pollEvents();
-            _window.update();
+            shouldRemoves.each!(w => _appsCollection.remove(w));
         }
 
     }//private
 }
-private Runner mainLoop_;
-Runner mainLoop() @property
-{
-    return mainLoop_;
-    // static __gshared Runner instance;
-    // import std.concurrency : initOnce;
-    // return initOnce!instance(new Runner);
+
+Runner mainLoop() @property {
+    static __gshared Runner instance;
+    import std.concurrency : initOnce;
+    return initOnce!instance(new Runner);
 }
 
 /++
@@ -135,8 +165,8 @@ Runner mainLoop() @property
     WindowType = 立ち上げるWindowの型を指定します．省略可能です．
     app = 立ち上げるアプリケーションを指定します．
 +/
-void run(WindowType = GLFWWindow)(BaseApp app, WindowConfig config = null){
-    mainLoop_ = new Runner;
+void run(WindowType = GLFWWindow)(Application app, WindowConfig config = null){
+    // mainLoop_ = new Runner;
     if(!config){
         config = new WindowConfig();
         with(config){
@@ -145,8 +175,24 @@ void run(WindowType = GLFWWindow)(BaseApp app, WindowConfig config = null){
             height = 480;
         }
     }
-    mainLoop.run!(WindowType)(app, config);
+
+    Window window = new WindowType(config);
+    mainLoop.register(app, window);
+    mainLoop.loop;
 }
+
+// void run(WindowType = GLFWWindow)(Application app, Window window){
+//     mainLoop_ = new Runner;
+//     if(!config){
+//         config = new WindowConfig();
+//         with(config){
+//             glVersion = SemVer(3, 3, 0);
+//             width = 640;
+//             height = 480;
+//         }
+//     }
+//     mainLoop.run!(WindowType)(app, config);
+// }
 
 /++
     現在のFPS(Frame Per Second)の使用率を返します．
@@ -167,7 +213,7 @@ double targetFps(){
 }
 
 CoreEvents currentEvents(){
-    return mainLoop.events;
+    return mainLoop.currentEvents;
 }
 
 double currentFps(){

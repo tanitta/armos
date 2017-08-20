@@ -5,6 +5,7 @@ import armos.events;
 import derelict.opengl3.gl;
 import armos.app.window;
 import armos.math;
+import armos.graphics.renderer;
 /++
     GLFWを利用したWindowです．armosではデフォルトでこのclassを元にWindowが生成されます．
 +/
@@ -18,7 +19,7 @@ class GLFWWindow : Window{
             Params:
             apprication = Windowとひも付けされるアプリケーションです．
         +/
-        this(BaseApp apprication, CoreEvents events, WindowConfig config){
+        this(WindowConfig config = new WindowConfig, GLFWwindow* sharedContext = null){
             DerelictGL.load();
             DerelictGLFW3.load();
 
@@ -33,8 +34,10 @@ class GLFWWindow : Window{
                 glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             }
 
-            _window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, null);
+            _window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, sharedContext);
             if(!_window){close;}
+
+            GLFWWindow.glfwWindowToArmosWindow[_window] = this;
 
             glfwMakeContextCurrent(_window);
 
@@ -44,13 +47,20 @@ class GLFWWindow : Window{
                 DerelictGL.reload();
             }
 
-            initEvents(apprication, events);
             initGLFWEvents();
+            _events = new CoreEvents;
 
             glfwSwapInterval(0);
             glfwSwapBuffers(_window);
             
             writeVersion;
+
+
+            _renderer = new Renderer;
+        }
+
+        ~this(){
+            GLFWWindow.glfwWindowToArmosWindow.remove(_window);
         }
 
         void size(Vector2i size){
@@ -82,14 +92,28 @@ class GLFWWindow : Window{
             glfwPollEvents();
         }
 
+        void setup(){
+            _renderer.setup();
+            _events.notifySetup();
+        }
+
         /++
             Windowを更新します．
         +/
         void update(){
-            // glFlush();
-            // glFinish();
-            glfwSwapBuffers(_window);
+            _events.notifyUpdate();
             _shouldClose = cast(bool)glfwWindowShouldClose(_window);
+        }
+
+        void draw(){
+            if(_renderer){
+                _renderer.startRender();
+            }
+            _events.notifyDraw();
+            if(_renderer){
+                _renderer.finishRender();
+            }
+            glfwSwapBuffers(_window);
         }
 
         /++
@@ -97,7 +121,7 @@ class GLFWWindow : Window{
         +/
         void close(){
             _shouldClose = true;
-            glfwTerminate();
+            glfwDestroyWindow(_window);
         }
 
         void name(in string str){
@@ -119,12 +143,35 @@ class GLFWWindow : Window{
         float pixelScreenCoordScale()const{
             return frameBufferSize.x / size.x;
         };
+
+        void initEvents(Application app){
+            assert(_events);
+            addListener(_events.windowResize, app, &app.windowResized);
+            addListener(_events.keyPressed, app, &app.keyPressed);
+            addListener(_events.keyReleased, app, &app.keyReleased);
+            addListener(_events.mouseMoved, app, &app.mouseMoved);
+            addListener(_events.mouseDragged, app, &app.mouseDragged);
+            addListener(_events.mouseReleased, app, &app.mouseReleased);
+            addListener(_events.mousePressed, app, &app.mousePressed);
+            addListener(_events.unicodeInputted, app, &app.unicodeInputted);
+        }
+
+        CoreEvents events(){return _events;}
+
+        Renderer renderer(){return _renderer;}
+
+        GLFWwindow* context(){
+            return _window;
+        }
     }//public
 
     private{
         GLFWwindow* _window;
+        CoreEvents _events;
+        Renderer _renderer;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
             import std.conv;
             import armos.utils.keytype;
             if(action == GLFW_PRESS){
@@ -135,6 +182,7 @@ class GLFWWindow : Window{
         }
         
         static extern(C) void charCallbackFunction(GLFWwindow* window, uint key){
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
             currentEvents.notifyUnicodeInput(key);
             // if(action == GLFW_PRESS){
             //     currentEvents.notifyKeyPressed(key);
@@ -144,10 +192,13 @@ class GLFWWindow : Window{
         }
 
         static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
             currentEvents.notifyMouseMoved(cast(int)xpos, cast(int)ypos, 0);
         }
 
         static extern(C ) void mouseButtonFunction(GLFWwindow* window, int button, int action, int mods){
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
+
             double xpos, ypos;
             glfwGetCursorPos(window, &xpos, &ypos);
 
@@ -160,6 +211,7 @@ class GLFWWindow : Window{
 
         static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
             import armos.graphics;
+            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
             currentRenderer.resize();
             currentEvents.notifyWindowResize(cast(int)width, cast(int)height);
         }
@@ -172,21 +224,6 @@ class GLFWWindow : Window{
             writefln("GLSL:     %s\n", to!string(glGetString(GL_SHADING_LANGUAGE_VERSION)));
         };
         
-        void initEvents(BaseApp app, CoreEvents events){
-            assert(events);
-            addListener(events.windowResize, app, &app.windowResized);
-            addListener(events.keyPressed, app, &app.keyPressed);
-            addListener(events.keyReleased, app, &app.keyReleased);
-            addListener(events.mouseMoved, app, &app.mouseMoved);
-            addListener(events.mouseDragged, app, &app.mouseDragged);
-            addListener(events.mouseReleased, app, &app.mouseReleased);
-            addListener(events.mousePressed, app, &app.mousePressed);
-            addListener(events.unicodeInputted, app, &app.unicodeInputted);
-            
-            import armos.utils:KeyType;
-            addListener(events.keyPressed,  app, delegate(ref KeyPressedEventArg message){app.PressKey(message.key);});
-            addListener(events.keyReleased, app, delegate(ref KeyReleasedEventArg message){app.ReleaseKey(message.key);});
-        }
 
 
         void initGLFWEvents(){
@@ -197,5 +234,8 @@ class GLFWWindow : Window{
             glfwSetMouseButtonCallback(_window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
             glfwSetWindowSizeCallback(_window, cast(GLFWwindowsizefun)&resizeWindowFunction);
         }
+
+        static Window[GLFWwindow*] glfwWindowToArmosWindow;
     }//private
 }
+

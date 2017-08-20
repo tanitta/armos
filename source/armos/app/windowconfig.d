@@ -73,7 +73,7 @@ class WindowConfig {
         int _height = 480;
         int _width = 640;
         Vector2i _position;
-        SemVer _glVersion = SemVer(3, 2, 0);
+        SemVer _glVersion = SemVer(3, 3, 0);
     }//private
 }//interface WindowConfig
 // WindowConfig should be able to handle float version.

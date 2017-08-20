@@ -19,6 +19,19 @@ class Recorder {
         }
 
         ///
+        string usableDevice(){
+            import std.conv;
+            return alcGetString(null, ALC_CAPTURE_DEVICE_SPECIFIER).to!string;
+        }
+
+        ///
+        string currentDevice(){
+            import std.conv;
+            assert(_device, "No capture device selected.");
+            return alcGetString(_device, ALC_CAPTURE_DEVICE_SPECIFIER).to!string;
+        }
+
+        ///
         const(byte[]) buffer()const{
             return _buffer;
         }
