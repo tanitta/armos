@@ -3,9 +3,10 @@
 armos
 ====
 
-[![Dub version](https://img.shields.io/dub/v/armos.svg)](https://code.dlang.org/packages/armos)
-[![Dub downloads](https://img.shields.io/dub/dt/armos.svg)](https://code.dlang.org/packages/armos)
-[![Build Status](https://travis-ci.org/tanitta/armos.svg?branch=dev)](https://travis-ci.org/tanitta/armos)
+[![Dub version][dub-version]][dub-version-url]
+[![Dub downloads][dub-downloads]][dub-downloads-url]
+[![License][license-badge]][license-badge-url]
+[![Build Status][build-status]][build-status-url]
 
 D言語によるクリエイティブコーディングのためのオープンソースライブラリです．
 
@@ -145,3 +146,13 @@ alias armos="path/to/armos"
 3. 変更をcommitします(git commit -am 'Add some feature')
 4. 2.で作ったbranchにPush(git push origin my-new-feature)
 5. Pull Requestを飛ばしましょう
+
+
+[dub-version]:       https://img.shields.io/dub/v/armos.svg
+[dub-version-url]:   https://code.dlang.org/packages/armos
+[dub-downloads]:     https://img.shields.io/dub/dt/armos.svg
+[dub-downloads-url]: https://code.dlang.org/packages/armos
+[license-badge]:     https://img.shields.io/badge/License-BSL%20v1.0-blue.svg
+[license-badge-url]: ./LICENSE
+[build-status]:      https://travis-ci.org/tanitta/armos.svg?branch=dev
+[build-status-url]:  https://travis-ci.org/tanitta/armos
