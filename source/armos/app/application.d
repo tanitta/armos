@@ -9,54 +9,54 @@ interface Application{
     /++
         事前処理を記述するメンバ関数です．initializerによる初期化が行われた後，一度だけ実行されます．
     +/
-    void setup(ref EventArg arg);
+    void setup(ref SetupEvent arg);
 
     /++
         毎フレーム実行されるメンバ関数です．
     +/
-    void update(ref EventArg arg);
+    void update(ref UpdateEvent arg);
 
     /++
         毎フレーム実行されるメンバ関数です．updateの次に呼ばれます．描画処理を記述します．
     +/
-    void draw(ref EventArg arg);
+    void draw(ref DrawEvent arg);
 
     /++
         終了時に一度だけ呼ばれるメンバ関数です．
     +/
-    void exit(ref EventArg arg);
+    void exit(ref ExitEvent arg);
 
     ///
-    void windowResized(ref WindowResizeEventArg message);
+    void windowResized(ref WindowResizeEvent message);
 
     /++
         キーボードを押した際に呼ばれるメンバ関数です．
         Params:
         message = キーボードの状態が格納されたメッセージです．
     +/
-    void keyPressed(ref KeyPressedEventArg message);
+    void keyPressed(ref KeyPressedEvent message);
 
     /++
         キーボードを離した際に呼ばれるメンバ関数です．
         Params:
         message = キーボードの状態が格納されたメッセージです．
     +/
-    void keyReleased(ref KeyReleasedEventArg message);
+    void keyReleased(ref KeyReleasedEvent message);
     
     ///
-    void unicodeInputted(ref UnicodeInputtedEventArg message);
+    void unicodeInputted(ref UnicodeInputtedEvent message);
 
     /++
         マウスが動いた際に呼ばれるメンバ関数です．
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mouseMoved(ref MouseMovedEventArg message);
+    void mouseMoved(ref MouseMovedEvent message);
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
         Deprecated: 現在動作しません．
     +/
-    void mouseDragged(ref MouseDraggedEventArg message);
+    void mouseDragged(ref MouseDraggedEvent message);
 
 
     /++
@@ -64,14 +64,14 @@ interface Application{
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mouseReleased(ref MouseReleasedEventArg message);
+    void mouseReleased(ref MouseReleasedEvent message);
 
     /++
         マウスのボタンが押された際に呼ばれるメンバ関数です．
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mousePressed(ref MousePressedEventArg message);
+    void mousePressed(ref MousePressedEvent message);
 
     ///
     bool hasPressedKey(in KeyType key)const;

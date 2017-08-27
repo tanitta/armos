@@ -83,7 +83,7 @@ interface Window{
         float pixelScreenCoordScale()const;
 
         ///
-        CoreEvents events();
+        CoreSubjects subjects();
 
         ///
         Renderer renderer();
