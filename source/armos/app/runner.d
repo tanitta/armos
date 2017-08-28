@@ -7,9 +7,6 @@ import armos.graphics;
 import std.algorithm;
 import std.array;
 
-import rx;
-import std.range:put;
-
 /++
 armosのアプリケーションの更新を行うclassです．
 +/
@@ -29,6 +26,7 @@ class Runner {
             app = 更新されるアプリケーションです．
         +/
         Runner register(Application app, Window window){
+            import rx;
             window.subjects.setup.doSubscribe!(event => app.setup(event));
             window.subjects.update.doSubscribe!(event => app.update(event));
             window.subjects.draw.doSubscribe!(event => app.draw(event));
@@ -145,7 +143,7 @@ class Runner {
                 auto app    = winapp[1];
 
                 if(window.shouldClose||app.shouldClose){
-                    // window.subjects.notifyExit();
+                    import std.range:put;
                     put(window.subjects.exit, ExitEvent());
                     window.close;
                     shouldRemoves ~= window;

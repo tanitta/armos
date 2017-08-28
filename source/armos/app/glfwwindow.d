@@ -6,7 +6,6 @@ import derelict.opengl3.gl;
 import armos.app.window;
 import armos.math;
 import armos.graphics.renderer;
-import rx;
 import std.range:put;
 /++
     GLFWを利用したWindowです．armosではデフォルトでこのclassを元にWindowが生成されます．
@@ -148,6 +147,7 @@ class GLFWWindow : Window{
 
         void initEvents(Application app){
             assert(_subjects);
+            import rx;
             _subjects.windowResize.doSubscribe!(event => app.windowResized(event));
             _subjects.keyPressed.doSubscribe!(event => app.keyPressed(event));
             _subjects.keyReleased.doSubscribe!(event => app.keyReleased(event));
