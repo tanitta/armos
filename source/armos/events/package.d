@@ -1,5 +1,5 @@
 module armos.events;
-public import armos.events.event;
+
 public import armos.events.events;
 
 import rx;
@@ -54,25 +54,3 @@ class CoreSubjects {
     private{
     }//private
 }//class CoreSubjects
-
-class CoreObserbable{
-        SubjectObject!SetupEvent setup;
-        SubjectObject!UpdateEvent update;
-        SubjectObject!DrawEvent draw;
-        SubjectObject!ExitEvent exit;
-        SubjectObject!WindowResizeEvent windowResize;
-        SubjectObject!KeyPressedEvent keyPressed;
-        SubjectObject!KeyReleasedEvent keyReleased;
-        SubjectObject!UnicodeInputtedEvent unicodeInputted;
-        SubjectObject!MouseDraggedEvent mouseDragged;
-        SubjectObject!MouseEnteredEvent mouseEntered;
-        SubjectObject!MouseMovedEvent mouseMoved;
-        SubjectObject!MousePressedEvent mousePressed;
-        SubjectObject!MouseReleasedEvent mouseReleased;
-        SubjectObject!MouseScrolledEvent mouseScrolled;
-        SubjectObject!TouchCancelledEvent touchCancelled;
-        SubjectObject!TouchDoubleTapEvent touchDoubleTap;
-        SubjectObject!TouchDownEvent touchDown;
-        SubjectObject!TouchMovedEvent touchMoved;
-        SubjectObject!TouchUpEvent touchUp;
-}
