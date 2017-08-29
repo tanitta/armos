@@ -26,10 +26,11 @@ class Runner {
             app = 更新されるアプリケーションです．
         +/
         Runner register(Application app, Window window){
-            addListener(window.events.setup,  app, &app.setup);
-            addListener(window.events.update, app, &app.update);
-            addListener(window.events.draw,   app, &app.draw);
-            addListener(window.events.exit,   app, &app.exit);
+            import rx;
+            window.subjects.setup.doSubscribe!(event => app.setup(event));
+            window.subjects.update.doSubscribe!(event => app.update(event));
+            window.subjects.draw.doSubscribe!(event => app.draw(event));
+            window.subjects.exit.doSubscribe!(event => app.exit(event));
             
             window.initEvents(app);
             _appsCollection.add(app, window);
@@ -74,10 +75,10 @@ class Runner {
             return _currentWindow;
         }
 
-        CoreEvents currentEvents()out(events){
-            assert(events);
+        CoreSubjects currentSubjects()out(subjects){
+            assert(subjects);
         }body{
-            return currentWindow.events;
+            return currentWindow.subjects;
         }
 
         ///
@@ -142,7 +143,8 @@ class Runner {
                 auto app    = winapp[1];
 
                 if(window.shouldClose||app.shouldClose){
-                    window.events.notifyExit();
+                    import std.range:put;
+                    put(window.subjects.exit, ExitEvent());
                     window.close;
                     shouldRemoves ~= window;
                 }
@@ -212,8 +214,8 @@ double targetFps(){
     return mainLoop.targetFps;
 }
 
-CoreEvents currentEvents(){
-    return mainLoop.currentEvents;
+CoreSubjects currentSubjects(){
+    return mainLoop.currentSubjects;
 }
 
 double currentFps(){

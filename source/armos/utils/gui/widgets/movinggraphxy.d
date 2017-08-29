@@ -24,12 +24,15 @@ class MovingGraphXY(T) : Widget{
                 _lines.addVertex(0, 0, 0);
                 _lines.addIndex(i);
             }
-            static import armos.events;
-            static import armos.app;
-            armos.events.addListener(armos.app.currentEvents.update, this, &this.update);
+
+            import armos.events;
+            import armos.app;
+            import rx;
+
+            currentSubjects.update.doSubscribe!(event => this.update(event));
         }
 
-        override void update(ref armos.events.EventArg arg){
+        override void update(ref armos.events.UpdateEvent arg){
             for (int i = 0; i < _bufferSize -1; i++) {
                 _buffer[i] = _buffer[i+1];
             }

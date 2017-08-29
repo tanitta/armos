@@ -11,7 +11,7 @@ class BaseApp: Application{
     /++
         事前処理を記述するメンバ関数です．initializerによる初期化が行われた後，一度だけ実行されます．
     +/
-    void setup(ref EventArg arg){
+    void setup(ref SetupEvent arg){
         this.initHeldKeys;
         setup();
     }
@@ -19,14 +19,14 @@ class BaseApp: Application{
     /++
         毎フレーム実行されるメンバ関数です．
     +/
-    void update(ref EventArg arg){
+    void update(ref UpdateEvent arg){
         update();
     }
 
     /++
         毎フレーム実行されるメンバ関数です．updateの次に呼ばれます．描画処理を記述します．
     +/
-    void draw(ref EventArg arg){
+    void draw(ref DrawEvent arg){
         draw();
         this.updateKeys;
     }
@@ -50,7 +50,7 @@ class BaseApp: Application{
     /++
         終了時に一度だけ呼ばれるメンバ関数です．
     +/
-    void exit(ref EventArg arg){
+    void exit(ref ExitEvent arg){
         exit();
     };
 
@@ -60,7 +60,7 @@ class BaseApp: Application{
     void exit(){};
     
     ///
-    void windowResized(ref WindowResizeEventArg message){
+    void windowResized(ref WindowResizeEvent message){
         windowResized(message.w, message.h);
         windowResized(Vector2i(message.w, message.h));
         windowResized;
@@ -80,7 +80,7 @@ class BaseApp: Application{
         Params:
         message = キーボードの状態が格納されたメッセージです．
     +/
-    void keyPressed(ref KeyPressedEventArg message){
+    void keyPressed(ref KeyPressedEvent message){
         import std.conv;
         keyPressed(message.key);
         this.PressKey(message.key);
@@ -98,7 +98,7 @@ class BaseApp: Application{
         Params:
         message = キーボードの状態が格納されたメッセージです．
     +/
-    void keyReleased(ref KeyReleasedEventArg message){
+    void keyReleased(ref KeyReleasedEvent message){
         import std.conv;
         keyReleased(message.key);
         this.ReleaseKey(message.key);
@@ -112,7 +112,7 @@ class BaseApp: Application{
     void keyReleased(KeyType key){}
     
     ///
-    void unicodeInputted(ref UnicodeInputtedEventArg message){
+    void unicodeInputted(ref UnicodeInputtedEvent message){
         unicodeInputted(message.key);
     }
     
@@ -129,7 +129,7 @@ class BaseApp: Application{
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mouseMoved(ref MouseMovedEventArg message){
+    void mouseMoved(ref MouseMovedEvent message){
         mouseMoved(message.x, message.y, message.button );
         mouseMoved(Vector2f(message.x, message.y), message.button);
         mouseMoved(Vector2i(message.x, message.y), message.button);
@@ -163,7 +163,7 @@ class BaseApp: Application{
         マウスがドラッグされた際に呼ばれるメンバ関数です．
         Deprecated: 現在動作しません．
     +/
-    void mouseDragged(ref MouseDraggedEventArg message){
+    void mouseDragged(ref MouseDraggedEvent message){
         mouseDragged(message.x, message.y, message.button );
         mouseDragged(Vector2f(message.x, message.y), message.button);
         mouseDragged(Vector2i(message.x, message.y), message.button);
@@ -193,7 +193,7 @@ class BaseApp: Application{
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mouseReleased(ref MouseReleasedEventArg message){
+    void mouseReleased(ref MouseReleasedEvent message){
         mouseReleased(message.x, message.y, message.button );
         mouseReleased(Vector2f(message.x, message.y), message.button);
         mouseReleased(Vector2i(message.x, message.y), message.button);
@@ -229,7 +229,7 @@ class BaseApp: Application{
         Params:
         message = マウスの状態が格納されたメッセージです．
     +/
-    void mousePressed(ref MousePressedEventArg message){
+    void mousePressed(ref MousePressedEvent message){
         mousePressed(message.x, message.y, message.button );
         mousePressed(Vector2f(message.x, message.y), message.button);
         mousePressed(Vector2i(message.x, message.y), message.button);
