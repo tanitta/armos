@@ -6,12 +6,12 @@ import derelict.opengl3.gl;
 import armos.app.window;
 import armos.math;
 import armos.graphics.renderer;
-import std.range:put;
 /++
     GLFWを利用したWindowです．armosではデフォルトでこのclassを元にWindowが生成されます．
 +/
 class GLFWWindow : Window{
     import derelict.glfw3.glfw3;
+    import std.range:put;
     mixin BaseWindow;
 
     public{
@@ -38,7 +38,7 @@ class GLFWWindow : Window{
             _window = glfwCreateWindow(config.width, config.height, cast(char*)_name, null, sharedContext);
             if(!_window){close;}
 
-            GLFWWindow.glfwWindowToArmosWindow[_window] = this;
+            GLFWWindow.glfwWindowToArmosGLFWWindow[_window] = this;
 
             glfwMakeContextCurrent(_window);
 
@@ -61,7 +61,7 @@ class GLFWWindow : Window{
         }
 
         ~this(){
-            GLFWWindow.glfwWindowToArmosWindow.remove(_window);
+            GLFWWindow.glfwWindowToArmosGLFWWindow.remove(_window);
         }
 
         void size(Vector2i size){
@@ -121,6 +121,7 @@ class GLFWWindow : Window{
             Windowを閉じます．
         +/
         void close(){
+            put(_subjects.exit, ExitEvent());
             _shouldClose = true;
             glfwDestroyWindow(_window);
         }
@@ -148,6 +149,10 @@ class GLFWWindow : Window{
         void initEvents(Application app){
             assert(_subjects);
             import rx;
+            _subjects.setup.doSubscribe!(event => app.setup(event));
+            _subjects.update.doSubscribe!(event => app.update(event));
+            _subjects.draw.doSubscribe!(event => app.draw(event));
+            _subjects.exit.doSubscribe!(event => app.exit(event));
             _subjects.windowResize.doSubscribe!(event => app.windowResized(event));
             _subjects.keyPressed.doSubscribe!(event => app.keyPressed(event));
             _subjects.keyReleased.doSubscribe!(event => app.keyReleased(event));
@@ -158,7 +163,10 @@ class GLFWWindow : Window{
             _subjects.unicodeInputted.doSubscribe!(event => app.unicodeInputted(event));
         }
 
-        CoreSubjects subjects(){return _subjects;}
+        CoreObservables observables(){
+            import std.conv:to;
+            return _subjects.to!CoreObservables;
+        }
 
         Renderer renderer(){return _renderer;}
 
@@ -173,19 +181,21 @@ class GLFWWindow : Window{
         Renderer _renderer;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
-            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
+            auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
+            mainLoop.select(currentGLFWWindow);
             import std.conv;
             import armos.utils.keytype;
             if(action == GLFW_PRESS){
-                put(currentSubjects.keyPressed, KeyPressedEvent(key.to!KeyType));
+                put(currentGLFWWindow._subjects.keyPressed, KeyPressedEvent(key.to!KeyType));
             }else if(action == GLFW_RELEASE){
-                put(currentSubjects.keyReleased, KeyReleasedEvent(key.to!KeyType));
+                put(currentGLFWWindow._subjects.keyReleased, KeyReleasedEvent(key.to!KeyType));
             }
         }
         
         static extern(C) void charCallbackFunction(GLFWwindow* window, uint key){
-            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
-            put(currentSubjects.unicodeInputted, UnicodeInputtedEvent(key));
+            auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
+            mainLoop.select(currentGLFWWindow);
+            put(currentGLFWWindow._subjects.unicodeInputted, UnicodeInputtedEvent(key));
             // if(action == GLFW_PRESS){
             //     currentSubject.notifyKeyPressed(key);
             // }else if(action == GLFW_RELEASE){
@@ -194,28 +204,31 @@ class GLFWWindow : Window{
         }
 
         static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
-            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
-            put(currentSubjects.mouseMoved, MouseMovedEvent(cast(int)xpos, cast(int)ypos, 0));
+            auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
+            mainLoop.select(currentGLFWWindow);
+            put(currentGLFWWindow._subjects.mouseMoved, MouseMovedEvent(cast(int)xpos, cast(int)ypos, 0));
         }
 
         static extern(C ) void mouseButtonFunction(GLFWwindow* window, int button, int action, int mods){
-            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
+            auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
+            mainLoop.select(currentGLFWWindow);
 
             double xpos, ypos;
             glfwGetCursorPos(window, &xpos, &ypos);
 
             if(action == GLFW_PRESS){
-                put(currentSubjects.mousePressed, MousePressedEvent(cast(int)xpos, cast(int)ypos, button));
+                put(currentGLFWWindow._subjects.mousePressed, MousePressedEvent(cast(int)xpos, cast(int)ypos, button));
             }else if(action == GLFW_RELEASE){
-                put(currentSubjects.mouseReleased, MouseReleasedEvent(cast(int)xpos, cast(int)ypos, button));
+                put(currentGLFWWindow._subjects.mouseReleased, MouseReleasedEvent(cast(int)xpos, cast(int)ypos, button));
             }
         }
 
         static extern(C ) void resizeWindowFunction(GLFWwindow* window, int width, int height){
             import armos.graphics;
-            mainLoop.select(GLFWWindow.glfwWindowToArmosWindow[window]);
+            auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
+            mainLoop.select(currentGLFWWindow);
             currentRenderer.resize();
-            put(currentSubjects.windowResize, WindowResizeEvent(cast(int)width, cast(int)height));
+            put(currentGLFWWindow._subjects.windowResize, WindowResizeEvent(cast(int)width, cast(int)height));
         }
         
         void writeVersion(){
@@ -237,7 +250,7 @@ class GLFWWindow : Window{
             glfwSetWindowSizeCallback(_window, cast(GLFWwindowsizefun)&resizeWindowFunction);
         }
 
-        static Window[GLFWwindow*] glfwWindowToArmosWindow;
+        static GLFWWindow[GLFWwindow*] glfwWindowToArmosGLFWWindow;
     }//private
 }
 

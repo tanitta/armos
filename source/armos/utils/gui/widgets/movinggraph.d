@@ -29,7 +29,7 @@ class MovingGraph(T) : Widget{
             import armos.app;
             import rx;
 
-            currentSubjects.update.doSubscribe!(event => this.update(event));
+            currentObservables.update.doSubscribe!(event => this.update(event));
         }
 
         override void update(ref armos.events.UpdateEvent arg){

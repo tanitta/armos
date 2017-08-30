@@ -49,8 +49,63 @@ class CoreSubjects {
             touchMoved      = new SubjectObject!TouchMovedEvent;
             touchUp         = new SubjectObject!TouchUpEvent;
         }
+
+        CoreObservables opCast(CoreObservables)(){
+            return CoreObservables(this);
+        }
     }//public
 
     private{
     }//private
 }//class CoreSubjects
+
+/++
++/
+struct CoreObservables {
+    public{
+        this(CoreSubjects s){
+            setup           = s.setup;
+            update          = s.update;
+            draw            = s.draw;
+            exit            = s.exit;
+            windowResize    = s.windowResize;
+            keyPressed      = s.keyPressed;
+            keyReleased     = s.keyReleased;
+            unicodeInputted = s.unicodeInputted;
+            mouseDragged    = s.mouseDragged;
+            mouseEntered    = s.mouseEntered;
+            mouseMoved      = s.mouseMoved;
+            mousePressed    = s.mousePressed;
+            mouseReleased   = s.mouseReleased;
+            mouseScrolled   = s.mouseScrolled;
+            touchCancelled  = s.touchCancelled;
+            touchDoubleTap  = s.touchDoubleTap;
+            touchDown       = s.touchDown;
+            touchMoved      = s.touchMoved;
+            touchUp         = s.touchUp;
+        }
+
+        Observable!SetupEvent setup;
+        Observable!UpdateEvent update;
+        Observable!DrawEvent draw;
+        Observable!ExitEvent exit;
+        Observable!WindowResizeEvent windowResize;
+        Observable!KeyPressedEvent keyPressed;
+        Observable!KeyReleasedEvent keyReleased;
+        Observable!UnicodeInputtedEvent unicodeInputted;
+        Observable!MouseDraggedEvent mouseDragged;
+        Observable!MouseEnteredEvent mouseEntered;
+        Observable!MouseMovedEvent mouseMoved;
+        Observable!MousePressedEvent mousePressed;
+        Observable!MouseReleasedEvent mouseReleased;
+        Observable!MouseScrolledEvent mouseScrolled;
+        Observable!TouchCancelledEvent touchCancelled;
+        Observable!TouchDoubleTapEvent touchDoubleTap;
+        Observable!TouchDownEvent touchDown;
+        Observable!TouchMovedEvent touchMoved;
+        Observable!TouchUpEvent touchUp;
+    }//public
+
+    private{
+    }//private
+}//struct CoreObservables

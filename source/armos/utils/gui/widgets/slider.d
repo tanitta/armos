@@ -31,9 +31,9 @@ class Slider(T) : Widget{
             import armos.app;
             import rx;
 
-            currentSubjects.mouseMoved.doSubscribe!(event => this.mouseMoved(event));
-            currentSubjects.mouseReleased.doSubscribe!(event => this.mouseReleased(event));
-            currentSubjects.mousePressed.doSubscribe!(event => this.mousePressed(event));
+            currentObservables.mouseMoved.doSubscribe!(event => this.mouseMoved(event));
+            currentObservables.mouseReleased.doSubscribe!(event => this.mouseReleased(event));
+            currentObservables.mousePressed.doSubscribe!(event => this.mousePressed(event));
         };
 
         /++

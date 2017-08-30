@@ -1,4 +1,5 @@
 module armos.app.runner;
+
 import armos.app;
 import armos.utils;
 import armos.events;
@@ -26,12 +27,6 @@ class Runner {
             app = 更新されるアプリケーションです．
         +/
         Runner register(Application app, Window window){
-            import rx;
-            window.subjects.setup.doSubscribe!(event => app.setup(event));
-            window.subjects.update.doSubscribe!(event => app.update(event));
-            window.subjects.draw.doSubscribe!(event => app.draw(event));
-            window.subjects.exit.doSubscribe!(event => app.exit(event));
-            
             window.initEvents(app);
             _appsCollection.add(app, window);
             return this;
@@ -75,10 +70,8 @@ class Runner {
             return _currentWindow;
         }
 
-        CoreSubjects currentSubjects()out(subjects){
-            assert(subjects);
-        }body{
-            return currentWindow.subjects;
+        CoreObservables currentObservables(){
+            return currentWindow.observables;
         }
 
         ///
@@ -143,8 +136,6 @@ class Runner {
                 auto app    = winapp[1];
 
                 if(window.shouldClose||app.shouldClose){
-                    import std.range:put;
-                    put(window.subjects.exit, ExitEvent());
                     window.close;
                     shouldRemoves ~= window;
                 }
@@ -214,8 +205,8 @@ double targetFps(){
     return mainLoop.targetFps;
 }
 
-CoreSubjects currentSubjects(){
-    return mainLoop.currentSubjects;
+CoreObservables currentObservables(){
+    return mainLoop.currentObservables;
 }
 
 double currentFps(){

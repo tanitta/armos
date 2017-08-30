@@ -13,8 +13,8 @@ class ToggleButton : Widget{
             import armos.app;
             import rx;
 
-            currentSubjects.mouseReleased.doSubscribe!(event => this.mouseReleased(event));
-            currentSubjects.mousePressed.doSubscribe!(event => this.mousePressed(event));
+            currentObservables.mouseReleased.doSubscribe!(event => this.mouseReleased(event));
+            currentObservables.mousePressed.doSubscribe!(event => this.mousePressed(event));
 
             _height = 32;
         }
