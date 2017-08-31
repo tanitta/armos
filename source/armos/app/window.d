@@ -106,13 +106,6 @@ mixin template BaseWindow(){
 
         /++
         +/
-        // CoreEvents events(){
-        //     assert(_coreEvents);
-        //     return _coreEvents;
-        // }
-
-        /++
-        +/
         float aspect(){
             if(size[1]==0){
                 return 0;

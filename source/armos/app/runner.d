@@ -89,9 +89,6 @@ class Runner {
                 _fpsCounter.adjust();
                 _fpsCounter.newFrame();
                 import std.functional;
-                //TODO
-                // isLoop = _appsCollection.byPair.map!(p => !p[0].shouldClose).fold!("a||b")(false)&&!_application.shouldClose;
-                // isLoop = _appsCollection.byPair.map!(p => !p[0].shouldClose).fold!("a||b")(false)&&!_application.shouldClose;
                 isLoop = _appsCollection.keys.length > 0;
             }
 
@@ -99,8 +96,6 @@ class Runner {
                 auto window = winapp[0];
                 auto app    = winapp[1];
                 select(window);
-                // window.events.notifyExit();
-                // window.close;
             }
             return this;
         }
@@ -112,7 +107,6 @@ class Runner {
     }//public
 
     private{
-        // Renderer   _renderer;
         AppCollection _appsCollection;
         Window _currentWindow;
 
@@ -173,19 +167,6 @@ void run(WindowType = GLFWWindow)(Application app, WindowConfig config = null){
     mainLoop.register(app, window);
     mainLoop.loop;
 }
-
-// void run(WindowType = GLFWWindow)(Application app, Window window){
-//     mainLoop_ = new Runner;
-//     if(!config){
-//         config = new WindowConfig();
-//         with(config){
-//             glVersion = SemVer(3, 3, 0);
-//             width = 640;
-//             height = 480;
-//         }
-//     }
-//     mainLoop.run!(WindowType)(app, config);
-// }
 
 /++
     現在のFPS(Frame Per Second)の使用率を返します．

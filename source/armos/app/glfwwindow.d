@@ -196,11 +196,6 @@ class GLFWWindow : Window{
             auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
             mainLoop.select(currentGLFWWindow);
             put(currentGLFWWindow._subjects.unicodeInputted, UnicodeInputtedEvent(key));
-            // if(action == GLFW_PRESS){
-            //     currentSubject.notifyKeyPressed(key);
-            // }else if(action == GLFW_RELEASE){
-            //     currentSubject.notifyKeyReleased(key);
-            // }
         }
 
         static extern(C) void cursorPositionFunction(GLFWwindow* window, double xpos, double ypos){
