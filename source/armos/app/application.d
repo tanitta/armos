@@ -54,7 +54,6 @@ interface Application{
     void mouseMoved(ref MouseMovedEvent message);
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
-        Deprecated: 現在動作しません．
     +/
     void mouseDragged(ref MouseDraggedEvent message);
 
