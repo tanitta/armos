@@ -57,6 +57,8 @@ interface Application{
     +/
     void mouseDragged(ref MouseDraggedEvent message);
 
+    ///
+    void mouseScrolled(ref MouseScrolledEvent message);
 
     /++
         マウスのボタンが離れた際に呼ばれるメンバ関数です．

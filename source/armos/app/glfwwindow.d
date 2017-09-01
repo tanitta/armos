@@ -172,6 +172,7 @@ class GLFWWindow : Window{
                                                            _subjects.mouseReleased.doSubscribe!(event => disposable.dispose());
                                                        });
             _subjects.mouseReleased.doSubscribe!(event => app.mouseReleased(event));
+            _subjects.mouseScrolled.doSubscribe!(event => app.mouseScrolled(event));
         }
 
         CoreObservables observables(){
@@ -236,6 +237,13 @@ class GLFWWindow : Window{
             currentRenderer.resize();
             put(currentGLFWWindow._subjects.windowResize, WindowResizeEvent(cast(int)width, cast(int)height));
         }
+
+        static extern(C ) void mouseScrolledCallback(GLFWwindow* window, double xOffset, double yOffset){
+            import armos.graphics;
+            auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
+            mainLoop.select(currentGLFWWindow);
+            put(currentGLFWWindow._subjects.mouseScrolled, MouseScrolledEvent(cast(int)xOffset, cast(int)yOffset));
+        }
         
         void writeVersion(){
             import std.stdio, std.conv;
@@ -254,6 +262,7 @@ class GLFWWindow : Window{
             glfwSetCursorPosCallback(_window, cast(GLFWcursorposfun)&cursorPositionFunction);
             glfwSetMouseButtonCallback(_window, cast(GLFWmousebuttonfun)&mouseButtonFunction);
             glfwSetWindowSizeCallback(_window, cast(GLFWwindowsizefun)&resizeWindowFunction);
+            glfwSetScrollCallback(_window, cast(GLFWscrollfun)&mouseScrolledCallback);
         }
 
         static GLFWWindow[GLFWwindow*] glfwWindowToArmosGLFWWindow;

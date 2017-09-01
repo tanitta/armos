@@ -35,7 +35,16 @@ struct MouseExitedEvent{mixin MouseEvent;}
 struct MouseMovedEvent{mixin MouseEvent;}
 struct MousePressedEvent{mixin MouseEvent;}
 struct MouseReleasedEvent{mixin MouseEvent;}
-struct MouseScrolledEvent{mixin MouseEvent;}
+
+struct MouseScrolledEvent{
+    this(in double xOffset, in double yOffset){
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+    }
+    double xOffset;
+    double yOffset;
+}
+
 struct MouseDraggedEvent{
     mixin MouseEvent;
     int firstX, firstY;

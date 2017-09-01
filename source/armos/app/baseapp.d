@@ -261,6 +261,26 @@ class BaseApp: Application{
         button = 押されたマウスのボタンを表します．
     +/
     void mousePressed(Vector2i position, int button){}
+
+    ///
+    void mouseScrolled(ref MouseScrolledEvent message){
+        mouseScrolled(message.xOffset, message.yOffset);
+        mouseScrolled(Vector2f(message.xOffset, message.yOffset));
+        import std.conv:to;
+        mouseScrolled(Vector2i(message.xOffset.to!int, message.yOffset.to!int));
+    }
+
+    ///
+    // void mouseScrolled(int xOffset, int yOffset){}
+
+    ///
+    void mouseScrolled(float xOffset, float yOffset){}
+
+    ///
+    void mouseScrolled(Vector2i position){}
+
+    ///
+    void mouseScrolled(Vector2f position){}
     
     ///
     bool hasPressedKey(in KeyType key)const{
