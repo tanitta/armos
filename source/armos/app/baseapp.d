@@ -168,7 +168,7 @@ class BaseApp: Application{
         mouseDragged(Vector2f(message.x, message.y), message.button);
         mouseDragged(Vector2f(message.firstX, message.firstY), Vector2f(message.x, message.y), message.button);
         mouseDragged(Vector2i(message.x, message.y), message.button);
-        mouseDragged(Vector2i(message.firstX, message.firstY), Vector2f(message.x, message.y), message.button);
+        mouseDragged(Vector2i(message.firstX, message.firstY), Vector2i(message.x, message.y), message.button);
     }
 
     /++
