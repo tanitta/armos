@@ -161,7 +161,6 @@ class BaseApp: Application{
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
-        Deprecated: 現在動作しません．
     +/
     void mouseDragged(ref MouseDraggedEvent message){
         mouseDragged(message.x, message.y, message.button );
@@ -174,21 +173,18 @@ class BaseApp: Application{
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
-        Deprecated: 現在動作しません．
     +/
     void mouseDragged(int currentX, int currentY, int button){}
     void mouseDragged(int firstX, int firstY, int currentX, int currentY, int button){}
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
-        Deprecated: 現在動作しません．
     +/
     void mouseDragged(Vector2f currentPosition, int button){}
     void mouseDragged(Vector2f firstPosition, Vector2f currentPosition, int button){}
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
-        Deprecated: 現在動作しません．
     +/
     void mouseDragged(Vector2i currentPosition, int button){}
     void mouseDragged(Vector2i firstPosition, Vector2i currentPosition, int button){}
