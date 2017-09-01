@@ -30,14 +30,16 @@ private mixin template MouseEvent(){
         this.button = button;
     };
 }
-//
-struct MouseDraggedEvent{mixin MouseEvent;}
 struct MouseEnteredEvent{mixin MouseEvent;}
 struct MouseExitedEvent{mixin MouseEvent;}
 struct MouseMovedEvent{mixin MouseEvent;}
 struct MousePressedEvent{mixin MouseEvent;}
 struct MouseReleasedEvent{mixin MouseEvent;}
 struct MouseScrolledEvent{mixin MouseEvent;}
+struct MouseDraggedEvent{
+    mixin MouseEvent;
+    int firstX, firstY;
+}
 
 private mixin template TouchEvent(){
     int x, y, id;

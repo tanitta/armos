@@ -165,27 +165,33 @@ class BaseApp: Application{
     +/
     void mouseDragged(ref MouseDraggedEvent message){
         mouseDragged(message.x, message.y, message.button );
+        mouseDragged(message.firstX, message.firstY, message.x, message.y, message.button );
         mouseDragged(Vector2f(message.x, message.y), message.button);
+        mouseDragged(Vector2f(message.firstX, message.firstY), Vector2f(message.x, message.y), message.button);
         mouseDragged(Vector2i(message.x, message.y), message.button);
+        mouseDragged(Vector2i(message.firstX, message.firstY), Vector2f(message.x, message.y), message.button);
     }
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
         Deprecated: 現在動作しません．
     +/
-    void mouseDragged(int x, int y, int button){}
+    void mouseDragged(int currentX, int currentY, int button){}
+    void mouseDragged(int firstX, int firstY, int currentX, int currentY, int button){}
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
         Deprecated: 現在動作しません．
     +/
-    void mouseDragged(Vector2f position, int button){}
+    void mouseDragged(Vector2f currentPosition, int button){}
+    void mouseDragged(Vector2f firstPosition, Vector2f currentPosition, int button){}
 
     /++
         マウスがドラッグされた際に呼ばれるメンバ関数です．
         Deprecated: 現在動作しません．
     +/
-    void mouseDragged(Vector2i position, int button){}
+    void mouseDragged(Vector2i currentPosition, int button){}
+    void mouseDragged(Vector2i firstPosition, Vector2i currentPosition, int button){}
 
 
     /++
