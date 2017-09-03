@@ -48,6 +48,20 @@ class CoreSubjects {
             touchDown       = new SubjectObject!TouchDownEvent;
             touchMoved      = new SubjectObject!TouchMovedEvent;
             touchUp         = new SubjectObject!TouchUpEvent;
+
+            mousePressed.doSubscribe!((MousePressedEvent pressedEvent){
+                            auto disposable = mouseMoved.doSubscribe!((MouseMovedEvent movedEvent){
+                                auto draggedEvent = MouseDraggedEvent();
+                                    draggedEvent.firstX = pressedEvent.x;
+                                    draggedEvent.firstY = pressedEvent.y;
+                                    draggedEvent.x = movedEvent.x;
+                                    draggedEvent.y = movedEvent.y;
+                                    draggedEvent.button = pressedEvent.button;
+                                    import std.range:put;
+                                    put(mouseDragged, draggedEvent);
+                                });
+                            mouseReleased.doSubscribe!(event => disposable.dispose());
+                        });
         }
 
         CoreObservables opCast(CoreObservables)(){

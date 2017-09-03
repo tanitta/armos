@@ -158,19 +158,8 @@ class GLFWWindow : Window{
             _subjects.keyReleased.doSubscribe!(event => app.keyReleased(event));
             _subjects.unicodeInputted.doSubscribe!(event => app.unicodeInputted(event));
             _subjects.mouseMoved.doSubscribe!(event => app.mouseMoved(event));
-            _subjects.mousePressed.doSubscribe!((MousePressedEvent pressedEvent){
-                                      app.mousePressed(pressedEvent);
-                                      auto disposable = _subjects.mouseMoved.doSubscribe!((MouseMovedEvent movedEvent){
-                                          auto draggedEvent = MouseDraggedEvent();
-                                          draggedEvent.firstX = pressedEvent.x;
-                                          draggedEvent.firstY = pressedEvent.y;
-                                          draggedEvent.x = movedEvent.x;
-                                          draggedEvent.y = movedEvent.y;
-                                          draggedEvent.button = pressedEvent.button;
-                                          app.mouseDragged(draggedEvent);
-                                      });
-                                      _subjects.mouseReleased.doSubscribe!(event => disposable.dispose());
-                                  });
+            _subjects.mousePressed.doSubscribe!(event => app.mousePressed(event));
+            _subjects.mouseDragged.doSubscribe!(event => app.mouseDragged(event));
             _subjects.mouseReleased.doSubscribe!(event => app.mouseReleased(event));
             _subjects.mouseScrolled.doSubscribe!(event => app.mouseScrolled(event));
         }
