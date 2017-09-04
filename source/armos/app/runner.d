@@ -193,3 +193,7 @@ CoreObservables currentObservables(){
 double currentFps(){
     return mainLoop.currentFps;
 }
+
+ulong currentFrames(){
+    return mainLoop._fpsCounter.currentFrames();
+}
