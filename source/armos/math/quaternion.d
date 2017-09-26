@@ -209,7 +209,8 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         assert(q/3 == qA);
     }
 
-    CastedType opCast(CastedType)()const{
+    ///
+    CastedType opCast(CastedType: Quaternion!T, T)()const{
         import std.conv:to;
         return CastedType(this.vec.to!(typeof(CastedType.vec)));
     }
@@ -221,6 +222,32 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         Quaternion!double dq = Quaternion!int.zero.to!(Quaternion!double); 
     }
 
+    ///
+    CastedType opCast(CastedType: Matrix!(E, 4, 4), E)()const{
+        import std.conv:to;
+        return matrix44!E;
+    }
+
+    unittest{ 
+        import std.conv:to;
+        auto q = Quaternion!double.unit.to!(Matrix!(float, 4, 4));
+        auto m = Matrix!(float, 4, 4).identity;
+        assert(q == m);
+    }
+
+    ///
+    CastedType opCast(CastedType: Matrix!(E, 3, 3), E)()const{
+        import std.conv:to;
+        return matrix33!E;
+    }
+
+    unittest{ 
+        import std.conv:to;
+        auto q = Quaternion!double.unit.to!(Matrix!(float, 3, 3));
+        auto m = Matrix!(float, 3, 3).identity;
+        assert(q == m);
+    }
+    
     /++
         Quaternionのノルムを返します．
     +/
@@ -274,8 +301,8 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     /++
         自身の回転行列(4x4)を返します．
     +/
-    armos.math.Matrix!(T, 4, 4) matrix44()()const if(__traits(isFloating, T)){
-        return armos.math.Matrix!(T, 4, 4)(
+    armos.math.Matrix!(E, 4, 4) matrix44(E = T)()const if(__traits(isFloating, E)){
+        return armos.math.Matrix!(E, 4, 4)(
                 [this[3]^^2.0+this[0]^^2.0-this[1]^^2.0-this[2]^^2.0, 2.0*(this[0]*this[1]-this[3]*this[2]),               2.0*(this[0]*this[2]+this[3]*this[1]),               0],
                 [2.0*(this[0]*this[1]+this[3]*this[2]),               this[3]^^2.0-this[0]^^2.0+this[1]^^2.0-this[2]^^2.0, 2.0*(this[1]*this[2]-this[3]*this[0]),               0],
                 [2.0*(this[0]*this[2]-this[3]*this[1]),               2.0*(this[1]*this[2]+this[3]*this[0]),               this[3]^^2.0-this[0]^^2.0-this[1]^^2.0+this[2]^^2.0, 0],
@@ -288,8 +315,8 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     /++
         自身の回転行列(3x3)を返します．
     +/
-    armos.math.Matrix!(T, 3, 3) matrix33()()const if(__traits(isFloating, T)){
-        return armos.math.Matrix!(T, 3, 3)(
+    armos.math.Matrix!(E, 3, 3) matrix33(E = T)()const if(__traits(isFloating, E)){
+        return armos.math.Matrix!(E, 3, 3)(
                 [this[3]^^2.0+this[0]^^2.0-this[1]^^2.0-this[2]^^2.0, 2.0*(this[0]*this[1]-this[3]*this[2]),               2.0*(this[0]*this[2]+this[3]*this[1])              ],
                 [2.0*(this[0]*this[1]+this[3]*this[2]),               this[3]^^2.0-this[0]^^2.0+this[1]^^2.0-this[2]^^2.0, 2.0*(this[1]*this[2]-this[3]*this[0])              ],
                 [2.0*(this[0]*this[2]-this[3]*this[1]),               2.0*(this[1]*this[2]+this[3]*this[0]),               this[3]^^2.0-this[0]^^2.0-this[1]^^2.0+this[2]^^2.0]
