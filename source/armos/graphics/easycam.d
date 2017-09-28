@@ -154,14 +154,12 @@ class EasyCam :Camera{
                     import armos.app:targetFps;
                     V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
                     _arcBall.linearVelocity = _arcBall.orientation.rotatedVector(V3(mouseVelocity.x, mouseVelocity.y, 0.0)*_linearSensitivity*_distanceRate*_unitDistance);
-                    import std.stdio; "translation".writeln;
                 }
             }
 
             if(_mouseScrollAmount != 0f){
                 import std.math;
                 _distanceRate = fmax(_distanceRate + _mouseScrollAmount*_linearSensitivity.z, 0);
-                import std.stdio; "scroll".writeln;
             }
             return this;
         }
@@ -172,7 +170,6 @@ class EasyCam :Camera{
                     import armos.app:targetFps;
                     V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
                     _arcBall.angularVelocity = _arcBall.orientation.rotatedVector(V3(mouseVelocity.y, -mouseVelocity.x, 0.0)*_angularSensitivity);
-                    import std.stdio; "rotation".writeln;
                 }
 
                 if(_manupilationType == ManupilationType.RotationZ){
@@ -205,9 +202,6 @@ private bool isInsideArcball(in V2 position, in float raadius){
 private V2 viewportCenter(){
     import armos.graphics:viewportSize, viewportPosition;
     import std.conv;
-    import std.stdio;
-    writeln("position", viewportPosition);
-    writeln("size", viewportSize);
     return viewportPosition.to!V2 + viewportSize.to!V2 * 0.5;
 }
 
