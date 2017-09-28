@@ -85,7 +85,7 @@ class EasyCam :Camera{
         bool _hasSetEvents = false;
         ArcBall _arcBall;
         V3 _angularSensitivity = V3(0.05, 0.05, 0.05);
-        V3 _linearSensitivity = V3(0.1, 0.1, 0.1);
+        V3 _linearSensitivity = V3(5, 5, 5);
 
         V2 _mousePositionPre;
         V2 _mousePositionCurrent;
@@ -140,6 +140,9 @@ class EasyCam :Camera{
         This updateTranslation(){
             if(_manupilationType == ManupilationType.Translation){
                 // TODO
+                import armos.app:targetFps;
+                V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
+                _arcBall.linearVelocity = _arcBall.orientation.rotatedVector(V3(mouseVelocity.x, mouseVelocity.y, 0.0)*_linearSensitivity*_unitDistance);
                 import std.stdio; "translation".writeln;
             }
 
