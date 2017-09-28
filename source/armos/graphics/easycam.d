@@ -7,8 +7,13 @@ private alias V3 = Vector3f;
 private alias M3 = Matrix3f;
 private alias Q  = Quaternionf;
 
-/++
-+/
+private enum ManupilationType {
+    RotationXY,
+    RotationZ,
+    Translation
+}//enum ManupilationType
+
+///
 class EasyCam :Camera{
     import armos.events;
     import armos.app;
@@ -50,11 +55,6 @@ class EasyCam :Camera{
             import std.math;
             _unitDistance = viewportSize.y / (2.0f * tan(PI * _fov / 360.0f));
             _arcBall.radius = viewportSize.y*0.25;
-
-            import std.stdio;
-            _target.writeln;
-            _position.writeln;
-            _up.writeln;
 
             if(_isButtonPressed){
                 updateTranslation();
@@ -107,11 +107,6 @@ class EasyCam :Camera{
         SubjectObject!V3    _subjectRotate;
         SubjectObject!float _subjectZoom;
 
-        enum ManupilationType {
-            RotationXY,
-            RotationZ,
-            Translation
-        }//enum ManupilationType
 
         This addEvents(){
             import std.typecons;
@@ -184,28 +179,15 @@ class EasyCam :Camera{
         void mouseDragged(MouseDraggedEvent event){
             _mousePositionCurrent = V2(event.x, event.y);
         }
-
-        void zoom(in float diff){};
-        void rotate(in V3 diff){
-
-        };
-        void translate(in V3 diff){};
-
-        struct MouseDraggedEventWithVelocity{
-            float currentX, currentY, preX, preY;
-            int button;
-        }
-
-        
     }//private
 }//class EasyCam
 
-bool isInsideArcball(in V2 position, in float raadius){
+private bool isInsideArcball(in V2 position, in float raadius){
     import armos.app.window;
     return (position*currentWindow.pixelScreenCoordScale - viewportCenter).norm < raadius;
 }
 
-V2 viewportCenter(){
+private V2 viewportCenter(){
     import armos.graphics:viewportSize, viewportPosition;
     import std.conv;
     import std.stdio;
@@ -216,7 +198,7 @@ V2 viewportCenter(){
 
 /++
 +/
-class ArcBall {
+private class ArcBall {
     public{
         V3 angularVelocity;
         V3 linearVelocity;
