@@ -30,6 +30,8 @@ class EasyCam :Camera{
             // _moussePositionPre = 
             _manupilationType = ManupilationType.RotationXY;
             _arcBall = new ArcBall;
+
+            reset();
         }
 
         ///
@@ -54,12 +56,12 @@ class EasyCam :Camera{
             import armos.graphics:viewportSize;
             import std.math;
             _unitDistance = viewportSize.y / (2.0f * tan(PI * _fov / 360.0f));
-            _arcBall.radius = viewportSize.y*0.25;
+            _arcBall.radius = viewportSize.y*0.5*0.8;
 
             if(_isButtonPressed){
-                updateTranslation();
-                updateRotation();
             }
+            updateTranslation();
+            updateRotation();
 
             import armos.app:targetFps;
             _arcBall.update(1.0/targetFps);
@@ -67,6 +69,7 @@ class EasyCam :Camera{
             updateCameraAriment();
 
             _mousePositionPre = _mousePositionCurrent;
+            _mouseScrollAmount = 0;
             return this;
         }
 
@@ -74,6 +77,8 @@ class EasyCam :Camera{
         This reset(){
             _hasSetDistance = false;
             _arcBall.reset;
+            _distanceRate = 1.0;
+            _mouseScrollAmount = 0.0;
             return this;
         }
 
@@ -84,12 +89,14 @@ class EasyCam :Camera{
         bool _hasSetDistance;
         bool _hasSetEvents = false;
         ArcBall _arcBall;
-        V3 _angularSensitivity = V3(0.05, 0.05, 0.05);
-        V3 _linearSensitivity = V3(5, 5, 5);
+        V3 _angularSensitivity = V3(10, 10, 10);
+        V3 _linearSensitivity = V3(5, 5, 0.02);
 
         V2 _mousePositionPre;
         V2 _mousePositionCurrent;
         V2 _mouseVelocity;
+        float _mouseScrollAmount;
+        float _distanceRate = 1.0;
 
         float _unitDistance;
 
@@ -125,6 +132,10 @@ class EasyCam :Camera{
                                                                                                 });
             _disposables["mouseDragged"]  = currentObservables.mouseDragged.doSubscribe!(event => mouseDragged(event));
             _disposables["mouseReleased"] = currentObservables.mouseReleased.doSubscribe!((event){_isButtonPressed = false;});
+
+            _disposables["mouseScrolled"]  = currentObservables.mouseScrolled.doSubscribe!((event){ 
+                                                                                                    _mouseScrollAmount += event.yOffset;
+                                                                                                });
             _hasSetEvents = true;
             return this;
         }
@@ -138,43 +149,44 @@ class EasyCam :Camera{
         }
 
         This updateTranslation(){
-            if(_manupilationType == ManupilationType.Translation){
-                // TODO
-                import armos.app:targetFps;
-                V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
-                _arcBall.linearVelocity = _arcBall.orientation.rotatedVector(V3(mouseVelocity.x, mouseVelocity.y, 0.0)*_linearSensitivity*_unitDistance);
-                import std.stdio; "translation".writeln;
+            if(_isButtonPressed){
+                if(_manupilationType == ManupilationType.Translation){
+                    import armos.app:targetFps;
+                    V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
+                    _arcBall.linearVelocity = _arcBall.orientation.rotatedVector(V3(mouseVelocity.x, mouseVelocity.y, 0.0)*_linearSensitivity*_distanceRate*_unitDistance);
+                    import std.stdio; "translation".writeln;
+                }
             }
 
-            ///TODO Scroll
-            if(_manupilationType == ManupilationType.Translation){
-                import std.stdio; "translation".writeln;
+            if(_mouseScrollAmount != 0f){
+                import std.math;
+                _distanceRate = fmax(_distanceRate + _mouseScrollAmount*_linearSensitivity.z, 0);
+                import std.stdio; "scroll".writeln;
             }
             return this;
         }
 
         This updateRotation(){
-            if(_manupilationType == ManupilationType.RotationXY){
-                import armos.app:targetFps;
-                V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
-                _arcBall.angularVelocity = _arcBall.orientation.rotatedVector(V3(-mouseVelocity.y, mouseVelocity.x, 0.0)*_angularSensitivity*_unitDistance);
-                import std.stdio; "rotation".writeln;
-            }
+            if(_isButtonPressed){
+                if(_manupilationType == ManupilationType.RotationXY){
+                    import armos.app:targetFps;
+                    V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
+                    _arcBall.angularVelocity = _arcBall.orientation.rotatedVector(V3(mouseVelocity.y, -mouseVelocity.x, 0.0)*_angularSensitivity);
+                    import std.stdio; "rotation".writeln;
+                }
 
-            if(_manupilationType == ManupilationType.RotationZ){
-                import armos.app:targetFps;
-                V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
-                //TODO
-                V3 r = V3(-mouseVelocity.y, mouseVelocity.x, 0.0);
-                // _arcBall.angularVelocity = _arcBall.orientation.rotatedVector(*_angularSensitivity*_unitDistance);
-                // import std.stdio; "rotation".writeln;
+                if(_manupilationType == ManupilationType.RotationZ){
+                    import armos.app:targetFps;
+                    V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
+                    V3 r = V3(-mouseVelocity.y, mouseVelocity.x, 0.0);
+                }
             }
             return this;
         }
 
         This updateCameraAriment(){
             _target = _arcBall.position;
-            _position = _target - _arcBall.orientation.rotatedVector(V3(0, 0, _unitDistance));
+            _position = _target - _arcBall.orientation.rotatedVector(V3(0, 0, _distanceRate*_unitDistance));
             _up = _arcBall.orientation.rotatedVector(V3(0, 1, 0));
             return this;
         }
