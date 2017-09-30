@@ -7,6 +7,7 @@ public import armos.graphics.node;
 public import armos.graphics.style;
 public import armos.graphics.primitives;
 public import armos.graphics.camera;
+public import armos.graphics.easycam;
 public import armos.graphics.fbo;
 public import armos.graphics.rbo;
 public import armos.graphics.buffer;
