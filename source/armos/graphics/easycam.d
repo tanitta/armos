@@ -56,7 +56,7 @@ class EasyCam :Camera{
             import armos.graphics:viewportSize;
             import std.math;
             _unitDistance = viewportSize.y / (2.0f * tan(PI * _fov / 360.0f));
-            _arcBall.radius = viewportSize.y*0.5*0.8;
+            _arcBall.radius = viewportSize.y*0.5;
 
             if(_isButtonPressed){
             }
@@ -89,7 +89,7 @@ class EasyCam :Camera{
         bool _hasSetDistance;
         bool _hasSetEvents = false;
         ArcBall _arcBall;
-        V3 _angularSensitivity = V3(10, 10, 10);
+        V3 _angularSensitivity = V3(40, 40, 0.05);
         V3 _linearSensitivity = V3(5, 5, 0.02);
 
         V2 _mousePositionPre;
@@ -102,6 +102,7 @@ class EasyCam :Camera{
 
         ManupilationType _manupilationType;
         bool _isButtonPressed = false;
+        bool _isShiftPressed = false;
 
         Disposable _disposableKeyPressed;
         Disposable _disposableKeyReleased;
@@ -118,24 +119,43 @@ class EasyCam :Camera{
         This addEvents(){
             import std.typecons;
             import armos.utils.keytype;
-            _disposables["keyPressed"]  = currentObservables.keyPressed.filter!(event => event.key == KeyType.LeftShift || event.key == KeyType.RightShift)
-                                                                       .doSubscribe!((event){_manupilationType = ManupilationType.Translation;});
-            _disposables["keyReleased"] = currentObservables.keyReleased.filter!(event => event.key == KeyType.LeftShift || event.key == KeyType.RightShift)
-                                                                        .doSubscribe!((event){_manupilationType = ManupilationType.RotationXY;});
+            _disposables["keyPressed"]    = currentObservables.keyPressed
+                                                              .filter!(event => event.key == KeyType.LeftShift || event.key == KeyType.RightShift)
+                                                              .doSubscribe!((event){_isShiftPressed = true;
+                                                                      });
+            _disposables["keyReleased"]   = currentObservables.keyReleased
+                                                              .filter!(event => event.key == KeyType.LeftShift || event.key == KeyType.RightShift)
+                                                              .doSubscribe!((event){_isShiftPressed = false;
+                                                                      });
 
-            _disposables["mousePressed"]  = currentObservables.mousePressed.doSubscribe!((event){
-                                                                                                    if(!V2(event.x, event.y).isInsideArcball(_arcBall.radius))return;
-                                                                                                    _isButtonPressed = true;
-                                                                                                    _mousePositionCurrent = V2(event.x, event.y);
-                                                                                                    _mousePositionPre = _mousePositionCurrent;
-                                                                                                    _mouseVelocity = V2.zero;
-                                                                                                });
-            _disposables["mouseDragged"]  = currentObservables.mouseDragged.doSubscribe!(event => mouseDragged(event));
-            _disposables["mouseReleased"] = currentObservables.mouseReleased.doSubscribe!((event){_isButtonPressed = false;});
+            _disposables["mousePressed"]  = currentObservables.mousePressed
+                                                              .doSubscribe!((event){
+                                                                                       if(_isShiftPressed){
+                                                                                           _manupilationType = ManupilationType.Translation;
+                                                                                           _isButtonPressed = true;
+                                                                                           _mousePositionCurrent = V2(event.x, event.y);
+                                                                                           _mousePositionPre = _mousePositionCurrent;
+                                                                                           _mouseVelocity = V2.zero;
+                                                                                       }else{
+                                                                                           if(V2(event.x, event.y).isInside(_arcBall.radius)){
+                                                                                               _isButtonPressed = true;
+                                                                                               _mousePositionCurrent = V2(event.x, event.y);
+                                                                                               _mousePositionPre = _mousePositionCurrent;
+                                                                                               _mouseVelocity = V2.zero;
+                                                                                               _manupilationType = ManupilationType.RotationXY;
+                                                                                               if(V2(event.x, event.y).isInside(_arcBall.radius, _arcBall.radius*0.7)){
+                                                                                                   _manupilationType = ManupilationType.RotationZ;
+                                                                                               }
+                                                                                           }
+                                                                                       }
+                                                                                   });
+            _disposables["mouseDragged"]  = currentObservables.mouseDragged
+                                                              .doSubscribe!(event => mouseDragged(event));
+            _disposables["mouseReleased"] = currentObservables.mouseReleased
+                                                              .doSubscribe!((event){_isButtonPressed = false;});
 
-            _disposables["mouseScrolled"]  = currentObservables.mouseScrolled.doSubscribe!((event){ 
-                                                                                                    _mouseScrollAmount += event.yOffset;
-                                                                                                });
+            _disposables["mouseScrolled"] = currentObservables.mouseScrolled
+                                                              .doSubscribe!((event){_mouseScrollAmount += event.yOffset;});
             _hasSetEvents = true;
             return this;
         }
@@ -174,8 +194,11 @@ class EasyCam :Camera{
 
                 if(_manupilationType == ManupilationType.RotationZ){
                     import armos.app:targetFps;
+                    import std.math;
                     V2 mouseVelocity = (_mousePositionCurrent - _mousePositionPre)*(1.0/targetFps);
-                    V3 r = V3(-mouseVelocity.y, mouseVelocity.x, 0.0);
+                    auto mousePositionFromCenter = (_mousePositionCurrent*currentWindow.pixelScreenCoordScale - viewportCenter);
+                    auto thetaVelocity = V3(mouseVelocity.x, mouseVelocity.y, 0).vectorProduct(V3(mousePositionFromCenter.x, mousePositionFromCenter.y, 0)).z;
+                    _arcBall.angularVelocity = _arcBall.orientation.rotatedVector(V3(0f, 0f, thetaVelocity)*_angularSensitivity);
                 }
             }
             return this;
@@ -194,9 +217,13 @@ class EasyCam :Camera{
     }//private
 }//class EasyCam
 
-private bool isInsideArcball(in V2 position, in float raadius){
+private bool isInside(in V2 position, in float radius1, in float radius2 = 0.0){
+    import std.math;
+    auto rMax = fmax(radius1, radius2);
+    auto rMin = fmin(radius1, radius2);
     import armos.app.window;
-    return (position*currentWindow.pixelScreenCoordScale - viewportCenter).norm < raadius;
+    auto rMouse = (position*currentWindow.pixelScreenCoordScale - viewportCenter).norm;
+    return rMin < rMouse && rMouse < rMax;
 }
 
 private V2 viewportCenter(){
