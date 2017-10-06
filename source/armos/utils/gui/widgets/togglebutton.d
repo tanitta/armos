@@ -9,10 +9,12 @@ class ToggleButton : Widget{
             _v = &v;
             _name = name;
 
-            static import armos.events;
-            static import armos.app;
-            armos.events.addListener(armos.app.currentEvents.mouseReleased, this, &this.mouseReleased);
-            armos.events.addListener(armos.app.currentEvents.mousePressed, this, &this.mousePressed);
+            import armos.events;
+            import armos.app;
+            import rx;
+
+            currentObservables.mouseReleased.doSubscribe!(event => this.mouseReleased(event));
+            currentObservables.mousePressed.doSubscribe!(event => this.mousePressed(event));
 
             _height = 32;
         }
@@ -39,13 +41,13 @@ class ToggleButton : Widget{
 
         /++
         +/
-        override void mousePressed(ref armos.events.MousePressedEventArg message){
+        override void mousePressed(ref armos.events.MousePressedEvent message){
             _isPressing = isOnMouse(message.x, message.y);
         }
 
         /++
         +/
-        override void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+        override void mouseReleased(ref armos.events.MouseReleasedEvent message){
             if(_isPressing){
                 *_v = !(*_v);
                 _isPressing = false;

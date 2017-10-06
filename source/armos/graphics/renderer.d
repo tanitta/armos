@@ -1065,6 +1065,24 @@ void viewport(V)(in V position, in V size, in bool vflip=true)if(isVector!V){
     glViewport(cast(int)pos[0], cast(int)pos[1], cast(int)size[0], cast(int)size[1]);
 }
 
+V2 viewportSize(V2 = Vector2i)(){
+    GLint[4] vp;
+    glGetIntegerv(GL_VIEWPORT, vp.ptr);
+    return V2(vp[2], vp[3]);
+}
+
+V2 viewportPosition(V2 = Vector2i)(){
+    GLint[4] vp;
+    glGetIntegerv(GL_VIEWPORT, vp.ptr);
+    return V2(vp[0], vp[1]);
+}
+
+V4 viewport(V4 = Vector4i)(){
+    GLint[4] vp;
+    glGetIntegerv(GL_VIEWPORT, vp.ptr);
+    return V4(vp[0], vp[0]);
+}
+
 ///
 armos.math.Matrix4f screenPerspectiveMatrix(in float width, in float height, in float fov = 60, in float nearDist = 0, in float farDist = 0){
     float viewW, viewH;

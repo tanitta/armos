@@ -30,22 +30,22 @@ class Widget {
 
         /++
         +/
-        void update(ref armos.events.EventArg arg){}
+        void update(ref armos.events.UpdateEvent arg){}
 
         /++
             マウスが動いた時に呼ばれるイベントハンドラです．
         +/
-        void mouseMoved(ref armos.events.MouseMovedEventArg message){}
+        void mouseMoved(ref armos.events.MouseMovedEvent message){}
 
         /++
             マウスのボタンが離された時に呼ばれるイベントハンドラです．
         +/
-        void mouseReleased(ref armos.events.MouseReleasedEventArg message){}
+        void mouseReleased(ref armos.events.MouseReleasedEvent message){}
 
         /++
             マウスのボタンが押された時に呼ばれるイベントハンドラです．
         +/
-        void mousePressed(ref armos.events.MousePressedEventArg message){}
+        void mousePressed(ref armos.events.MousePressedEvent message){}
     }//public
 
     private{

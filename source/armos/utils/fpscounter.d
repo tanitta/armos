@@ -30,7 +30,7 @@ class FpsCounter {
             _currentFrames++;
         }
 
-        ulong currenFrames()const{
+        ulong currentFrames()const{
             return _currentFrames;
         };
 

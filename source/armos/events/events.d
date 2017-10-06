@@ -2,245 +2,73 @@ module armos.events.events;
 import armos.events;
 import armos.utils;
 
-class KeyPressedEventArg : armos.events.EventArg{
-    KeyType key;
-};
+struct SetupEvent{}
+struct UpdateEvent{}
+struct DrawEvent{}
+struct ExitEvent{}
 
-class KeyReleasedEventArg : armos.events.EventArg{
+struct KeyPressedEvent{
+    this(in KeyType key){this.key = key;}
     KeyType key;
-};
+}
 
-class UnicodeInputtedEventArg : armos.events.EventArg{
+struct KeyReleasedEvent{
+    this(in KeyType key){this.key = key;}
+    KeyType key;
+}
+//
+struct UnicodeInputtedEvent{
+    this(in uint key){this.key = key;}
     uint  key;
-};
+}
 
-@disable class MessageReceivedEventArg :armos.events.EventArg {}
-
-mixin template MouseEvent(){
+private mixin template MouseEvent(){
     int x, y, button;
-    this(int x, int y, int button){
+    this(in int x, in int y, in int button){
         this.x = x;
         this.y = y;
         this.button = button;
     };
 }
+struct MouseEnteredEvent{mixin MouseEvent;}
+struct MouseExitedEvent{mixin MouseEvent;}
+struct MouseMovedEvent{mixin MouseEvent;}
+struct MousePressedEvent{mixin MouseEvent;}
+struct MouseReleasedEvent{mixin MouseEvent;}
 
-class MouseDraggedEventArg :armos.events.EventArg {mixin MouseEvent;}
-class MouseEnteredEventArg :armos.events.EventArg {mixin MouseEvent;}
-class MouseExitedEventArg :armos.events.EventArg {mixin MouseEvent;}
-class MouseMovedEventArg :armos.events.EventArg {mixin MouseEvent;}
-class MousePressedEventArg :armos.events.EventArg {mixin MouseEvent;}
-class MouseReleasedEventArg :armos.events.EventArg {mixin MouseEvent;}
-class MouseScrolledEventArg :armos.events.EventArg {mixin MouseEvent;}
+struct MouseScrolledEvent{
+    this(in double xOffset, in double yOffset){
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+    }
+    double xOffset;
+    double yOffset;
+}
 
-mixin template TouchEvent(){
+struct MouseDraggedEvent{
+    mixin MouseEvent;
+    int firstX, firstY;
+}
+
+private mixin template TouchEvent(){
     int x, y, id;
-    this(int x, int y, int id){
+    this(in int x, in int y, in int id){
         this.x = x;
         this.y = y;
         this.id = id;
     };
 }
+//
+struct TouchCancelledEvent{mixin TouchEvent;}
+struct TouchDoubleTapEvent{mixin TouchEvent;}
+struct TouchDownEvent{mixin TouchEvent;}
+struct TouchMovedEvent{mixin TouchEvent;}
+struct TouchUpEvent{mixin TouchEvent;}
 
-class TouchCancelledEventArg{mixin TouchEvent;}
-class TouchDoubleTapEventArg{mixin TouchEvent;}
-class TouchDownEventArg{mixin TouchEvent;}
-class TouchMovedEventArg{mixin TouchEvent;}
-class TouchUpEventArg{mixin TouchEvent;}
-
-class WindowResizeEventArg{
+struct WindowResizeEvent{
     int w, h;
-    this(int w, int h){
+    this(in int w, in int h){
         this.w = w;
         this.h = h;
     }
-}
-
-class CoreEvents {
-    private armos.events.EventArg voidEventArg;
-
-    armos.events.Event!(armos.events.EventArg) setup;
-    armos.events.Event!(armos.events.EventArg) update;
-    armos.events.Event!(armos.events.EventArg) draw;
-    armos.events.Event!(armos.events.EventArg) exit;
-
-    armos.events.Event!(KeyPressedEventArg) keyPressed;
-    armos.events.Event!(KeyReleasedEventArg) keyReleased;
-    armos.events.Event!(UnicodeInputtedEventArg) unicodeInputted;
-
-    armos.events.Event!(MouseDraggedEventArg) mouseDragged;
-    armos.events.Event!(MouseEnteredEventArg) mouseEntered;
-    armos.events.Event!(MouseMovedEventArg) mouseMoved;
-    armos.events.Event!(MousePressedEventArg) mousePressed;
-    armos.events.Event!(MouseReleasedEventArg) mouseReleased;
-    armos.events.Event!(MouseScrolledEventArg) mouseScrolled;
-
-    armos.events.Event!(TouchCancelledEventArg) touchCancelled;
-    armos.events.Event!(TouchDoubleTapEventArg) touchDoubleTap;
-    armos.events.Event!(TouchDownEventArg) touchDown;
-    armos.events.Event!(TouchMovedEventArg) touchMoved;
-    armos.events.Event!(TouchUpEventArg) touchUp;
-
-    armos.events.Event!(WindowResizeEventArg) windowResize;
-
-    this(){
-        setup = new armos.events.Event!(armos.events.EventArg);
-        update= new armos.events.Event!(armos.events.EventArg);
-        draw = new armos.events.Event!(armos.events.EventArg);
-        exit = new armos.events.Event!(armos.events.EventArg);
-
-        keyPressed = new armos.events.Event!(KeyPressedEventArg);
-        keyReleased = new armos.events.Event!(KeyReleasedEventArg);
-        
-        unicodeInputted = new armos.events.Event!(UnicodeInputtedEventArg);
-
-        mouseDragged = new armos.events.Event!(MouseDraggedEventArg);
-        mouseEntered = new armos.events.Event!(MouseEnteredEventArg);
-        mouseMoved = new armos.events.Event!(MouseMovedEventArg);
-        mousePressed = new armos.events.Event!(MousePressedEventArg);
-        mouseReleased = new armos.events.Event!(MouseReleasedEventArg);
-        mouseScrolled = new armos.events.Event!(MouseScrolledEventArg);
-
-        touchCancelled = new armos.events.Event!(TouchCancelledEventArg);
-        touchDoubleTap = new armos.events.Event!(TouchDoubleTapEventArg);
-        touchDown = new armos.events.Event!(TouchDownEventArg);
-        touchMoved= new armos.events.Event!(TouchMovedEventArg);
-        touchUp = new armos.events.Event!(TouchUpEventArg);
-
-        windowResize = new armos.events.Event!(WindowResizeEventArg);
-    }
-    void notifySetup(){
-        armos.events.notifyEvent(setup, voidEventArg);
-    };
-
-    void notifyUpdate(){
-        armos.events.notifyEvent(update, voidEventArg);
-    };
-
-    void notifyDraw(){
-        armos.events.notifyEvent(draw, voidEventArg);
-    };
-
-    void notifyExit(){
-        armos.events.notifyEvent(exit, voidEventArg);
-    };
-
-    void notifyKeyPressed(KeyType key){
-        auto obj = new KeyPressedEventArg;
-        obj.key = key;
-        armos.events.notifyEvent(keyPressed, obj);
-    }
-
-    void notifyKeyReleased(KeyType key){
-        auto obj = new KeyReleasedEventArg;
-        obj.key = key;
-        armos.events.notifyEvent(keyReleased, obj);
-    }
-    
-    void notifyUnicodeInput(uint key){
-        auto obj = new UnicodeInputtedEventArg;
-        obj.key = key;
-        armos.events.notifyEvent(unicodeInputted, obj);
-    }
-
-    void notifyMouseDragged(int x, int y, int button){
-        auto obj = new MouseDraggedEventArg(x, y, button);
-        armos.events.notifyEvent(mouseDragged, obj);
-    }
-
-    void notifyMouseEntered(int x, int y, int button){
-        auto obj = new MouseEnteredEventArg(x, y, button);
-        armos.events.notifyEvent(mouseEntered, obj);
-    }
-
-    void notifyMouseMoved(int x, int y, int button){
-        auto obj = new MouseMovedEventArg(x, y, button);
-        armos.events.notifyEvent(mouseMoved, obj);
-    }
-
-    void notifyMousePressed(int x, int y, int button){
-        auto obj = new MousePressedEventArg(x, y, button);
-        armos.events.notifyEvent(mousePressed, obj);
-    }
-
-    void notifyMouseReleased(int x, int y, int button){
-        auto obj = new MouseReleasedEventArg(x, y, button);
-        armos.events.notifyEvent(mouseReleased, obj);
-    }
-
-    void notifyMouseScrolled(int x, int y, int button){
-        auto obj = new MouseScrolledEventArg(x, y, button);
-        armos.events.notifyEvent(mouseScrolled, obj);
-    }
-
-    void notifyTouchCancelled(int x, int y, int id){
-        auto obj = new TouchCancelledEventArg(x, y, id);
-        armos.events.notifyEvent(touchCancelled, obj);
-    }
-
-    void notifyTouchDoubleTap(int x, int y, int id){
-        auto obj = new TouchDoubleTapEventArg(x, y, id);
-        armos.events.notifyEvent(touchDoubleTap, obj);
-    }
-
-    void notifyTouchDown(int x, int y, int id){
-        auto obj = new TouchDownEventArg(x, y, id);
-        armos.events.notifyEvent(touchDown, obj);
-    }
-
-    void notifyTouchMoved(int x, int y, int id){
-        auto obj = new TouchMovedEventArg(x, y, id);
-        armos.events.notifyEvent(touchMoved, obj);
-    }
-
-    void notifyTouchUp(int x, int y, int id){
-        auto obj = new TouchUpEventArg(x, y, id);
-        armos.events.notifyEvent(touchUp, obj);
-    }
-
-    void notifyWindowResize(int w, int h){
-        auto obj = new WindowResizeEventArg(w, h);
-        armos.events.notifyEvent(windowResize, obj);
-    }
-}
-
-unittest{
-    import armos.app;
-
-    auto core_events = new CoreEvents;
-    bool executedSetup = false;
-    int pressedKey = false;
-    import armos.app;
-    class TestApp: armos.app.BaseApp {
-        //i want to write like c++. the following is verbose...
-        //should i use template mixin instead alias?
-        alias armos.app.BaseApp.setup setup;
-        alias armos.app.BaseApp.update update;
-        alias armos.app.BaseApp.draw draw;
-        alias armos.app.BaseApp.keyPressed keyPressed;
-
-        override void setup(){
-            
-            executedSetup = true;
-        }
-        override void update(){}
-        
-        override void draw(){}
-        
-
-        override void keyPressed(KeyType key) {
-            
-            char str_key = cast(char)key;
-            pressedKey = key;
-        }
-
-    }
-
-    auto app = new TestApp;
-    armos.events.addListener(core_events.setup, app, &app.setup);
-    armos.events.addListener(core_events.keyPressed, app, &app.keyPressed);
-    core_events.notifySetup();
-    core_events.notifyKeyPressed(KeyType.A);
-    assert(executedSetup);
-    assert(pressedKey == KeyType.A);
 }

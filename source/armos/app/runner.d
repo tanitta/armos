@@ -1,4 +1,5 @@
 module armos.app.runner;
+
 import armos.app;
 import armos.utils;
 import armos.events;
@@ -26,11 +27,6 @@ class Runner {
             app = 更新されるアプリケーションです．
         +/
         Runner register(Application app, Window window){
-            addListener(window.events.setup,  app, &app.setup);
-            addListener(window.events.update, app, &app.update);
-            addListener(window.events.draw,   app, &app.draw);
-            addListener(window.events.exit,   app, &app.exit);
-            
             window.initEvents(app);
             _appsCollection.add(app, window);
             return this;
@@ -74,10 +70,8 @@ class Runner {
             return _currentWindow;
         }
 
-        CoreEvents currentEvents()out(events){
-            assert(events);
-        }body{
-            return currentWindow.events;
+        CoreObservables currentObservables(){
+            return currentWindow.observables;
         }
 
         ///
@@ -95,9 +89,6 @@ class Runner {
                 _fpsCounter.adjust();
                 _fpsCounter.newFrame();
                 import std.functional;
-                //TODO
-                // isLoop = _appsCollection.byPair.map!(p => !p[0].shouldClose).fold!("a||b")(false)&&!_application.shouldClose;
-                // isLoop = _appsCollection.byPair.map!(p => !p[0].shouldClose).fold!("a||b")(false)&&!_application.shouldClose;
                 isLoop = _appsCollection.keys.length > 0;
             }
 
@@ -105,8 +96,6 @@ class Runner {
                 auto window = winapp[0];
                 auto app    = winapp[1];
                 select(window);
-                // window.events.notifyExit();
-                // window.close;
             }
             return this;
         }
@@ -118,7 +107,6 @@ class Runner {
     }//public
 
     private{
-        // Renderer   _renderer;
         AppCollection _appsCollection;
         Window _currentWindow;
 
@@ -142,7 +130,6 @@ class Runner {
                 auto app    = winapp[1];
 
                 if(window.shouldClose||app.shouldClose){
-                    window.events.notifyExit();
                     window.close;
                     shouldRemoves ~= window;
                 }
@@ -181,19 +168,6 @@ void run(WindowType = GLFWWindow)(Application app, WindowConfig config = null){
     mainLoop.loop;
 }
 
-// void run(WindowType = GLFWWindow)(Application app, Window window){
-//     mainLoop_ = new Runner;
-//     if(!config){
-//         config = new WindowConfig();
-//         with(config){
-//             glVersion = SemVer(3, 3, 0);
-//             width = 640;
-//             height = 480;
-//         }
-//     }
-//     mainLoop.run!(WindowType)(app, config);
-// }
-
 /++
     現在のFPS(Frame Per Second)の使用率を返します．
 +/
@@ -212,10 +186,14 @@ double targetFps(){
     return mainLoop.targetFps;
 }
 
-CoreEvents currentEvents(){
-    return mainLoop.currentEvents;
+CoreObservables currentObservables(){
+    return mainLoop.currentObservables;
 }
 
 double currentFps(){
     return mainLoop.currentFps;
+}
+
+ulong currentFrames(){
+    return mainLoop._fpsCounter.currentFrames();
 }

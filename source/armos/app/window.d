@@ -83,7 +83,7 @@ interface Window{
         float pixelScreenCoordScale()const;
 
         ///
-        CoreEvents events();
+        CoreObservables observables();
 
         ///
         Renderer renderer();
@@ -103,13 +103,6 @@ mixin template BaseWindow(){
         /++
         +/
         void name(in string str){_name = str;}
-
-        /++
-        +/
-        // CoreEvents events(){
-        //     assert(_coreEvents);
-        //     return _coreEvents;
-        // }
 
         /++
         +/

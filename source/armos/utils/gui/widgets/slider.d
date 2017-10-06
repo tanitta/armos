@@ -21,10 +21,19 @@ class Slider(T) : Widget{
             _name = name;
             _height = 32;
 
-            static import armos.app;
-            armos.events.addListener(armos.app.currentEvents.mouseMoved, this, &this.mouseMoved);
-            armos.events.addListener(armos.app.currentEvents.mouseReleased, this, &this.mouseReleased);
-            armos.events.addListener(armos.app.currentEvents.mousePressed, this, &this.mousePressed);
+            // static import armos.app;
+            // armos.events.addListener(armos.app.currentEvents.mouseMoved, this, &this.mouseMoved);
+            // armos.events.addListener(armos.app.currentEvents.mouseReleased, this, &this.mouseReleased);
+            // armos.events.addListener(armos.app.currentEvents.mousePressed, this, &this.mousePressed);
+
+
+            import armos.events;
+            import armos.app;
+            import rx;
+
+            currentObservables.mouseMoved.doSubscribe!(event => this.mouseMoved(event));
+            currentObservables.mouseReleased.doSubscribe!(event => this.mouseReleased(event));
+            currentObservables.mousePressed.doSubscribe!(event => this.mousePressed(event));
         };
 
         /++
@@ -56,13 +65,13 @@ class Slider(T) : Widget{
 
         /++
         +/
-        override void mousePressed(ref armos.events.MousePressedEventArg message){
+        override void mousePressed(ref armos.events.MousePressedEvent message){
             _isPressing = isOnMouse(message.x, message.y);
         }
 
         /++
         +/
-        override void mouseMoved(ref armos.events.MouseMovedEventArg message){
+        override void mouseMoved(ref armos.events.MouseMovedEvent message){
             if(_isPressing){
                 import armos.math:map;
                 *_var = map( 
@@ -75,7 +84,7 @@ class Slider(T) : Widget{
 
         /++
         +/
-        override void mouseReleased(ref armos.events.MouseReleasedEventArg message){
+        override void mouseReleased(ref armos.events.MouseReleasedEvent message){
             if(_isPressing){
                 import armos.math:map;
                 *_var = map( 
