@@ -153,8 +153,6 @@ mixin template MaterialImpl(){
 
         ///
         T beginDefault(){
-            import armos.graphics:pushMaterialStack;
-            pushMaterialStack(this);
             _shader.begin;
             _textures.begin;
             sendUniformsToShader;
@@ -165,9 +163,6 @@ mixin template MaterialImpl(){
         T endDefault(){
             _textures.end;
             _shader.end;
-            
-            import armos.graphics:popMaterialStack;
-            popMaterialStack;
             return this;
         }
 
@@ -347,6 +342,7 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 
 void main(void) {
-    fragColor = texture(tex0, outtexCoord0)*diffuse;
+    fragColor = texture(tex0, outtexCoord0);
+    // fragColor = vec4(1, 1, 1, 1);
 }
 };

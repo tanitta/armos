@@ -42,10 +42,10 @@ class BufferEntity {
             return this;
         }
 
-        BufferEntity updateBuffers(){
+        BufferEntity sendBuffersToBindedVao(){
             import std.algorithm;
             _bufferBundle.attrs.keys.each!((key){
-                    _bufferBundle.attr(key).updateGlBuffer;
+                    _bufferBundle.attr(key).sendToBindedVao;
                     });
             return this;
         }
@@ -101,37 +101,40 @@ class BufferEntity {
         }
         
         void draw(){
-            updateBuffers;
+            sendBuffersToBindedVao;
             updateShaderAttribs;
             drawWithoutUpdate;
         }
 
         ///
         void drawWithoutUpdate(){
-            const scopedVao      = scoped(_bufferBundle.vao);
-            const scopedMaterial = scoped(_material);
-            const iboScope       = scoped(_bufferBundle.attrs["index"]);
-
-            import armos.graphics.renderer;
-            _material.shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
-            _material.shader.uniform("projectionMatrix", projectionMatrix);
-            _material.shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
-            _material.shader.uniform("textureMatrix", textureMatrix);
-            _material.shader.enableAttribs();
-                int elements;
-                import derelict.opengl3.gl;
-                glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
-                import std.conv;
-                immutable int size = (elements/GLuint.sizeof).to!int;
-                glDrawElements(_primitiveMode, size, GL_UNSIGNED_INT, null);
-            _material.shader.disableAttribs();
+            pragma(msg, __FILE__, "(", __LINE__, "): ",
+                   "TODO: rewrite");
+            // const scopedVao      = scoped(_bufferBundle.vao);
+            // const scopedMaterial = scoped(_material);
+            // const iboScope       = scoped(_bufferBundle.attrs["index"]);
+            //
+            // import armos.graphics.renderer;
+            // _material.shader.uniform("modelViewMatrix", viewMatrix * modelMatrix);
+            // _material.shader.uniform("projectionMatrix", projectionMatrix);
+            // _material.shader.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+            // _material.shader.uniform("textureMatrix", textureMatrix);
+            // _material.shader.enableAttribs();
+            //     int elements;
+            //     import derelict.opengl3.gl;
+            //     glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
+            //     import std.conv;
+            //     immutable int size = (elements/GLuint.sizeof).to!int;
+            //     glDrawElements(_primitiveMode, size, GL_UNSIGNED_INT, null);
+            // _material.shader.disableAttribs();
         }
         
         void draw(in armos.graphics.PolyRenderMode renderMode){
-            import derelict.opengl3.gl;
-            glPolygonMode(GL_FRONT_AND_BACK, renderMode);
-            draw;
-            glPolygonMode(GL_FRONT_AND_BACK, currentStyle.polyRenderMode);
+            //TODO
+            // import derelict.opengl3.gl;
+            // glPolygonMode(GL_FRONT_AND_BACK, renderMode);
+            // draw;
+            // glPolygonMode(GL_FRONT_AND_BACK, currentStyle.polyRenderMode);
         }
         
         /++

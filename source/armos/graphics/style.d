@@ -1,8 +1,7 @@
 module armos.graphics.style;
 
-/++
-色や線の幅などの描画方法をまとめたstructです．
-+/
+deprecated:
+/// 色や線の幅などの描画方法をまとめたstructです．
 struct Style {
     import armos.graphics;
     import armos.types;

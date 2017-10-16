@@ -138,7 +138,9 @@ class Mesh {
             renderMode = 面，線，点のどれを描画するか指定します．
         +/
         Mesh draw(in PolyRenderMode renderMode){
-            currentRenderer.draw(this, renderMode, false, false, false);
+            // TODO
+            // currentRenderer.draw(this, renderMode, false, false, false);
+            currentRenderer.render();
             return this;
         };
 

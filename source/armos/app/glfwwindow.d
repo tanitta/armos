@@ -57,7 +57,8 @@ class GLFWWindow : Window{
             writeVersion;
 
 
-            _renderer = new Renderer;
+            _renderer = new DefaultRenderer;
+            _renderer.target.resize(frameBufferSize);
         }
 
         ~this(){
@@ -94,7 +95,7 @@ class GLFWWindow : Window{
         }
 
         void setup(){
-            _renderer.setup();
+            // _renderer.setup();
             put(_subjects.setup, SetupEvent());
         }
 
@@ -107,13 +108,13 @@ class GLFWWindow : Window{
         }
 
         void draw(){
-            if(_renderer){
-                _renderer.startRender();
-            }
+            // if(_renderer){
+            //     _renderer.startRender();
+            // }
             put(_subjects.draw, DrawEvent());
-            if(_renderer){
-                _renderer.finishRender();
-            }
+            // if(_renderer){
+            //     _renderer.finishRender();
+            // }
             glfwSwapBuffers(_window);
         }
 
@@ -223,7 +224,7 @@ class GLFWWindow : Window{
             import armos.graphics;
             auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
             mainLoop.select(currentGLFWWindow);
-            currentRenderer.resize();
+            if(currentRenderer.target)currentRenderer.target.resize(Vector2i(width, height));
             put(currentGLFWWindow._subjects.windowResize, WindowResizeEvent(cast(int)width, cast(int)height));
         }
 

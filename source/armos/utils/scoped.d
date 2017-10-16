@@ -42,3 +42,7 @@ struct Scoped(T){
 Scoped!T scoped(T)(T t)if(isScopable!T && (is(T == interface)) || is(T == class)){
     return Scoped!T(t);
 }
+
+Scoped!T scoped(T)(T t)if(isScopable!T && (is(T == struct))){
+    return Scoped!T(t);
+}

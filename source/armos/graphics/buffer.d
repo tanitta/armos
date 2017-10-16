@@ -14,7 +14,7 @@ class Buffer {
         /++
             BufferTypeを指定して初期化します．
         +/
-        this(in BufferType bufferType){
+        this(in BufferType bufferType = BufferType.Array){
             glGenBuffers(1, cast(uint*)&_id);
             _type = bufferType;
         }
@@ -57,7 +57,7 @@ class Buffer {
             _freq      = freq;
             _nature    = nature;
 
-            updateGlBuffer;
+            sendToBindedVao;
             return this;
         }
         
@@ -76,13 +76,13 @@ class Buffer {
         }
 
         ///
-        Buffer updateGlBuffer(){
+        Buffer sendToBindedVao(){
             if(_array.type == typeid(const(float)[])){
-                updateGlBuffer!(const(float));
+                sendToBindedVao!(const(float));
             }else if(_array.type == typeid(const(double)[])){
-                updateGlBuffer!(const(double));
+                sendToBindedVao!(const(double));
             }else if(_array.type == typeid(const(int)[])){
-                updateGlBuffer!(const(int));
+                sendToBindedVao!(const(int));
             }
             return this;
         }
@@ -104,7 +104,7 @@ class Buffer {
         BufferUsageNature _nature;
         Algebraic!(const(int)[], const(float)[], const(double)[]) _array;
 
-        void updateGlBuffer(T)(){
+        void sendToBindedVao(T)(){
             auto arr = _array.get!(T[]);
             begin;
             immutable currentSize = arr.length * arr[0].sizeof;

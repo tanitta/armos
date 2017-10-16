@@ -170,7 +170,7 @@ class AssimpModelLoader {
         Model createdModel(const(aiScene)* scene)const{
             import std.stdio;
             auto t = _scene.mRootNode.mTransformation;
-            Matrix4f rootTransformation = Matrix4f([
+            Matrix4f rootTransformation = Matrix4f.array([
                 [t.a1, t.a2, t.a3, t.a4], 
                 [t.b1, t.b2, t.b3, t.b4], 
                 [t.c1, t.c2, t.c3, t.c4], 

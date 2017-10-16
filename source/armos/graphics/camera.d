@@ -70,12 +70,12 @@ interface Camera{
         /++
             Cameraで表示する処理を開始します．
         +/
-        Camera begin();
+        // Camera begin();
         
         /++
             Cameraで表示する処理を終了します．
         +/
-        Camera end();
+        // Camera end();
     }//public
 }//interface Camera
 
@@ -90,61 +90,61 @@ mixin template CameraImpl(){
     import armos.app;
     private alias T = typeof(this);
     public{
-        /++
-            projectionMatrixを取得します．
-        +/
-        Matrix4f projectionMatrix()const{return _projectionMatrix;}
+        /// projectionMatrixを取得します．
+        Matrix4f projectionMatrix(){
+            _projectionMatrix = perspectiveMatrix(
+                _fov,
+                windowAspect,
+                _nearDist,
+                _farDist
+            )*scalingMatrix!float(1f, -1f, 1f);
+            return _projectionMatrix;
+        }
 
         ///
-        Matrix4f viewMatrix()const{return _viewMatrix;}
+        Matrix4f viewMatrix(){
+            _viewMatrix = lookAtViewMatrix(
+                _position, 
+                _target, 
+                _up
+            );
+            return _viewMatrix;
+        }
         
-        /++
-            Cameraの位置を表します．
-        +/
+        /// Cameraの位置を表します．
         Vector3f position()const{return _position;}
         
         ///
         T position(in Vector3f p){_position = p; return this;}
         
-
-        /++
-            Cameraが映す対象の位置を表します．
-        +/
+        /// Cameraが映す対象の位置を表します．
         Vector3f target()const{return _target;}
         
         ///
         T target(in Vector3f v){_target = v; return this;}
 
-        /++
-            Cameraの方向を表します．
-        +/
+        /// Cameraの方向を表します．
         Vector3f up()const{return _up;}
         
         ///
         T up(in Vector3f v){_up = v; return this;}
 
-        /**
-          Cameraの視野角を表します．単位はdegreeです．
-         **/
+        /// Cameraの視野角を表します．単位はdegreeです．
         double fov()const{return _fov;}
         
         ///
         T fov(in double f){_fov = f; return this;}
 
-        /++
-            描画を行う最短距離です．
-        +/
+        /// 描画を行う最短距離です．
         double nearDist()const{return _nearDist;}
         
-        ///
+        /// 
         T nearDist(in double n){
             _nearDist = n;
             return this;
         }
 
-        /++
-            描画を行う最長距離です．
-        +/
+        /// 描画を行う最長距離です．
         double farDist()const{return _farDist;}
         
         ///
@@ -153,39 +153,39 @@ mixin template CameraImpl(){
             return this;
         }
 
-        /++
-            Cameraで表示する処理を開始します．
-        +/
-        T begin(){
-            _viewMatrix = lookAtViewMatrix(
-                    _position, 
-                    _target, 
-                    _up
-                    );
-
-            _projectionMatrix = perspectiveMatrix(
-                    _fov,
-                    windowAspect,
-                    _nearDist,
-                    _farDist
-                    );
-
-            pushViewMatrix;
-            loadViewMatrix(_viewMatrix);
-            pushProjectionMatrix;
-            loadProjectionMatrix(_projectionMatrix);
-            multProjectionMatrix(scalingMatrix!float(1f, -1f, 1f));
-            return this;
-        }
-
-        /++
-            Cameraで表示する処理を終了します．
-        +/
-        T end(){
-            popViewMatrix;
-            popProjectionMatrix;
-            return this;
-        }
+        // /++
+        //     Cameraで表示する処理を開始します．
+        // +/
+        // T begin(){
+        //     _viewMatrix = lookAtViewMatrix(
+        //             _position, 
+        //             _target, 
+        //             _up
+        //             );
+        //
+        //     _projectionMatrix = perspectiveMatrix(
+        //             _fov,
+        //             windowAspect,
+        //             _nearDist,
+        //             _farDist
+        //             );
+        //
+        //     pushViewMatrix;
+        //     loadViewMatrix(_viewMatrix);
+        //     pushProjectionMatrix;
+        //     loadProjectionMatrix(_projectionMatrix);
+        //     multProjectionMatrix(scalingMatrix!float(1f, -1f, 1f));
+        //     return this;
+        // }
+        //
+        // /++
+        //     Cameraで表示する処理を終了します．
+        // +/
+        // T end(){
+        //     popViewMatrix;
+        //     popProjectionMatrix;
+        //     return this;
+        // }
     }
 
     private{

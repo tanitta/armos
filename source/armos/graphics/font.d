@@ -136,7 +136,8 @@ class Font{
                 }
             }
             _mesh.drawWireFrame;
-            currentMaterial.texture("tex0", _textureAtlas);
+            // TODO set texture to this.material
+            // currentMaterial.texture("tex0", _textureAtlas);
             _mesh.drawFill;
             return this;
         }

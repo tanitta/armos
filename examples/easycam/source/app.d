@@ -14,7 +14,7 @@ class TestApp : ar.app.BaseApp{
 
     override void draw(){
         _camera.begin;
-        ar.graphics.drawAxis(100.0);
+        ar.utils.drawAxis(100.0);
         _camera.end;
     }
 

@@ -7,19 +7,19 @@ import armos.graphics;
 class Entity {
     public{
         ///
-        Entity draw(in PolyRenderMode renderMode){
+        Entity draw(in PolyRenderMode renderMode, Renderer renderer = null){
             _material.begin;
-            armos.graphics.currentRenderer.draw(_mesh, renderMode, true, true, true);
+            //TODO
+            // armos.graphics.currentRenderer.draw(_mesh, renderMode, true, true, true);
+            if(renderer){
+                renderer.render();
+            }else{
+                armos.graphics.currentRenderer.render();
+            }
             _material.end;
             return this;
         };
-        
-        ///
-        Entity draw(){
-            draw(currentStyle.polyRenderMode);
-            return this;
-        };
-        
+
         /++
             entityをワイヤフレームで描画します．
         +/
@@ -70,5 +70,6 @@ class Entity {
     private{
         armos.graphics.Mesh _mesh;
         armos.graphics.Material _material;
+
     }//private
 }//class Entity

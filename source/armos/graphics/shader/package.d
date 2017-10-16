@@ -1,12 +1,14 @@
 module armos.graphics.shader;
 
 import derelict.opengl3.gl;
+import colorize;
+
 import armos.math.vector;
 import armos.math.matrix;
 import armos.graphics;
 import armos.graphics.shader.source;
-import colorize;
-
+import armos.graphics.shader.utils;
+public import armos.graphics.shader.uniform;
 /++
 +/
 class Shader {
@@ -226,138 +228,6 @@ class Shader {
             return location;
         }
 
-        /++
-            Set vector to uniform.
-            example:
-            ----
-            auto v = ar.Vector!(float, 3)(1.0, 2.0, 3.0);
-        shader.setUniform("v", v);
-        ----
-        +/
-        Shader uniform(V)(in string name, V v)
-        if(isVector!(V) && V.dimention <= 4){
-            if(_isLoaded){
-                begin;
-                int location = uniformLocation(name);
-                if(location != -1){
-                    mixin(glFunctionString!(typeof(v[0]), V.dimention).normal("glUniform"));
-                }
-                end;
-            }
-            return this;
-        }
-
-        /++
-            Set matrix to uniform.
-            example:
-            ----
-            auto m = ar.Matrix!(float, 3, 3)(
-                    [0, 0, 0], 
-                    [0, 0, 0], 
-                    [0, 0, 0], 
-                    );
-        shader.setUniform("m", m);
-        ----
-        +/
-        Shader uniform(M)(in string name, M m)
-        if(isMatrix!(M) && M.rowSize<=4 && M.colSize<=4){
-            if(_isLoaded){
-                begin;
-                int location = uniformLocation(name);
-                if(location != -1){
-                    mixin( glFunctionString!(typeof(m[0][0])[], m.rowSize, m.colSize).name("glUniform") ~ "(location, 1, GL_FALSE, m.array.ptr);" );
-                }
-                end;
-            }
-            return this;
-        }
-
-        /++
-            Set bool as int to uniform.
-            example:
-            ----
-            // Set variables to glsl uniform named "v".
-            bool a = 1.0;
-            bool b = 2.0;
-            bool c = 3.0;
-            shader.setUniform("v", a, b, c);
-            ----
-        +/
-        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && is(Args[0]==bool)){
-            if(_isLoaded){
-                begin;
-                int location = uniformLocation(name);
-                if(location != -1){
-                    mixin(glFunctionString!(int, v.length).normal("glUniform"));
-                }
-                end;
-            }
-            return this;
-        }
-
-        /++
-            Set as an uniform.
-            example:
-            ----
-            // Set variables to glsl uniform named "v".
-            float a = 1.0;
-            float b = 2.0;
-            float c = 3.0;
-            shader.setUniform("v", a, b, c);
-            ----
-        +/
-        Shader uniform(Args...)(in string name, Args v)if(0 < Args.length && Args.length <= 4 && __traits(isArithmetic, Args[0]) && !is(Args[0]==bool)){
-            if(_isLoaded){
-                begin;
-                int location = uniformLocation(name);
-                if(location != -1){
-                    mixin(glFunctionString!(typeof(v[0]), v.length).normal("glUniform"));
-                }
-                end;
-            }
-            return this;
-        }
-
-        ///
-        Shader uniformArray(T)(in string name, T[] v)if(is(T==bool)){
-            if(_isLoaded){
-                begin;
-                int location = uniformLocation(name);
-                if(location != -1){
-                    import std.conv:to;
-                    mixin(glFunctionString!(int[]).array("glUniform"));
-                }
-                end;
-            }
-            return this;
-        }
-
-        ///
-        Shader uniformArray(T)(in string name, T[] v)if(__traits(isArithmetic, T) && !is(T==bool)){
-            if(_isLoaded){
-                begin;
-                int location = uniformLocation(name);
-                if(location != -1){
-                    import std.conv:to;
-                    mixin(glFunctionString!(T[]).array("glUniform"));
-                }
-                end;
-            }
-            return this;
-        }
-
-        /++
-        +/
-        Shader uniformTexture(in string name, Texture texture, int textureLocation){
-            import std.string;
-            if(_isLoaded){
-                begin;scope(exit)end;
-                glActiveTexture(GL_TEXTURE0 + textureLocation);
-                texture.begin;
-                uniform(name, textureLocation);
-            }
-            return this;
-        }
 
         /++
         +/
@@ -647,80 +517,7 @@ class Shader {
     }//private
 }//class Shader
 
-private template glFunctionString(T, size_t DimC = 1, size_t DimR = 1){
-    import std.conv;
 
-    public{
-        static if(DimR == 1){
-            string normal(in string functionString, in string variableName = "v"){
-                return name(functionString) ~ "(location, " ~ args(variableName) ~ ");";
-            }
-
-            string array(in string functionString, in string variableName = "v"){
-                return name(functionString) ~ "(location, " ~ arrayArgs(variableName) ~ ");";
-            }
-        }
-
-        string name(in string functionString){
-            return functionString ~ suffix;
-        }
-    }//public
-
-    private{
-        string suffix(){
-            string type;
-            static if(is(T == float)){
-                type = "f";
-            }else if(is(T == double)){
-                type = "d";
-            }else if(is(T == int)){
-                type = "i";
-            }
-
-            static if(is(T == float[])){
-                type = "fv";
-            }else if(is(T == double[])){
-                type = "bv";
-            }else if(is(T == int[])){
-                type = "iv";
-            }
-
-            string str = "";
-            if(isMatrix){str ~= "Matrix";}
-            str ~= dim;
-            str ~= type;
-            return str;
-        }
-
-        string dim(){
-            auto str = DimC.to!string;
-            static if(isMatrix){
-                str ~= (DimC == DimR)?"":( "x" ~ DimR.to!string );
-            }
-            return str;
-        }
-
-        string args(in string variableName){
-            string argsStr = variableName~"[0]";
-            for (int i = 1; i < DimC; i++) {
-                argsStr ~= ", "~variableName~"[" ~ i.to!string~ "]";
-            }
-            return argsStr;
-        }
-
-        string arrayArgs(in string variableName){
-            return  variableName ~ ".length.to!int, " ~ variableName ~ ".ptr";
-        }
-
-        bool isMatrix(){
-            return (DimR > 1);
-        }
-
-        // bool isVector(){
-        // 	return false;
-        // }
-    }//private
-}
 
 private{
     string loadedSource(in string path){
@@ -746,14 +543,6 @@ private{
             PrimitiveMode _primitiveMode;
         }//private
     }//struct GeometryIO
-}
-
-static unittest{
-    assert( glFunctionString!(float, 3).normal("glUniform") == "glUniform3f(location, v[0], v[1], v[2]);");
-    assert( glFunctionString!(float[], 3, 3).name("glUniform") == "glUniformMatrix3fv" );
-    assert( glFunctionString!(float[], 2, 3).name("glUniform") == "glUniformMatrix2x3fv" );
-    import std.stdio;
-    assert( glFunctionString!(float[]).array("glUniform") == "glUniform1fv(location, v.length.to!int, v.ptr);");
 }
 
 

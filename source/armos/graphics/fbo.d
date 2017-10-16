@@ -77,6 +77,7 @@ class Fbo{
             
             _material = (new FboMaterial).texture("colorTexture", _colorTexture)
                                          .texture("depthTexture", _depthTexture);
+            import std.stdio;
         }
 
         /++
@@ -86,11 +87,13 @@ class Fbo{
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
             glBindFramebuffer(GL_FRAMEBUFFER, _id);
             Vector2i textureSize = _size*_samples;
-            viewport(Vector2i.zero, textureSize);
-            
-            pushProjectionMatrix;
-            import armos.app:windowSize;
-            if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(_size));
+            pragma(msg, __FILE__, "(", __LINE__, "): ",
+                   "TODO: ");
+            // viewport(Vector2i.zero, textureSize);
+            //
+            // pushProjectionMatrix;
+            // import armos.app:windowSize;
+            // if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(_size));
             return this;
         }
 
@@ -98,7 +101,9 @@ class Fbo{
             FBOへの描画処理を終了します．
         +/
         Fbo end(){
-            popProjectionMatrix;
+            pragma(msg, __FILE__, "(", __LINE__, "): ",
+                   "TODO: ");
+            // popProjectionMatrix;
             glBindFramebuffer(GL_FRAMEBUFFER, _savedId);
             return this;
         }
@@ -132,6 +137,7 @@ class Fbo{
             _rect.vertices[2][1] = _size[1];
             _rect.vertices[3][1] = _size[1];
             resizeTextures;
+
             return this;
         }
         
@@ -231,6 +237,7 @@ class Fbo{
         Vector2i _size;
         
         void resizeTextures(){
+            import std.stdio;
             begin;
             _colorTexture.resize(_size*_samples);
             _depthTexture.resize(_size*_samples);

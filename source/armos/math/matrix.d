@@ -33,9 +33,12 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
     VectorType[RowSize] elements = VectorType();
 
+    pragma(msg, __FILE__, "(", __LINE__, "): ",
+           "TODO: implement ctor(T[RowSize*ColSize] ...)");
     /++
     +/
-    this(T[][] arr ...){
+    deprecated("Use array(arr).")
+    this(T[][] arr){
         if(arr.length != 0){
             if(arr.length == RowSize){
                 foreach (int index, ref VectorType vector; elements) {
@@ -47,6 +50,82 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         }
     }
 
+    unittest{
+        float[][] array = [
+            [1f, 2f],
+            [3f, 4f]
+        ];
+        auto m = Matrix2f.array(array);
+    }
+
+    static MatrixType array(Arr:E[][], E)(Arr arr){
+        MatrixType m;
+        foreach (int index, ref VectorType vector; m.elements) {
+            vector = VectorType.array(arr[index]);
+        }
+        return m;
+    }
+
+    static MatrixType array(Arr:E[ColSize][RowSize], E)(Arr arr){
+        MatrixType m;
+        foreach (int index, ref VectorType vector; m.elements) {
+            vector = VectorType.array(arr[index]);
+        }
+        return m;
+    }
+
+    unittest{
+        float[][] array = [
+            [1, 2],
+            [3, 4]
+        ];
+        auto m = Matrix2f.array(array);
+        assert(m[0][0] == array[0][0]);
+        assert(m[0][1] == array[0][1]);
+        assert(m[1][0] == array[1][0]);
+        assert(m[1][1] == array[1][1]);
+    }
+
+    unittest{
+        float[2][2] array = [
+            [1f, 2f],
+            [3f, 4f]
+        ];
+        auto m = Matrix2f.array(array);
+        assert(m[0][0] == array[0][0]);
+        assert(m[0][1] == array[0][1]);
+        assert(m[1][0] == array[1][0]);
+        assert(m[1][1] == array[1][1]);
+    }
+
+    unittest{
+        float[2][2] array = [
+            [1, 2],
+            [3, 4]
+        ];
+
+        auto m = Matrix2f.array([
+            [1, 2],
+            [3, 4]
+        ]);
+        assert(m[0][0] == array[0][0]);
+        assert(m[0][1] == array[0][1]);
+        assert(m[1][0] == array[1][0]);
+        assert(m[1][1] == array[1][1]);
+    }
+
+    // this(T[ColSize][RowSize] arr){
+    //     if(arr.length != 0){
+    //         if(arr.length == RowSize){
+    //             foreach (int index, ref VectorType vector; elements) {
+    //                 vector = VectorType(arr[index]);
+    //             }
+    //         }else{
+    //             assert(0);
+    //         }
+    //     }
+    // }
+
     /++
     +/
     pure VectorType opIndex(in size_t index)const{
@@ -57,10 +136,10 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         assert(matrix[0][0] == 0);
     }
     unittest{
-        auto matrix = Matrix2d(
-                [1.0, 0.0],
-                [0.0, 1.0]
-                );
+        auto matrix = Matrix2d.array([
+            [1.0, 0.0],
+            [0.0, 1.0]
+        ]);
         assert(matrix[0][0] == 1.00);
     }
 
@@ -86,15 +165,15 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     // 	return true;
     // }
     unittest{
-        auto matrix1 = Matrix2d(
-                [2.0, 1.0],
-                [1.0, 2.0]
-                );
+        auto matrix1 = Matrix2d.array([
+            [2.0, 1.0],
+            [1.0, 2.0]
+        ]);
 
-        auto matrix2 = Matrix2d(
-                [2.0, 1.0],
-                [1.0, 2.0]
-                );
+        auto matrix2 = Matrix2d.array([
+            [2.0, 1.0],
+            [1.0, 2.0]
+        ]);
         assert(matrix1 == matrix2);
     }
     unittest{
@@ -108,16 +187,24 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         assert(matrix1 != matrix3);
     }
     unittest{
-        auto matrix1 = Matrix!(double, 1, 2)(
-                [2.0, 1.0]
-                );
+        auto matrix1 = Matrix!(double, 1, 2).array([[2.0, 1.0]]);
 
-        auto matrix2 = Matrix!(double, 2, 1)(
-                [2.0],
-                [1.0]
-                );
+        auto matrix2 = Matrix!(double, 2, 1).array([
+            [2.0],
+            [1.0]
+        ]);
         // assert(matrix1 != matrix2);
 
+    }
+
+    static MatrixType init(){
+        auto initMatrix = MatrixType();
+        foreach (ref v; initMatrix.elements) {
+            foreach (ref n; v.elements) {
+                n = T();
+            }
+        }
+        return initMatrix;
     }
 
     static MatrixType zero(){
@@ -130,12 +217,11 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         return zeroMatrix;
     }
     unittest{
-        assert(
-                Matrix!(float, 3, 3).zero == Matrix!(float, 3, 3)(
+        assert(Matrix!(float, 3, 3).zero == Matrix!(float, 3, 3).array([
                     [0, 0, 0],
                     [0, 0, 0],
                     [0, 0, 0]
-                    )
+                    ])
               );
 
     }
@@ -152,11 +238,11 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
     unittest{
         assert(
-                Matrix!(float, 3, 3).identity == Matrix!(float, 3, 3)(
+                Matrix!(float, 3, 3).identity == Matrix!(float, 3, 3).array([
                     [1, 0, 0],
                     [0, 1, 0],
                     [0, 0, 1]
-                    )
+                    ])
               );
     }
 
@@ -283,22 +369,22 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         return result;
     }
     unittest{
-        auto matrix1 = Matrix2f(
-                [2.0, 0.0],
-                [1.0, 1.0]
-                );
+        auto matrix1 = Matrix2f.array([
+            [2.0, 0.0],
+            [1.0, 1.0]
+        ]);
 
-        auto matrix2 = Matrix2f(
-                [1.0, 1.0],
-                [0.0, 1.0]
-                );
+        auto matrix2 = Matrix2f.array([
+            [1.0, 1.0],
+            [0.0, 1.0]
+        ]);
 
         auto matrix3 = matrix1 * matrix2;
 
-        auto matrix_answer = Matrix2f(
-                [2.0, 2.0],
-                [1.0, 2.0]
-                );
+        auto matrix_answer = Matrix2f.array([
+            [2.0, 2.0],
+            [1.0, 2.0]
+        ]);
 
         assert(matrix3 == matrix_answer);
     }
@@ -317,10 +403,10 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         return result;
     }
     unittest{
-        auto matrix1 = Matrix2f(
-                [2.0, 0.0],
-                [1.0, 1.0]
-                );
+        auto matrix1 = Matrix2f.array([
+            [2.0, 0.0],
+            [1.0, 1.0]
+        ]);
         auto vector1 = armos.math.Vector2f(1.0, 0.0);
         auto vector_answer = armos.math.Vector2f(2.0, 1.0);
         auto vector2 = matrix1 * vector1;
@@ -335,44 +421,44 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         return result;
     }
     unittest{
-        auto matrix1 = Matrix2d(
-                [2.0, 4.0],
-                [3.0, 1.0]
-                );
+        auto matrix1 = Matrix2d.array([
+            [2.0, 4.0],
+            [3.0, 1.0]
+        ]);
         auto matrix2 = matrix1 / 2.0;
 
-        auto matrixA = Matrix2d(
-                [1.0, 2.0],
-                [1.5, 0.5]
-                );
+        auto matrixA = Matrix2d.array([
+            [1.0, 2.0],
+            [1.5, 0.5]
+        ]);
         assert(matrix2 == matrixA);
     }
 
 
     static if(RowSize == 3 && ColSize == 3 && ( is(T == double) || is(T == float) )){
         MatrixType inverse(){
-            MatrixType mat = MatrixType(
+            MatrixType mat = MatrixType.array([
                     [elements[1][1]*elements[2][2]-elements[1][2]*elements[2][1], elements[0][2]*elements[2][1]-elements[0][1]*elements[2][2], elements[0][1]*elements[1][2]-elements[0][2]*elements[1][1]],
                     [elements[1][2]*elements[2][0]-elements[1][0]*elements[2][2], elements[0][0]*elements[2][2]-elements[0][2]*elements[2][0], elements[0][2]*elements[1][0]-elements[0][0]*elements[1][2]],
                     [elements[1][0]*elements[2][1]-elements[1][1]*elements[2][0], elements[0][1]*elements[2][0]-elements[0][0]*elements[2][1], elements[0][0]*elements[1][1]-elements[0][1]*elements[1][0]]
-                    );
+                    ]);
             return mat/determinant;
         }
     }
     unittest{
-        auto m= Matrix3f(
-                [1, 2, 0], 
-                [3, 2, 2], 
-                [1, 4, 3]
-                );
+        auto m= Matrix3f.array([
+            [1, 2, 0], 
+            [3, 2, 2], 
+            [1, 4, 3]
+        ]);
 
         auto mInv= m.inverse;
 
-        auto mA= Matrix3f(
-                [1, 0, 0], 
-                [0, 1, 0], 
-                [0, 0, 1]
-                );
+        auto mA= Matrix3f.array([
+            [1, 0, 0], 
+            [0, 1, 0], 
+            [0, 0, 1]
+        ]);
         assert(mInv*m == mA);
     }
 
@@ -389,10 +475,10 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         auto vec1 = armos.math.Vector2f(3, 4);
         matrix.setColumnVector(0, vec0);
         matrix.setColumnVector(1, vec1);
-        assert(matrix == Matrix2f(
-                    [1, 3], 
-                    [2, 4]
-                    ));
+        assert(matrix == Matrix2f.array([
+                                      [1, 3], 
+                                      [2, 4]
+                                  ]));
 
     }
 
@@ -407,10 +493,10 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         auto vec1 = armos.math.Vector2f(3, 4);
         matrix.setRowVector(0, vec0);
         matrix.setRowVector(1, vec1);
-        assert(matrix == Matrix2f(
+        assert(matrix == Matrix2f.array([
                     [1, 2], 
                     [3, 4]
-                    ));
+                    ]));
     }
 
     /++
@@ -430,24 +516,24 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
             return this;
         }
     unittest{
-        auto mat44 = Matrix!(double, 4, 4)(
-                [1, 0, 0, 4],
-                [0, 1, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, 2]
-                );
-        auto mat33 = Matrix!(float, 3, 3)(
-                [2, 1, 0],
-                [0, 1, 3],
-                [0, 0, 3]
-                );
+        auto mat44 = Matrix!(double, 4, 4).array([
+            [1, 0, 0, 4],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 2]
+        ]);
+        auto mat33 = Matrix!(float, 3, 3).array([
+            [2, 1, 0],
+            [0, 1, 3],
+            [0, 0, 3]
+        ]);
 
-        auto mat44A = Matrix!(double, 4, 4)(
-                [1, 2, 1, 0],
-                [0, 0, 1, 3],
-                [0, 0, 0, 3],
-                [0, 0, 0, 2]
-                );
+        auto mat44A = Matrix!(double, 4, 4).array([
+            [1, 2, 1, 0],
+            [0, 0, 1, 3],
+            [0, 0, 0, 3],
+            [0, 0, 0, 2]
+        ]);
         assert( mat44.setMatrix(mat33, 0, 1) == mat44A );
     }
 
@@ -501,32 +587,58 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     unittest{
         import std.stdio;
         import std.math;
-        auto matrix = Matrix3f(
-                [0.8, 0, 0],
-                [0, 1.5, 0],
-                [0, 0, 0.8]
-                );
+        auto matrix = Matrix3f.array([
+            [0.8, 0, 0],
+            [0, 1.5, 0],
+            [0, 0, 0.8]
+        ]);
         assert( approxEqual(matrix.determinant, 0.96) );
     }
 
     /++
     +/
-    T[RowSize*ColSize] array()const{
-        T[RowSize*ColSize] tmp;
-        for (int i = 0; i < RowSize ; i++) {
-            for (int j = 0; j < ColSize ; j++) {
-                tmp[i+j*RowSize] = elements[i][j];
+    auto array(size_t dimention = 1)()const{
+        static if(dimention == 1){
+            T[RowSize*ColSize] tmp;
+            for (int i = 0; i < RowSize ; i++) {
+                for (int j = 0; j < ColSize ; j++) {
+                    tmp[i+j*RowSize] = elements[i][j];
+                }
             }
+            return tmp;
+        }else static if(dimention == 2){
+            T[ColSize][RowSize] tmp;
+            foreach (size_t index, rowVector; elements) {
+                tmp[index] = rowVector.array;
+            }
+            return tmp;
         }
-        return tmp;
     }
     unittest{
-        auto matrix = Matrix3f(
-                [1, 4, 7], 
-                [2, 5, 8], 
-                [3, 6, 9]
-                );
+        auto matrix = Matrix3f.array([
+            [1, 4, 7], 
+            [2, 5, 8], 
+            [3, 6, 9]
+        ]);
         assert(matrix.array == [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert(matrix.array!1 == [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert(matrix.array!2 == [
+                                     [1, 4, 7], 
+                                     [2, 5, 8], 
+                                     [3, 6, 9]
+        ]);
+    }
+
+    T[ColSize][RowSize] nestedArray(){
+        T[ColSize][RowSize] result;
+        foreach (rowIndex, row; elements) {
+            result[rowIndex] = row.elements;
+        }
+        return result;
+    }
+    pragma(msg, __FILE__, "(", __LINE__, "): ",
+           "TODO: should test");
+    unittest{
     }
 
     /++
@@ -540,11 +652,11 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         return mat;
     }
     unittest{
-        auto m_f= Matrix3f(
-                [1, 4, 7], 
-                [2, 5, 8], 
-                [3, 6, 9]
-        );
+        auto m_f= Matrix3f.array([
+            [1, 4, 7], 
+            [2, 5, 8], 
+            [3, 6, 9]
+        ]);
 
         auto m_i= Matrix3i.zero;
         
@@ -554,11 +666,11 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
 
         //Invalid cast. Different size.
         assert(!__traits(compiles, {
-            auto m_f= Matrix3f(
-                    [1, 4, 7], 
-                    [2, 5, 8], 
-                    [3, 6, 9]
-            );
+            auto m_f= Matrix3f.array([
+                [1, 4, 7], 
+                [2, 5, 8], 
+                [3, 6, 9]
+            ]);
             auto m_i= Matrix4i.zero;
             vec_i = cast(Vector3i)vec_f;
         }));

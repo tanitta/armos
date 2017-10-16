@@ -47,6 +47,7 @@ class Gui {
         /++
         +/
         this(){
+            pragma(msg, __FILE__, "(", __LINE__, "): ", "TODO: use material");
             _style = new Style;
             _style.font = new BitmapFont;
             _style.font.load("data/font.png", 8, 8);
@@ -72,9 +73,11 @@ class Gui {
         +/
         void draw(){
             import armos.graphics.renderer;
-            pushStyle;
-            blendMode(BlendMode.Alpha);
-            disableDepthTest;
+            pragma(msg, __FILE__, "(", __LINE__, "): ", "TODO: use material");
+            // pushStyle;
+            // blendMode(BlendMode.Alpha);
+            // disableDepthTest;
+            isUsing(Capability.DepthTest, true);
 
             int currentWidth = 0;
             foreach (list; _lists) {
@@ -84,7 +87,7 @@ class Gui {
                 popMatrix;
                 currentWidth += list.width + _style.font.width;
             }
-            popStyle;
+            // popStyle;
         }
 
     }//public

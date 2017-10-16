@@ -102,6 +102,34 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         static assert(Vector!(float,3).coordName == "xyz");
     }
 
+    ///
+    static VectorType array(Arr:E[], E)(Arr arr){
+        VectorType v;
+        import std.conv;
+        v.packedElements.arr = arr.to!(T[]);
+        return v; 
+    }
+
+    unittest{
+        float[] array = [1, 2];
+        auto v = Vector2f.array(array);
+        assert(v[0] == array[0]);
+        assert(v[1] == array[1]);
+    }
+
+    unittest{
+        float[2] array = [1, 2];
+        auto v = Vector2f.array(array);
+        assert(v[0] == array[0]);
+        assert(v[1] == array[1]);
+    }
+
+    unittest{
+        auto v = Vector2f.array([1, 2]);
+        assert(v[0] == 1f);
+        assert(v[1] == 2f);
+    }
+
     /++
         Vectorのinitializerです．引数はDimentionと同じ個数の要素を取ります．
     +/

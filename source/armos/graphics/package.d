@@ -25,3 +25,4 @@ public import armos.graphics.entity;
 public import armos.graphics.model;
 public import armos.graphics.bufferbundle;
 public import armos.graphics.bufferentity;
+public import armos.graphics.scene;

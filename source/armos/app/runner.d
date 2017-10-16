@@ -28,7 +28,8 @@ class Runner {
         +/
         Runner register(Application app, Window window){
             window.initEvents(app);
-            _appsCollection.add(app, window);
+            import armos.graphics.scene;
+            _appsCollection.add(window, app, new Scene);
             return this;
         };
 
@@ -64,10 +65,11 @@ class Runner {
         }
         
         ///
-        Window currentWindow()out(window){
+        Window currentWindow()
+        out(window){
             assert(window);
         }body{
-            return _currentWindow;
+            return _currentBundle.window;
         }
 
         CoreObservables currentObservables(){
@@ -76,9 +78,9 @@ class Runner {
 
         ///
         Runner loop(){
-            foreach (winapp; _appsCollection.byPair) {
-                auto window = winapp[0];
-                auto app    = winapp[1];
+            foreach (winAndBundle; _appsCollection.byPair) {
+                auto window = winAndBundle[0];
+                auto app    = winAndBundle[1].application;
                 select(window);
                 window.setup;
             }
@@ -92,9 +94,9 @@ class Runner {
                 isLoop = _appsCollection.keys.length > 0;
             }
 
-            foreach (winapp; _appsCollection.byPair) {
-                auto window = winapp[0];
-                auto app    = winapp[1];
+            foreach (winAndBundle; _appsCollection.byPair) {
+                auto window = winAndBundle[0];
+                auto app    = winAndBundle[1].application;
                 select(window);
             }
             return this;
@@ -102,32 +104,34 @@ class Runner {
 
         void select(Window window){
             window.select;
-            _currentWindow = window;
+            _currentBundle = _appsCollection[window];
         }
     }//public
 
     private{
         AppCollection _appsCollection;
-        Window _currentWindow;
+        ApplicationBundle _currentBundle;
 
         FpsCounter _fpsCounter;
 
 
 
         void loopOnce(){
-            foreach (winapp; _appsCollection.byPair) {
-                auto window = winapp[0];
-                auto app    = winapp[1];
+            foreach (winAndBundle; _appsCollection.byPair) {
+                auto window = winAndBundle[0];
+                auto app    = winAndBundle[1].application;
                 select(window);
                 window.update();
                 window.draw();
             }
+
+            import std.stdio;
             _appsCollection.keys.each!(w => w.pollEvents());
             
             Window[] shouldRemoves;
-            foreach (winapp; _appsCollection.byPair) {
-                auto window = winapp[0];
-                auto app    = winapp[1];
+            foreach (winAndBundle; _appsCollection.byPair) {
+                auto window = winAndBundle[0];
+                auto app    = winAndBundle[1].application;
 
                 if(window.shouldClose||app.shouldClose){
                     window.close;
@@ -197,3 +201,11 @@ double currentFps(){
 ulong currentFrames(){
     return mainLoop._fpsCounter.currentFrames();
 }
+
+Scene currentScene()
+out(scene){
+    assert(scene);
+}body{
+    return mainLoop._currentBundle.scene;
+}
+

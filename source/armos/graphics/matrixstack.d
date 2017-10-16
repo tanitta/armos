@@ -43,25 +43,31 @@ class MatrixStack {
 }//class MatrixStack
 
 unittest{
-    immutable m1 = M4(
-            [1, 0, 0, 10], 
-            [0, 1, 0, 0], 
-            [0, 0, 1, 0], 
-            [0, 0, 0, 1], 
+    immutable m1 = M4.array(
+        [
+            [1f, 0f, 0f, 10f], 
+            [0f, 1f, 0f, 0f], 
+            [0f, 0f, 1f, 0f], 
+            [0f, 0f, 0f, 1f], 
+        ]
     );
         
-    immutable m2 = M4(
-            [1, 0, 0, 0], 
-            [0, 1, 0, 20], 
-            [0, 0, 1, 0], 
-            [0, 0, 0, 1], 
+    immutable m2 = M4.array(
+        [
+            [1f, 0f, 0f, 0f], 
+            [0f, 1f, 0f, 20f], 
+            [0f, 0f, 1f, 0f], 
+            [0f, 0f, 0f, 1f], 
+        ]
     );
     
-    immutable m3 = M4(
-            [1, 0, 0, 0], 
-            [0, 1, 0, 0], 
-            [0, 0, 1, 30], 
-            [0, 0, 0, 1], 
+    immutable m3 = M4.array(
+        [
+            [1f, 0f, 0f, 0f], 
+            [0f, 1f, 0f, 0f], 
+            [0f, 0f, 1f, 30f], 
+            [0f, 0f, 0f, 1f], 
+        ]
     );
     
     auto matrixStack = new MatrixStack;
@@ -87,18 +93,22 @@ unittest{
 }
 
 unittest{
-    immutable m1 = M4(
+    immutable m1 = M4.array(
+        [
             [1, 0, 0, 10], 
             [0, 1, 0, 0], 
             [0, 0, 1, 0], 
             [0, 0, 0, 1], 
+        ]
     );
         
-    immutable m2 = M4(
+    immutable m2 = M4.array(
+        [
             [1, 0, 0, 0], 
             [0, 1, 0, 20], 
             [0, 0, 1, 0], 
             [0, 0, 0, 1], 
+        ]
     );
     
     auto matrixStack = new MatrixStack;
@@ -123,39 +133,40 @@ unittest{
 
 package mixin template MatrixStackFunction(string Name){
     public{
+        import armos.app.runner:currentScene;
         import std.string;
         /// Matrix4f nameMatrix()
         mixin("
         Matrix4f " ~ Name.toLower ~ "Matrix(){
-          return currentRenderer." ~ Name.toLower ~ "Matrix;
+          return currentScene." ~ Name.toLower ~ "MatrixStack.matrix();
         }
         ");
         
         /// void pushNameMatrix(in Matrix4f newMatrix = Matrix4f.identity)
         mixin("
         void push" ~ Name ~ "Matrix(){
-            currentRenderer.push" ~ Name ~ "Matrix();
+            currentScene." ~ Name.toLower ~ "MatrixStack.push();
         }
         ");
 
         /// Matrix4f popNameMatrix()
         mixin( "
         void pop" ~ Name ~ "Matrix(){
-            currentRenderer.pop" ~ Name ~ "Matrix;
+            currentScene." ~ Name.toLower ~ "MatrixStack.pop();
         }
         ");
 
         /// void multNameMatrix(in Matrix4f matrix)
         mixin("
         void mult" ~ Name ~ "Matrix(in Matrix4f matrix){
-            currentRenderer.mult" ~ Name ~ "Matrix(matrix);
+            currentScene." ~ Name.toLower ~ "MatrixStack.mult(matrix);
         }
         ");
 
         /// void loadNameMatrix(in Matrix4f matrix)
         mixin( "
         void load" ~ Name ~ "Matrix(in Matrix4f matrix){
-            currentRenderer.load" ~ Name ~ "Matrix(matrix);
+            currentScene." ~ Name.toLower ~ "MatrixStack.load(matrix);
         }
         ");
 
@@ -163,6 +174,8 @@ package mixin template MatrixStackFunction(string Name){
 }
 
 package mixin template MatrixStackManipulator(string Name){
+    import armos.math.matrix;
+    import armos.graphics.matrixstack;
     public{
         import std.string;
         mixin("

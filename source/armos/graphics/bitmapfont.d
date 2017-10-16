@@ -1,6 +1,7 @@
 module armos.graphics.bitmapfont;
-import armos.graphics;;
 import armos.math;
+import armos.graphics.image;
+import armos.graphics;
 
 /++
 BitmapFontを描画するclassです．

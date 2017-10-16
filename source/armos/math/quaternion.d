@@ -84,13 +84,13 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     /++
     +/
     T opIndex(in int index)const{
-        return vec[index];
+        return this.vec[index];
     }
 
     /++
     +/
     ref  T opIndex(in int index){
-        return vec[index];
+        return this.vec[index];
     }
     unittest{
         Quaternion!(double) q = Quaternion!(double)(1, 2, 3, 4);
@@ -173,7 +173,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     +/
     Q opAdd(in Q q)const{
         auto return_quat = Q();
-        return_quat.vec = vec + q.vec;
+        return_quat.vec = this.vec + q.vec;
         return return_quat;
     }
     unittest{
@@ -187,7 +187,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     +/
     Q opMul(in T r)const{
         auto return_quat = Q();
-        return_quat.vec = vec * r;
+        return_quat.vec = this.vec * r;
         return return_quat;
     }
     unittest{
@@ -200,7 +200,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     +/
     Q opDiv(in T r)const {
         auto return_quat = Q();
-        return_quat.vec = vec / r;
+        return_quat.vec = this.vec / r;
         return return_quat;
     }
     unittest{
@@ -224,7 +224,6 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
 
     ///
     CastedType opCast(CastedType: Matrix!(E, 4, 4), E)()const{
-        import std.conv:to;
         return matrix44!E;
     }
 
@@ -263,7 +262,7 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
     /++
     +/
     Q normalized()const {
-        return Q(vec.normalized);
+        return Q(this.vec.normalized);
     }
     unittest{
         // auto q = Quaternion!(double)(1, 2, 3, 4);
@@ -302,25 +301,42 @@ struct Quaternion(T)if(__traits(isArithmetic, T)){
         自身の回転行列(4x4)を返します．
     +/
     armos.math.Matrix!(E, 4, 4) matrix44(E = T)()const if(__traits(isFloating, E)){
-        return armos.math.Matrix!(E, 4, 4)(
-                [this[3]^^2.0+this[0]^^2.0-this[1]^^2.0-this[2]^^2.0, 2.0*(this[0]*this[1]-this[3]*this[2]),               2.0*(this[0]*this[2]+this[3]*this[1]),               0],
-                [2.0*(this[0]*this[1]+this[3]*this[2]),               this[3]^^2.0-this[0]^^2.0+this[1]^^2.0-this[2]^^2.0, 2.0*(this[1]*this[2]-this[3]*this[0]),               0],
-                [2.0*(this[0]*this[2]-this[3]*this[1]),               2.0*(this[1]*this[2]+this[3]*this[0]),               this[3]^^2.0-this[0]^^2.0-this[1]^^2.0+this[2]^^2.0, 0],
-                [0,                                                   0,                                                   0,                                                   1]
-                );
+        return armos.math.Matrix!(E, 4, 4)([
+            [E(this[3]^^2.0+this[0]^^2.0-this[1]^^2.0-this[2]^^2.0), E(2.0*(this[0]*this[1]-this[3]*this[2])),               E(2.0*(this[0]*this[2]+this[3]*this[1])),               E(0)],
+            [E(2.0*(this[0]*this[1]+this[3]*this[2])),               E(this[3]^^2.0-this[0]^^2.0+this[1]^^2.0-this[2]^^2.0), E(2.0*(this[1]*this[2]-this[3]*this[0])),               E(0)],
+            [E(2.0*(this[0]*this[2]-this[3]*this[1])),               E(2.0*(this[1]*this[2]+this[3]*this[0])),               E(this[3]^^2.0-this[0]^^2.0-this[1]^^2.0+this[2]^^2.0), E(0)],
+            [E(0),                                                   E(0),                                                   E(0),                                                   E(1)]
+        ]);
     }
     unittest{
+        auto q = Quaternion!(double).unit;
+        auto m = Matrix4d.array([
+            [1, 0, 0, 0], 
+            [0, 1, 0, 0], 
+            [0, 0, 1, 0], 
+            [0, 0, 0, 1], 
+        ]);
+        assert(q.matrix44 == m);
     }
 
     /++
         自身の回転行列(3x3)を返します．
     +/
     armos.math.Matrix!(E, 3, 3) matrix33(E = T)()const if(__traits(isFloating, E)){
-        return armos.math.Matrix!(E, 3, 3)(
-                [this[3]^^2.0+this[0]^^2.0-this[1]^^2.0-this[2]^^2.0, 2.0*(this[0]*this[1]-this[3]*this[2]),               2.0*(this[0]*this[2]+this[3]*this[1])              ],
-                [2.0*(this[0]*this[1]+this[3]*this[2]),               this[3]^^2.0-this[0]^^2.0+this[1]^^2.0-this[2]^^2.0, 2.0*(this[1]*this[2]-this[3]*this[0])              ],
-                [2.0*(this[0]*this[2]-this[3]*this[1]),               2.0*(this[1]*this[2]+this[3]*this[0]),               this[3]^^2.0-this[0]^^2.0-this[1]^^2.0+this[2]^^2.0]
-                );
+        return armos.math.Matrix!(E, 3, 3)([
+                [E(this[3]^^2.0+this[0]^^2.0-this[1]^^2.0-this[2]^^2.0), E(2.0*(this[0]*this[1]-this[3]*this[2])),               E(2.0*(this[0]*this[2]+this[3]*this[1]))              ],
+                [E(2.0*(this[0]*this[1]+this[3]*this[2])),               E(this[3]^^2.0-this[0]^^2.0+this[1]^^2.0-this[2]^^2.0), E(2.0*(this[1]*this[2]-this[3]*this[0]))              ],
+                [E(2.0*(this[0]*this[2]-this[3]*this[1])),               E(2.0*(this[1]*this[2]+this[3]*this[0])),               E(this[3]^^2.0-this[0]^^2.0-this[1]^^2.0+this[2]^^2.0)]
+                ]);
+    }
+    unittest{
+        auto q = Quaternion!(double).unit;
+        auto m = Matrix3d.array([
+                [1, 0, 0], 
+                [0, 1, 0], 
+                [0, 0, 1], 
+        ]);
+        assert(q.matrix33 == m);
     }
 
     /++
