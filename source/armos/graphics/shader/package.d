@@ -6,8 +6,10 @@ import colorize;
 import armos.math.vector;
 import armos.math.matrix;
 import armos.graphics;
+import armos.graphics.renderer:PrimitiveMode;
 import armos.graphics.shader.source;
 import armos.graphics.shader.utils;
+
 public import armos.graphics.shader.uniform;
 /++
 +/

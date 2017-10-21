@@ -9,6 +9,7 @@ import armos.graphics.shader.utils;
 
 import std.variant;
 import std.meta;
+
 alias GlArithmeticTypes = AliasSeq!(uint, int, float);
 alias GlVectorTypes     = AliasSeq!(uint[1], int[1], float[1],
                                     uint[2], int[2], float[2],
@@ -20,6 +21,7 @@ alias GlMatrixTypes     = AliasSeq!(float[2][2], float[3][3], float[4][4],
                                     float[3][4], float[4][3]);
 alias AcceptableUniformTypes = AliasSeq!(GlArithmeticTypes, GlVectorTypes, GlMatrixTypes);
 alias Uniform = Algebraic!(AcceptableUniformTypes);
+
 pragma(msg, __FILE__, "(", __LINE__, "): ",
        "TODO: build into material");
 
@@ -67,17 +69,6 @@ unittest{
 shader.setUniform("v", v);
 ----
 +/
-Shader uniform(V)(Shader shader, in string name, V v)
-if(isVector!(V) && V.dimention <= 4){
-    shader.uniform(name, v.array);
-    return shader;
-}
-unittest{
-    assert(__traits(compiles, (){
-        Shader shader;
-        shader.uniform("foo", Vector4f.zero);
-    }));
-}
 
 /++
     Set matrix to uniform.
@@ -91,17 +82,8 @@ unittest{
 shader.setUniform("m", m);
 ----
 +/
-Shader uniform(M)(Shader shader, in string name, M m)
-if(isMatrix!(M)){
-    shader.uniform(name, m.array!2);
-    return shader;
-}
-unittest{
-    assert(__traits(compiles, (){
-        Shader shader;
-        shader.uniform("foo", Matrix4f.identity);
-    }));
-}
+
+
 
 /++
     Set as an uniform.
@@ -114,13 +96,13 @@ unittest{
     shader.setUniform("v", a, b, c);
     ----
 +/
-Shader uniform(T)(Shader shader, in string name, T[] v...)if(isInherentingIn!(T, GlArithmeticTypes)){
+Shader uniform(A:T[N], T, size_t N)(Shader shader, in string name, A v)if(isInherentingIn!(T, GlArithmeticTypes)){
     if(shader.isLoaded){
         shader.begin;
         int location = shader.uniformLocation(name);
         if(location != -1){
             import std.conv:to;
-            mixin(glFunctionString!(T[]).array("glUniform"));
+            mixin(glFunctionString!(T[], N).name("glUniform") ~ "(location, 1, v.ptr);" );
         }
         shader.end;
     }
@@ -131,13 +113,6 @@ unittest{
     assert(__traits(compiles, (){
         Shader shader;
         shader.uniform("foo", 1f);
-    }));
-}
-
-unittest{
-    assert(__traits(compiles, (){
-        Shader shader;
-        shader.uniform("foo", [1f, 2f, 3f, 4f]);
     }));
 }
 
@@ -214,4 +189,66 @@ unittest{
         Texture texture;
         shader.uniformTexture("foo", texture, 0);
     }));
+}
+
+///
+template hasUniformImpl(T) {
+    enum bool hasUniformImpl = __traits(compiles, (){
+        T t;
+        Uniform u;
+        t.uniformImpl("uniformName", u);
+    });
+}//template hasUniformImpl
+
+T uniform(T)(T t, in string name, Uniform u)if(hasUniformImpl!T){
+    t.uniformImpl(name, u);
+    return t;
+}
+
+import std.meta:staticIndexOf;
+///
+T uniform(T, U)(T t, in string name, U v)if(hasUniformImpl!T && staticIndexOf!(U, AcceptableUniformTypes)!=-1)
+{
+    t.uniformImpl(name, Uniform(v));
+    return t;
+}
+
+T uniform(T, V)(T t, in string name, V v)
+if(isVector!(V) && V.dimention <= 4){
+    t.uniform(name, v.array);
+    return t;
+}
+
+T uniform(T, M)(T t, in string name, M m)
+if(isMatrix!(M)){
+    t.uniform(name, m.array!2);
+    return t;
+}
+
+///
+T uniform(T, E)(T t, in string name, E e)if(isInherentingIn!(E, GlArithmeticTypes)){
+    E[1] v  = [e];
+    uniform(t, name, v);
+    return t;
+}
+
+///
+T uniform(T, E)(T t, in string name, E e1, E e2)if(isInherentingIn!(E, GlArithmeticTypes)){
+    E[2] v  = [e1, e2];
+    uniform(t, name, v);
+    return t;
+}
+
+///
+T uniform(T, E)(T t, in string name, E e1, E e2, E e3)if(isInherentingIn!(E, GlArithmeticTypes)){
+    E[3] v  = [e1, e2, e3];
+    uniform(t, name, v);
+    return t;
+}
+
+///
+T uniform(T, E)(T t, in string name, E e1, E e2, E e3, E e4)if(isInherentingIn!(E, GlArithmeticTypes)){
+    E[4] v  = [e1, e2, e3, e4];
+    uniform(t, name, v);
+    return t;
 }

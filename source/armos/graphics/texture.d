@@ -3,6 +3,8 @@ module armos.graphics.texture;
 import derelict.opengl3.gl;
 import armos.math.vector;
 import armos.graphics;
+import armos.graphics.pixel:ColorFormat;
+import armos.graphics.bitmap:Bitmap;
 
 /++
     openGLのtextureを表すクラスです．

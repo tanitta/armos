@@ -22,21 +22,23 @@ class ToggleButton : Widget{
         /++
         +/
         override void draw(){
-            import armos.graphics:color,
-                                  drawRectangle;
-            color(_style.colors["background"]);
-            drawRectangle(0, 0, _style.width, _style.font.height*4);
-
-            _style.font.material.uniform("diffuse", _style.colors["font1"]);
-            _style.font.draw(_name, _style.font.width, 0);
-
-            if(*_v){
-                color(_style.colors["base2"]);
-            }else{
-                color(_style.colors["base1"]);
-            }
-
-            drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
+            pragma(msg, __FILE__, "(", __LINE__, "): ",
+                   "TODO: enable to draw");
+            // import armos.graphics:color,
+            //                       drawRectangle;
+            // color(_style.colors["background"]);
+            // drawRectangle(0, 0, _style.width, _style.font.height*4);
+            //
+            // _style.font.material.uniform("diffuse", _style.colors["font1"]);
+            // _style.font.draw(_name, _style.font.width, 0);
+            //
+            // if(*_v){
+            //     color(_style.colors["base2"]);
+            // }else{
+            //     color(_style.colors["base1"]);
+            // }
+            //
+            // drawRectangle(_style.font.width, _style.font.height, _style.font.width*2, _style.font.height*2);
         }
 
         /++

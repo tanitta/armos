@@ -1,7 +1,12 @@
 module armos.graphics.material;
 import armos.types;
 import armos.math;
-import armos.graphics;
+import armos.graphics.texture;
+import armos.graphics.shader;
+
+import armos.graphics.renderer;
+
+import armos.graphics.shader.uniform;
 
 /++
 材質を表すinterfaceです．
@@ -10,54 +15,45 @@ interface Material{
     public{
         ///
         Material begin();
-
+        
         ///
         Material end();
         
         ///
-        Material uniform(in string name, in int i);
+        Material uniformImpl(in string name, Uniform);
         
         ///
-        Material uniform(in string name, in float f);
+        Material texture(in string name, Texture tex);
 
         ///
-        Material uniform(in string name, in Color c);
-        
-        ///
-        Material uniform(in string name, in Vector2f v);
-        
-        ///
-        Material uniform(in string name, in Vector3f v);
-        
-        ///
-        Material uniform(in string name, in Vector4f v);
-        
-        ///
-        ref Vector4f uniform(in string name);
-        
-        ///
-        Material texture(in string name, armos.graphics.Texture tex);
+        Texture texture(in string name);
 
         ///
-        armos.graphics.Texture texture(in string name);
-
-        ///
-        armos.graphics.Shader shader();
+        Shader shader();
         
         ///
-        Material shader(armos.graphics.Shader s);
+        Material shader(Shader s);
         
         ///
         Material loadImage(in string pathInDataDir, in string name);
+
+        ///
+        Material sendToRenderer(Renderer);
     }//public
 
 }//interface Material
+
+Renderer material(Renderer renderer, Material material){
+    material.sendToRenderer(renderer);
+    return renderer;
+}
 
 ///
 mixin template MaterialImpl(){
     alias T = typeof(this);
     import armos.math;
     import armos.types:Color;
+    import armos.graphics.renderer;
     public{
         ///
         T begin(){
@@ -72,84 +68,53 @@ mixin template MaterialImpl(){
         }
         
         ///
-        T uniform(in string Name, in int v){
-            _uniformsI[Name] = v;
-            return this;
-        }
-        
-        ///
-        T uniform(in string Name, in float v){
-            _uniformsF[Name] = v;
-            return this;
-        }
-        
-        ///
-        T uniform(in string Name, in Vector2f v){
-            _uniformsV2f[Name] = v;
+        T uniformImpl(in string name, Uniform u){
+            _uniforms[name] = u;
             return this;
         }
 
         ///
-        T uniform(in string Name, in Vector3f v){
-            _uniformsV3f[Name] = v;
-            return this;
-        }
-        
-        ///
-        T uniform(in string Name, in Vector4f v){
-            _uniformsV4f[Name] = v;
-            return this;
-        }
-        
-        ///
-        T uniform(in string Name, in Color c){
-            import std.conv;
-            _uniformsV4f[Name] = Vector4f(c.r.to!float/c.limit, c.g.to!float/c.limit, c.b.to!float/c.limit, c.a.to!float/c.limit);
-            return this;
-        }
-
-        ///
-        ref Vector4f uniform(in string name){
-            return _uniformsV4f[name];
-        }
-
-        ///
-        T texture(in string name, armos.graphics.Texture tex){
+        T texture(in string name, Texture tex){
             _textures[name] = tex;
             return this;
         }
 
         ///
-        armos.graphics.Texture texture(in string name){return _textures[name];}
+        Texture texture(in string name){return _textures[name];}
 
         ///
-        armos.graphics.Shader shader(){
+        Shader shader(){
             return _shader;
         }
 
         ///
-        T shader(armos.graphics.Shader s){
+        T shader(Shader s){
             _shader = s;
             return this;
         }
 
         ///
         T loadImage(in string pathInDataDir, in string name){
-            auto image = new armos.graphics.Image();
+            import armos.graphics.image;
+            auto image = new Image();
             image.load(pathInDataDir);
             texture(name, image.texture);
             return this;
         }
     }//public
 
+    protected{
+        T sendToRenderer(Renderer renderer){
+            _uniforms.sendTo(_shader);
+            _textures.sendTo(_shader);
+            return this;
+        }
+    }
+
     private{
-        int[string] _uniformsI;
-        float[string] _uniformsF;
-        Vector2f[string] _uniformsV2f;
-        Vector3f[string] _uniformsV3f;
-        Vector4f[string] _uniformsV4f;
-        armos.graphics.Texture[string] _textures;
-        armos.graphics.Shader _shader;
+        Uniform[string] _uniforms;
+        Texture[string] _textures;
+        Shader _shader;
 
         ///
         T beginDefault(){
@@ -167,11 +132,7 @@ mixin template MaterialImpl(){
         }
 
         T sendUniformsToShader(){
-            _uniformsF.sendTo(_shader);
-            _uniformsI.sendTo(_shader);
-            _uniformsV2f.sendTo(_shader);
-            _uniformsV3f.sendTo(_shader);
-            _uniformsV4f.sendTo(_shader);
+            _uniforms.sendTo(_shader);
             _textures.sendTo(_shader);
             return this;
         }
@@ -179,7 +140,7 @@ mixin template MaterialImpl(){
    
 }
 
-void begin(armos.graphics.Texture[string] textures){
+void begin(Texture[string] textures){
     foreach (string key; textures.keys) {
         auto texture = textures[key];
         if(texture){
@@ -188,7 +149,7 @@ void begin(armos.graphics.Texture[string] textures){
     }
 }
 
-void end(armos.graphics.Texture[string] textures){
+void end(Texture[string] textures){
     foreach_reverse (string key; textures.keys) {
         auto texture = textures[key];
         if(texture){
@@ -197,12 +158,22 @@ void end(armos.graphics.Texture[string] textures){
     }
 }
 
-void sendTo(U:E[K], E, K)(U uniform, armos.graphics.Shader shader){
+void sendTo(U:E[K], E, K)(U uniform, Shader shader){
     foreach (int i, string key; uniform.keys) {
-        static if(is(E == armos.graphics.Texture)){
+        static if(is(E == Texture)){
             shader.uniformTexture(key, uniform[key], i);
         }else{
             shader.uniform(key, uniform[key]);
+        }
+    }
+}
+
+void sendTo(U:E[K], E, K)(U uniforms, Renderer renderer){
+    foreach (int i, string key; uniforms.keys) {
+        static if(is(E == Texture)){
+            renderer.texture(key, uniforms[key]);
+        }else{
+            renderer.uniform(key, uniforms[key]);
         }
     }
 }
@@ -301,6 +272,7 @@ class AutoReloadMaterial : Material{
     }
 }//class DefaultMaterial
 
+
 immutable string defaultVertexShaderSource = q{
 #version 330
 
@@ -342,7 +314,8 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 
 void main(void) {
-    fragColor = texture(tex0, outtexCoord0);
+    fragColor = texture(tex0, outtexCoord0)*diffuse;
+    // fragColor = diffuse;
     // fragColor = vec4(1, 1, 1, 1);
 }
 };

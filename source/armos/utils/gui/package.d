@@ -73,11 +73,11 @@ class Gui {
         +/
         void draw(){
             import armos.graphics.renderer;
-            pragma(msg, __FILE__, "(", __LINE__, "): ", "TODO: use material");
+            pragma(msg, __FILE__, "(", __LINE__, "): ", "TODO: enable to draw");
             // pushStyle;
             // blendMode(BlendMode.Alpha);
             // disableDepthTest;
-            isUsing(Capability.DepthTest, true);
+            // isUsing(Capability.DepthTest, true);
 
             int currentWidth = 0;
             foreach (list; _lists) {

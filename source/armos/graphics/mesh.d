@@ -1,7 +1,8 @@
 module armos.graphics.mesh;
+
 import armos.types;
 import armos.math;
-import armos.graphics;
+import armos.graphics.renderer;
 
 /++
     ポリゴンで構成された形状を表すclassです．
@@ -138,9 +139,10 @@ class Mesh {
             renderMode = 面，線，点のどれを描画するか指定します．
         +/
         Mesh draw(in PolyRenderMode renderMode){
-            // TODO
+            pragma(msg, __FILE__, "(", __LINE__, "): ",
+                   "TODO: enable to draw");
             // currentRenderer.draw(this, renderMode, false, false, false);
-            currentRenderer.render();
+            // currentRenderer.render();
             return this;
         };
 

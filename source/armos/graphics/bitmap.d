@@ -1,6 +1,7 @@
 module armos.graphics.bitmap;
 import armos.math;
 import armos.graphics;
+import armos.graphics.pixel:Pixel, ColorFormat;
 
 /++
 Bitmapデータを表すstructです．
@@ -14,7 +15,7 @@ struct Bitmap(T){
             size = Bitmapのサイズです．
             colorType = Bitmapのカラーフォーマットを指定します．
         +/
-        Bitmap allocate(armos.math.Vector2i size, armos.graphics.ColorFormat colorType){
+        Bitmap allocate(armos.math.Vector2i size, ColorFormat colorType){
             _colorFormat = colorType;
             allocate(size[0], size[1], colorType);
             return this;
@@ -27,7 +28,7 @@ struct Bitmap(T){
             height = Bitmapの縦幅です．
             colorType = Bitmapのカラーフォーマットを指定します．
         +/
-        Bitmap allocate(int width, int height, armos.graphics.ColorFormat colorType){
+        Bitmap allocate(int width, int height, ColorFormat colorType){
             import std.array:appender;
             _size[0] = width;
             _size[1] = height;
@@ -67,7 +68,7 @@ struct Bitmap(T){
 
             positionで指定された座標のpixelを返します．
         +/
-        armos.graphics.Pixel!(T) pixel(in int x, in int y){
+        Pixel!(T) pixel(in int x, in int y){
             return _data[x+y*_size[0]];
         };
 
@@ -76,7 +77,7 @@ struct Bitmap(T){
 
             positionで指定された座標のpixelにpixelを設定します．
         +/
-        Bitmap pixel(in int x, in int y, armos.graphics.Pixel!(T) pixel){
+        Bitmap pixel(in int x, in int y, Pixel!(T) pixel){
             _data[x+y*_size[0]].element(pixel);
             return this;
         };
@@ -131,7 +132,7 @@ struct Bitmap(T){
 
             一次元配列からBitmapを生成します
         +/
-        Bitmap setFromAlignedPixels(T* pixels, int width, int height, armos.graphics.ColorFormat format){
+        Bitmap setFromAlignedPixels(T* pixels, int width, int height, ColorFormat format){
             allocate(width, height, format);
             auto size = width * height;
             auto numChannels = armos.graphics.numColorFormatElements(format);
@@ -168,7 +169,7 @@ struct Bitmap(T){
 
     private{
         armos.math.Vector2i _size;
-        armos.graphics.Pixel!(T)[] _data;
-        armos.graphics.ColorFormat _colorFormat;
+        Pixel!(T)[] _data;
+        ColorFormat _colorFormat;
     }
 }

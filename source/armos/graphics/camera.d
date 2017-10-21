@@ -152,40 +152,6 @@ mixin template CameraImpl(){
             _farDist = f;
             return this;
         }
-
-        // /++
-        //     Cameraで表示する処理を開始します．
-        // +/
-        // T begin(){
-        //     _viewMatrix = lookAtViewMatrix(
-        //             _position, 
-        //             _target, 
-        //             _up
-        //             );
-        //
-        //     _projectionMatrix = perspectiveMatrix(
-        //             _fov,
-        //             windowAspect,
-        //             _nearDist,
-        //             _farDist
-        //             );
-        //
-        //     pushViewMatrix;
-        //     loadViewMatrix(_viewMatrix);
-        //     pushProjectionMatrix;
-        //     loadProjectionMatrix(_projectionMatrix);
-        //     multProjectionMatrix(scalingMatrix!float(1f, -1f, 1f));
-        //     return this;
-        // }
-        //
-        // /++
-        //     Cameraで表示する処理を終了します．
-        // +/
-        // T end(){
-        //     popViewMatrix;
-        //     popProjectionMatrix;
-        //     return this;
-        // }
     }
 
     private{

@@ -229,17 +229,18 @@ class AssimpModelLoader {
             
             aiColor4D color;
 
+            import std.conv:to;
             //diffuse
             aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, 0, 0, &color);
-            mat.uniform("diffuse", fromAiColor(color));
+            mat.uniform("diffuse", fromAiColor(color).to!Vector4f);
 
             //speculer
             aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, 0, 0, &color);
-            mat.uniform("speculer", fromAiColor(color));
+            mat.uniform("speculer", fromAiColor(color).to!Vector4f);
 
             //ambient
             aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, 0, 0, &color);
-            mat.uniform("ambient", fromAiColor(color));
+            mat.uniform("ambient", fromAiColor(color).to!Vector4f);
 
             return mat;
         }

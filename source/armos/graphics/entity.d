@@ -7,15 +7,12 @@ import armos.graphics;
 class Entity {
     public{
         ///
-        Entity draw(in PolyRenderMode renderMode, Renderer renderer = null){
+        Entity draw(in PolyRenderMode renderMode, ){
             _material.begin;
-            //TODO
+            pragma(msg, __FILE__, "(", __LINE__, "): ",
+                   "TODO: enable to draw");
             // armos.graphics.currentRenderer.draw(_mesh, renderMode, true, true, true);
-            if(renderer){
-                renderer.render();
-            }else{
-                armos.graphics.currentRenderer.render();
-            }
+                // renderer.render();
             _material.end;
             return this;
         };

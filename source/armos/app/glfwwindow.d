@@ -57,6 +57,7 @@ class GLFWWindow : Window{
             writeVersion;
 
 
+            import armos.graphics.defaultrenderer:DefaultRenderer;
             _renderer = new DefaultRenderer;
             _renderer.target.resize(frameBufferSize);
         }
@@ -224,7 +225,7 @@ class GLFWWindow : Window{
             import armos.graphics;
             auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
             mainLoop.select(currentGLFWWindow);
-            if(currentRenderer.target)currentRenderer.target.resize(Vector2i(width, height));
+            // if(currentRenderer.target)currentRenderer.target.resize(Vector2i(width, height));
             put(currentGLFWWindow._subjects.windowResize, WindowResizeEvent(cast(int)width, cast(int)height));
         }
 
