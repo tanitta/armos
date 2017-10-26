@@ -1,16 +1,17 @@
-module armos.graphics.shader;
+module armos.graphics.gl.shader;
 
 import derelict.opengl3.gl;
 import colorize;
 
 import armos.math.vector;
 import armos.math.matrix;
-import armos.graphics;
-import armos.graphics.renderer:PrimitiveMode;
-import armos.graphics.shader.source;
-import armos.graphics.shader.utils;
+import armos.graphics.gl.primitivemode;
+import armos.graphics.gl.shadersource;
+import armos.graphics.gl.shaderutils;
+import armos.graphics.gl.context;
+import armos.app.runner:currentContext;
 
-public import armos.graphics.shader.uniform;
+public import armos.graphics.gl.uniform;
 /++
 +/
 class Shader {
@@ -193,10 +194,7 @@ class Shader {
             Begin adapted process
         +/
         Shader begin(){
-            int savedID;
-            glGetIntegerv(GL_CURRENT_PROGRAM, &savedID);
-            _savedIDs ~= savedID;
-            glUseProgram(_programID);
+            currentContext.pushShader(this);
             return this;
         }
 
@@ -204,14 +202,7 @@ class Shader {
             End adapted process
         +/
         Shader end(){
-            // TODO
-            glUseProgram(_savedIDs[$-1]);
-            if (_savedIDs.length == 0) {
-                assert(0, "stack is empty");
-            }else{
-                import std.range;
-                _savedIDs.popBack;
-            }
+            currentContext.popShader();
             return this;
         }
 
@@ -404,6 +395,13 @@ class Shader {
         ///
         Shader geometryOutput(in PrimitiveMode p){_geometryOutput.primitiveMode = p;return this;}
     }//public
+
+    package{
+        Shader bind(){
+            glUseProgram(_programID);
+            return this;
+        }
+    }
 
     private{
         int _programID;

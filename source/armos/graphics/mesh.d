@@ -3,6 +3,8 @@ module armos.graphics.mesh;
 import armos.types;
 import armos.math;
 import armos.graphics.renderer;
+import armos.graphics.gl.primitivemode;
+import armos.graphics.gl.polyrendermode;
 
 /++
     ポリゴンで構成された形状を表すclassです．

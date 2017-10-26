@@ -1,19 +1,19 @@
 module armos.graphics.defaultrenderer;
 
-// import armos.graphics.renderer;
 import armos.graphics.renderer:Renderer,
                                uniform, 
-                               backgroundColor, 
-                               Capability, 
-                               PolyRenderMode,
-                               BlendMode,
-                               PrimitiveMode;
-import armos.graphics.vao:Vao;
-import armos.graphics.shader.uniform:Uniform, uniform, uniformTexture;
-import armos.graphics.shader:Shader;
-import armos.graphics.fbo:Fbo;
-import armos.graphics.buffer:Buffer;
-import armos.graphics.texture:Texture;
+                               backgroundColor;
+import armos.graphics.gl.context;
+import armos.graphics.gl.capability;
+import armos.graphics.gl.polyrendermode;
+import armos.graphics.gl.primitivemode;
+import armos.graphics.gl.blendmode;
+import armos.graphics.gl.vao:Vao;
+import armos.graphics.gl.uniform:Uniform, uniform, uniformTexture;
+import armos.graphics.gl.shader:Shader;
+import armos.graphics.gl.fbo:Fbo;
+import armos.graphics.gl.buffer:Buffer;
+import armos.graphics.gl.texture:Texture;
 
 class DefaultRenderer: Renderer{
     import armos.math:Matrix4f;
@@ -163,7 +163,6 @@ class DefaultRenderer: Renderer{
                 }
             }
 
-            import std.stdio;
             _renderer.polyRenderMode(_polyRenderMode)
                      .blendMode(_blendMode)
                      .isBackgrounding(_isBackgrounding)

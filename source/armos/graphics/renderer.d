@@ -2,45 +2,21 @@ module armos.graphics.renderer;
 
 import std.math;
 import derelict.opengl3.gl;
+
+import armos.graphics.gl.vao;
+import armos.graphics.gl.fbo;
+import armos.graphics.gl.buffer;
+import armos.graphics.gl.texture;
+import armos.graphics.gl.shader;
+import armos.graphics.gl.polyrendermode;
+import armos.graphics.gl.primitivemode;
+import armos.graphics.gl.blendmode;
+import armos.graphics.gl.capability;
 import armos.app;
-import armos.graphics.vao;
-import armos.graphics.fbo;
-import armos.graphics.buffer;
-import armos.graphics.texture;
-import armos.graphics.shader;
 import armos.math;
 import armos.types;
 
-/// ポリゴンのレンダリング方法を表します
-enum PolyRenderMode {
-    Points    = GL_POINTS, /// 頂点のみ描画します．
-    WireFrame = GL_LINE,   /// 線のみ描画します．
-    Fill      = GL_FILL,   /// 面を塗りつぶして描画します．
-}
 
-/// ポリゴンのプリミティブを指定します．
-enum PrimitiveMode{
-    Triangles     = GL_TRIANGLES,
-    TriangleStrip = GL_TRIANGLE_STRIP,
-    TriangleFan   = GL_TRIANGLE_FAN,
-    Lines         = GL_LINES,
-    LineStrip     = GL_LINE_STRIP,
-    LineLoop      = GL_LINE_LOOP,
-    Points        = GL_POINTS,
-}
-
-///
-enum BlendMode{
-    Disable,
-    Alpha,
-    Add,
-    Screen,
-    Subtract
-}
-
-enum Capability {
-    DepthTest = GL_DEPTH_TEST, 
-}//enum GlCapability
 
 pragma(msg, __FILE__, "(", __LINE__, "): ",
        "TODO: check VAO support");
@@ -157,19 +133,16 @@ void drawRectangle(Vector)(in Vector position, in Vector size){
     drawRectangle(position[0], position[1], size[0], size[1]);
 }
 
-/++
-+/
-void popMatrix(){
-    // currentRenderer.popMatrix();
-    popModelMatrix;
+///
+void pushMatrix(){
+    currentContext.pushModelMatrix;
 }
 
-/++
-+/
-void pushMatrix(){
-    // currentRenderer.pushMatrix();
-    pushModelMatrix;
+///
+void popMatrix(){
+    currentContext.popModelMatrix;
 }
+
 
 ///
 M translationMatrix(T, M = armos.math.Matrix!(T, 4, 4))(in T x, in T y, in T z)
@@ -219,7 +192,7 @@ unittest{
 +/
 void translate(T)(in T x, in T y, in T z)if(__traits(isArithmetic, T)){
     import std.conv;
-    multModelMatrix(translationMatrix(x.to!float, y.to!float, z.to!float));
+    currentContext.multModelMatrix(translationMatrix(x.to!float, y.to!float, z.to!float));
 }
 
 ///
@@ -282,20 +255,20 @@ unittest{
 
 /++
 +/
-void scale(float x, float y, float z){
-    multModelMatrix(scalingMatrix(x, y, z));
+void scale(in float x, in float y, in float z){
+    currentContext.multModelMatrix(scalingMatrix(x, y, z));
 }
 
 /++
 +/
-void scale(float s){
-    multModelMatrix(scalingMatrix(s, s, s));
+void scale(in float s){
+    scale(s, s, s);
 }
 
 /++
 +/
-void scale(armos.math.Vector3f vec){
-    multModelMatrix(scalingMatrix(vec[0], vec[1], vec[2]));
+void scale(in armos.math.Vector3f vec){
+    scale(vec[0], vec[1], vec[2]);
 }
 
 ///
@@ -363,14 +336,13 @@ unittest{
 /++
 +/
 void rotate(T)(in T rad, in T vec_x, in T vec_y, in T vec_z)if(__traits(isArithmetic, T)){
-    multModelMatrix(rotationMatrix!float(rad, vec_x, vec_y, vec_z));
+    currentContext.multModelMatrix(rotationMatrix!float(rad, vec_x, vec_y, vec_z));
 }
 
 /++
 +/
 void rotate(T, V)(in T rad, V vec)if(__traits(isArithmetic, T) && armos.math.isVector!(V)){
-    
-    multModelMatrix(rotationMatrix(rad, vec[0], vec[1], vec[2]));
+    rotate(rad, vec[0], vec[1], vec[2], vec[3]);
 }
 
 // /++
@@ -392,55 +364,56 @@ void rotate(T, V)(in T rad, V vec)if(__traits(isArithmetic, T) && armos.math.isV
 // }
 
 ///
-mixin armos.graphics.matrixstack.MatrixStackFunction!("Model");
-
-///
-mixin armos.graphics.matrixstack.MatrixStackFunction!("View");
-
-///
-mixin armos.graphics.matrixstack.MatrixStackFunction!("Projection");
-
-///
-mixin armos.graphics.matrixstack.MatrixStackFunction!("Texture");
+// mixin armos.graphics.matrixstack.MatrixStackFunction!("Model");
+//
+// ///
+// mixin armos.graphics.matrixstack.MatrixStackFunction!("View");
+//
+// ///
+// mixin armos.graphics.matrixstack.MatrixStackFunction!("Projection");
+//
+// ///
+// mixin armos.graphics.matrixstack.MatrixStackFunction!("Texture");
 
 // armos.math.Matrix4f modelViewProjectionMatrix(){
 //     return projectionMatrix * viewMatrix * modelMatrix;
 // }
 
+import armos.graphics.gl.context;
 /++
 +/
 private struct ScopedMatrixStack{
     public{
-        this(armos.graphics.MatrixStack matrixStack, in armos.math.Matrix4f matrix){
-            _matrixStack = matrixStack;
-            _matrixStack.push();
-            _matrixStack.mult(matrix);
+        this(Stack!Matrix4f stack, in armos.math.Matrix4f matrix){
+            _stack = stack;
+            _stack.push(matrix);
+            _stack.mult(matrix);
         }
         
         ~this(){
-            _matrixStack.pop;
+            _stack.pop;
         }
     }//public
 
     private{
-        armos.graphics.MatrixStack _matrixStack;
+        Stack!Matrix4f _stack;
     }//private
 }//struct ScopedMatrixStack
 
 ScopedMatrixStack scopedModelMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
-    return ScopedMatrixStack(currentScene.modelMatrixStack, matrix);
+    return ScopedMatrixStack(currentContext.matrixStack(MatrixType.Model), matrix);
 }
 
 ScopedMatrixStack scopedViewMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
-    return ScopedMatrixStack(currentScene.viewMatrixStack, matrix);
+    return ScopedMatrixStack(currentContext.matrixStack(MatrixType.View), matrix);
 }
 
 ScopedMatrixStack scopedProjectionMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
-    return ScopedMatrixStack(currentScene.projectionMatrixStack, matrix);
+    return ScopedMatrixStack(currentContext.matrixStack(MatrixType.Projection), matrix);
 }
 
 ScopedMatrixStack scopedTextureMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
-    return ScopedMatrixStack(currentScene.textureMatrixStack, matrix);
+    return ScopedMatrixStack(currentContext.matrixStack(MatrixType.Texture), matrix);
 }
 
 // ///

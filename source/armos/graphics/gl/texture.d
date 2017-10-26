@@ -1,4 +1,4 @@
-module armos.graphics.texture;
+module armos.graphics.gl.texture;
 
 import derelict.opengl3.gl;
 import armos.math.vector;

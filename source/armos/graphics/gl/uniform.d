@@ -1,11 +1,11 @@
-module armos.graphics.shader.uniform;
+module armos.graphics.gl.uniform;
 
 import derelict.opengl3.gl;
 
-import armos.graphics.shader;
+import armos.graphics.gl.shader;
 import armos.math.vector;
 import armos.math.matrix;
-import armos.graphics.shader.utils;
+import armos.graphics.gl.shaderutils;
 
 import std.variant;
 import std.meta;
@@ -170,7 +170,7 @@ unittest{
 //     return shader;
 // }
 
-import armos.graphics.texture;
+import armos.graphics.gl.texture;
 /++
 +/
 Shader uniformTexture(Shader shader, in string name, Texture texture, int textureLocation){

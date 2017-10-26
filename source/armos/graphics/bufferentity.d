@@ -1,11 +1,11 @@
 module armos.graphics.bufferentity;
 
-import armos.graphics;
+import armos.graphics.gl.buffer;
+import armos.graphics.gl.shader;
 import armos.graphics.mesh;
 import armos.graphics.material;
-import armos.graphics.buffer;
 import armos.graphics.buffermesh;
-import armos.graphics.shader;
+import armos.graphics.bufferbundle;
 
 /++
 +/

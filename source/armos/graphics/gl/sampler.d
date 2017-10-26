@@ -1,4 +1,4 @@
-module armos.graphics.sampler;
+module armos.graphics.gl.sampler;
 
 import derelict.opengl3.gl;
 

@@ -1,8 +1,9 @@
 module armos.graphics.image;
 
 // import armos.graphics;
+import armos.graphics.gl.texture;
+import armos.graphics.gl.primitivemode;
 import armos.graphics.bitmap;
-import armos.graphics.texture;
 import armos.graphics.material;
 import armos.graphics.mesh;
 import armos.graphics.renderer;
@@ -65,7 +66,7 @@ class Image {
                 isInitializedFreeImage = true;
             }
             _material = (new DefaultMaterial);
-            import armos.graphics.shader.uniform;
+            import armos.graphics.gl.uniform;
             _material.uniform("diffuse", Vector4f(1, 1, 1, 1));
         }
 

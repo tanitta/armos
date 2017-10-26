@@ -1,4 +1,4 @@
-module armos.graphics.shader.source;
+module armos.graphics.gl.shadersource;
 
 /++
 +/

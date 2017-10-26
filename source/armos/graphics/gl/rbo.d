@@ -1,4 +1,4 @@
-module armos.graphics.rbo;
+module armos.graphics.gl.rbo;
 import armos.graphics;
 import derelict.opengl3.gl;
 import armos.math.vector;

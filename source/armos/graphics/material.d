@@ -1,12 +1,12 @@
 module armos.graphics.material;
 import armos.types;
 import armos.math;
-import armos.graphics.texture;
-import armos.graphics.shader;
+import armos.graphics.gl.texture;
+import armos.graphics.gl.shader;
 
 import armos.graphics.renderer;
 
-import armos.graphics.shader.uniform;
+import armos.graphics.gl.uniform;
 
 /++
 材質を表すinterfaceです．

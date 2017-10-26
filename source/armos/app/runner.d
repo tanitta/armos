@@ -1,12 +1,14 @@
 module armos.app.runner;
 
+import std.algorithm;
+import std.array;
+
 import armos.app;
 import armos.utils;
 import armos.events;
 import armos.graphics;
+import armos.app.environment;
 
-import std.algorithm;
-import std.array;
 
 /++
 armosのアプリケーションの更新を行うclassです．
@@ -26,10 +28,9 @@ class Runner {
             Params:
             app = 更新されるアプリケーションです．
         +/
-        Runner register(Application app, Window window){
-            window.initEvents(app);
-            import armos.graphics.scene;
-            _appsCollection.add(window, app, new Scene);
+        Runner register(Environment env){
+            env.window.initEvents(env.application);
+            _envCollection.add(env);
             return this;
         };
 
@@ -69,7 +70,7 @@ class Runner {
         out(window){
             assert(window);
         }body{
-            return _currentBundle.window;
+            return _currentEnvironment.window;
         }
 
         CoreObservables currentObservables(){
@@ -78,7 +79,7 @@ class Runner {
 
         ///
         Runner loop(){
-            foreach (winAndBundle; _appsCollection.byPair) {
+            foreach (winAndBundle; _envCollection.byPair) {
                 auto window = winAndBundle[0];
                 auto app    = winAndBundle[1].application;
                 select(window);
@@ -91,10 +92,10 @@ class Runner {
                 _fpsCounter.adjust();
                 _fpsCounter.newFrame();
                 import std.functional;
-                isLoop = _appsCollection.keys.length > 0;
+                isLoop = _envCollection.keys.length > 0;
             }
 
-            foreach (winAndBundle; _appsCollection.byPair) {
+            foreach (winAndBundle; _envCollection.byPair) {
                 auto window = winAndBundle[0];
                 auto app    = winAndBundle[1].application;
                 select(window);
@@ -104,20 +105,20 @@ class Runner {
 
         void select(Window window){
             window.select;
-            _currentBundle = _appsCollection[window];
+            _currentEnvironment = _envCollection[window];
         }
     }//public
 
     private{
-        AppCollection _appsCollection;
-        ApplicationBundle _currentBundle;
+        Environment[Window] _envCollection;
+        Environment _currentEnvironment;
 
         FpsCounter _fpsCounter;
 
 
 
         void loopOnce(){
-            foreach (winAndBundle; _appsCollection.byPair) {
+            foreach (winAndBundle; _envCollection.byPair) {
                 auto window = winAndBundle[0];
                 auto app    = winAndBundle[1].application;
                 select(window);
@@ -126,10 +127,10 @@ class Runner {
             }
 
             import std.stdio;
-            _appsCollection.keys.each!(w => w.pollEvents());
+            _envCollection.keys.each!(w => w.pollEvents());
             
             Window[] shouldRemoves;
-            foreach (winAndBundle; _appsCollection.byPair) {
+            foreach (winAndBundle; _envCollection.byPair) {
                 auto window = winAndBundle[0];
                 auto app    = winAndBundle[1].application;
 
@@ -138,7 +139,7 @@ class Runner {
                     shouldRemoves ~= window;
                 }
             }
-            shouldRemoves.each!(w => _appsCollection.remove(w));
+            shouldRemoves.each!(w => _envCollection.remove(w));
         }
 
     }//private
@@ -156,8 +157,7 @@ Runner mainLoop() @property {
     WindowType = 立ち上げるWindowの型を指定します．省略可能です．
     app = 立ち上げるアプリケーションを指定します．
 +/
-void run(WindowType = GLFWWindow)(Application app, WindowConfig config = null){
-    // mainLoop_ = new Runner;
+void run(Env = GLFWEnvironment)(Application app, WindowConfig config = null){
     if(!config){
         config = new WindowConfig();
         with(config){
@@ -167,9 +167,18 @@ void run(WindowType = GLFWWindow)(Application app, WindowConfig config = null){
         }
     }
 
-    Window window = new WindowType(config);
-    mainLoop.register(app, window);
-    mainLoop.loop;
+    Environment env = (new Env)
+                     .application(app)
+                     .windowConfig(config)
+                     .build;
+
+    mainLoop.register(env)
+            .loop;
+}
+
+void run(Environment env){
+    mainLoop.register(env)
+            .loop;
 }
 
 /++
@@ -202,10 +211,10 @@ ulong currentFrames(){
     return mainLoop._fpsCounter.currentFrames();
 }
 
-Scene currentScene()
-out(scene){
-    assert(scene);
+Context currentContext()
+out(context){
+    assert(context);
 }body{
-    return mainLoop._currentBundle.scene;
+    return mainLoop._currentEnvironment.context;
 }
 

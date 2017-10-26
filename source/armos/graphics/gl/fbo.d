@@ -1,10 +1,10 @@
-module armos.graphics.fbo;
+module armos.graphics.gl.fbo;
 
 import derelict.opengl3.gl;
-import armos.graphics.texture;
+import armos.graphics.gl.texture;
 import armos.graphics.material;
 import armos.graphics.mesh;
-import armos.graphics.shader;
+import armos.graphics.gl.shader;
 import armos.types;
 import armos.math.vector;
 import armos.utils.scoped;

@@ -1,4 +1,4 @@
-module armos.graphics.shader.utils;
+module armos.graphics.gl.shaderutils;
 
 template glFunctionString(T, size_t DimC = 1, size_t DimR = 1){
     import std.conv;

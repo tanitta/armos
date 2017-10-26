@@ -6,12 +6,12 @@ import armos.graphics.renderer:Renderer,
                                PolyRenderMode,
                                BlendMode,
                                PrimitiveMode;
-import armos.graphics.vao:Vao;
-import armos.graphics.shader.uniform:Uniform, uniform, uniformTexture;
-import armos.graphics.shader:Shader;
-import armos.graphics.fbo:Fbo;
-import armos.graphics.buffer:Buffer;
-import armos.graphics.texture:Texture;
+import armos.graphics.gl.vao:Vao;
+import armos.graphics.gl.uniform:Uniform, uniform, uniformTexture;
+import armos.graphics.gl.shader:Shader;
+import armos.graphics.gl.fbo:Fbo;
+import armos.graphics.gl.buffer:Buffer;
+import armos.graphics.gl.texture:Texture;
 import armos.utils.scoped: scoped;
 
 class EmbedddedRenderer: Renderer{

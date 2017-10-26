@@ -1,7 +1,7 @@
-module armos.graphics.buffer;
+module armos.graphics.gl.buffer;
 
 import derelict.opengl3.gl;
-import armos.graphics.vao;
+import armos.graphics.gl.vao;
 import armos.math;
 import std.variant;
 

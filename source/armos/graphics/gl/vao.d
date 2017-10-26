@@ -1,6 +1,6 @@
-module armos.graphics.vao;
+module armos.graphics.gl.vao;
 
-import armos.graphics.buffer;
+import armos.graphics.gl.buffer;
 import derelict.opengl3.gl;
 
 /++

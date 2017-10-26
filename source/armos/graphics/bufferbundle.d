@@ -1,8 +1,8 @@
 module armos.graphics.bufferbundle;
 
-import armos.graphics.vao;
+import armos.graphics.gl.vao;
 import armos.graphics.mesh;
-import armos.graphics.buffer;
+import armos.graphics.gl.buffer;
 import armos.math;
 
 /++

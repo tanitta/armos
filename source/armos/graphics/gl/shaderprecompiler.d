@@ -1,4 +1,4 @@
-module armos.graphics.shader.precompiler;
+module armos.graphics.shader.gl.precompiler;
 
 // /++
 // +/
@@ -10,7 +10,7 @@ module armos.graphics.shader.precompiler;
 //     }//private
 // }//class PreCpmpiler
 
-import armos.graphics.shader.source;
+import armos.graphics.gl.shadersource;
 
 auto precompile(in Source entryPoint, in Source[] searchable){
     Source expanded = new Source(entryPoint.rawText, entryPoint.name);
