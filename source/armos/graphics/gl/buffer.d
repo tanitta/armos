@@ -4,6 +4,7 @@ import derelict.opengl3.gl;
 import armos.graphics.gl.vao;
 import armos.math;
 import std.variant;
+import armos.graphics.gl.context;
 
 
 /++
@@ -44,6 +45,12 @@ class Buffer {
                 _savedIDs.popBack;
             }
         }
+
+        Buffer bind(){
+            glBindBuffer(_type, _id);
+            return this;
+        }
+
 
         ///
         Buffer array(T)(in T[] array, in size_t dimention = 1,

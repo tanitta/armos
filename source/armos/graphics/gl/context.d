@@ -9,6 +9,7 @@ import armos.graphics.gl.vao;
 import armos.graphics.gl.viewport;
 import armos.graphics.gl.capability;
 import armos.graphics.gl.polyrendermode;
+import armos.graphics.gl.texture:TextureTarget;
 
 ///
 enum MatrixType {
@@ -22,13 +23,14 @@ enum MatrixType {
 class Context {
     public{
         this(){
-            _modelMatrixStack      = new Stack!Matrix4f;
-            _viewMatrixStack       = new Stack!Matrix4f;
-            _projectionMatrixStack = new Stack!Matrix4f;
-            _textureMatrixStack    = new Stack!Matrix4f;
+            _matrixStacks[MatrixType.Model]      = new Stack!Matrix4f;
+            _matrixStacks[MatrixType.View]       = new Stack!Matrix4f;
+            _matrixStacks[MatrixType.Projection] = new Stack!Matrix4f;
+            _matrixStacks[MatrixType.Texture]    = new Stack!Matrix4f;
 
             _shaderStack           = new Stack!Shader;
-            // _bufferStacks          = new Stack!Buffer;
+            _bufferStacks[BufferType.ElementArray]     = new Stack!Buffer;
+            _bufferStacks[BufferType.Array]            = new Stack!Buffer;
             _vaoStack              = new Stack!Vao;
 
             _readFramebufferStack  = new Stack!Fbo;
@@ -36,32 +38,12 @@ class Context {
         }
 
         Stack!Matrix4f matrixStack(in MatrixType matrixType){
-            Stack!Matrix4f s;
-            switch (matrixType) {
-                case MatrixType.Model:
-                    s = _modelMatrixStack;
-                    break;
-                case MatrixType.View:
-                    s = _viewMatrixStack;
-                    break;
-                case MatrixType.Projection:
-                    s = _projectionMatrixStack;
-                    break;
-                case MatrixType.Texture:
-                    s = _textureMatrixStack;
-                    break;
-                default:
-                    assert(false);
-            }
-            return s;
+            return _matrixStacks[matrixType];
         }
     }//publii
 
     private{
-        Stack!Matrix4f _modelMatrixStack;
-        Stack!Matrix4f _viewMatrixStack;
-        Stack!Matrix4f _projectionMatrixStack;
-        Stack!Matrix4f _textureMatrixStack;
+        Stack!Matrix4f[MatrixType] _matrixStacks;
 
         Stack!Shader             _shaderStack;
         Stack!Buffer[BufferType] _bufferStacks;
@@ -79,9 +61,9 @@ class Context {
 }//class Context
 
 unittest{
-    assert(__traits(compiles, (){
-        Context context;
-    }));
+    // assert(__traits(compiles, (){
+    //     Context context;
+    // }));
 }
 
 ///
@@ -231,19 +213,6 @@ Context popShader(Context c){
 
 import derelict.opengl3.gl;
 ///
-enum TextureTarget{
-    Dim1= GL_TEXTURE_1D,
-    Dim2= GL_TEXTURE_2D,
-    Dim3= GL_TEXTURE_3D,
-    Buffer = GL_TEXTURE_BUFFER,
-    Dim1Array = GL_TEXTURE_1D_ARRAY,
-    Dim2Array = GL_TEXTURE_2D_ARRAY,
-    Dim3Array = GL_TEXTURE_RECTANGLE,
-    CubeMap      = GL_TEXTURE_CUBE_MAP,
-    CubeMapArray = GL_TEXTURE_CUBE_MAP_ARRAY,
-    Dim2Multisample      = GL_TEXTURE_2D_MULTISAMPLE,
-    Dim2MultisampleArray = GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
-}
 
 alias TextureUnit = Texture[TextureTarget];
 

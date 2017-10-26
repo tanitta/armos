@@ -26,15 +26,16 @@ class GLFWEnvironment: Environment{
         }
 
         ///
-        GLFWEnvironment shareContextWith(GLFWEnvironment otherEnv){
-            otherEnv._windowContext = _window.context;
-            otherEnv._context = _context;
+        GLFWEnvironment sharedContextFrom(GLFWEnvironment otherEnv){
+            _windowContext = otherEnv._window.context;
+            _context       = otherEnv.context;
             return this;
         }
 
         ///
         Environment build(){
             _window = new GLFWWindow(_windowConfig, _windowContext);
+            if(!_context)_context = new Context;
             return this;
         }
 
@@ -51,7 +52,7 @@ class GLFWEnvironment: Environment{
     private{
         Application _application;
         GLFWWindow _window;
-        Context     _context = new Context;
+        Context     _context;
         GLFWwindow* _windowContext;
         WindowConfig _windowConfig;
     }//private

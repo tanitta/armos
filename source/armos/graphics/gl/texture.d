@@ -316,3 +316,17 @@ enum TextureWrap{
     Clamp  = GL_CLAMP,
     Repeat = GL_REPEAT,
 }
+
+enum TextureTarget{
+    Dim1 = GL_TEXTURE_1D,
+    Dim2 = GL_TEXTURE_2D,
+    Dim3 = GL_TEXTURE_3D,
+    Buffer = GL_TEXTURE_BUFFER,
+    Dim1Array = GL_TEXTURE_1D_ARRAY,
+    Dim2Array = GL_TEXTURE_2D_ARRAY,
+    Dim3Array = GL_TEXTURE_RECTANGLE,
+    CubeMap      = GL_TEXTURE_CUBE_MAP,
+    CubeMapArray = GL_TEXTURE_CUBE_MAP_ARRAY,
+    Dim2Multisample      = GL_TEXTURE_2D_MULTISAMPLE,
+    Dim2MultisampleArray = GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
+}
