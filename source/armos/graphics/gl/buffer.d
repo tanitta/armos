@@ -27,29 +27,20 @@ class Buffer {
 
         /++
         +/
-        void begin(){
-            int savedID;
-            glGetIntegerv(bindingEnum(_type), &savedID);
-            _savedIDs ~= savedID;
-            glBindBuffer(_type, _id);
+        Buffer begin(){
+            import armos.app.runner:currentContext;
+            currentContext.pushBuffer(_type, this);
+            return this;
         }
 
         /++
         +/
-        void end(){
-            import std.range;
-            glBindBuffer(_type, _savedIDs[$-1]);
-            if (_savedIDs.length == 0) {
-                assert(0, "stack is empty");
-            }else{
-                _savedIDs.popBack;
-            }
-        }
-
-        Buffer bind(){
-            glBindBuffer(_type, _id);
+        Buffer end(){
+            import armos.app.runner:currentContext;
+            currentContext.popBuffer(_type);
             return this;
         }
+
 
 
         ///
@@ -100,6 +91,22 @@ class Buffer {
         ///
         BufferType type()const{return _type;}
     }//public
+
+    package{
+        Buffer bind(){
+            Buffer.bind(_type, this);
+            return this;
+        }
+
+        static Buffer bind(BufferType type, Buffer buffer){
+            if(!buffer){
+                glBindBuffer(type, 0);
+                return buffer;
+            }                
+            glBindBuffer(type, buffer._id);
+            return buffer;
+        }
+    }
 
     private{
         int _id;

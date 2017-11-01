@@ -68,18 +68,18 @@ unittest{
 
 ///
 Matrix4f matrix(Context c, in MatrixType type){
-    return c.matrixStack(type).current;
+    return c.matrixStack(type).top;
 }
 
 ///
 Context matrix(Context c, in MatrixType type, in Matrix4f m){
-    c.matrixStack(type).current = m;
+    c.matrixStack(type).top = m;
     return c;
 }
 
 ///
 Context pushMatrix(Context c, in MatrixType type){
-    c.matrixStack(type).push(c.matrixStack(type).current);
+    c.matrixStack(type).push(c.matrixStack(type).top);
     return c;
 }
 
@@ -91,7 +91,7 @@ Context popMatrix(Context c, in MatrixType type){
 
 ///
 Context multMatrix(Context c, in MatrixType type, in Matrix4f m){
-    c.matrixStack(type).current = c.matrixStack(type).current * m;
+    c.matrixStack(type).top = c.matrixStack(type).top * m;
     return c;
 }
 
@@ -176,7 +176,7 @@ Context multProjectionMatrix(Context c, in Matrix4f m){
 
 Shader shader(Context c){
     if(c._shaderStack.empty) return null;
-    return c._shaderStack.current;
+    return c._shaderStack.top;
 }
 
 ///
@@ -184,8 +184,7 @@ Context pushShader(Context c, Shader shader){
     auto prevShader = c.shader;
     c._shaderStack.push(shader);
     if(!c.shader){
-        import derelict.opengl3.gl;
-        glUseProgram(0);
+        Shader.bind(null);
         return c;
     }
     if(c.shader != prevShader){
@@ -196,12 +195,10 @@ Context pushShader(Context c, Shader shader){
 
 ///
 Context popShader(Context c){
-    assert(!c._shaderStack.empty, "stack is empty");
     auto prevShader = c.shader;
     c._shaderStack.pop();
     if(c._shaderStack.empty){
-        import derelict.opengl3.gl;
-        glUseProgram(0);
+        Shader.bind(null);
         return c;
     }
     if(c.shader != prevShader){
@@ -210,6 +207,42 @@ Context popShader(Context c){
     }
     return c;
 }
+
+Buffer buffer(Context c, in BufferType bufferType){
+    import std.algorithm:canFind;
+    if(!c._bufferStacks.keys.canFind(bufferType)) return null;
+    if(c._bufferStacks[bufferType].empty) return null;
+    return c._bufferStacks[bufferType].top;
+}
+
+Context pushBuffer(Context c, in BufferType bufferType, Buffer buffer){
+    auto prevBuffer = c.buffer(bufferType);
+    c._bufferStacks[bufferType].push(buffer);
+    if(!c.buffer(bufferType)){
+        Buffer.bind(bufferType, null);
+        return c;
+    }
+    if(c.buffer(bufferType) != prevBuffer){
+        c.buffer(bufferType).bind;
+        return c;
+    }
+    return c;
+}
+
+Context popBuffer(Context c, in BufferType bufferType){
+    auto prevBuffer = c.buffer(bufferType);
+    c._bufferStacks[bufferType].pop();
+    if(c._bufferStacks[bufferType].empty){
+        Buffer.bind(bufferType, null);
+        return c;
+    }
+    if(c.buffer(bufferType) != prevBuffer){
+        c.buffer(bufferType).bind;
+        return c;
+    }
+    return c;
+}
+
 
 import derelict.opengl3.gl;
 ///
@@ -220,11 +253,11 @@ alias TextureUnit = Texture[TextureTarget];
 +/
 class Stack(T){
     public{
-        ref const(T) current()const{
+        ref const(T) top()const{
             return _stack[$-1];
         }
 
-        ref T current(){
+        ref T top(){
             return _stack[$-1];
         }
         
@@ -235,6 +268,7 @@ class Stack(T){
         }
         
         Stack!T pop(){
+            assert(!empty, "stack is empty");
             import std.array;
             _stack.popBack;
             return this;
@@ -259,14 +293,14 @@ unittest{
     auto t = new Stack!int;
     import std.stdio;
     t.push(1);
-    assert(t.current == 1);
+    assert(t.top == 1);
     t.push(2);
-    assert(t.current == 2);
+    assert(t.top == 2);
     t.pop();
-    assert(t.current == 1);
+    assert(t.top == 1);
 }
 
 Stack!Matrix4f mult(Stack!Matrix4f stack, in Matrix4f m){
-    stack.current = stack.current * m;
+    stack.top = stack.top * m;
     return stack;
 }
