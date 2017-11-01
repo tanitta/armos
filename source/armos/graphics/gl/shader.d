@@ -398,8 +398,16 @@ class Shader {
 
     package{
         Shader bind(){
-            glUseProgram(_programID);
-            return this;
+            return Shader.bind(this);
+        }
+
+        static Shader bind(Shader shader){
+            if(!shader){
+                glUseProgram(0);
+                return shader;
+            }
+            glUseProgram(shader._programID);
+            return shader;
         }
     }
 
