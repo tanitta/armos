@@ -10,14 +10,7 @@ import armos.graphics.gl.viewport;
 import armos.graphics.gl.capability;
 import armos.graphics.gl.polyrendermode;
 import armos.graphics.gl.texture:TextureTarget;
-
-///
-enum MatrixType {
-    Model,
-    View,
-    Projection,
-    Texture
-}//enum MatrixType
+import armos.graphics.gl.stack;
 
 ///
 class Context {
@@ -243,64 +236,53 @@ Context popBuffer(Context c, in BufferType bufferType){
     return c;
 }
 
+private Context bindVao(Context c){
+    return c;
+}
 
-import derelict.opengl3.gl;
 ///
+Vao vao(Context c){
+    if(c._vaoStack.empty)return null;
+    return c._vaoStack.top;
+}
 
+///
+Context pushVao(Context c, Vao vao){
+    auto prevVao = c.vao;
+    c._vaoStack.push(vao);
+    if(!c.vao){
+        Vao.bind(null);
+        return c;
+    }
+    if(c.vao != prevVao){
+        c.vao.bind;
+    }
+    return c;
+}
+
+///
+Context popVao(Context c){
+    auto prevVao = c.vao;
+    c._vaoStack.pop();
+    if(c._vaoStack.empty){
+        Vao.bind(null);
+        return c;
+    }
+    if(c.vao != prevVao){
+        c.vao.bind;
+        return c;
+    }
+    return c;
+}
+
+///
 alias TextureUnit = Texture[TextureTarget];
 
-/++
-+/
-class Stack(T){
-    public{
-        ref const(T) top()const{
-            return _stack[$-1];
-        }
+///
+enum MatrixType {
+    Model,
+    View,
+    Projection,
+    Texture
+}//enum MatrixType
 
-        ref T top(){
-            return _stack[$-1];
-        }
-        
-        
-        Stack!T push(T elem){
-            _stack ~= elem;
-            return this;
-        }
-        
-        Stack!T pop(){
-            assert(!empty, "stack is empty");
-            import std.array;
-            _stack.popBack;
-            return this;
-        }
-        
-        Stack!T load(ref T elem){
-            _stack[$-1] = elem;
-            return this;
-        }
-        
-        bool empty()const{
-            return _stack.length == 0;
-        }
-    }//public
-
-    private{
-        T[] _stack;
-    }//private
-}//class MatrixStack
-
-unittest{
-    auto t = new Stack!int;
-    import std.stdio;
-    t.push(1);
-    assert(t.top == 1);
-    t.push(2);
-    assert(t.top == 2);
-    t.pop();
-    assert(t.top == 1);
-}
-
-Stack!Matrix4f mult(Stack!Matrix4f stack, in Matrix4f m){
-    stack.top = stack.top * m;
-    return stack;
-}

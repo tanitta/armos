@@ -379,9 +379,9 @@ void rotate(T, V)(in T rad, V vec)if(__traits(isArithmetic, T) && armos.math.isV
 //     return projectionMatrix * viewMatrix * modelMatrix;
 // }
 
-import armos.graphics.gl.context;
-/++
-+/
+import armos.graphics.gl.stack;
+
+///
 private struct ScopedMatrixStack{
     public{
         this(Stack!Matrix4f stack, in armos.math.Matrix4f matrix){
@@ -400,18 +400,24 @@ private struct ScopedMatrixStack{
     }//private
 }//struct ScopedMatrixStack
 
+import armos.graphics.gl.context;
+
+///
 ScopedMatrixStack scopedModelMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
     return ScopedMatrixStack(currentContext.matrixStack(MatrixType.Model), matrix);
 }
 
+///
 ScopedMatrixStack scopedViewMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
     return ScopedMatrixStack(currentContext.matrixStack(MatrixType.View), matrix);
 }
 
+///
 ScopedMatrixStack scopedProjectionMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
     return ScopedMatrixStack(currentContext.matrixStack(MatrixType.Projection), matrix);
 }
 
+///
 ScopedMatrixStack scopedTextureMatrix(in armos.math.Matrix4f matrix = armos.math.Matrix4f.identity){
     return ScopedMatrixStack(currentContext.matrixStack(MatrixType.Texture), matrix);
 }
