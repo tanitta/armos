@@ -49,13 +49,10 @@ class Buffer {
                         in BufferUsageNature    nature = BufferUsageNature.Draw)
         if(__traits(isArithmetic, T)){
             if(array.length == 0)return this;
-
             _array     = Algebraic!(const(int)[], const(float)[], const(double)[])(array);
             _dimention = dimention;
             _freq      = freq;
             _nature    = nature;
-
-            sendToBindedVao;
             return this;
         }
         
@@ -74,13 +71,13 @@ class Buffer {
         }
 
         ///
-        Buffer sendToBindedVao(){
+        Buffer sendToBindedVao(in int attributeLocation){
             if(_array.type == typeid(const(float)[])){
-                sendToBindedVao!(const(float));
+                sendToBindedVao!(const(float))(attributeLocation);
             }else if(_array.type == typeid(const(double)[])){
-                sendToBindedVao!(const(double));
+                sendToBindedVao!(const(double))(attributeLocation);
             }else if(_array.type == typeid(const(int)[])){
-                sendToBindedVao!(const(int));
+                sendToBindedVao!(const(int))(attributeLocation);
             }
             return this;
         }
@@ -118,7 +115,7 @@ class Buffer {
         BufferUsageNature _nature;
         Algebraic!(const(int)[], const(float)[], const(double)[]) _array;
 
-        void sendToBindedVao(T)(){
+        void sendToBindedVao(T)(in int attributeLocation){
             auto arr = _array.get!(T[]);
             begin;
             immutable currentSize = arr.length * arr[0].sizeof;
@@ -139,7 +136,7 @@ class Buffer {
                 }else static if(is(T == const(int))){
                     GLenum glDataType = GL_INT;
                 }
-                glVertexAttribPointer(0,
+                glVertexAttribPointer(attributeLocation,
                                       _dimention.to!int,
                                       glDataType,
                                       GL_FALSE,

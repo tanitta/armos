@@ -103,24 +103,16 @@ class EmbedddedRenderer: Renderer{
                 auto c = _backgroundColor.content;
                 glClearColor(c[0], c[1], c[2], c[3]);
             } 
-
             if(_isBackgrounding){
                 glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             }
-
             if(_isUsingUserVao){
-                auto vaoScope = scoped(_vao);
-                sendAttribsToShaderWithBindedVao();
-                renderWithBindedVao();
+                renderVao(_vao);
             }else{
-                auto vaoScope = scoped(_defaultVao);
-                sendBuffersToBindedVao;
-                sendAttribsToShaderWithBindedVao();
-                renderWithBindedVao();
+                registerBuffersToDefaultVao;
+                renderVao(_defaultVao);
             }
-
             turnOffupdateFlagOfEachCachable;
-
             return this;
         }
 
@@ -175,31 +167,31 @@ class EmbedddedRenderer: Renderer{
             _backgroundColor.hasChanged = false;
             return this;
         }
-        // binding requirement
-        // shader : no
-        // vao    : yes 
-        This sendAttribsToShaderWithBindedVao(){
+        
+        This registerBuffersToDefaultVao(){
             import std.array:byPair;
-            foreach (pair; _attributes.byPair){
-                auto name   = pair[0];
-                auto buffer = pair[1].content;
-                buffer.begin;
-                _shader.attr(name);
-                buffer.end;
-            }
+            import std.algorithm:each;
+            _attributes.byPair.each!((p){
+                pragma(msg, __FILE__, "(", __LINE__, "): ",
+                       "TODO: use cachables");
+                _defaultVao.registerBuffer(p[0], p[1].content, _shader);
+            });
+            _defaultVao.registerBuffer(_indices.content);
             return this;
         }
 
         // binding requirement
         // shader : no 
         // vao    : yes 
-        This renderWithBindedVao(){
+        This renderVao(Vao vao){
             import std.array:byPair;
             import std.algorithm:each;
 
             assert(_indices.content);
 
-            const shaderScope= scoped(_shader);
+            auto vaoScope = scoped(vao);
+
+            const shaderScope = scoped(_shader);
             _uniforms.byPair.each!(u => _shader.uniform(u[0], u[1].content));
 
             const texturesScope = scoped(Textures(_textures));
@@ -212,26 +204,14 @@ class EmbedddedRenderer: Renderer{
             }
 
             const iboScope       = scoped(_indices.content);
-            _shader.enableAttribs();
-                int elements;
-                import derelict.opengl3.gl;
-                glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
-                import std.conv;
-                immutable int size = (elements/GLuint.sizeof).to!int;
-                glDrawElements(_primitiveMode, size, GL_UNSIGNED_INT, null);
-            _shader.disableAttribs();
-
-            return this;
-        }
-
-        This sendBuffersToBindedVao(){
-            import std.algorithm;
-            _attributes.values.map!(cachable => cachable.content)
-                              .each!(b => b.sendToBindedVao);
-            return this;
-        }
-
-        This sendBuffersToDefaultVao(){
+            int elements;
+            import derelict.opengl3.gl;
+            glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
+            import std.conv;
+            immutable int size = (elements/GLuint.sizeof).to!int;
+            vao.isUsingAttributes(true);
+            glDrawElements(_primitiveMode, size, GL_UNSIGNED_INT, null);
+            vao.isUsingAttributes(false);
             return this;
         }
     }//private

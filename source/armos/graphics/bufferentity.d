@@ -42,11 +42,14 @@ class BufferEntity {
             return this;
         }
 
-        BufferEntity sendBuffersToBindedVao(){
+        BufferEntity sendBuffersToBindedVao()in{
+            assert(_material);
+            assert(_material.shader);
+        }body{
             import std.algorithm;
             _bufferBundle.attrs.keys.each!((key){
-                    _bufferBundle.attr(key).sendToBindedVao;
-                    });
+                _bufferBundle.attr(key).sendToBindedVao(_material.shader.attrLocation(key));
+            });
             return this;
         }
         

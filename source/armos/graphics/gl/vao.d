@@ -3,6 +3,7 @@ module armos.graphics.gl.vao;
 import derelict.opengl3.gl;
 
 import armos.graphics.gl.buffer;
+import armos.graphics.gl.shader;
 import armos.graphics.gl.stack;
 
 /++
@@ -38,11 +39,70 @@ class Vao {
             return this;
         }
 
-        Buffer buffer(in BufferType bufferType){
-            pragma(msg, __FILE__, "(", __LINE__, "): ",
-                   "TODO: impl");
-            return null;
+        ///
+        Vao registerBuffer(in string attributeName, Buffer buffer, in Shader shader){
+            registerBuffer(shader.attrLocation(attributeName), buffer);
+            return this;
         }
+
+        ///
+        Vao registerBuffer(in int attributeLocation, Buffer buffer){
+            if(buffer.type == BufferType.ElementArray){
+                _ibo = buffer;
+            }else{
+                _vertexBuffers[attributeLocation] = buffer;
+            }
+            begin;
+            isUsingAttribute(attributeLocation, true);
+            buffer.sendToBindedVao(attributeLocation);
+            isUsingAttribute(attributeLocation, false);
+            end;
+            return this;
+        }
+
+        ///
+        Vao registerBuffer(Buffer buffer)in{
+            assert(buffer.type == BufferType.ElementArray);
+        }body{
+            _ibo = buffer;
+            begin;
+            buffer.sendToBindedVao(0);
+            end;
+            return this;
+        }
+
+        ///
+        Vao isUsingAttribute(in int attrLocation, in bool b){
+            begin;
+            isUsingAttributeWithoutBinding(attrLocation, b);
+            end;
+            return this;
+        }
+
+        ///
+        Vao isUsingAttributes(in bool b){
+            begin;
+            import std.algorithm;
+            _vertexBuffers.keys.each!((attrLocation){
+                isUsingAttributeWithoutBinding(attrLocation, b);
+            });
+            end;
+            return this;
+        }
+
+        ///
+        Vao isUsingAttributeWithoutBinding(in int attrLocation, in bool b)in{
+            import std.algorithm;
+            assert(_vertexBuffers.keys.canFind(attrLocation), "No registration exists.");
+        }body{
+            if(b){
+                glEnableVertexAttribArray(attrLocation);
+            }else{
+                glDisableVertexAttribArray(attrLocation);
+            }
+            return this;
+        }
+
     }//public
 
     package{
@@ -64,6 +124,7 @@ class Vao {
         int _id;
         int[] _savedIDs;
 
-        Stack!Buffer[BufferType] _bufferStacks;
+        Buffer[int] _vertexBuffers;
+        Buffer _ibo;
     }//private
 }//class Vao
