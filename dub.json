@@ -17,8 +17,8 @@
         "derelict-portmidi": "~>1.0.0-beta",
         "colorize":          "~>1.0.5",
         "fswatch":           "~>0.2.0",
-        "dub":               "~>1.4.0",
-        "rx":                "~>0.6.0"
+        "dub":               "~>1.6.0",
+        "rx":                "0.6.0"
     }, 
     "copyFiles-windows-x86": [
         "libs/FreeImage/lib/win32/FreeImage.dll",
