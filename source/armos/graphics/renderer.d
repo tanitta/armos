@@ -32,7 +32,7 @@ interface Renderer {
         This polyRenderMode(PolyRenderMode mode);
         This capability(Capability cap, bool b);
         This blendMode(BlendMode blendMode);
-        This isBackgrounding(in bool b);
+        This fillBackground();
         This target(Fbo);
         This shader(Shader);
         This uniformImpl(in string name, Uniform u);
@@ -41,6 +41,7 @@ interface Renderer {
         //output
         Fbo  target();
 
+        This setup();
         This render();
         This renderer(Renderer);
     }//public

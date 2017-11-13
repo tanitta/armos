@@ -17,12 +17,11 @@ import armos.utils.scoped: scoped;
 class EmbedddedRenderer: Renderer{
     import derelict.opengl3.gl;
     public{
-        this(){
+        ///
+        This setup(){
             _defaultVao = new Vao;
+            return this;
         }
-
-        //inputs
-        // // This scene(Scene);
 
         ///
         This vao(Vao vao){
@@ -57,8 +56,9 @@ class EmbedddedRenderer: Renderer{
         }
 
         ///
-        This isBackgrounding(in bool b){
-            _isBackgrounding = b;
+        This fillBackground(){
+            const fboScope = scoped(_target);
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             return this;
         }
 
@@ -99,13 +99,6 @@ class EmbedddedRenderer: Renderer{
 
         ///
         This render(){
-            if(_backgroundColor.hasChanged){
-                auto c = _backgroundColor.content;
-                glClearColor(c[0], c[1], c[2], c[3]);
-            } 
-            if(_isBackgrounding){
-                glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            }
             if(_isUsingUserVao){
                 renderVao(_vao);
             }else{
@@ -133,6 +126,10 @@ class EmbedddedRenderer: Renderer{
         ///
         This backgroundColorImpl(in float r, in float g, in float b, in float a){
             _backgroundColor.updateCachable([r, g, b, a]);
+            if(_backgroundColor.hasChanged){
+                auto c = _backgroundColor.content;
+                glClearColor(c[0], c[1], c[2], c[3]);
+            } 
             return this;
         }
     }//public
@@ -148,7 +145,6 @@ class EmbedddedRenderer: Renderer{
         Cachable!BlendMode        _blendMode;
         Cachable!(float[4])       _backgroundColor;
 
-        bool _isBackgrounding;
         Shader _shader;
         Vao _vao;
         Vao _defaultVao;
@@ -209,9 +205,11 @@ class EmbedddedRenderer: Renderer{
             glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
             import std.conv;
             immutable int size = (elements/GLuint.sizeof).to!int;
+            if(_target)_target.begin;
             vao.isUsingAttributes(true);
             glDrawElements(_primitiveMode, size, GL_UNSIGNED_INT, null);
             vao.isUsingAttributes(false);
+            if(_target)_target.end;
             return this;
         }
     }//private

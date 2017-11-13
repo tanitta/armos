@@ -3,7 +3,6 @@ module armos.app.window;
 import armos.events;
 import armos.math;
 import armos.app;
-import armos.graphics.renderer;
 
 /++
 armosで用いるWindowsの雛形となるinterfaceです．新たにWindowを実装する際はこのinterfaceを継承することでrunnerから実行できます．
@@ -84,9 +83,6 @@ interface Window{
 
         ///
         CoreObservables observables();
-
-        ///
-        Renderer renderer();
     }//public
 }
 

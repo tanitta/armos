@@ -19,7 +19,9 @@ class DefaultRenderer: Renderer{
     import armos.math:Matrix4f;
     public{
         import armos.utils.scoped: scoped;
-        this(){
+
+        ///
+        This setup(){
             import armos.math:Vector2i;
             _target = new Fbo(Vector2i(256, 256));
 
@@ -32,7 +34,6 @@ class DefaultRenderer: Renderer{
             _shader.log.writeln;
             _defaultVao = new Vao;
             _primitiveMode = PrimitiveMode.Triangles;
-            _isBackgrounding = true;
             _backgroundColor = [0.1, 0.1, 0.1, 1.0];
             this.diffuse = [1.0f, 1.0f, 1.0f, 1.0f];
             setupBuildinUniforms();
@@ -45,8 +46,9 @@ class DefaultRenderer: Renderer{
                          .setAllPixels(2, 255)
                          .setAllPixels(3, 255);
             _textures["tex0"] = (new Texture).allocate(bitmap);
+            this.fillBackground;
+            return this;
         }
-
         //inputs
         // // This scene(Scene);
 
@@ -83,8 +85,10 @@ class DefaultRenderer: Renderer{
         }
 
         ///
-        This isBackgrounding(in bool b){
-            _isBackgrounding = b;
+        This fillBackground(){
+            _renderer.target(_target)
+                     .backgroundColor(_backgroundColor)
+                     .fillBackground;
             return this;
         }
 
@@ -165,8 +169,6 @@ class DefaultRenderer: Renderer{
 
             _renderer.polyRenderMode(_polyRenderMode)
                      .blendMode(_blendMode)
-                     .isBackgrounding(_isBackgrounding)
-                     .backgroundColor(_backgroundColor)
                      .target(_target)
                      .shader(_shader)
                      .render();
@@ -197,7 +199,6 @@ class DefaultRenderer: Renderer{
         BlendMode        _blendMode;
         float[4]         _backgroundColor;
 
-        bool _isBackgrounding;
         Shader _shader;
         Vao _vao;
         Vao _defaultVao;

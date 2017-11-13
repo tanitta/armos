@@ -8,6 +8,7 @@ import armos.graphics.gl.context;
 import armos.app.window;
 import armos.app.windowconfig;
 import armos.app.glfwwindow;
+import armos.graphics.renderer;
 
 ///
 class GLFWEnvironment: Environment{
@@ -16,6 +17,12 @@ class GLFWEnvironment: Environment{
         ///
         GLFWEnvironment application(Application app){
             _application = app;
+            return this;
+        }
+
+        ///
+        GLFWEnvironment renderer(Renderer renderer){
+            _renderer = renderer;
             return this;
         }
 
@@ -33,9 +40,13 @@ class GLFWEnvironment: Environment{
         }
 
         ///
-        Environment build(){
+        GLFWEnvironment build(){
             _window = new GLFWWindow(_windowConfig, _windowContext);
             if(!_context)_context = new Context;
+
+            import rx;
+            _window.observables.setup.doSubscribe!(event => renderer.setup());
+            _window.observables.windowResize.doSubscribe!(event => renderer.target.resize(_window.frameBufferSize));
             return this;
         }
 
@@ -47,11 +58,15 @@ class GLFWEnvironment: Environment{
 
         ///
         Context context(){return _context;}
+
+        ///
+        Renderer renderer(){return _renderer;}
     }//public
 
     private{
         Application _application;
-        GLFWWindow _window;
+        GLFWWindow  _window;
+        Renderer    _renderer;
         Context     _context;
         GLFWwindow* _windowContext;
         WindowConfig _windowConfig;

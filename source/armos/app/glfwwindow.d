@@ -5,7 +5,6 @@ import armos.events;
 import derelict.opengl3.gl;
 import armos.app.window;
 import armos.math;
-import armos.graphics.renderer;
 /++
     GLFWを利用したWindowです．armosではデフォルトでこのclassを元にWindowが生成されます．
 +/
@@ -55,11 +54,6 @@ class GLFWWindow : Window{
             glfwSwapBuffers(_window);
             
             writeVersion;
-
-
-            import armos.graphics.defaultrenderer:DefaultRenderer;
-            _renderer = new DefaultRenderer;
-            _renderer.target.resize(frameBufferSize);
         }
 
         ~this(){
@@ -96,7 +90,6 @@ class GLFWWindow : Window{
         }
 
         void setup(){
-            // _renderer.setup();
             put(_subjects.setup, SetupEvent());
         }
 
@@ -109,13 +102,7 @@ class GLFWWindow : Window{
         }
 
         void draw(){
-            // if(_renderer){
-            //     _renderer.startRender();
-            // }
             put(_subjects.draw, DrawEvent());
-            // if(_renderer){
-            //     _renderer.finishRender();
-            // }
             glfwSwapBuffers(_window);
         }
 
@@ -171,8 +158,6 @@ class GLFWWindow : Window{
             return _subjects.to!CoreObservables;
         }
 
-        Renderer renderer(){return _renderer;}
-
         GLFWwindow* context(){
             return _window;
         }
@@ -181,7 +166,6 @@ class GLFWWindow : Window{
     private{
         GLFWwindow* _window;
         CoreSubjects _subjects;
-        Renderer _renderer;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
             auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];

@@ -3,11 +3,14 @@ static import ar = armos;
 class TestApp : ar.app.BaseApp{
     this(){}
 
-    override void setup(){}
+    override void setup(){
+    }
 
     override void update(){}
 
-    override void draw(){}
+    override void draw(){
+        ar.app.currentRenderer.fillBackground;
+    }
 
     override void keyPressed(ar.utils.KeyType key){}
 

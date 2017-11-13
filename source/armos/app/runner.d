@@ -62,7 +62,7 @@ class Runner {
         Renderer renderer()out(renderer){
             assert(renderer);
         }body{
-            return currentWindow.renderer;
+            return _currentEnvironment.renderer;
         }
         
         ///
@@ -166,12 +166,14 @@ void run(Env = GLFWEnvironment)(Application app, WindowConfig config = null){
             height = 480;
         }
     }
-
+    import armos.graphics.defaultrenderer:DefaultRenderer;
+    import armos.graphics.embeddedrenderer:EmbedddedRenderer;
+    Renderer r = (new DefaultRenderer).renderer(new EmbedddedRenderer);
     Environment env = (new Env)
                      .application(app)
                      .windowConfig(config)
+                     .renderer(r)
                      .build;
-
     mainLoop.register(env)
             .loop;
 }
@@ -218,3 +220,9 @@ out(context){
     return mainLoop._currentEnvironment.context;
 }
 
+Renderer currentRenderer()
+out(renderer){
+    assert(renderer);
+}body{
+    return mainLoop._currentEnvironment.renderer;
+}
