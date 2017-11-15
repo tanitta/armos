@@ -5,6 +5,7 @@ import armos.events;
 import derelict.opengl3.gl;
 import armos.app.window;
 import armos.math;
+import armos.graphics.gl.fbo:Fbo;
 /++
     GLFWを利用したWindowです．armosではデフォルトでこのclassを元にWindowが生成されます．
 +/
@@ -47,8 +48,13 @@ class GLFWWindow : Window{
                 DerelictGL.reload();
             }
 
+
             initGLFWEvents();
             _subjects = new CoreSubjects;
+
+            _screen = new Fbo(frameBufferSize);
+            import rx;
+            _subjects.windowResize.doSubscribe!(event => _screen.resize(this.frameBufferSize));
 
             glfwSwapInterval(0);
             glfwSwapBuffers(_window);
@@ -103,6 +109,7 @@ class GLFWWindow : Window{
 
         void draw(){
             put(_subjects.draw, DrawEvent());
+            // draw screen fbo
             glfwSwapBuffers(_window);
         }
 
@@ -133,6 +140,11 @@ class GLFWWindow : Window{
         ///
         float pixelScreenCoordScale()const{
             return frameBufferSize.x / size.x;
+        };
+
+        ///
+        Fbo screen(){
+            return _screen;
         };
 
         void initEvents(Application app){
@@ -166,6 +178,7 @@ class GLFWWindow : Window{
     private{
         GLFWwindow* _window;
         CoreSubjects _subjects;
+        Fbo _screen;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
             auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];

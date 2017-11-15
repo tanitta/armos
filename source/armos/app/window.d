@@ -3,6 +3,7 @@ module armos.app.window;
 import armos.events;
 import armos.math;
 import armos.app;
+import armos.graphics.gl.fbo:Fbo;
 
 /++
 armosで用いるWindowsの雛形となるinterfaceです．新たにWindowを実装する際はこのinterfaceを継承することでrunnerから実行できます．
@@ -79,7 +80,11 @@ interface Window{
         /// VerticalSync
         void verticalSync(in bool);
 
+        ///
         float pixelScreenCoordScale()const;
+
+        ///
+        Fbo screen();
 
         ///
         CoreObservables observables();
@@ -124,8 +129,10 @@ mixin template BaseWindow(){
 /++
     現在のWindowを返す関数です．
 +/
-Window currentWindow(){
-    return mainLoop.currentWindow;
+Window currentWindow()out(window){
+    assert(window);
+}body{
+    return mainLoop.currentEnvironment.window;
 }
 
 /++

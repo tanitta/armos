@@ -9,9 +9,9 @@ import armos.graphics.gl.primitivemode;
 import armos.graphics.gl.shadersource;
 import armos.graphics.gl.shaderutils;
 import armos.graphics.gl.context;
-import armos.app.runner:currentContext;
 
 public import armos.graphics.gl.uniform;
+
 /++
 +/
 class Shader {

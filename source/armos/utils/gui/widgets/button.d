@@ -11,9 +11,7 @@ class Button : Widget{
             _name = name;
 
             import armos.events;
-            import armos.app;
             import rx;
-
             currentObservables.mouseReleased.doSubscribe!(event => this.mouseReleased(event));
             currentObservables.mousePressed.doSubscribe!(event => this.mousePressed(event));
 

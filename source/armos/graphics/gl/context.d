@@ -53,6 +53,14 @@ class Context {
     }
 }//class Context
 
+Context currentContext()
+out(context){
+    assert(context);
+}body{
+    import armos.app.runner:mainLoop;
+    return mainLoop.currentEnvironment.context;
+}
+
 unittest{
     // assert(__traits(compiles, (){
     //     Context context;

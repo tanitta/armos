@@ -43,10 +43,9 @@ class GLFWEnvironment: Environment{
         GLFWEnvironment build(){
             _window = new GLFWWindow(_windowConfig, _windowContext);
             if(!_context)_context = new Context;
-
             import rx;
             _window.observables.setup.doSubscribe!(event => renderer.setup());
-            _window.observables.windowResize.doSubscribe!(event => renderer.target.resize(_window.frameBufferSize));
+            _renderer.target = _window.screen;
             return this;
         }
 

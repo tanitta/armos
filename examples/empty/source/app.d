@@ -9,7 +9,7 @@ class TestApp : ar.app.BaseApp{
     override void update(){}
 
     override void draw(){
-        ar.app.currentRenderer.fillBackground;
+        ar.graphics.currentRenderer.fillBackground;
     }
 
     override void keyPressed(ar.utils.KeyType key){}

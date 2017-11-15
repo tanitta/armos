@@ -25,24 +25,31 @@ unittest{
 +/
 struct Scoped(T){
     public{
-        this(T t){
+        this(T t, in bool isActive = true){
             _t = t;
-            _t.begin;
+            _isActive = isActive;
+            if(_isActive) _t.begin;
         }
+
         ~this(){
-            _t.end;
+            if(_isActive) _t.end;
         }
     }//public
 
     private{
         T _t;
+        bool _isActive;
     }//private
 }//struct ScopedShader
 
 Scoped!T scoped(T)(T t)if(isScopable!T && (is(T == interface)) || is(T == class)){
-    return Scoped!T(t);
+    return Scoped!T(t, t !is null);
 }
 
-Scoped!T scoped(T)(T t)if(isScopable!T && (is(T == struct))){
-    return Scoped!T(t);
+Scoped!T scoped(T)(T t, in bool isActive)if(isScopable!T && (is(T == interface)) || is(T == class)){
+    return Scoped!T(t, isActive);
+}
+
+Scoped!T scoped(T)(T t, in bool isActive = true)if(isScopable!T && (is(T == struct))){
+    return Scoped!T(t, isActive);
 }

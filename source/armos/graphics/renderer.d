@@ -48,6 +48,13 @@ interface Renderer {
 
 }//interface Renderer
 
+Renderer currentRenderer()
+out(renderer){
+    assert(renderer);
+}body{
+    import armos.app.runner;
+    return mainLoop.currentEnvironment.renderer;
+}
 
 ///
 Renderer viewMatrix(Renderer r, Matrix4f m){

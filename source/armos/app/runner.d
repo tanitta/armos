@@ -59,23 +59,12 @@ class Runner {
         }
         
         ///
-        Renderer renderer()out(renderer){
-            assert(renderer);
+        Environment currentEnvironment()out(env){
+            assert(env);
         }body{
-            return _currentEnvironment.renderer;
-        }
-        
-        ///
-        Window currentWindow()
-        out(window){
-            assert(window);
-        }body{
-            return _currentEnvironment.window;
+            return _currentEnvironment;
         }
 
-        CoreObservables currentObservables(){
-            return currentWindow.observables;
-        }
 
         ///
         Runner loop(){
@@ -201,28 +190,10 @@ double targetFps(){
     return mainLoop.targetFps;
 }
 
-CoreObservables currentObservables(){
-    return mainLoop.currentObservables;
-}
-
 double currentFps(){
     return mainLoop.currentFps;
 }
 
 ulong currentFrames(){
     return mainLoop._fpsCounter.currentFrames();
-}
-
-Context currentContext()
-out(context){
-    assert(context);
-}body{
-    return mainLoop._currentEnvironment.context;
-}
-
-Renderer currentRenderer()
-out(renderer){
-    assert(renderer);
-}body{
-    return mainLoop._currentEnvironment.renderer;
 }

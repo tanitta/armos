@@ -16,15 +16,13 @@ import armos.graphics.gl.buffer:Buffer;
 import armos.graphics.gl.texture:Texture;
 
 class DefaultRenderer: Renderer{
+    import derelict.opengl3.gl;
     import armos.math:Matrix4f;
     public{
         import armos.utils.scoped: scoped;
 
         ///
         This setup(){
-            import armos.math:Vector2i;
-            _target = new Fbo(Vector2i(256, 256));
-
             import armos.graphics.material:defaultVertexShaderSource,
                                            defaultFragmentShaderSource;
             _shader = (new Shader).loadSources(defaultVertexShaderSource,
@@ -46,7 +44,6 @@ class DefaultRenderer: Renderer{
                          .setAllPixels(2, 255)
                          .setAllPixels(3, 255);
             _textures["tex0"] = (new Texture).allocate(bitmap);
-            this.fillBackground;
             return this;
         }
         //inputs
@@ -86,9 +83,10 @@ class DefaultRenderer: Renderer{
 
         ///
         This fillBackground(){
-            _renderer.target(_target)
-                     .backgroundColor(_backgroundColor)
-                     .fillBackground;
+            const fboScope = scoped(_target);
+            auto c = _backgroundColor;
+            glClearColor(c[0], c[1], c[2], c[3]);
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             return this;
         }
 
@@ -135,43 +133,12 @@ class DefaultRenderer: Renderer{
 
         ///
         This render(){
-            updateBuildinUniforms;
-            import std.array:byPair;
-            foreach (pair; _capabilities.byPair) {
-                auto name    = pair[0];
-                auto capability = pair[1];
-                _renderer.capability(name, capability);
-            }
-
-            foreach (pair; _uniforms.byPair) {
-                auto name    = pair[0];
-                auto uniform = pair[1];
-                _renderer.uniform(name, uniform);
-            }
-
-            foreach (pair; _textures.byPair) {
-                auto name    = pair[0];
-                auto texture = pair[1];
-                _renderer.texture(name, texture);
-            }
-
-            _renderer.indices(_indices);
-
             if(_isUsingUserVao){
-                _renderer.vao = _vao;
+                renderVao(_vao);
             }else{
-                foreach (pair; _attributes.byPair) {
-                    auto name    = pair[0];
-                    auto attribute = pair[1];
-                    _renderer.attribute(name, attribute);
-                }
+                registerBuffersToDefaultVao;
+                renderVao(_defaultVao);
             }
-
-            _renderer.polyRenderMode(_polyRenderMode)
-                     .blendMode(_blendMode)
-                     .target(_target)
-                     .shader(_shader)
-                     .render();
             return this;
         }
     }//public
@@ -225,6 +192,51 @@ class DefaultRenderer: Renderer{
             this.uniform("modelViewProjectionMatrix", (projectionMatrix*viewMatrix*modelMatrix).array!2);
             return this;
         }
+
+        This registerBuffersToDefaultVao(){
+            import std.array:byPair;
+            import std.algorithm:each;
+            _attributes.byPair.each!((p){
+                pragma(msg, __FILE__, "(", __LINE__, "): ",
+                       "TODO: use cachables");
+                _defaultVao.registerBuffer(p[0], p[1], _shader);
+            });
+            _defaultVao.registerBuffer(_indices);
+            return this;
+        }
+
+        This renderVao(Vao vao){
+            import std.array:byPair;
+            import std.algorithm:each;
+
+            assert(_indices);
+
+            auto vaoScope = scoped(vao);
+
+            const shaderScope = scoped(_shader);
+            _uniforms.byPair.each!(u => _shader.uniform(u[0], u[1]));
+
+            const texturesScope = scoped(Textures(_textures));
+            uint textureIndex;
+            foreach (pair; _textures.byPair) {
+                auto name = pair[0];
+                auto texture  = pair[1];
+                _shader.uniformTexture(name, texture , textureIndex);
+                textureIndex++;
+            }
+
+            const iboScope = scoped(_indices);
+            int elements;
+            import derelict.opengl3.gl;
+            glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
+            import std.conv;
+            immutable int size = (elements/GLuint.sizeof).to!int;
+            const fboScope = scoped(_target);
+            vao.isUsingAttributes(true);
+            glDrawElements(_primitiveMode, size, GL_UNSIGNED_INT, null);
+            vao.isUsingAttributes(false);
+            return this;
+        }
     }//private
 }//class DefaultRenderer
 
@@ -249,3 +261,27 @@ Renderer diffuse(Renderer renderer, Color c){
     return renderer;
 }
 
+private struct Textures {
+    import std.array:byPair;
+    public{
+        Textures begin(){
+            foreach (pair; _textures.byPair) {
+                auto texture  = pair[1];
+                texture.begin;
+            }
+            return this;
+        }
+
+        Textures end(){
+            foreach (pair; _textures.byPair) {
+                auto texture  = pair[1];
+                texture.end;
+            }
+            return this;
+        }
+    }//public
+
+    private{
+        Texture[string] _textures;
+    }//private
+}//struct Textures

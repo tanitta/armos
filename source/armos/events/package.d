@@ -123,3 +123,8 @@ struct CoreObservables {
     private{
     }//private
 }//struct CoreObservables
+
+CoreObservables currentObservables(){
+    import armos.app.window;
+    return currentWindow.observables;
+}
