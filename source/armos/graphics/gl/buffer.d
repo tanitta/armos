@@ -29,6 +29,7 @@ class Buffer {
         +/
         Buffer begin(){
             import armos.app.runner:currentContext;
+            import armos.graphics.gl.context.helper.buffer;
             currentContext.pushBuffer(_type, this);
             return this;
         }
@@ -37,6 +38,7 @@ class Buffer {
         +/
         Buffer end(){
             import armos.app.runner:currentContext;
+            import armos.graphics.gl.context.helper.buffer;
             currentContext.popBuffer(_type);
             return this;
         }

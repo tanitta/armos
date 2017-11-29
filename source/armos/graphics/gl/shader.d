@@ -194,6 +194,7 @@ class Shader {
             Begin adapted process
         +/
         Shader begin(){
+            import armos.graphics.gl.context.helper.shader;
             currentContext.pushShader(this);
             return this;
         }
@@ -202,6 +203,7 @@ class Shader {
             End adapted process
         +/
         Shader end(){
+            import armos.graphics.gl.context.helper.shader;
             currentContext.popShader();
             return this;
         }

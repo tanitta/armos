@@ -25,7 +25,7 @@ class Vao {
         +/
         Vao begin(){
             import armos.app.runner:currentContext;
-            import armos.graphics.gl.context;
+            import armos.graphics.gl.context.helper.vao;
             currentContext.pushVao(this);
             return this;
         }
@@ -34,7 +34,7 @@ class Vao {
         +/
         Vao end(){
             import armos.app.runner:currentContext;
-            import armos.graphics.gl.context;
+            import armos.graphics.gl.context.helper.vao;
             currentContext.popVao();
             return this;
         }
