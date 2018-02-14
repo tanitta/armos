@@ -83,20 +83,17 @@ class Fbo{
             import std.stdio;
         }
 
+        Vector2i size()const {
+            return _size;
+        }
+
         /++
             FBOへの描画処理を開始します．
         +/
         Fbo begin(in bool setScreenPerspective = true){
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
-            glBindFramebuffer(GL_FRAMEBUFFER, _id);
-            Vector2i textureSize = _size*_samples;
-            pragma(msg, __FILE__, "(", __LINE__, "): ",
-                   "TODO: ");
-            // viewport(Vector2i.zero, textureSize);
-            //
-            // pushProjectionMatrix;
-            // import armos.app:windowSize;
-            // if(setScreenPerspective) loadProjectionMatrix(screenPerspectiveMatrix(_size));
+            import armos.app.runner:currentContext;
+            import armos.graphics.gl.context.helper.fbo;
+            currentContext.pushFbo(this);
             return this;
         }
 
@@ -104,10 +101,9 @@ class Fbo{
             FBOへの描画処理を終了します．
         +/
         Fbo end(){
-            pragma(msg, __FILE__, "(", __LINE__, "): ",
-                   "TODO: ");
-            // popProjectionMatrix;
-            glBindFramebuffer(GL_FRAMEBUFFER, _savedId);
+            import armos.app.runner:currentContext;
+            import armos.graphics.gl.context.helper.fbo;
+            currentContext.popFbo();
             return this;
         }
 
@@ -223,6 +219,21 @@ class Fbo{
         }
         
     }//public
+
+    package{
+        Fbo bind(){
+            return Fbo.bind(this);
+        }
+
+        static Fbo bind(Fbo fbo){
+            if(!fbo){
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                return fbo;
+            }
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo._id);
+            return fbo;
+        }
+    }
 
     private{
         int _savedId = 0;

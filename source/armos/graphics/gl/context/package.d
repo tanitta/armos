@@ -17,6 +17,7 @@ public import armos.graphics.gl.context.helper.capability;
 public import armos.graphics.gl.context.helper.matrix;
 public import armos.graphics.gl.context.helper.shader;
 public import armos.graphics.gl.context.helper.vao;
+public import armos.graphics.gl.context.helper.fbo;
 
 ///
 class Context {
@@ -32,8 +33,7 @@ class Context {
             _bufferStacks[BufferType.Array]            = new Stack!Buffer;
             _vaoStack              = new Stack!Vao;
 
-            _readFramebufferStack  = new Stack!Fbo;
-            _drawFramebufferStack  = new Stack!Fbo;
+            _fboStack  = new Stack!Fbo;
         }
 
         Stack!Matrix4f matrixStack(in MatrixType matrixType){
@@ -47,8 +47,7 @@ class Context {
         Stack!Buffer[BufferType] _bufferStacks;
         Stack!Vao                _vaoStack;
 
-        Stack!Fbo _readFramebufferStack;
-        Stack!Fbo _drawFramebufferStack;
+        Stack!Fbo _fboStack;
 
         Stack!Texture[TextureTarget][] _textureStacks;
         Stack!size_t                   _activeTextureUnitStack;
