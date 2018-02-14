@@ -186,11 +186,13 @@ struct BaseColor(T, T Limit){
         unittest{
             import std.stdio;
             import std.math;
-            auto cColor = BaseColor!(char, 255)(128, 0, 0, 255);
-            assert(approxEqual( ( cast(BaseColor!(float, 1.0f))cColor ).r, 128.0/255.0 ));
+            alias ElementType = float;
+            auto cColor = BaseColor!(ElementType, 255)(128, 0, 0, 255);
+            import std.conv;
+            assert(cColor.r == (128.0/255.0).to!ElementType);
 
-            auto fColor = BaseColor!(float, 1.0f)(0.5, 0.0, 0.0, 1.0);
-            assert(approxEqual( ( cast(BaseColor!(char, 255))cColor ).r, 128));
+            auto fColor = BaseColor!(ElementType, 1.0f)(0.5, 0.0, 0.0, 1.0);
+            assert(cColor.r == (128).to!ElementType);
         }
 
         
