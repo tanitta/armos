@@ -30,57 +30,22 @@ class Fbo{
         /++
         +/
         this(T)(in T width, in T height){
-            _size = Vector2i(width, height);
-            Vector2i textureSize = _size * _samples;
-            int x = textureSize.x;
-            int y = textureSize.y;
-            
             glGenFramebuffers(1, cast(uint*)&_id);
-
-            _colorTexture = (new Texture).allocate(x, y, armos.graphics.ColorFormat.RGBA)
-                                         .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
-
-            _depthTexture = (new Texture).allocate(x, y, armos.graphics.ColorFormat.Depth)
-                                         .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
-            
-            _colorTextureTmp = (new Texture).allocate(x, y, armos.graphics.ColorFormat.RGBA)
+            _size = Vector2i(width, height);
+            _colorTexture    = (new Texture).allocate(_size.x, _size.y, armos.graphics.ColorFormat.RGBA)
+                                            .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            _depthTexture    = (new Texture).allocate(_size.x, _size.y, armos.graphics.ColorFormat.Depth)
+                                            .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            _colorTextureTmp = (new Texture).allocate(_size.x, _size.y, armos.graphics.ColorFormat.RGBA)
+                                            .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            _depthTextureTmp = (new Texture).allocate(_size.x, _size.y, armos.graphics.ColorFormat.Depth)
                                             .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
             
-            _depthTextureTmp = (new Texture).allocate(x, y, armos.graphics.ColorFormat.Depth)
-                                            .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
-
-            _rect = new Mesh;
-
-            _rect.texCoords0 = [
-                Vector4f(0f, 0f, 0.0, 1.0f),
-                Vector4f(1f, 0,  0.0, 1.0f),
-                Vector4f(1f, 1f, 0.0, 1.0f),
-                Vector4f(0,  1f, 0.0, 1.0f),
-            ];
-            // isFlip(true);
-            
-            _rect.vertices = [
-                Vector4f(0.0,   0.0,    0.0, 1.0f),
-                Vector4f(_size.x, 0.0,    0.0, 1.0f),
-                Vector4f(_size.x, _size.y, 0.0, 1.0f),
-                Vector4f(0.0,   _size.y, 0.0, 1.0f),
-            ];
-
-            _rect.indices = [
-                0, 1, 2,
-                2, 3, 0,
-            ];
-
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_savedId);
-            glBindFramebuffer(GL_FRAMEBUFFER, _id);
-
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorTexture.id, 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, _depthTexture.id, 0);
-            glBindFramebuffer(GL_FRAMEBUFFER, _savedId);
-            
-            _material = (new FboMaterial).texture("colorTexture", _colorTexture)
-                                         .texture("depthTexture", _depthTexture);
-            import std.stdio;
+            {
+                begin;scope(exit)end;
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorTexture.id, 0);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, _depthTexture.id, 0);
+            }
         }
 
         Vector2i size()const {
@@ -115,67 +80,17 @@ class Fbo{
         }
 
         /++
-            FBOを描画します．
-        +/
-        Fbo draw(){
-            _material.begin;
-            _rect.drawFill;
-            _material.end;
-            return this;
-        }
-
-        /++
             FBOをリサイズします．
             Params:
             size = リサイズ後のサイズ
         +/
         Fbo resize(in armos.math.Vector2i size){
             _size = size;
-            _rect.vertices[1][0] = _size[0];
-            _rect.vertices[2][0] = _size[0];
-            _rect.vertices[2][1] = _size[1];
-            _rect.vertices[3][1] = _size[1];
             resizeTextures;
 
             return this;
         }
         
-        ///
-        bool isFlip()const{return _isFlip;}
-        
-        ///
-        Fbo isFlip(in bool f){
-            _isFlip = f;
-            if(_isFlip){
-                _rect.texCoords0 = [
-                    Vector4f(0f, 1f, 0.0, 1.0f),
-                    Vector4f(1f, 1,  0.0, 1.0f),
-                    Vector4f(1f, 0f, 0.0, 1.0f),
-                    Vector4f(0,  0f, 0.0, 1.0f),
-                ];
-            }else{
-                _rect.texCoords0 = [
-                    Vector4f(0f, 0f, 0.0, 1.0f),
-                    Vector4f(1f, 0,  0.0, 1.0f),
-                    Vector4f(1f, 1f, 0.0, 1.0f),
-                    Vector4f(0,  1f, 0.0, 1.0f),
-                ];
-            }
-            return this;
-        }
-        
-        ///
-        Fbo samples(in int s){
-            _samples = s;
-            resizeTextures;
-            return this;
-        }
-        
-        ///
-        int samples()const{
-            return _samples;
-        }
-
         ///
         Fbo minFilter(in TextureMinFilter filter){
             _colorTexture.minFilter(filter);
@@ -191,30 +106,6 @@ class Fbo{
             _colorTextureTmp.magFilter(filter);
             _depthTexture.magFilter(filter);
             _depthTextureTmp.magFilter(filter);
-            return this;
-        }
-        
-        ///
-        Fbo filteredBy(Material material){
-            {
-                auto scopedFbo = scoped(this);
-                {
-                    auto scopedColor = scoped(_colorTextureTmp);
-                    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
-                }
-                {
-                    auto scopedDepth= scoped(_depthTextureTmp);
-                    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _size.x, _size.y);
-                }
-            }
-            
-            material.texture("colorTexture", _colorTextureTmp)
-                    .texture("depthTexture", _depthTextureTmp);
-            
-            auto scopedFbo = scoped(this);
-            auto scopedMaterial = scoped(material);
-            _rect.drawFill;
-            
             return this;
         }
         
@@ -246,17 +137,15 @@ class Fbo{
 
         Mesh _rect = new Mesh;
         Material _material;
-        int _samples = 1;
-        bool _isFlip = false;
         Vector2i _size;
         
         void resizeTextures(){
             import std.stdio;
             begin;
-            _colorTexture.resize(_size*_samples);
-            _depthTexture.resize(_size*_samples);
-            _colorTextureTmp.resize(_size*_samples);
-            _depthTextureTmp.resize(_size*_samples);
+            _colorTexture.resize(_size);
+            _depthTexture.resize(_size);
+            _colorTextureTmp.resize(_size);
+            _depthTextureTmp.resize(_size);
             end;
         }
     }//private

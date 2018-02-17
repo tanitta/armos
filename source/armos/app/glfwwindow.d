@@ -52,14 +52,12 @@ class GLFWWindow : Window{
             initGLFWEvents();
             _subjects = new CoreSubjects;
 
-            _screen = new Fbo(frameBufferSize);
-            import rx;
-            _subjects.windowResize.doSubscribe!(event => _screen.resize(this.frameBufferSize));
 
             glfwSwapInterval(0);
             glfwSwapBuffers(_window);
             
             writeVersion;
+
         }
 
         ~this(){
@@ -96,7 +94,12 @@ class GLFWWindow : Window{
         }
 
         void setup(){
+            _screen = new Fbo(frameBufferSize);
+            import rx;
+            _subjects.windowResize.doSubscribe!(event => _screen.resize(this.frameBufferSize));
+            // _screenRenderer = new ScreenRenderer();
             put(_subjects.setup, SetupEvent());
+            // _screenRenderer.setup(_screen);
         }
 
         /++
@@ -109,7 +112,7 @@ class GLFWWindow : Window{
 
         void draw(){
             put(_subjects.draw, DrawEvent());
-            // draw screen fbo
+            // _screenRenderer.render();
             glfwSwapBuffers(_window);
         }
 
@@ -179,6 +182,7 @@ class GLFWWindow : Window{
         GLFWwindow* _window;
         CoreSubjects _subjects;
         Fbo _screen;
+        ScreenRenderer _screenRenderer;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
             auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
@@ -254,6 +258,33 @@ class GLFWWindow : Window{
         }
 
         static GLFWWindow[GLFWwindow*] glfwWindowToArmosGLFWWindow;
+
+        void drawScreen(){
+
+        }
     }//private
 }
+
+import armos.graphics.renderer:Renderer;
+import armos.graphics.defaultrenderer;
+private class ScreenRenderer {
+    public{
+        this(){
+            _renderer = new DefaultRenderer();
+        }
+        ~this(){}
+
+        void setup(Fbo screen){
+            // _renderer.texture("tex0", screen);
+            _renderer.setup;
+        };
+
+        void render(){
+        };
+    }//public
+
+    private{
+        Renderer _renderer;
+    }//private
+}//class ScreenRenderer
 
