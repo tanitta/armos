@@ -118,7 +118,7 @@ class GLFWWindow : Window{
 
         void draw(){
             put(_subjects.draw, DrawEvent());
-            // _screenDrawer.render();
+            _screenDrawer.render();
             glfwSwapBuffers(_window);
         }
 

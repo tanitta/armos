@@ -46,7 +46,7 @@ class GLFWEnvironment: Environment{
             import rx;
             _window.observables.setup.doSubscribe!((event){
                 renderer.setup();
-                // renderer.target = window.screen;
+                renderer.target = window.screen;
             });
             return this;
         }
