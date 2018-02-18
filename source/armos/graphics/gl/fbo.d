@@ -36,6 +36,7 @@ class Fbo{
                                             .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
             _depthTexture    = (new Texture).allocate(_size.x, _size.y, armos.graphics.ColorFormat.Depth)
                                             .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+
             _colorTextureTmp = (new Texture).allocate(_size.x, _size.y, armos.graphics.ColorFormat.RGBA)
                                             .minMagFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
             _depthTextureTmp = (new Texture).allocate(_size.x, _size.y, armos.graphics.ColorFormat.Depth)
@@ -77,6 +78,14 @@ class Fbo{
         +/
         int id()const{
             return _id;
+        }
+
+        Texture colorTexture(){
+            return _colorTexture;
+        }
+
+        Texture depthTexture(){
+            return _depthTexture;
         }
 
         /++

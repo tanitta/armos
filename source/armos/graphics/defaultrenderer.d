@@ -19,7 +19,7 @@ class DefaultRenderer: Renderer{
     import derelict.opengl3.gl;
     import armos.math:Matrix4f;
     public{
-        import armos.utils.scoped: scoped;
+        import armos.utils.scoped;
 
         ///
         This setup(){
@@ -84,6 +84,7 @@ class DefaultRenderer: Renderer{
         ///
         This fillBackground(){
             const fboScope = scoped(_target);
+
             auto c = _backgroundColor;
             glClearColor(c[0], c[1], c[2], c[3]);
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -107,7 +108,6 @@ class DefaultRenderer: Renderer{
             return this;
         }
         
-        //output
         ///
         Fbo  target(){
             return _target;
@@ -133,6 +133,7 @@ class DefaultRenderer: Renderer{
 
         ///
         This render(){
+            updateBuildinUniforms;
             if(_isUsingUserVao){
                 renderVao(_vao);
             }else{
@@ -188,8 +189,9 @@ class DefaultRenderer: Renderer{
             auto viewMatrix       = Matrix4f.array(*_uniforms["viewMatrix"].peek!(float[4][4]));
             auto modelMatrix      = Matrix4f.array(*_uniforms["modelMatrix"].peek!(float[4][4]));
             auto projectionMatrix = Matrix4f.array(*_uniforms["projectionMatrix"].peek!(float[4][4]));
-            this.uniform("modelViewMatrix",           (viewMatrix*modelMatrix).array!2);
-            this.uniform("modelViewProjectionMatrix", (projectionMatrix*viewMatrix*modelMatrix).array!2);
+            this.uniform("modelViewMatrix",           (modelMatrix*viewMatrix).array!2);
+            this.uniform("modelViewProjectionMatrix", (modelMatrix*viewMatrix*projectionMatrix).array!2);
+            // this.uniform("modelViewProjectionMatrix", (projectionMatrix*viewMatrix*modelMatrix).transpose.array!2);
             return this;
         }
 
@@ -201,6 +203,7 @@ class DefaultRenderer: Renderer{
                        "TODO: use cachables");
                 _defaultVao.registerBuffer(p[0], p[1], _shader);
             });
+            if(!_indices)return this;
             _defaultVao.registerBuffer(_indices);
             return this;
         }
@@ -209,7 +212,7 @@ class DefaultRenderer: Renderer{
             import std.array:byPair;
             import std.algorithm:each;
 
-            assert(_indices);
+            if(!_indices)return this;
 
             auto vaoScope = scoped(vao);
 
@@ -231,7 +234,9 @@ class DefaultRenderer: Renderer{
             glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
             import std.conv;
             immutable int size = (elements/GLuint.sizeof).to!int;
+
             const fboScope = scoped(_target);
+
             vao.isUsingAttributes(true);
             glDrawElements(_primitiveMode, size, GL_UNSIGNED_INT, null);
             vao.isUsingAttributes(false);

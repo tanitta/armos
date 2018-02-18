@@ -92,12 +92,13 @@ mixin template CameraImpl(){
     public{
         /// projectionMatrixを取得します．
         Matrix4f projectionMatrix(){
+            import std.stdio;
             _projectionMatrix = perspectiveMatrix(
                 _fov,
                 windowAspect,
                 _nearDist,
                 _farDist
-            )*scalingMatrix!float(1f, -1f, 1f);
+            );
             return _projectionMatrix;
         }
 

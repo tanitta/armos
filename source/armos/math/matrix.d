@@ -641,6 +641,31 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
     unittest{
     }
 
+    MatrixType transpose()() if(isSquareMatrix!(MatrixType)){
+        MatrixType result;
+        for(int i = 0; i<MatrixType.rowSize; i++){
+            for(int j = 0; j<MatrixType.colSize; j++){
+                result[j][i] = this[i][j];
+            }
+        }
+        return result;
+    }
+
+    unittest{
+        auto matrix = Matrix3f.array([
+            [1, 4, 7], 
+            [2, 5, 8], 
+            [3, 6, 9]
+        ]);
+
+        auto ans = Matrix3f.array([
+            [1, 2, 3], 
+            [4, 5, 6], 
+            [7, 8, 10]
+        ]);
+        assert(matrix.transpose == ans);
+    }
+
     /++
         自身を別の型のMatrixへキャストしたものを返します．キャスト後の型は元のMatrixのRowSize, ColSizeが等しくある必要があります．
     +/

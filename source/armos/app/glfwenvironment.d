@@ -44,8 +44,10 @@ class GLFWEnvironment: Environment{
             _window = new GLFWWindow(_windowConfig, _windowContext);
             if(!_context)_context = new Context;
             import rx;
-            _window.observables.setup.doSubscribe!(event => renderer.setup());
-            _renderer.target = _window.screen;
+            _window.observables.setup.doSubscribe!((event){
+                renderer.setup();
+                // renderer.target = window.screen;
+            });
             return this;
         }
 

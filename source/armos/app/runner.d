@@ -156,8 +156,9 @@ void run(Env = GLFWEnvironment)(Application app, WindowConfig config = null){
         }
     }
     import armos.graphics.defaultrenderer:DefaultRenderer;
-    import armos.graphics.embeddedrenderer:EmbedddedRenderer;
-    Renderer r = (new DefaultRenderer).renderer(new EmbedddedRenderer);
+    // Renderer r = (new DefaultRenderer).renderer(new DefaultRenderer);
+    // Renderer r = (new DefaultRenderer).renderer(new EmbedddedRenderer);
+    Renderer r = new DefaultRenderer;
     Environment env = (new Env)
                      .application(app)
                      .windowConfig(config)

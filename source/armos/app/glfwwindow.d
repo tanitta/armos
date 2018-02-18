@@ -57,7 +57,9 @@ class GLFWWindow : Window{
             glfwSwapBuffers(_window);
             
             writeVersion;
+        }
 
+        void allocateGlObjects(){
         }
 
         ~this(){
@@ -94,12 +96,16 @@ class GLFWWindow : Window{
         }
 
         void setup(){
-            _screen = new Fbo(frameBufferSize);
             import rx;
-            _subjects.windowResize.doSubscribe!(event => _screen.resize(this.frameBufferSize));
-            // _screenRenderer = new ScreenRenderer();
+            _screen = new Fbo(frameBufferSize);
+            _subjects.windowResize.doSubscribe!((event){
+                _screen.resize(this.frameBufferSize);
+                _screenDrawer.resize(this.frameBufferSize.x, this.frameBufferSize.y);
+            });
+
+            _screenDrawer = new ScreenDrawer();
             put(_subjects.setup, SetupEvent());
-            // _screenRenderer.setup(_screen);
+            _screenDrawer.setup(_screen, frameBufferSize.x, frameBufferSize.y);
         }
 
         /++
@@ -112,7 +118,7 @@ class GLFWWindow : Window{
 
         void draw(){
             put(_subjects.draw, DrawEvent());
-            // _screenRenderer.render();
+            // _screenDrawer.render();
             glfwSwapBuffers(_window);
         }
 
@@ -182,7 +188,7 @@ class GLFWWindow : Window{
         GLFWwindow* _window;
         CoreSubjects _subjects;
         Fbo _screen;
-        ScreenRenderer _screenRenderer;
+        ScreenDrawer _screenDrawer;
 
         static extern(C) void keyCallbackFunction(GLFWwindow* window, int key, int scancode, int action, int mods){
             auto currentGLFWWindow = GLFWWindow.glfwWindowToArmosGLFWWindow[window];
@@ -267,24 +273,66 @@ class GLFWWindow : Window{
 
 import armos.graphics.renderer:Renderer;
 import armos.graphics.defaultrenderer;
-private class ScreenRenderer {
+import armos.graphics.gl.buffer;
+private class ScreenDrawer {
     public{
         this(){
             _renderer = new DefaultRenderer();
+
+            _vertex   = new Buffer();
+            _texCoord = new Buffer();
+            _index    = new Buffer(BufferType.ElementArray);
         }
         ~this(){}
 
-        void setup(Fbo screen){
-            // _renderer.texture("tex0", screen);
+        void resize(in int width, in int height){
+            _vertex.array([
+                Vector4f(-1.0, -1.0, 0.0, 1.0f),
+                Vector4f(1.0,  -1.0, 0.0, 1.0f),
+                Vector4f(1.0,  1.0,  0.0, 1.0f),
+                Vector4f(-1.0, 1.0,  0.0, 1.0f),
+            ]);
+        }
+
+        void setup(Fbo screen, in int width, in int height){
+            import std.stdio;
+            writeln(width, " ", height);
             _renderer.setup;
+
+            _renderer.texture("tex0", screen.colorTexture);
+
+            _texCoord.array([
+                Vector4f(0f, 0f, 0.0, 1.0f),
+                Vector4f(1f, 0,  0.0, 1.0f),
+                Vector4f(1f, 1f, 0.0, 1.0f),
+                Vector4f(0,  1f, 0.0, 1.0f),
+            ]);
+            _vertex.array([
+                Vector4f(-1.0, -1.0, 0.0, 1.0f),
+                Vector4f(1.0,  -1.0, 0.0, 1.0f),
+                Vector4f(1.0,  1.0,  0.0, 1.0f),
+                Vector4f(-1.0, 1.0,  0.0, 1.0f),
+            ]);
+            _index.array([
+                0, 1, 2,
+                2, 3, 0,
+            ]);
         };
 
         void render(){
+            _renderer.attribute("vertex", _vertex)
+                     .attribute("texCoord0", _texCoord)
+                     .indices(_index)
+                     .diffuse(1f, 1f, 1f, 1f)
+                     .render();
         };
     }//public
 
     private{
         Renderer _renderer;
+        Buffer _texCoord;
+        Buffer _vertex;
+        Buffer _index;
     }//private
-}//class ScreenRenderer
+}//class ScreenDrawer
 
