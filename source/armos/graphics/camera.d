@@ -168,3 +168,64 @@ mixin template CameraImpl(){
         double   _farDist  = 10000.0;
     }
 }
+
+class ScreenCamera: Camera{
+    mixin CameraImpl;
+    import armos.app.window;
+    import std.math;
+    private alias T = typeof(this);
+
+    T screenSize(V2)(in V2 size){
+        this.screenSize = size;
+        return this;
+    }
+
+    Matrix4f projectionMatrix(){
+        float viewW = size.x;
+        float viewH = size.y;
+        if(size.x == -1) viewW = currentWindow.frameBufferSize.x;
+        if(size.x == -1) viewH = currentWindow.frameBufferSize.y;
+
+        immutable float eyeX = viewW / 2.0;
+        immutable float eyeY = viewH / 2.0;
+        immutable float halfFov = PI * _fov / 360.0;
+        immutable float theTan = tan(halfFov);
+        immutable float dist = eyeY / theTan;
+        immutable float aspect = viewW / viewH;
+        //
+        immutable float near = (nearDist==0)?dist / 10.0f:nearDist;
+        immutable float far  = (farDist==0)?dist * 10.0f:farDist;
+
+        _projectionMatrix = scalingMatrix(1f, -1f, 1f)*perspectiveMatrix(fov, aspect, near, far);
+
+        return _projectionMatrix;
+    }
+
+    Matrix4f viewMatrix(){
+        float viewW = size.x;
+        float viewH = size.y;
+        if(size.x == -1) viewW = currentWindow.frameBufferSize.x;
+        if(size.x == -1) viewH = currentWindow.frameBufferSize.y;
+
+        immutable float eyeX = viewW / 2.0;
+        immutable float eyeY = viewH / 2.0;
+        immutable float halfFov = PI * _fov / 360.0;
+        immutable float theTan = tan(halfFov);
+        immutable float dist = eyeY / theTan;
+        immutable float aspect = viewW / viewH;
+        //
+        immutable float near = (nearDist==0)?dist / 10.0f:nearDist;
+        immutable float far  = (farDist==0)?dist * 10.0f:farDist;
+
+        _viewMatrix = lookAtViewMatrix(
+                Vector3f(eyeX, eyeY, dist),
+                Vector3f(eyeX, eyeY, 0),
+                Vector3f(0, 1, 0)
+                );
+        return _viewMatrix;
+    }
+
+    private{
+        Vector2f size = Vector2f(-1, -1);
+    }
+}
