@@ -187,12 +187,14 @@ struct BaseColor(T, T Limit){
             import std.stdio;
             import std.math;
             alias ElementType = float;
-            auto cColor = BaseColor!(ElementType, 255)(128, 0, 0, 255);
-            import std.conv;
-            assert(cColor.r == (128.0/255.0).to!ElementType);
+            alias Color256 = BaseColor!(ElementType, 256f);
+            alias Color1   = BaseColor!(ElementType, 1.0f);
+            auto color256 = Color256(128f, 0f, 0f, 256f);
+            auto color1   = Color1(0.5f, 0f, 0f, 1f);
 
-            auto fColor = BaseColor!(ElementType, 1.0f)(0.5, 0.0, 0.0, 1.0);
-            assert(cColor.r == (128).to!ElementType);
+            import std.conv;
+            assert(color1.to!Color256 == color256);
+            assert(color256.to!Color1 == color1);
         }
 
         

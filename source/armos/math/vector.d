@@ -160,14 +160,14 @@ struct Vector(T, int Dimention)if(__traits(isArithmetic, T) && Dimention > 0){
         assert(vec[2] == 3.0);
     }
 
-    // pure const bool opEquals(Object vec){
-    //  foreach (int index, T v; (cast(VectorType)vec).packedElements.arr) {
-    //      if(v != this.packedElements.arr[index]){
-    //          return false;
-    //      }
-    //  }
-    //  return true;
-    // }
+    pure const bool opEquals(in VectorType vec){
+     foreach (int index, T e; vec.packedElements.arr) {
+         if(e != this.packedElements.arr[index]){
+             return false;
+         }
+     }
+     return true;
+    }
     unittest{
         auto vec1 = Vector3d(1, 2, 3);
         auto vec2 = Vector3d(1, 2, 3);

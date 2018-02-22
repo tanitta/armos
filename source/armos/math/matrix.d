@@ -154,16 +154,16 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         assert(matrix[1][0] == 1.0);
     }
 
-    // const bool opEquals(Object mat){
-    // 	// if(this.rowSize != (cast(MatrixType)mat_tmp).rowSize){return false;}
-    // 	// if(this.colSize != (cast(MatrixType)mat_tmp).colSize){return false;}
-    // 	foreach (int index, VectorType vec; (cast(MatrixType)mat).elements) {
-    // 		if(vec != this.elements[index]){
-    // 			return false;
-    // 		}
-    // 	}
-    // 	return true;
-    // }
+    const bool opEquals(MatrixType mat){
+    	// if(this.rowSize != (cast(MatrixType)mat_tmp).rowSize){return false;}
+    	// if(this.colSize != (cast(MatrixType)mat_tmp).colSize){return false;}
+    	foreach (int index, VectorType vec; mat.elements) {
+    		if(vec != this.elements[index]){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
     unittest{
         auto matrix1 = Matrix2d.array([
             [2.0, 1.0],
@@ -177,12 +177,13 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         assert(matrix1 == matrix2);
     }
     unittest{
-        auto matrix1 = Matrix2d();
+        auto matrix1 = Matrix2d().zero;
         matrix1[1][0] = 1.0;
-        auto matrix2 = Matrix2d();
+        auto matrix2 = Matrix2d().zero;
         matrix2[1][0] = 1.0;
-        auto matrix3 = Matrix2d();
+        auto matrix3 = Matrix2d().zero;
         matrix3[1][0] = 2.0;
+
         assert(matrix1 == matrix2);
         assert(matrix1 != matrix3);
     }
@@ -661,7 +662,7 @@ struct Matrix(T, int RowSize, int ColSize)if(__traits(isArithmetic, T) && RowSiz
         auto ans = Matrix3f.array([
             [1, 2, 3], 
             [4, 5, 6], 
-            [7, 8, 10]
+            [7, 8, 9]
         ]);
         assert(matrix.transpose == ans);
     }
