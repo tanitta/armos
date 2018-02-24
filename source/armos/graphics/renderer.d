@@ -43,7 +43,7 @@ interface Renderer {
 
         This setup();
         This render();
-        This renderer(Renderer);
+        // This renderer(Renderer);
     }//public
 
 }//interface Renderer

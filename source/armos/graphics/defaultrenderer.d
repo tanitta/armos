@@ -126,12 +126,6 @@ class DefaultRenderer: Renderer{
         }
 
         ///
-        This renderer(Renderer renderer){
-            _renderer = renderer;
-            return this;
-        }
-
-        ///
         This render(){
             updateBuildinUniforms;
             if(_isUsingUserVao){
@@ -173,7 +167,6 @@ class DefaultRenderer: Renderer{
         bool _isUsingUserVao = false;
         PrimitiveMode _primitiveMode;
         Texture[string] _textures;
-        Renderer _renderer;
 
         This setupBuildinUniforms(){
             this.uniform("modelMatrix",               Matrix4f.identity.array!2);
