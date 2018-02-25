@@ -1,5 +1,6 @@
 module armos.graphics.experimental.mesh;
 
+import armos.graphics.bufferbundle;
 import armos.graphics.gl.primitivemode;
 
 ///
@@ -24,6 +25,17 @@ class Mesh(ElementType) {
 
         Attribute!ElementType attr(in string name){
             return _attrs[name];
+        }
+
+        BufferBundle opCast()const{
+            auto bb = new BufferBundle();
+            import std.array:byPair;
+            foreach (pair; _attrs.byPair) {
+                auto name = pair[0];
+                auto attr = pair[1];
+                bb.attr(name, attr.elements, attr.dimention);
+            }
+            return bb;
         }
     }//public
 
