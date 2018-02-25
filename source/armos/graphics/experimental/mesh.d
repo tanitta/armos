@@ -15,7 +15,7 @@ class Mesh(ElementType) {
         PrimitiveMode primitiveMode = PrimitiveMode.Triangles;
         This attr(in string name, ElementType[] arr, in size_t dimention){
             import std.algorithm.searching;
-            if(!_attrs.keys.canFind("name"))
+            if(!_attrs.keys.canFind(name))
                 _attrs[name] = Attribute!ElementType();
             _attrs[name].dimention = dimention;
             _attrs[name].elements = arr;
