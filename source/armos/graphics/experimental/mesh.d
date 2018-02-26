@@ -23,6 +23,10 @@ class Mesh(ElementType) {
             return this;
         }
 
+        This attr(V)(in string name, V[] arr){
+            return this;
+        }
+
         Attribute!ElementType attr(in string name){
             return _attrs[name];
         }

@@ -1,0 +1,14 @@
+.dub
+docs.json
+__dummy.html
+docs/
+mesh.so
+mesh.dylib
+mesh.dll
+mesh.a
+mesh.lib
+mesh-test-*
+*.exe
+*.o
+*.obj
+*.lst
