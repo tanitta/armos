@@ -14,7 +14,7 @@ class Mesh(ElementType) {
     private: alias This = typeof(this);
     public{
         PrimitiveMode primitiveMode = PrimitiveMode.Triangles;
-        This attr(in string name, ElementType[] arr, in size_t dimention){
+        This attr(in string name, ElementType[] arr, in size_t dimention = 1){
             import std.algorithm.searching;
             if(!_attrs.keys.canFind(name))
                 _attrs[name] = Attribute!ElementType();
