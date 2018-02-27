@@ -24,6 +24,11 @@ class Mesh(ElementType) {
         }
 
         This attr(V)(in string name, V[] arr){
+            V.elementType[] serialized;
+            foreach (v; arr) {
+                serialized ~= v.array[];
+            }
+            this.attr(name, serialized, V.dimention);
             return this;
         }
 
