@@ -80,7 +80,7 @@ interface Camera{
 }//interface Camera
 
 ///
-class DefaultCamera: Camera{
+class PerspCamera: Camera{
     mixin CameraImpl;
 }
 
