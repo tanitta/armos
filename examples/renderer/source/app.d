@@ -5,7 +5,7 @@ import std.stdio, std.math;
 alias V4 = ar.math.Vector4f;
 class TestApp : ar.app.BaseApp{
     override void setup(){
-        _camera = (new ar.graphics.DefaultCamera).position(ar.math.Vector3f(0, 0, 2.0))
+        _camera = (new ar.graphics.PerspCamera).position(ar.math.Vector3f(0, 0, 2.0))
                                                  .target(ar.math.Vector3f.zero);
         _model  = (new ar.graphics.Model).load("data/bunny.fbx");
         _index = new ar.graphics.Buffer(ar.graphics.BufferType.ElementArray);
