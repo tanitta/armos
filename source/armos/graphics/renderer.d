@@ -17,7 +17,6 @@ import armos.math;
 import armos.types;
 
 
-
 pragma(msg, __FILE__, "(", __LINE__, "): ",
        "TODO: check VAO support");
 ///
@@ -47,6 +46,42 @@ interface Renderer {
     }//public
 
 }//interface Renderer
+
+template isRenderer(R){
+    enum bool isRenderer = __traits(compiles, (){
+        R r;
+        Renderer ir = r;
+    });
+}
+
+version(unittest){
+    class RendererMock: Renderer{
+        private alias This = this;
+        public {
+            This vao(Vao){return this;}
+            This attribute(in string name, Buffer){return this;}
+            This indices(Buffer){return this;}
+            This texture(in string name, Texture){return this;}
+            This polyRenderMode(PolyRenderMode mode){return this;}
+            This capability(Capability cap, bool b){return this;}
+            This blendMode(BlendMode blendMode){return this;}
+            This fillBackground(){return this;}
+            This target(Fbo){return this;}
+            This shader(Shader){return this;}
+            This uniformImpl(in string name, Uniform u){return this;}
+            This backgroundColorImpl(in float r, in float g, in float b, in float a){return this;}
+
+            //output
+            Fbo  target(){return new Fbo;}
+
+            This setup(){return this;}
+            This render(){return this;}
+        }
+    }
+}
+unittest{
+    assert(isRenderer!(RendererMock));
+}
 
 Renderer currentRenderer()
 out(renderer){
