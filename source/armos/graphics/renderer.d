@@ -21,7 +21,7 @@ pragma(msg, __FILE__, "(", __LINE__, "): ",
        "TODO: check VAO support");
 ///
 interface Renderer {
-    alias This = this;
+    private alias This = this;
     public{
         //inputs
         This vao(Vao);
