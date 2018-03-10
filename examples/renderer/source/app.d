@@ -27,7 +27,7 @@ class TestApp : ar.app.BaseApp{
 
     override void draw(){
         import armos.graphics.renderer;
-        import armos.graphics.defaultrenderer;
+        import armos.graphics.standardrenderer;
         auto cr = armos.graphics.currentRenderer;
         cr.backgroundColor(0.2, 0.2, 0.2, 1.).fillBackground;
 

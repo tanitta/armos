@@ -272,12 +272,12 @@ class GLFWWindow : Window{
 }
 
 import armos.graphics.renderer:Renderer;
-import armos.graphics.defaultrenderer;
+import armos.graphics.standardrenderer;
 import armos.graphics.gl.buffer;
 private class ScreenDrawer {
     public{
         this(){
-            _renderer = new DefaultRenderer();
+            _renderer = new StandardRenderer();
 
             _vertex   = new Buffer();
             _texCoord = new Buffer();
