@@ -79,7 +79,6 @@ class StandardRenderer : DefaultRenderer{
             auto projectionMatrix = Matrix4f.array(*_uniforms["projectionMatrix"].peek!(float[4][4]));
             this.uniform("modelViewMatrix",           (modelMatrix*viewMatrix).array!2);
             this.uniform("modelViewProjectionMatrix", (modelMatrix*viewMatrix*projectionMatrix).array!2);
-            // this.uniform("modelViewProjectionMatrix", (projectionMatrix*viewMatrix*modelMatrix).transpose.array!2);
             return this;
         }
     }
