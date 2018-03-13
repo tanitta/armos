@@ -1,14 +1,16 @@
 module armos.graphics.vertex;
 import armos.math;
 
-// Flow of Castability.
+// Flow of allowed castability.
 // L3 -> L2 -> L1
 
+////////////////////////////////////////////////////////////////
 /// L3 Armos Embedded Layer
+
 /// Prefix
-/// - L3
-/// - Standard
-/// - Armos
+/// - "L3"
+/// - "Standard"
+/// - "Armos"
 struct StandardVertex {
     public{
         Vector4f position;
@@ -23,7 +25,13 @@ struct StandardVertex {
     }//private
 }//struct Vertex
 
+////////////////////////////////////////////////////////////////
 /// L2 Static Layer
+/// Set type of Attribute as tuple on defining.
+
+/// Prefix
+/// - "L2"
+/// - "Static"
 struct StaticVertex(alias TP){
     public{
     }//public
@@ -32,7 +40,13 @@ struct StaticVertex(alias TP){
     }//private
 }//struct Vertex
 
+////////////////////////////////////////////////////////////////
 /// L1 Dynamic Layer
+/// Use valiant.
+
+/// Prefix
+/// - "L1"
+/// - "Dynamic"
 struct DynamicVertex {
     public{
     }//public
@@ -42,3 +56,4 @@ struct DynamicVertex {
 }//struct Vertex
 
 /// L0 Raw OpenGL Layer
+/// None
