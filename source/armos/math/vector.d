@@ -12,6 +12,22 @@ else {
     enum SIMD_Enable = false;
 }
 
+template ConvToVecType(StaticArr: T[D], T, size_t D){
+    alias ConvToVecType = Vector!(T, D);
+}
+
+unittest{
+    assert(__traits(compiles, (){
+        alias V = ConvToVecType!(float[4]);
+        int d = V.dimention;
+        alias T = V.elementType;
+    }));
+
+    alias V = ConvToVecType!(float[4]);
+    assert(V.dimention == 4);
+    assert(typeid(V.elementType) == typeid(float));
+}
+
 /++
 ベクトル計算を行うstructです
 +/
