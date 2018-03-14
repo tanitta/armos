@@ -1,6 +1,8 @@
 module armos.graphics.vertex;
 import armos.math;
 
+import armos.graphics.gl.attribute;
+
 // Flow of allowed castability.
 // L3 -> L2 -> L1
 
@@ -49,6 +51,7 @@ struct StaticVertex(alias TP){
 /// - "Dynamic"
 struct DynamicVertex {
     public{
+        V attr
     }//public
 
     private{
