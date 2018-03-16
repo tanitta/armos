@@ -4,13 +4,13 @@ import armos.math;
 import armos.graphics.gl.attribute;
 
 // Flow of allowed castability.
-// L3 -> L2 -> L1
+// L2 -> L1
 
 ////////////////////////////////////////////////////////////////
-/// L3 Armos Embedded Layer
+/// L2 Armos Embedded Layer
 
 /// Prefix
-/// - "L3"
+/// - "L2"
 /// - "Standard"
 /// - "Armos"
 struct StandardVertex {
@@ -21,40 +21,40 @@ struct StandardVertex {
         Vector4f texCoord0;
         Vector4f texCoord1;
         Vector3f color;
+
+        DynamicVertex opCast(DynamicVertex)(){
+            DynamicVertex dynamicVert;
+            dynamicVert["position"]  = position;
+            dynamicVert["normal"]    = normal;
+            dynamicVert["tangent"]   = tangent;
+            dynamicVert["texCoord0"] = texCoord0;
+            dynamicVert["texCoord1"] = texCoord1;
+            dynamicVert["color"]     = color;
+            return dynamicVert;
+        }
     }//public
 
     private{
     }//private
 }//struct Vertex
 
-////////////////////////////////////////////////////////////////
-/// L2 Static Layer
-/// Set type of Attribute as tuple on defining.
-
-/// Prefix
-/// - "L2"
-/// - "Static"
-struct StaticVertex(alias TP){
-    public{
-    }//public
-
-    private{
-    }//private
-}//struct Vertex
-
-////////////////////////////////////////////////////////////////
-/// L1 Dynamic Layer
-/// Use valiant.
+unittest{
+    StandardVertex standardVert;
+    standardVert.position = Vector4f(1f, 2f, 3f, 4);
+    DynamicVertex dynamicVert = cast(DynamicVertex)standardVert;
+    assert(dynamicVert["position"] == standardVert.position);
+}
 
 /// Prefix
 /// - "L1"
 /// - "Dynamic"
 struct DynamicVertex {
     public{
-        V attr
+        alias attrs this;
     }//public
 
     private{
+        Attribute[string] attrs;
     }//private
 }//struct Vertex
 
