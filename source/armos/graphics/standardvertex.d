@@ -1,7 +1,7 @@
-module armos.graphics.vertex;
-import armos.math;
+module armos.graphics.standardvertex;
 
-import armos.graphics.gl.attribute;
+import armos.math;
+import armos.graphics.dynamicvertex;
 
 // Flow of allowed castability.
 // L2 -> L1
@@ -33,9 +33,6 @@ struct StandardVertex {
             return dynamicVert;
         }
     }//public
-
-    private{
-    }//private
 }//struct Vertex
 
 unittest{
@@ -44,19 +41,3 @@ unittest{
     DynamicVertex dynamicVert = cast(DynamicVertex)standardVert;
     assert(dynamicVert["position"] == standardVert.position);
 }
-
-/// Prefix
-/// - "L1"
-/// - "Dynamic"
-struct DynamicVertex {
-    public{
-        alias attrs this;
-    }//public
-
-    private{
-        Attribute[string] attrs;
-    }//private
-}//struct Vertex
-
-/// L0 Raw OpenGL Layer
-/// None

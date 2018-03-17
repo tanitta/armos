@@ -1,7 +1,7 @@
 module armos.graphics.dynamicmesh;
 
 import armos.graphics.gl.primitivemode;
-import armos.graphics.vertex;
+import armos.graphics.dynamicvertex;
 
 class DynamicMesh{
     DynamicVertex[] vertices;

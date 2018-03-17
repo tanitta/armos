@@ -1,7 +1,7 @@
 module armos.graphics.standardmesh;
 
 import armos.graphics.gl.primitivemode;
-import armos.graphics.vertex;
+import armos.graphics.standardvertex;
 
 class StandardMesh{
     StandardVertex[] vertices;
