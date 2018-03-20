@@ -65,20 +65,14 @@ class StandardRenderer : DefaultRenderer{
     }
 
     private{
-        Buffer _positionBuffer;
-        Buffer _normalBuffer;
-        Buffer _tangentBuffer;
-        Buffer _texCoord0Buffer;
-        Buffer _texCoord1Buffer;
-        Buffer _colorBuffer;
-
         void setupBuffers(){
-            _positionBuffer  = new Buffer();
-            _normalBuffer    = new Buffer();
-            _tangentBuffer   = new Buffer();
-            _texCoord0Buffer = new Buffer();
-            _texCoord1Buffer = new Buffer();
-            _colorBuffer     = new Buffer();
+            _attributes["position"]  = new Buffer();
+            _attributes["normal"]    = new Buffer();
+            _attributes["tangent"]   = new Buffer();
+            _attributes["texCoord0"] = new Buffer();
+            _attributes["texCoord1"] = new Buffer();
+            _attributes["color"]     = new Buffer();
+            _indexBuffer             = new Buffer(BufferType.ElementArray);
         }
         
         This setupBuildinUniforms(){

@@ -44,7 +44,7 @@ class DefaultRenderer: Renderer{
 
         ///
         This indices(Buffer buffer){
-            _indices = buffer;
+            _indexBuffer = buffer;
             return this;
         }
 
@@ -131,7 +131,7 @@ class DefaultRenderer: Renderer{
         Uniform[string]  _uniforms;
         Buffer[string]   _attributes;
         bool[Capability] _capabilities;
-        Buffer           _indices;
+        Buffer           _indexBuffer;
         PolyRenderMode   _polyRenderMode;
         BlendMode        _blendMode;
         float[4]         _backgroundColor;
@@ -160,8 +160,8 @@ class DefaultRenderer: Renderer{
             _attributes.byPair.each!((p){
                 _defaultVao.registerBuffer(p[0], p[1], _shader);
             });
-            if(!_indices)return this;
-            _defaultVao.registerBuffer(_indices);
+            if(!_indexBuffer)return this;
+            _defaultVao.registerBuffer(_indexBuffer);
             return this;
         }
 
@@ -169,7 +169,7 @@ class DefaultRenderer: Renderer{
             import std.array:byPair;
             import std.algorithm:each;
 
-            if(!_indices)return this;
+            if(!_indexBuffer)return this;
 
             auto vaoScope = scoped(vao);
 
@@ -185,7 +185,7 @@ class DefaultRenderer: Renderer{
                 textureIndex++;
             }
 
-            const iboScope = scoped(_indices);
+            const iboScope = scoped(_indexBuffer);
             int elements;
             import derelict.opengl3.gl;
             glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &elements);
