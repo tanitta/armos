@@ -12,6 +12,7 @@ import armos.graphics.gl.uniform:Uniform,
                                  uniformTexture;
 import armos.graphics.gl.primitivemode;
 import armos.graphics.gl.texture:Texture;
+import armos.graphics.gl.buffer;
 
 class StandardRenderer : DefaultRenderer{
     import armos.math:Matrix4f;
@@ -33,6 +34,7 @@ class StandardRenderer : DefaultRenderer{
                     defaultFragmentShaderSource);
             import std.stdio;
             _shader.log.writeln;
+            setupBuffers();
             _defaultVao = new Vao;
             _primitiveMode = PrimitiveMode.Triangles;
             _backgroundColor = [0.1, 0.1, 0.1, 1.0];
@@ -63,6 +65,22 @@ class StandardRenderer : DefaultRenderer{
     }
 
     private{
+        Buffer _positionBuffer;
+        Buffer _normalBuffer;
+        Buffer _tangentBuffer;
+        Buffer _texCoord0Buffer;
+        Buffer _texCoord1Buffer;
+        Buffer _colorBuffer;
+
+        void setupBuffers(){
+            _positionBuffer  = new Buffer();
+            _normalBuffer    = new Buffer();
+            _tangentBuffer   = new Buffer();
+            _texCoord0Buffer = new Buffer();
+            _texCoord1Buffer = new Buffer();
+            _colorBuffer     = new Buffer();
+        }
+        
         This setupBuildinUniforms(){
             this.uniform("modelMatrix",               Matrix4f.identity.array!2);
             this.uniform("viewMatrix",                Matrix4f.identity.array!2);
