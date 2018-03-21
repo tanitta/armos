@@ -320,9 +320,9 @@ private class ScreenDrawer {
         };
 
         void render(){
-            _renderer.attribute("position", _position)
-                     .attribute("texCoord0", _texCoord)
-                     .indices(_index)
+            _renderer.attrBuffer("position", _position)
+                     .attrBuffer("texCoord0", _texCoord)
+                     .indexBuffer(_index)
                      .diffuse(1f, 1f, 1f, 1f)
                      .render();
         };

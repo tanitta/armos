@@ -31,26 +31,26 @@ class EmbedddedRenderer: Renderer{
         };
         
         ///
-        This attribute(in string name, Buffer buffer){
+        This attrBuffer(in string name, Buffer buffer){
             _isUsingUserVao = false;
             _attributes.updateCachable(name, buffer);
             return this;
         }
         ///
-        Buffer attribute(in string name){
+        Buffer attrBuffer(in string name){
             import std.algorithm;
             if(!_attributes.keys.canFind(name)) return null;
             return _attributes[name].content;
         }
 
         ///
-        This indices(Buffer buffer){
+        This indexBuffer(Buffer buffer){
             _indices.updateCachable(buffer);
             return this;
         }
 
         ///
-        Buffer indices(){
+        Buffer indexBuffer(){
             return _indices.content;
         }
 

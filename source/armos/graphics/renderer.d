@@ -25,9 +25,10 @@ interface Renderer {
     public{
         //inputs
         This vao(Vao);
-        This attribute(in string name, Buffer);
-        Buffer attribute(in string);
-        This indices(Buffer);
+        This attrBuffer(in string name, Buffer);
+        Buffer attrBuffer(in string);
+        This indexBuffer(Buffer);
+        Buffer indexBuffer();
         This texture(in string name, Texture);
         This polyRenderMode(PolyRenderMode mode);
         This capability(Capability cap, bool b);
@@ -90,6 +91,18 @@ out(renderer){
 }body{
     import armos.app.runner;
     return mainLoop.currentEnvironment.renderer;
+}
+
+///
+Renderer attribute(Renderer renderer, in string name, Buffer buffer){
+    renderer.attrBuffer(name, buffer);
+    return renderer;
+}
+
+///
+Renderer indices(Renderer renderer, Buffer buffer){
+    renderer.indexBuffer(buffer);
+    return renderer;
 }
 
 ///

@@ -36,27 +36,27 @@ class DefaultRenderer: Renderer{
         }
         
         ///
-        This attribute(in string name, Buffer buffer){
+        This attrBuffer(in string name, Buffer buffer){
             _isUsingUserVao = false;
             _attributes[name] = buffer;
             return this;
         }
 
         ///
-        Buffer attribute(in string name){
+        Buffer attrBuffer(in string name){
             import std.algorithm;
             if(!_attributes.keys.canFind(name)) return null;
             return _attributes[name];
         }
 
         ///
-        This indices(Buffer buffer){
+        This indexBuffer(Buffer buffer){
             _indexBuffer = buffer;
             return this;
         }
 
         ///
-        Buffer indices(){
+        Buffer indexBuffer(){
             return _indexBuffer;
         }
 

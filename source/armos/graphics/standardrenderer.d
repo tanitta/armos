@@ -18,13 +18,13 @@ class StandardRenderer : DefaultRenderer{
     import armos.math:Matrix4f;
     private alias This = this;
     public{
-        This vertices(T)(T[] arr, size_t dim){
-            return this;
-        }
-        
-        This indices(T)(T arr){
-            return this;
-        }
+        // This vertices(T)(T[] arr, size_t dim){
+        //     return this;
+        // }
+        //
+        // This indices(T)(T arr){
+        //     return this;
+        // }
 
         override This setup(){
             import armos.graphics.material:defaultVertexShaderSource,
@@ -119,4 +119,28 @@ Renderer diffuse(Renderer renderer, Color c){
     renderer.uniform("diffuse", arr);
     return renderer;
 }
+
+import armos.graphics.standardvertex;
+
+///
+Renderer vertices(
+    Renderer renderer,
+    StandardVertex[] vertices,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    if(!renderer.attrBuffer("position")) renderer.attrBuffer("position", new Buffer());
+    import std.algorithm;
+    import std.array;
+    renderer.attrBuffer("position").array(vertices.map!(vert => vert.position).array, 
+                                  freq, 
+                                  nature);
+    // _attributes["normal"]    = new Buffer();
+    // _attributes["tangent"]   = new Buffer();
+    // _attributes["texCoord0"] = new Buffer();
+    // _attributes["texCoord1"] = new Buffer();
+    // _attributes["color"]     = new Buffer();
+    return renderer;
+}
+
 
