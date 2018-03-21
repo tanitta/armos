@@ -8,8 +8,8 @@ class TestApp : ar.app.BaseApp{
         _camera = (new ar.graphics.PerspCamera).position(ar.math.Vector3f(0, 0, 2.0))
                                                  .target(ar.math.Vector3f.zero);
         _model  = (new ar.graphics.Model).load("data/bunny.fbx");
-        _index = new ar.graphics.Buffer(ar.graphics.BufferType.ElementArray);
-        _position = new ar.graphics.Buffer();
+        _indexBuffer = new ar.graphics.Buffer(ar.graphics.BufferType.ElementArray);
+        _positionBuffer = new ar.graphics.Buffer();
         import armos.graphics.embeddedrenderer;
 
     }
@@ -19,10 +19,10 @@ class TestApp : ar.app.BaseApp{
         _camera.position = ar.math.Vector3f(5.0*cos(_counter*0.05),
                                             0,
                                             5.0*sin(_counter*0.05));
-        _position.array([V4(-0.5, -0.5, 0, 1),
+        _positionBuffer.array([V4(-0.5, -0.5, 0, 1),
                        V4(0.5, -0.5, 0, 1),
                        V4(0, 0.5, 0, 1)]);
-        _index.array([0, 1, 2]);
+        _indexBuffer.array([0, 1, 2]);
     }
 
     override void draw(){
@@ -33,8 +33,8 @@ class TestApp : ar.app.BaseApp{
 
         cr.projectionMatrix(_camera.projectionMatrix)
           .viewMatrix(_camera.viewMatrix)
-          .attribute("position", _position)
-          .indices(_index)
+          .positions(_positionBuffer)
+          .indices(_indexBuffer)
           .diffuse(1f-cos(_counter*0.5)*0.5f,
                    1f-cos(_counter*0.51)*0.5f,
                    1f-cos(_counter*0.52)*0.5f,
@@ -46,8 +46,8 @@ class TestApp : ar.app.BaseApp{
         float _counter = 0f;
         ar.graphics.Camera _camera;
         ar.graphics.Model  _model;
-        ar.graphics.Buffer _index;
-        ar.graphics.Buffer _position;
+        ar.graphics.Buffer _indexBuffer;
+        ar.graphics.Buffer _positionBuffer;
     }
 }
 

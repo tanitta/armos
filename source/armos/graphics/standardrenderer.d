@@ -3,8 +3,8 @@ module armos.graphics.standardrenderer;
 import armos.graphics.renderer:Renderer,
                                uniform, 
                                backgroundColor;
-
 import armos.graphics.defaultrenderer:DefaultRenderer;
+import armos.graphics.renderer;
 import armos.graphics.gl.shader:Shader;
 import armos.graphics.gl.vao:Vao;
 import armos.graphics.gl.uniform:Uniform,
@@ -13,6 +13,8 @@ import armos.graphics.gl.uniform:Uniform,
 import armos.graphics.gl.primitivemode;
 import armos.graphics.gl.texture:Texture;
 import armos.graphics.gl.buffer;
+
+import armos.math;
 
 class StandardRenderer : DefaultRenderer{
     import armos.math:Matrix4f;
@@ -129,12 +131,12 @@ Renderer vertices(
     BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
     BufferUsageNature    nature = BufferUsageNature.Draw
 ){
-    if(!renderer.attrBuffer("position")) renderer.attrBuffer("position", new Buffer());
-    import std.algorithm;
-    import std.array;
-    renderer.attrBuffer("position").array(vertices.map!(vert => vert.position).array, 
-                                  freq, 
-                                  nature);
+    // if(!renderer.attrBuffer("position")) renderer.attrBuffer("position", new Buffer());
+    // import std.algorithm;
+    // import std.array;
+    // renderer.attrBuffer("position").array(vertices.map!(vert => vert.position).array, 
+    //                               freq, 
+    //                               nature);
     // _attributes["normal"]    = new Buffer();
     // _attributes["tangent"]   = new Buffer();
     // _attributes["texCoord0"] = new Buffer();
@@ -143,4 +145,128 @@ Renderer vertices(
     return renderer;
 }
 
+///
+Renderer positions(Renderer renderer, Buffer buffer){
+    return renderer.attribute("position", buffer);
+}
 
+///
+Renderer positions(
+    Renderer renderer,
+    Vector4f[] arr,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    if(!renderer.attrBuffer("position")) renderer.attrBuffer("position", new Buffer());
+    import std.algorithm;
+    import std.array;
+    renderer.attrBuffer("position").array(arr, freq, nature);
+    return renderer;
+}
+
+///
+Renderer indices(
+    Renderer renderer,
+    int[] arr,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    if(!renderer.indexBuffer) renderer.indexBuffer(new Buffer(BufferType.ElementArray));
+    import std.algorithm;
+    import std.array;
+    renderer.indexBuffer().array(arr, 1, freq, nature);
+    return renderer;
+}
+
+///
+Renderer colors(Renderer renderer, Buffer buffer){
+    return renderer.attribute("color", buffer);
+}
+
+///
+Renderer colors(
+    Renderer renderer,
+    Vector4f[] arr,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    if(!renderer.attrBuffer("color")) renderer.attrBuffer("color", new Buffer());
+    import std.algorithm;
+    import std.array;
+    renderer.attrBuffer("color").array(arr, freq, nature);
+    return renderer;
+}
+
+///
+Renderer normals(Renderer renderer, Buffer buffer){
+    return renderer.attribute("normal", buffer);
+}
+
+///
+Renderer normals(
+    Renderer renderer,
+    Vector3f[] arr,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    if(!renderer.attrBuffer("normal")) renderer.attrBuffer("normal", new Buffer());
+    import std.algorithm;
+    import std.array;
+    renderer.attrBuffer("normal").array(arr, freq, nature);
+    return renderer;
+}
+
+///
+Renderer tangents(Renderer renderer, Buffer buffer){
+    return renderer.attribute("tangent", buffer);
+}
+
+Renderer tangents(
+    Renderer renderer,
+    Vector3f[] arr,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    if(!renderer.attrBuffer("tangent")) renderer.attrBuffer("tangent", new Buffer());
+    import std.algorithm;
+    import std.array;
+    renderer.attrBuffer("tangent").array(arr, freq, nature);
+    return renderer;
+}
+
+///
+Renderer texCoords0(Renderer renderer, Buffer buffer){
+    return renderer.attribute("texCoord0", buffer);
+}
+
+///
+Renderer texCoords0(
+    Renderer renderer,
+    Vector4f[] arr,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    if(!renderer.attrBuffer("texCoord0")) renderer.attrBuffer("texCoord0", new Buffer());
+    import std.algorithm;
+    import std.array;
+    renderer.attrBuffer("texCoord0").array(arr, freq, nature);
+    return renderer;
+}
+
+///
+Renderer texCoords1(Renderer renderer, Buffer buffer){
+    return renderer.attribute("texCoord1", buffer);
+}
+
+Renderer texCoords1(
+    Renderer renderer,
+    Vector4f[] arr,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    if(!renderer.attrBuffer("texCoord1")) renderer.attrBuffer("texCoord1", new Buffer());
+    import std.algorithm;
+    import std.array;
+    renderer.attrBuffer("texCoord1").array(arr, freq, nature);
+    return renderer;
+}
