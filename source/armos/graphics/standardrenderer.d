@@ -119,3 +119,4 @@ Renderer diffuse(Renderer renderer, Color c){
     renderer.uniform("diffuse", arr);
     return renderer;
 }
+

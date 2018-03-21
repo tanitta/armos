@@ -43,9 +43,21 @@ class DefaultRenderer: Renderer{
         }
 
         ///
+        Buffer attribute(in string name){
+            import std.algorithm;
+            if(!_attributes.keys.canFind(name)) return null;
+            return _attributes[name];
+        }
+
+        ///
         This indices(Buffer buffer){
             _indexBuffer = buffer;
             return this;
+        }
+
+        ///
+        Buffer indices(){
+            return _indexBuffer;
         }
 
         ///

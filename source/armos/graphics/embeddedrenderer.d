@@ -36,11 +36,22 @@ class EmbedddedRenderer: Renderer{
             _attributes.updateCachable(name, buffer);
             return this;
         }
+        ///
+        Buffer attribute(in string name){
+            import std.algorithm;
+            if(!_attributes.keys.canFind(name)) return null;
+            return _attributes[name].content;
+        }
 
         ///
         This indices(Buffer buffer){
             _indices.updateCachable(buffer);
             return this;
+        }
+
+        ///
+        Buffer indices(){
+            return _indices.content;
         }
 
         ///

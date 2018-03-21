@@ -26,6 +26,7 @@ interface Renderer {
         //inputs
         This vao(Vao);
         This attribute(in string name, Buffer);
+        Buffer attribute(in string);
         This indices(Buffer);
         This texture(in string name, Texture);
         This polyRenderMode(PolyRenderMode mode);
