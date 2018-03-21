@@ -9,7 +9,7 @@ class TestApp : ar.app.BaseApp{
                                                  .target(ar.math.Vector3f.zero);
         _model  = (new ar.graphics.Model).load("data/bunny.fbx");
         _index = new ar.graphics.Buffer(ar.graphics.BufferType.ElementArray);
-        _vertex = new ar.graphics.Buffer();
+        _position = new ar.graphics.Buffer();
         import armos.graphics.embeddedrenderer;
 
     }
@@ -19,7 +19,7 @@ class TestApp : ar.app.BaseApp{
         _camera.position = ar.math.Vector3f(5.0*cos(_counter*0.05),
                                             0,
                                             5.0*sin(_counter*0.05));
-        _vertex.array([V4(-0.5, -0.5, 0, 1),
+        _position.array([V4(-0.5, -0.5, 0, 1),
                        V4(0.5, -0.5, 0, 1),
                        V4(0, 0.5, 0, 1)]);
         _index.array([0, 1, 2]);
@@ -33,7 +33,7 @@ class TestApp : ar.app.BaseApp{
 
         cr.projectionMatrix(_camera.projectionMatrix)
           .viewMatrix(_camera.viewMatrix)
-          .attribute("vertex", _vertex)
+          .attribute("position", _position)
           .indices(_index)
           .diffuse(1f-cos(_counter*0.5)*0.5f,
                    1f-cos(_counter*0.51)*0.5f,
@@ -47,7 +47,7 @@ class TestApp : ar.app.BaseApp{
         ar.graphics.Camera _camera;
         ar.graphics.Model  _model;
         ar.graphics.Buffer _index;
-        ar.graphics.Buffer _vertex;
+        ar.graphics.Buffer _position;
     }
 }
 

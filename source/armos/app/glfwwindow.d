@@ -279,14 +279,14 @@ private class ScreenDrawer {
         this(){
             _renderer = new StandardRenderer();
 
-            _vertex   = new Buffer();
+            _position   = new Buffer();
             _texCoord = new Buffer();
             _index    = new Buffer(BufferType.ElementArray);
         }
         ~this(){}
 
         void resize(in int width, in int height){
-            _vertex.array([
+            _position.array([
                 Vector4f(-1.0, -1.0, 0.0, 1.0f),
                 Vector4f(1.0,  -1.0, 0.0, 1.0f),
                 Vector4f(1.0,  1.0,  0.0, 1.0f),
@@ -307,7 +307,7 @@ private class ScreenDrawer {
                 Vector4f(1f, 1f, 0.0, 1.0f),
                 Vector4f(0,  1f, 0.0, 1.0f),
             ]);
-            _vertex.array([
+            _position.array([
                 Vector4f(-1.0, -1.0, 0.0, 1.0f),
                 Vector4f(1.0,  -1.0, 0.0, 1.0f),
                 Vector4f(1.0,  1.0,  0.0, 1.0f),
@@ -320,7 +320,7 @@ private class ScreenDrawer {
         };
 
         void render(){
-            _renderer.attribute("vertex", _vertex)
+            _renderer.attribute("position", _position)
                      .attribute("texCoord0", _texCoord)
                      .indices(_index)
                      .diffuse(1f, 1f, 1f, 1f)
@@ -331,7 +331,7 @@ private class ScreenDrawer {
     private{
         Renderer _renderer;
         Buffer _texCoord;
-        Buffer _vertex;
+        Buffer _position;
         Buffer _index;
     }//private
 }//class ScreenDrawer

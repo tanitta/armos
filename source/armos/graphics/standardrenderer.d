@@ -34,7 +34,10 @@ class StandardRenderer : DefaultRenderer{
                     defaultFragmentShaderSource);
             import std.stdio;
             _shader.log.writeln;
-            setupBuffers();
+
+            // lazy allocate on time of setting attribute
+            // setupBuffers();
+
             _defaultVao = new Vao;
             _primitiveMode = PrimitiveMode.Triangles;
             _backgroundColor = [0.1, 0.1, 0.1, 1.0];
