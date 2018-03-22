@@ -131,18 +131,20 @@ Renderer vertices(
     BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
     BufferUsageNature    nature = BufferUsageNature.Draw
 ){
-    // if(!renderer.attrBuffer("position")) renderer.attrBuffer("position", new Buffer());
-    // import std.algorithm;
-    // import std.array;
-    // renderer.attrBuffer("position").array(vertices.map!(vert => vert.position).array, 
-    //                               freq, 
-    //                               nature);
-    // _attributes["normal"]    = new Buffer();
-    // _attributes["tangent"]   = new Buffer();
-    // _attributes["texCoord0"] = new Buffer();
-    // _attributes["texCoord1"] = new Buffer();
-    // _attributes["color"]     = new Buffer();
-    return renderer;
+    import std.algorithm;
+    import std.array;
+    auto positions  = vertices.map!(vert => vert.position).array;
+    auto normals    = vertices.map!(vert => vert.normal).array;
+    auto tangents   = vertices.map!(vert => vert.tangent).array;
+    auto colors     = vertices.map!(vert => vert.color).array;
+    auto texCoords0 = vertices.map!(vert => vert.texCoord0).array;
+    auto texCoords1 = vertices.map!(vert => vert.texCoord1).array;
+    return renderer.positions(positions, freq, nature)
+                   .normals(normals, freq, nature)
+                   .tangents(tangents, freq, nature)
+                   .colors(colors, freq, nature)
+                   .texCoords0(texCoords0, freq, nature)
+                   .texCoords1(texCoords1, freq, nature);
 }
 
 ///

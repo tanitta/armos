@@ -25,7 +25,7 @@ interface Renderer {
     public{
         //inputs
         This vao(Vao);
- indexBuffer       This attrBuffer(in string name, Buffer);
+        This attrBuffer(in string name, Buffer);
         Buffer attrBuffer(in string);
         This indexBuffer(Buffer);
         Buffer indexBuffer();
