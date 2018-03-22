@@ -16,18 +16,10 @@ import armos.graphics.gl.buffer;
 
 import armos.math;
 
-class StandardRenderer : DefaultRenderer{
+class StandardRenderer : DefaultRenderer, Renderer{
     import armos.math:Matrix4f;
     private alias This = this;
     public{
-        // This vertices(T)(T[] arr, size_t dim){
-        //     return this;
-        // }
-        //
-        // This indices(T)(T arr){
-        //     return this;
-        // }
-
         override This setup(){
             import armos.graphics.material:defaultVertexShaderSource,
                    defaultFragmentShaderSource;
@@ -81,22 +73,20 @@ class StandardRenderer : DefaultRenderer{
         }
         
         This setupBuildinUniforms(){
-            this.uniform("modelMatrix",               Matrix4f.identity.array!2);
-            this.uniform("viewMatrix",                Matrix4f.identity.array!2);
-            this.uniform("projectionMatrix",          Matrix4f.identity.array!2);
-            this.uniform("textureMatrix",             Matrix4f.identity.array!2);
-            this.uniform("modelViewMatrix",           Matrix4f.identity.array!2);
-            this.uniform("modelViewProjectionMatrix", Matrix4f.identity.array!2);
-            return this;
+            return this.uniform("modelMatrix",               Matrix4f.identity.array!2)
+                       .uniform("viewMatrix",                Matrix4f.identity.array!2)
+                       .uniform("projectionMatrix",          Matrix4f.identity.array!2)
+                       .uniform("textureMatrix",             Matrix4f.identity.array!2)
+                       .uniform("modelViewMatrix",           Matrix4f.identity.array!2)
+                       .uniform("modelViewProjectionMatrix", Matrix4f.identity.array!2);
         }
 
         This updateBuildinUniforms(){
             auto viewMatrix       = Matrix4f.array(*_uniforms["viewMatrix"].peek!(float[4][4]));
             auto modelMatrix      = Matrix4f.array(*_uniforms["modelMatrix"].peek!(float[4][4]));
             auto projectionMatrix = Matrix4f.array(*_uniforms["projectionMatrix"].peek!(float[4][4]));
-            this.uniform("modelViewMatrix",           (modelMatrix*viewMatrix).array!2);
-            this.uniform("modelViewProjectionMatrix", (modelMatrix*viewMatrix*projectionMatrix).array!2);
-            return this;
+            return this.uniform("modelViewMatrix",           (modelMatrix*viewMatrix).array!2)
+                       .uniform("modelViewProjectionMatrix", (modelMatrix*viewMatrix*projectionMatrix).array!2);
         }
     }
 }
