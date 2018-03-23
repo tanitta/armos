@@ -61,8 +61,10 @@ version(unittest){
         private alias This = this;
         public {
             This vao(Vao){return this;}
-            This attribute(in string name, Buffer){return this;}
-            This indices(Buffer){return this;}
+            This attrBuffer(in string name, Buffer){return this;}
+            Buffer attrBuffer(in string name){return new Buffer;}
+            This indexBuffer(Buffer){return this;}
+            Buffer indexBuffer(){return new Buffer;}
             This texture(in string name, Texture){return this;}
             This polyRenderMode(PolyRenderMode mode){return this;}
             This capability(Capability cap, bool b){return this;}
@@ -93,6 +95,12 @@ out(renderer){
     return mainLoop.currentEnvironment.renderer;
 }
 
+
+// Renderer attribute(T)(Renderer renderer, in string name, T content){
+//     import std.stdio;
+//     typeid(T).writeln;
+//     return renderer.attributeImpl(name, content);
+// }
 ///
 Renderer attribute(Renderer renderer, in string name, Buffer buffer){
     renderer.attrBuffer(name, buffer);
