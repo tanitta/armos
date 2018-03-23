@@ -16,7 +16,7 @@ import armos.graphics.gl.buffer;
 
 import armos.math;
 
-class StandardRenderer : DefaultRenderer, Renderer{
+class StandardRenderer : DefaultRenderer{
     import armos.math:Matrix4f;
     private alias This = this;
     public{
@@ -136,6 +136,19 @@ Renderer vertices(
                    .texCoords0(texCoords0, freq, nature)
                    .texCoords1(texCoords1, freq, nature);
 }
+
+import armos.graphics.dynamicvertex;
+///
+Renderer vertices(
+    Renderer renderer,
+    DynamicVertex[] vertices,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+){
+    //WIP
+    return renderer;
+}
+
 
 ///
 Renderer positions(Renderer renderer, Buffer buffer){
@@ -262,3 +275,4 @@ Renderer texCoords1(
     renderer.attrBuffer("texCoord1").array(arr, freq, nature);
     return renderer;
 }
+
