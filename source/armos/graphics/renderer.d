@@ -95,12 +95,6 @@ out(renderer){
     return mainLoop.currentEnvironment.renderer;
 }
 
-
-// Renderer attribute(T)(Renderer renderer, in string name, T content){
-//     import std.stdio;
-//     typeid(T).writeln;
-//     return renderer.attributeImpl(name, content);
-// }
 ///
 Renderer attribute(Renderer renderer, in string name, Buffer buffer){
     renderer.attrBuffer(name, buffer);
