@@ -1,10 +1,5 @@
 module armos.graphics.standardrenderer;
 
-import armos.graphics.renderer:Renderer,
-                               uniform, 
-                               backgroundColor;
-import armos.graphics.defaultrenderer:DefaultRenderer;
-import armos.graphics.renderer;
 import armos.graphics.gl.shader:Shader;
 import armos.graphics.gl.vao:Vao;
 import armos.graphics.gl.uniform:Uniform,
@@ -13,6 +8,12 @@ import armos.graphics.gl.uniform:Uniform,
 import armos.graphics.gl.primitivemode;
 import armos.graphics.gl.texture:Texture;
 import armos.graphics.gl.buffer;
+
+import armos.graphics.renderer:Renderer,
+                               uniform, 
+                               attribute, 
+                               backgroundColor;
+import armos.graphics.defaultrenderer:DefaultRenderer;
 
 import armos.math;
 
@@ -276,3 +277,23 @@ Renderer texCoords1(
     return renderer;
 }
 
+///
+Renderer attribute(V)(Renderer renderer,
+                      in string name, V[] arr,
+                      BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+                      BufferUsageNature    nature = BufferUsageNature.Draw
+)if(isVector!V){
+    if(!renderer.attrBuffer(name)) renderer.attrBuffer(name, new Buffer());
+    import std.algorithm;
+    import std.array;
+    renderer.attrBuffer(name).array(arr, freq, nature);
+    return renderer;
+}
+
+unittest{
+    assert(__traits(compiles, (){
+        Renderer r;
+        Vector4f[] arr;
+        r.attribute("name", arr);
+    }));
+}
