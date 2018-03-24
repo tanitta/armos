@@ -139,15 +139,28 @@ Renderer vertices(
 }
 
 import armos.graphics.dynamicvertex;
-///
+/// WIP: no testing
 Renderer vertices(
     Renderer renderer,
     DynamicVertex[] vertices,
     BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
     BufferUsageNature    nature = BufferUsageNature.Draw
 ){
-    //WIP
-    return renderer;
+    import std.algorithm;
+    import std.array;
+    auto positions  = vertices.map!(vert => vert.attr("position").get!Vector4f).array;
+    auto normals    = vertices.map!(vert => vert.attr("normal").get!Vector3f).array;
+    auto tangents   = vertices.map!(vert => vert.attr("tangent").get!Vector3f).array;
+    auto colors     = vertices.map!(vert => vert.attr("color").get!Vector4f).array;
+    auto texCoords0 = vertices.map!(vert => vert.attr("texCoord0").get!Vector4f).array;
+    auto texCoords1 = vertices.map!(vert => vert.attr("texCoord1").get!Vector4f).array;
+    
+    return renderer.attribute("position", positions, freq, nature)
+                   .attribute("normal", normals, freq, nature)
+                   .attribute("tangent", tangents, freq, nature)
+                   .attribute("color", colors, freq, nature)
+                   .attribute("texCoord0", texCoords0, freq, nature)
+                   .attribute("texCoord1", texCoords1, freq, nature);
 }
 
 
