@@ -7,7 +7,6 @@ class TestApp : ar.app.BaseApp{
     override void setup(){
         _camera = (new ar.graphics.PerspCamera).position(ar.math.Vector3f(0, 0, 2.0))
                                                  .target(ar.math.Vector3f.zero);
-        _model  = (new ar.graphics.Model).load("data/bunny.fbx");
         _indexBuffer = new ar.graphics.Buffer(ar.graphics.BufferType.ElementArray);
         _positionBuffer = new ar.graphics.Buffer();
         import armos.graphics.embeddedrenderer;
@@ -45,7 +44,6 @@ class TestApp : ar.app.BaseApp{
     private{
         float _counter = 0f;
         ar.graphics.Camera _camera;
-        ar.graphics.Model  _model;
         ar.graphics.Buffer _indexBuffer;
         ar.graphics.Buffer _positionBuffer;
     }
