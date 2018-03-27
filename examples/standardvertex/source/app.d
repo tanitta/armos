@@ -5,12 +5,15 @@ import std.stdio, std.math;
 alias V4 = ar.math.Vector4f;
 class TestApp : ar.app.BaseApp{
     override void setup(){
-        _camera = (new ar.graphics.PerspCamera).position(ar.math.Vector3f(0, 0, 2.0))
-                                                 .target(ar.math.Vector3f.zero);
-        _indexBuffer = new ar.graphics.Buffer(ar.graphics.BufferType.ElementArray);
-        _positionBuffer = new ar.graphics.Buffer();
-        import armos.graphics.embeddedrenderer;
+        _camera = (new ar.graphics.PerspCamera).position(ar.math.Vector3f(0.5, 0.0, 0.5))
+                                               .target(ar.math.Vector3f.zero);
+        _vertices = [
+            ar.graphics.StandardVertex().position(V4(-0.5, -0.5, 0, 1)), 
+            ar.graphics.StandardVertex().position(V4(0.5, -0.5, 0, 1)),
+            ar.graphics.StandardVertex().position(V4(0, 0.5, 0, 1)),
+        ];
 
+        _indices = [0, 1, 2];
     }
 
     override void update(){
@@ -18,10 +21,6 @@ class TestApp : ar.app.BaseApp{
         _camera.position = ar.math.Vector3f(5.0*cos(_counter*0.05),
                                             0,
                                             5.0*sin(_counter*0.05));
-        _positionBuffer.array([V4(-0.5, -0.5, 0, 1),
-                       V4(0.5, -0.5, 0, 1),
-                       V4(0, 0.5, 0, 1)]);
-        _indexBuffer.array([0, 1, 2]);
     }
 
     override void draw(){
@@ -32,8 +31,8 @@ class TestApp : ar.app.BaseApp{
 
         cr.projectionMatrix(_camera.projectionMatrix)
           .viewMatrix(_camera.viewMatrix)
-          .positions(_positionBuffer)
-          .indices(_indexBuffer)
+          .vertices(_vertices)
+          .indices(_indices)
           .diffuse(1f-cos(_counter*0.5)*0.5f,
                    1f-cos(_counter*0.51)*0.5f,
                    1f-cos(_counter*0.52)*0.5f,
@@ -44,8 +43,8 @@ class TestApp : ar.app.BaseApp{
     private{
         float _counter = 0f;
         ar.graphics.Camera _camera;
-        ar.graphics.Buffer _indexBuffer;
-        ar.graphics.Buffer _positionBuffer;
+        ar.graphics.StandardVertex[] _vertices;
+        int[] _indices;
     }
 }
 
