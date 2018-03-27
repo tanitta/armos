@@ -1,5 +1,4 @@
 static import ar = armos;
-// import armos.graphics;
 import std.stdio, std.math;
 
 alias V4 = ar.math.Vector4f;
