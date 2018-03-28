@@ -856,6 +856,51 @@ alias Vector!(double, 3) Vector3d;
 /// double型の4次元ベクトルです．
 alias Vector!(double, 4) Vector4d;
 
+///
+Vector!(T, Dim) vec(T, int Dim)(T[] arr ...){
+    return Vector!(T, Dim)(arr);
+}
+
+Vector!(T, Dim) vec(int Dim, T)(T[] arr ...){
+    return Vector!(T, Dim)(arr);
+}
+
+unittest{
+    assert(__traits(compiles, {
+        Vector!(float, 3) v = vec!(float, 3);
+    }));
+
+    assert(__traits(compiles, {
+        Vector!(float, 3) v = vec!(3, float);
+    }));
+}
+
+///
+alias vec2i = vec!(int, 2);
+///
+alias vec3i = vec!(int, 3);
+///
+alias vec2i = vec!(int, 4);
+
+///
+alias vec2f = vec!(float, 2);
+///
+alias vec3f = vec!(float, 3);
+///
+alias vec2f = vec!(float, 4);
+
+///
+alias vec2d = vec!(double, 2);
+///
+alias vec3d = vec!(double, 3);
+///
+alias vec2d = vec!(double, 4);
+
+unittest{
+    assert(__traits(compiles, {
+        Vector!(float, 3) v = vec3f;
+    }));
+}
 /++
 +/
 template isVector(V) {
