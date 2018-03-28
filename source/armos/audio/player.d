@@ -3,7 +3,7 @@ module armos.audio.player;
 import derelict.openal.al;
 import armos.math;
 import armos.audio.source;
-import armos.audio.buffer;
+import armos.audio.soundbuffer;
 
 /++
 +/
@@ -27,12 +27,12 @@ class Player {
         }
         
         ///
-        Source play(Buffer buf){
+        Source play(SoundBuffer buf){
             return play(buf, Vector4f.zero);
         }
         
         ///
-        Source play(V4)(Buffer buf, in V4 position, in V4 velocity = V4.zero)if(isVector!(V4) && V4.dimention){
+        Source play(V4)(SoundBuffer buf, in V4 position, in V4 velocity = V4.zero)if(isVector!(V4) && V4.dimention){
             return (new Source).position(position)
                                .velocity(velocity)
                                .buffer(buf)

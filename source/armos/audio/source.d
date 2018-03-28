@@ -2,7 +2,7 @@ module armos.audio.source;
 
 import derelict.openal.al;
 import armos.math;
-import armos.audio.buffer;
+import armos.audio.soundbuffer;
 import armos.audio.spectrum;
 
 /++
@@ -29,7 +29,7 @@ class Source{
         }
         
         ///
-        Source buffer(Buffer b){
+        Source buffer(SoundBuffer b){
             alSourcei(_id, AL_BUFFER, b.id);
             _buffer = b;
             return this;
@@ -172,7 +172,7 @@ class Source{
         Vector4f _direction = Vector4f(0, 0, 0, 0);
         float _gain = 1f;
         bool _isLooping = false;
-        Buffer _buffer;
+        SoundBuffer _buffer;
         
         SourceState _state;
     }//private
