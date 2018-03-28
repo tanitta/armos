@@ -880,25 +880,57 @@ alias vec2i = vec!(int, 2);
 ///
 alias vec3i = vec!(int, 3);
 ///
-alias vec2i = vec!(int, 4);
+alias vec4i = vec!(int, 4);
 
 ///
 alias vec2f = vec!(float, 2);
 ///
 alias vec3f = vec!(float, 3);
 ///
-alias vec2f = vec!(float, 4);
+alias vec4f = vec!(float, 4);
 
 ///
 alias vec2d = vec!(double, 2);
 ///
 alias vec3d = vec!(double, 3);
 ///
-alias vec2d = vec!(double, 4);
+alias vec4d = vec!(double, 4);
 
 unittest{
     assert(__traits(compiles, {
+        Vector!(int, 2) v = vec2i;
+    }));
+
+    assert(__traits(compiles, {
+        Vector!(int, 3) v = vec3i;
+    }));
+    
+    assert(__traits(compiles, {
+        Vector!(int, 4) v = vec4i;
+    }));
+
+    assert(__traits(compiles, {
+        Vector!(float, 2) v = vec2f;
+    }));
+
+    assert(__traits(compiles, {
         Vector!(float, 3) v = vec3f;
+    }));
+    
+    assert(__traits(compiles, {
+        Vector!(float, 4) v = vec4f;
+    }));
+
+    assert(__traits(compiles, {
+        Vector!(double, 2) v = vec2d;
+    }));
+
+    assert(__traits(compiles, {
+        Vector!(double, 3) v = vec3d;
+    }));
+
+    assert(__traits(compiles, {
+        Vector!(double, 4) v = vec4d;
     }));
 }
 /++
