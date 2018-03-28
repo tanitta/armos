@@ -1,15 +1,16 @@
-static import ar = armos;
-import std.stdio, std.math;
+import armos.app;
+import armos.graphics;
+import armos.math;
+import std.math;
 
-alias V4 = ar.math.Vector4f;
-class TestApp : ar.app.BaseApp{
+class TestApp : BaseApp{
     override void setup(){
-        _camera = (new ar.graphics.PerspCamera).position(ar.math.Vector3f(0.5, 0.0, 0.5))
-                                               .target(ar.math.Vector3f.zero);
+        _camera = (new PerspCamera).position(vec3f(0.5, 0.0, 0.5))
+                                   .target(vec3f.zero);
         _vertices = [
-            ar.graphics.StandardVertex().position(V4(-0.5, -0.5, 0, 1)), 
-            ar.graphics.StandardVertex().position(V4(0.5, -0.5, 0, 1)),
-            ar.graphics.StandardVertex().position(V4(0, 0.5, 0, 1)),
+            StandardVertex().position(vec4f(-0.5, -0.5, 0, 1)), 
+            StandardVertex().position(vec4f(0.5, -0.5, 0, 1)),
+            StandardVertex().position(vec4f(0, 0.5, 0, 1)),
         ];
 
         _indices = [0, 1, 2];
@@ -17,15 +18,13 @@ class TestApp : ar.app.BaseApp{
 
     override void update(){
         _counter += 0.1;
-        _camera.position = ar.math.Vector3f(5.0*cos(_counter*0.05),
-                                            0,
-                                            5.0*sin(_counter*0.05));
+        _camera.position = vec3f(5.0*cos(_counter*0.05),
+                                 0,
+                                 5.0*sin(_counter*0.05));
     }
 
     override void draw(){
-        import armos.graphics.renderer;
-        import armos.graphics.standardrenderer;
-        auto cr = armos.graphics.currentRenderer;
+        auto cr = currentRenderer;
         cr.backgroundColor(0.2, 0.2, 0.2, 1.).fillBackground;
 
         cr.projectionMatrix(_camera.projectionMatrix)
@@ -41,8 +40,8 @@ class TestApp : ar.app.BaseApp{
 
     private{
         float _counter = 0f;
-        ar.graphics.Camera _camera;
-        ar.graphics.StandardVertex[] _vertices;
+        Camera _camera;
+        StandardVertex[] _vertices;
         int[] _indices;
     }
 }
@@ -50,6 +49,6 @@ class TestApp : ar.app.BaseApp{
 void main(){
     version(unittest){
     }else{
-        ar.app.run(new TestApp);
+        run(new TestApp);
     }
 }
