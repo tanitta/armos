@@ -113,6 +113,26 @@ Renderer diffuse(Renderer renderer, Color c){
     return renderer;
 }
 
+///
+Renderer viewMatrix(Renderer r, Matrix4f m){
+    return r.uniform("viewMatrix", m.transpose.nestedArray);
+} //set from camera
+
+///
+Renderer modelMatrix(Renderer r, Matrix4f m){
+    return r.uniform("modelMatrix", m.transpose.nestedArray);
+} //set from scene
+
+///
+Renderer textureMatrix(Renderer r, Matrix4f m){
+    return r.uniform("textureMatrix", m.transpose.nestedArray);
+}
+
+///
+Renderer projectionMatrix(Renderer r, Matrix4f m){
+    return r.uniform("projectionMatrix", m.transpose.nestedArray);
+} // set from camera and target buffer size
+
 import armos.graphics.standardvertex;
 
 ///

@@ -107,26 +107,6 @@ Renderer indices(Renderer renderer, Buffer buffer){
     return renderer;
 }
 
-///
-Renderer viewMatrix(Renderer r, Matrix4f m){
-    return r.uniform("viewMatrix", m.transpose.nestedArray);
-} //set from camera
-
-///
-Renderer modelMatrix(Renderer r, Matrix4f m){
-    return r.uniform("modelMatrix", m.transpose.nestedArray);
-} //set from scene
-
-///
-Renderer textureMatrix(Renderer r, Matrix4f m){
-    return r.uniform("textureMatrix", m.transpose.nestedArray);
-}
-
-///
-Renderer projectionMatrix(Renderer r, Matrix4f m){
-    return r.uniform("projectionMatrix", m.transpose.nestedArray);
-} // set from camera and target buffer size
-
 Renderer backgroundColor(Renderer renderer, in float r, in float g, in float b, in float a){
     return renderer.backgroundColorImpl(r, g, b, a);
 };
@@ -138,7 +118,6 @@ Renderer backgroundColor(Renderer r, Color color){
 Renderer backgroundColor(Renderer r, float[4] c){
     return r.backgroundColorImpl(c[0], c[1], c[2], c[3]);
 };
-
 
 /++
 +/
