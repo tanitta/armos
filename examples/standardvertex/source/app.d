@@ -42,7 +42,7 @@ class TestApp : BaseApp{
         float _counter = 0f;
         Camera _camera;
         StandardVertex[] _vertices;
-        int[] _indices;
+        uint[] _indices;
     }
 }
 

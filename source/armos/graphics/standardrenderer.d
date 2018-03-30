@@ -133,6 +133,14 @@ Renderer projectionMatrix(Renderer r, Matrix4f m){
     return r.uniform("projectionMatrix", m.transpose.nestedArray);
 } // set from camera and target buffer size
 
+import armos.graphics.standardmesh;
+///
+Renderer mesh(Renderer renderer, StandardMesh mesh){
+    return renderer.vertices(mesh.vertices)
+                   .indices(mesh.indices);
+
+}
+
 import armos.graphics.standardvertex;
 
 ///
@@ -183,7 +191,6 @@ Renderer vertices(
                    .attribute("texCoord1", texCoords1, freq, nature);
 }
 
-
 ///
 Renderer positions(Renderer renderer, Buffer buffer){
     return renderer.attribute("position", buffer);
@@ -206,7 +213,7 @@ Renderer positions(
 ///
 Renderer indices(
     Renderer renderer,
-    int[] arr,
+    uint[] arr,
     BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
     BufferUsageNature    nature = BufferUsageNature.Draw
 ){

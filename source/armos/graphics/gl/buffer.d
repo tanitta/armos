@@ -51,7 +51,7 @@ class Buffer {
                         in BufferUsageNature    nature = BufferUsageNature.Draw)
         if(__traits(isArithmetic, T)){
             if(array.length == 0)return this;
-            _array     = Algebraic!(const(int)[], const(float)[], const(double)[])(array);
+            _array     = Algebraic!(const(uint)[], const(int)[], const(float)[], const(double)[])(array);
             _dimention = dimention;
             _freq      = freq;
             _nature    = nature;
@@ -78,6 +78,8 @@ class Buffer {
                 sendToBindedVao!(const(float))(attributeLocation);
             }else if(_array.type == typeid(const(double)[])){
                 sendToBindedVao!(const(double))(attributeLocation);
+            }else if(_array.type == typeid(const(uint)[])){
+                sendToBindedVao!(const(uint))(attributeLocation);
             }else if(_array.type == typeid(const(int)[])){
                 sendToBindedVao!(const(int))(attributeLocation);
             }
@@ -115,7 +117,7 @@ class Buffer {
         size_t _dimention;
         BufferUsageFrequency _freq;
         BufferUsageNature _nature;
-        Algebraic!(const(int)[], const(float)[], const(double)[]) _array;
+        Algebraic!(const(uint)[], const(int)[], const(float)[], const(double)[]) _array;
 
         void sendToBindedVao(T)(in int attributeLocation){
             auto arr = _array.get!(T[]);
@@ -135,6 +137,8 @@ class Buffer {
                     GLenum glDataType = GL_FLOAT;
                 }else static if(is(T == const(double))){
                     GLenum glDataType = GL_DOUBLE;
+                }else static if(is(T == const(uint))){
+                    GLenum glDataType = GL_UNSIGNED_INT;
                 }else static if(is(T == const(int))){
                     GLenum glDataType = GL_INT;
                 }

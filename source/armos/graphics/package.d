@@ -24,5 +24,6 @@ public{
     import armos.graphics.bufferentity;
     import armos.graphics.standardvertex;
     import armos.graphics.dynamicvertex;
+    import armos.graphics.standardmesh;
     import armos.graphics.standardrenderer;
 }
