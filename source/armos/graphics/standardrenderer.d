@@ -213,10 +213,21 @@ Renderer positions(
 ///
 Renderer indices(
     Renderer renderer,
-    uint[] arr,
+    size_t[] arr,
     BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
     BufferUsageNature    nature = BufferUsageNature.Draw
 ){
+    import std.conv;
+    return renderer.indices(arr.to!(uint[]), freq, nature);
+}
+
+///
+Renderer indices(Int)(
+    Renderer renderer,
+    Int[] arr,
+    BufferUsageFrequency freq   = BufferUsageFrequency.Dynamic,
+    BufferUsageNature    nature = BufferUsageNature.Draw
+)if(is(Int == int) || is(Int == uint)){
     if(!renderer.indexBuffer) renderer.indexBuffer(new Buffer(BufferType.ElementArray));
     import std.algorithm;
     import std.array;
