@@ -167,7 +167,7 @@ Renderer vertices(
 }
 
 import armos.graphics.dynamicvertex;
-/// WIP: no testing
+///
 Renderer vertices(
     Renderer renderer,
     DynamicVertex[] vertices,
@@ -278,6 +278,7 @@ Renderer tangents(Renderer renderer, Buffer buffer){
     return renderer.attribute("tangent", buffer);
 }
 
+///
 Renderer tangents(
     Renderer renderer,
     Vector3f[] arr,
@@ -315,6 +316,7 @@ Renderer texCoords1(Renderer renderer, Buffer buffer){
     return renderer.attribute("texCoord1", buffer);
 }
 
+///
 Renderer texCoords1(
     Renderer renderer,
     Vector4f[] arr,
