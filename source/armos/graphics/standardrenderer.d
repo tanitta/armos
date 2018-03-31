@@ -113,6 +113,13 @@ Renderer diffuse(Renderer renderer, Color c){
     return renderer;
 }
 
+import armos.graphics.camera;
+///
+Renderer camera(Renderer r, Camera camera){
+    return r.viewMatrix(camera.viewMatrix)
+            .projectionMatrix(camera.projectionMatrix);
+}
+
 ///
 Renderer viewMatrix(Renderer r, Matrix4f m){
     return r.uniform("viewMatrix", m.transpose.nestedArray);

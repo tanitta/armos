@@ -1,37 +1,33 @@
-static import ar = armos;
+import armos.app;
+import armos.math;
+import armos.graphics;
 // import armos.graphics;
 import std.stdio, std.math;
 
-alias V4 = ar.math.Vector4f;
-class TestApp : ar.app.BaseApp{
+class TestApp : BaseApp{
     override void setup(){
-        _camera = (new ar.graphics.PerspCamera).position(ar.math.Vector3f(0, 0, 2.0))
-                                                 .target(ar.math.Vector3f.zero);
-        _indexBuffer = new ar.graphics.Buffer(ar.graphics.BufferType.ElementArray);
-        _positionBuffer = new ar.graphics.Buffer();
-        import armos.graphics.embeddedrenderer;
-
+        _camera = (new PerspCamera).position(vec3f(0, 0, 2.0))
+                                                 .target(vec3f.zero);
+        _indexBuffer = new Buffer(BufferType.ElementArray);
+        _positionBuffer = new Buffer();
     }
 
     override void update(){
         _counter += 0.1;
-        _camera.position = ar.math.Vector3f(5.0*cos(_counter*0.05),
+        _camera.position = vec3f(5.0*cos(_counter*0.05),
                                             0,
                                             5.0*sin(_counter*0.05));
-        _positionBuffer.array([V4(-0.5, -0.5, 0, 1),
-                       V4(0.5, -0.5, 0, 1),
-                       V4(0, 0.5, 0, 1)]);
+        _positionBuffer.array([vec4f(-0.5, -0.5, 0, 1),
+                       vec4f(0.5, -0.5, 0, 1),
+                       vec4f(0, 0.5, 0, 1)]);
         _indexBuffer.array([0, 1, 2]);
     }
 
     override void draw(){
-        import armos.graphics.renderer;
-        import armos.graphics.standardrenderer;
-        auto cr = armos.graphics.currentRenderer;
+        auto cr = currentRenderer;
         cr.backgroundColor(0.2, 0.2, 0.2, 1.).fillBackground;
 
-        cr.projectionMatrix(_camera.projectionMatrix)
-          .viewMatrix(_camera.viewMatrix)
+        cr.camera(_camera)
           .positions(_positionBuffer)
           .indices(_indexBuffer)
           .diffuse(1f-cos(_counter*0.5)*0.5f,
@@ -43,15 +39,15 @@ class TestApp : ar.app.BaseApp{
 
     private{
         float _counter = 0f;
-        ar.graphics.Camera _camera;
-        ar.graphics.Buffer _indexBuffer;
-        ar.graphics.Buffer _positionBuffer;
+        Camera _camera;
+        Buffer _indexBuffer;
+        Buffer _positionBuffer;
     }
 }
 
 void main(){
     version(unittest){
     }else{
-        ar.app.run(new TestApp);
+        run(new TestApp);
     }
 }

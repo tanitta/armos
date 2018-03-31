@@ -7,13 +7,10 @@ class TestApp : BaseApp{
     override void setup(){
         _camera = (new PerspCamera).position(vec3f(0.5, 0.0, 0.5))
                                    .target(vec3f.zero);
-        _vertices = [
-            StandardVertex().position(vec4f(-0.5, -0.5, 0, 1)), 
-            StandardVertex().position(vec4f(0.5, -0.5, 0, 1)),
-            StandardVertex().position(vec4f(0, 0.5, 0, 1)),
-        ];
-
-        _indices = [0, 1, 2];
+        _mesh = (new StandardMesh).vertices([StandardVertex().position(vec4f(-0.5, -0.5, 0, 1)), 
+                                             StandardVertex().position(vec4f(0.5, -0.5, 0, 1)),
+                                             StandardVertex().position(vec4f(0, 0.5, 0, 1))])
+                                  .indices([0, 1, 2]);
     }
 
     override void update(){
@@ -28,8 +25,7 @@ class TestApp : BaseApp{
         cr.backgroundColor(0.2, 0.2, 0.2, 1.).fillBackground;
 
         cr.camera(_camera)
-          .vertices(_vertices)
-          .indices(_indices)
+          .mesh(_mesh)
           .diffuse(1f-cos(_counter*0.5)*0.5f,
                    1f-cos(_counter*0.51)*0.5f,
                    1f-cos(_counter*0.52)*0.5f,
@@ -40,8 +36,7 @@ class TestApp : BaseApp{
     private{
         float _counter = 0f;
         Camera _camera;
-        StandardVertex[] _vertices;
-        uint[] _indices;
+        StandardMesh _mesh;
     }
 }
 
