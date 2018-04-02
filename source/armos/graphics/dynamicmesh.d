@@ -5,6 +5,6 @@ import armos.graphics.dynamicvertex;
 
 class DynamicMesh{
     DynamicVertex[] vertices;
-    size_t[] indices;
+    uint[] indices;
     PrimitiveMode primitiveMode = PrimitiveMode.Triangles;
 }
