@@ -15,8 +15,8 @@ class TestApp : BaseApp{
     override void update(){
         _counter += 0.1;
         _camera.position = vec3f(5.0*cos(_counter*0.05),
-                                            0,
-                                            5.0*sin(_counter*0.05));
+                                 0,
+                                 5.0*sin(_counter*0.05));
         _positionBuffer.array([vec4f(-0.5, -0.5, 0, 1),
                        vec4f(0.5, -0.5, 0, 1),
                        vec4f(0, 0.5, 0, 1)]);
