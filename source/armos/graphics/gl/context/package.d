@@ -18,6 +18,8 @@ public import armos.graphics.gl.context.helper.matrix;
 public import armos.graphics.gl.context.helper.shader;
 public import armos.graphics.gl.context.helper.vao;
 public import armos.graphics.gl.context.helper.fbo;
+public import armos.graphics.gl.context.helper.activetextureunit;
+public import armos.graphics.gl.context.helper.texture;
 
 ///
 class Context {
@@ -49,8 +51,9 @@ class Context {
 
         Stack!Fbo _fboStack;
 
-        Stack!Texture[TextureTarget][] _textureStacks;
-        Stack!size_t                   _activeTextureUnitStack;
+        Stack!Texture[TextureTarget][size_t] _textureStacks;
+        Stack!size_t _activeTextureUnitStack;
+
         Stack!Viewport _viewportStack;
         Stack!bool[Capability] _capabilityStacks;
         Stack!PolyRenderMode     _polyRenderModeStack;

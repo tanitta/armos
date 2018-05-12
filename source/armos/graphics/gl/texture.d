@@ -37,7 +37,8 @@ class Texture {
     public{
         /++
         +/
-        this(){
+        this(TextureTarget target = TextureTarget.Dim2){
+            _target = target;
             glEnable(GL_TEXTURE);
             glGenTextures(1 , cast(uint*)&_id);
         }
@@ -70,11 +71,18 @@ class Texture {
         +/
         int id()const{return _id;}
 
+        ///
+        TextureTarget target()const{
+            return _target;
+        } 
+
         /++
             Begin to bind the texture.
         +/
         Texture begin(){
-            glBindTexture(GL_TEXTURE_2D , _id);
+            import armos.app.runner:currentContext;
+            import armos.graphics.gl.context.helper.texture;
+            currentContext.pushTexture(this);
             return this;
         }
 
@@ -82,16 +90,12 @@ class Texture {
             End to bind the texture.
         +/
         Texture end(){
-            glBindTexture(GL_TEXTURE_2D , 0);
+            import armos.app.runner:currentContext;
+            import armos.graphics.gl.context.helper.texture;
+            currentContext.popTexture(_target);
             return this;
         }
         
-        ///
-        Texture bind(){
-            glBindTexture(GL_TEXTURE_2D , _id);
-            return this;
-        };
-
         /++
             Resize texture.
         +/
@@ -214,15 +218,23 @@ class Texture {
         +/
         Texture allocate(){
             GLuint internalFormat = getGLInternalFormat(_format);
-            begin;
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _minFilter);
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _magFilter);
-            glTexImage2D(
-                    GL_TEXTURE_2D, 0, internalFormat,
+            begin;scope(exit)end;
+            glTexParameteri( _target, GL_TEXTURE_MIN_FILTER, _minFilter);
+            glTexParameteri( _target, GL_TEXTURE_MAG_FILTER, _magFilter);
+            if(_target.isOperatableWith1D){
+                assert(false, "1D texture is not supported yet.");
+            } 
+            if(_target.isOperatableWith2D){
+                glTexImage2D(
+                    _target, 0, internalFormat,
                     _size[0], _size[1],
                     0, internalFormat, GL_UNSIGNED_BYTE, cast(GLvoid*)_bitsPtr
-                    );
-            end;
+                );
+                return this;
+            }
+            if(_target.isOperatableWith3D){
+                assert(false, "3D texture is not supported yet.");
+            }
             return this;
         }
 
@@ -232,8 +244,8 @@ class Texture {
             _minFilter = minFilter;
             _magFilter = magFilter;
             begin; 
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+            glTexParameteri( _target, GL_TEXTURE_MIN_FILTER, minFilter);
+            glTexParameteri( _target, GL_TEXTURE_MAG_FILTER, magFilter);
             end;
             return this;
         }
@@ -243,7 +255,7 @@ class Texture {
         Texture minFilter(in TextureMinFilter filter){
             _minFilter = filter;
             begin;
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+            glTexParameteri( _target, GL_TEXTURE_MIN_FILTER, filter);
             end;
             return this;
         }
@@ -252,7 +264,7 @@ class Texture {
         Texture magFilter(in TextureMagFilter filter){
             _magFilter = filter;
             begin;
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+            glTexParameteri( _target, GL_TEXTURE_MAG_FILTER, filter);
             end;
             return this;
         }
@@ -260,8 +272,8 @@ class Texture {
         ///
         Texture wrap(in TextureWrap p){
             begin;
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, p);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, p);
+            glTexParameteri(_target, GL_TEXTURE_WRAP_S, p);
+            glTexParameteri(_target, GL_TEXTURE_WRAP_T, p);
             end;
             return this;
         }
@@ -269,7 +281,7 @@ class Texture {
         ///
         Texture wrapS(in TextureWrap p){
             begin;
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, p);
+            glTexParameteri(_target, GL_TEXTURE_WRAP_S, p);
             end;
             return this;
         }
@@ -277,9 +289,32 @@ class Texture {
         ///
         Texture wrapT(in TextureWrap p){
             begin;
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, p);
+            glTexParameteri(_target, GL_TEXTURE_WRAP_T, p);
             end;
             return this;
+        }
+    }
+
+    package{
+        Texture bind(){
+            return Texture.bind(this);
+        }
+
+        Texture bind(in TextureTarget target){
+            return Texture.bind(this, target);
+        }
+
+        static Texture bind(Texture texture){
+            return Texture.bind(texture, texture._target);
+        }
+
+        static Texture bind(Texture texture, in TextureTarget target){
+            if(!texture){
+                glBindTexture(target, 0);
+                return texture;
+            }
+            glBindTexture(target, texture._id);
+            return texture;
         }
     }
 
@@ -287,10 +322,25 @@ class Texture {
         int _id;
         ubyte* _bitsPtr;
         Vector2i _size;
+        TextureTarget _target;
         ColorFormat _format;
         TextureMinFilter _minFilter;
         TextureMagFilter _magFilter;
     }
+}
+
+private bool isOperatableWith1D(in TextureTarget target){
+    return target == TextureTarget.Dim1;
+}
+
+private bool isOperatableWith2D(in TextureTarget target){
+    return target == TextureTarget.Dim2
+        || target == TextureTarget.Dim1Array
+        || target == TextureTarget.Rectangle;
+}
+
+private bool isOperatableWith3D(in TextureTarget target){
+    return target == TextureTarget.Dim3 || target == TextureTarget.Dim2Array;
 }
 
 /++
@@ -324,7 +374,7 @@ enum TextureTarget{
     Buffer = GL_TEXTURE_BUFFER,
     Dim1Array = GL_TEXTURE_1D_ARRAY,
     Dim2Array = GL_TEXTURE_2D_ARRAY,
-    Dim3Array = GL_TEXTURE_RECTANGLE,
+    Rectangle = GL_TEXTURE_RECTANGLE,
     CubeMap      = GL_TEXTURE_CUBE_MAP,
     CubeMapArray = GL_TEXTURE_CUBE_MAP_ARRAY,
     Dim2Multisample      = GL_TEXTURE_2D_MULTISAMPLE,
