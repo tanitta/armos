@@ -11,8 +11,7 @@ Texture texture(Context c, TextureTarget target){
 
 ///
 Texture texture(Context c, in TextureTarget target, in size_t unitIndex){
-    import std.algorithm;
-    // if(c._textureStacks.keys.canFind(unitIndex)) // create stack
+    createTextureStackIfNeeded(c, target, unitIndex);
     if(c._textureStacks[unitIndex][target].empty)return null;
     return c._textureStacks[unitIndex][target].top;
 }
@@ -24,6 +23,7 @@ Context pushTexture(alias bind = Texture.bind)(Context c, Texture texture){
 
 ///
 Context pushTexture(alias bind = Texture.bind)(Context c, Texture texture, in TextureTarget target, in size_t unitIndex){
+    createTextureStackIfNeeded(c, target, unitIndex);
     auto prevTex = c.texture(target, unitIndex);
     c._textureStacks[unitIndex][target].push(texture);
     c.pushActiveTextureUnit(unitIndex);
@@ -45,6 +45,7 @@ Context popTexture(alias bind = Texture.bind)(Context c, in TextureTarget target
 
 ///
 Context popTexture(alias bind = Texture.bind)(Context c, in TextureTarget target, in size_t unitIndex){
+    createTextureStackIfNeeded(c, target, unitIndex);
     auto prevTex = c.texture(target, unitIndex);
     c._textureStacks[unitIndex][target].pop();
     c.pushActiveTextureUnit(unitIndex);
@@ -58,6 +59,18 @@ Context popTexture(alias bind = Texture.bind)(Context c, in TextureTarget target
     }
     c.popActiveTextureUnit();
     return c;
+}
+
+private void createTextureStackIfNeeded(Context c, in TextureTarget target, in size_t unitIndex){
+    import armos.graphics.gl.stack;
+    import std.algorithm;
+    if(!c._textureStacks.keys.canFind(unitIndex)){ 
+        Stack!Texture[TextureTarget] stacks = [target: new Stack!Texture];
+        c._textureStacks[unitIndex] = stacks;
+    }
+    if(!c._textureStacks[unitIndex].keys.canFind(target)){
+        c._textureStacks[unitIndex][target] = new Stack!Texture;
+    }
 }
 
 unittest{

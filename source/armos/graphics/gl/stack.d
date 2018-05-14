@@ -32,6 +32,10 @@ class Stack(T){
         bool empty()const{
             return _stack.length == 0;
         }
+
+        size_t length()const{
+            return _stack.length;
+        }
     }//public
 
     private{

@@ -36,6 +36,8 @@ class Context {
             _vaoStack              = new Stack!Vao;
 
             _fboStack  = new Stack!Fbo;
+
+            _activeTextureUnitStack = new Stack!size_t;
         }
 
         Stack!Matrix4f matrixStack(in MatrixType matrixType){
