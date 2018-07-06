@@ -80,7 +80,7 @@ void main(){run(new TestApp);}
   $ dub fetch armos
   ```
 
-3. Install dependency dynamic libraries and npm for glsl package management.
+3. Install dependent dynamic libraries and npm for glsl package management.
   - macOS
   ```
   $ brew install glfw3 assimp freeimage libogg libvorbis npm
