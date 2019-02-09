@@ -16,6 +16,7 @@ import armos.utils.scoped: scoped;
 
 class EmbedddedRenderer: Renderer{
     import derelict.opengl3.gl;
+    private alias this This;
     public{
         ///
         This setup(){
