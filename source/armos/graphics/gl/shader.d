@@ -8,6 +8,7 @@ import armos.math.matrix;
 import armos.graphics.gl.primitivemode;
 import armos.graphics.gl.shadersource;
 import armos.graphics.gl.shaderutils;
+import armos.graphics.gl.texture;
 import armos.graphics.gl.context;
 
 public import armos.graphics.gl.uniform;
@@ -221,6 +222,16 @@ class Shader {
             immutable location = glGetUniformLocation(_programID, name.toStringz);
             // assert(location != -1, "Could not find uniform \"" ~ name ~ "\"");
             return location;
+        }
+
+        Shader uniformImpl(in string name, Uniform u){
+            // hint fow dev: Use static foreach with AcceptableUniformTypes.
+
+            return this;
+        }
+
+        Shader uniformImpl(in string name, Uniform u, in size_t textureUnit){
+            return uniformImplForTexture(name, u.get!Texture, textureUnit);
         }
 
 
@@ -524,10 +535,93 @@ class Shader {
             }
             return dim;
         }
+
+        /// ArithmeticTypes
+        /++
+            Set as an uniform.
+            example:
+            ----
+            // Set variables to glsl uniform named "v".
+            float a = 1.0;
+            float b = 2.0;
+            float c = 3.0;
+            shader.setUniform("v", a, b, c);
+            ----
+        +/
+        Shader uniformImplForArithmetic(A:T[N], T, size_t N)(in string name, A v)if(isInherentingIn!(T, GlArithmeticTypes)){
+            if(isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    import std.conv:to;
+                    mixin(glFunctionString!(T[], N).name("glUniform") ~ "(location, 1, v.ptr);" );
+                }
+                end;
+            }
+            return this;
+        }
+
+        unittest{
+            assert(__traits(compiles, (){
+                Shader shader;
+                shader.uniform("foo", 1f);
+            }));
+        }
+
+        unittest{
+            assert(__traits(compiles, (){
+                Shader shader;
+                float[4] arr = [1f, 2f, 3f, 4f];
+                shader.uniform("foo", arr);
+            }));
+        }
+
+        /// VectorTypes
+
+        /// MatrixTypes
+        Shader uniformImplForMatrix(Arg:T[ColSize][RowSize], T, size_t ColSize, size_t RowSize)(in string name, Arg m)if(isInherentingIn!(Arg, GlMatrixTypes)){
+            if(isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    T[RowSize*ColSize] arr;
+                    foreach (size_t rIndex, row; m) {
+                        foreach(size_t cIndex, elem; row){
+                            arr[rIndex*ColSize+cIndex] = elem;
+                        }
+                    }
+                    mixin( glFunctionString!(T[], RowSize, ColSize).name("glUniform") ~ "(location, 1, GL_FALSE, arr.ptr);" );
+                }
+                end;
+            }
+            return this;
+        }
+        unittest{
+            // Shader shader;
+            // float[3][3] arr;
+            // shader.uniform("foo", arr);
+            assert(__traits(compiles, (){
+                Shader shader;
+                float[3][3] arr;
+                shader.uniform("foo", arr);
+            }));
+        }
+
+        /// Texture
+        Shader uniformImplForTexture(in string name, Texture texture, in size_t textureUnit){
+            import std.string;
+            import std.conv:to;
+            if(isLoaded){
+                begin;scope(exit)end;
+                glActiveTexture(GL_TEXTURE0 + textureUnit.to!int);
+                begin;
+                this.uniform(name, textureUnit.to!int);
+                end;
+            }
+            return this;
+        }
     }//private
 }//class Shader
-
-
 
 private{
     string loadedSource(in string path){
@@ -554,5 +648,3 @@ private{
         }//private
     }//struct GeometryIO
 }
-
-

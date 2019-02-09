@@ -9,7 +9,8 @@ import armos.graphics.gl.polyrendermode;
 import armos.graphics.gl.primitivemode;
 import armos.graphics.gl.blendmode;
 import armos.graphics.gl.vao:Vao;
-import armos.graphics.gl.uniform:Uniform, uniform, uniformTexture;
+// import armos.graphics.gl.uniform:Uniform, uniform;
+import armos.graphics.gl.uniform;
 import armos.graphics.gl.shader:Shader;
 import armos.graphics.gl.fbo:Fbo;
 import armos.graphics.gl.buffer:Buffer;
@@ -193,7 +194,7 @@ class DefaultRenderer: Renderer{
             foreach (pair; _textures.byPair) {
                 auto name = pair[0];
                 auto texture  = pair[1];
-                _shader.uniformTexture(name, texture , textureIndex);
+                _shader.uniform(name, texture , textureIndex);
                 textureIndex++;
             }
 

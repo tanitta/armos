@@ -21,12 +21,15 @@ interface Material{
         
         ///
         Material uniformImpl(in string name, Uniform);
-        
-        ///
-        Material texture(in string name, Texture tex);
 
         ///
-        Texture texture(in string name);
+        // Uniform uniformImpl(in string);
+        
+        // ///
+        // Material texture(in string name, Texture tex);
+        //
+        // ///
+        // Texture texture(in string name);
 
         ///
         Shader shader();
@@ -42,6 +45,10 @@ interface Material{
     }//public
 
 }//interface Material
+
+// Material uniform(Material material, in string name, Texture texture){
+//     return material.uniformImpl(name, Uniform(texture));
+// };
 
 Renderer material(Renderer renderer, Material material){
     material.sendToRenderer(renderer);
@@ -161,7 +168,7 @@ void end(Texture[string] textures){
 void sendTo(U:E[K], E, K)(U uniform, Shader shader){
     foreach (int i, string key; uniform.keys) {
         static if(is(E == Texture)){
-            shader.uniformTexture(key, uniform[key], i);
+            shader.uniform(key, uniform[key], i);
         }else{
             shader.uniform(key, uniform[key]);
         }

@@ -2,6 +2,7 @@ module armos.graphics.image;
 
 // import armos.graphics;
 import armos.graphics.gl.texture;
+import armos.graphics.gl.uniform;
 import armos.graphics.gl.primitivemode;
 import armos.graphics.bitmap;
 import armos.graphics.material;
@@ -106,7 +107,7 @@ class Image {
             }
 
             allocate;
-            _material.texture("tex0", this._texture);
+            _material.uniform("tex0", _texture);
             return this;
         }
 
@@ -213,7 +214,7 @@ class Image {
             _bitmap = data;
             allocate();
             _isLoaded = true;
-            _material.texture("tex0", this._texture);
+            _material.uniform("tex0", _texture);
             return this;
         }
 
@@ -226,7 +227,7 @@ class Image {
             _bitmap.setFromAlignedPixels(cast(char*)pixels, width, height, format);
             allocate;
             _isLoaded = true;
-            _material.texture("tex0", this._texture);
+            _material.uniform("tex0", _texture);
             return this;
         }
 

@@ -7,7 +7,10 @@ class MainApp : ar.app.BaseApp{
 
     override void update(){
         import std.stdio;
-        _stream.popMessages.writeln;
+        auto messages = _stream.popMessages;
+        if(messages.length != 0){
+            messages.writeln;
+        }
     }
 
     ar.communication.MidiStream _stream;

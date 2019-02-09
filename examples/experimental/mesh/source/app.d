@@ -16,7 +16,7 @@ class MainApp : BaseApp{
                             Vector4f(-0.5, -0.5, 0, 1),
                             Vector4f(0.5, -0.5, 0, 1),
                             Vector4f(0, 0.5, 0, 1)])
-                        .attr("index", [0, 1, 2], 1);
+                        .attr("index", [0, 1, 2]);
     }
 
     override void update(){

@@ -222,7 +222,7 @@ class AssimpModelLoader {
                 image.load(buildPath( dirName(_modelfilepath), textureFileName ));
                 
                 mat = new DefaultMaterial;
-                mat.texture("tex0", image.texture);
+                mat.uniform("tex0", image.texture);
             }else{
                 mat = new NoTextureMaterial;
             }
