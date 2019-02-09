@@ -298,8 +298,8 @@ private class ScreenDrawer {
             import std.stdio;
             writeln(width, " ", height);
             _renderer.setup;
-
-            _renderer.texture("tex0", screen.colorTexture);
+            import armos.graphics.gl.uniform;
+            _renderer.uniform("tex0", screen.colorTexture);
 
             _texCoord.array([
                 Vector4f(0f, 0f, 0.0, 1.0f),

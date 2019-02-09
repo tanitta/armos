@@ -61,7 +61,7 @@ class DefaultRenderer: Renderer{
         }
 
         ///
-        This texture(in string name, Texture texture){
+        This uniformImpl(in string name, Texture texture){
             _textures[name] = texture;
             return this;
         }
@@ -127,7 +127,7 @@ class DefaultRenderer: Renderer{
             return this;
         }
 
-        This uniformImpl(in string name, Uniform u){
+        This uniformImpl(in string name, NumericalUniform u){
             _uniforms[name] = u;
             return this;
         }
@@ -140,7 +140,7 @@ class DefaultRenderer: Renderer{
 
     protected{
         Fbo _target;
-        Uniform[string]  _uniforms;
+        NumericalUniform[string]  _uniforms;
         Buffer[string]   _attributes;
         bool[Capability] _capabilities;
         Buffer           _indexBuffer;

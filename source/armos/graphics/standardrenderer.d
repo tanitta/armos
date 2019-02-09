@@ -2,8 +2,8 @@ module armos.graphics.standardrenderer;
 
 import armos.graphics.gl.shader:Shader;
 import armos.graphics.gl.vao:Vao;
-import armos.graphics.gl.uniform:Uniform,
-                                 uniform;
+import armos.graphics.gl.uniform;
+                               
 import armos.graphics.gl.primitivemode;
 import armos.graphics.gl.texture:Texture;
 import armos.graphics.gl.buffer;

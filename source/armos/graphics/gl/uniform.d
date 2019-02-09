@@ -12,14 +12,10 @@ import std.meta;
 
 import armos.graphics.gl.types;
 
-alias AcceptableUniformTypes = AliasSeq!(GlArithmeticTypes,
+alias AcceptableNumericalUniformTypes = AliasSeq!(GlArithmeticTypes,
                                          GlVectorTypes,
-                                         GlMatrixTypes,
-                                         Texture);
-alias Uniform = Algebraic!(AcceptableUniformTypes);
-
-pragma(msg, __FILE__, "(", __LINE__, "): ",
-       "TODO: build into material");
+                                         GlMatrixTypes);
+alias NumericalUniform = Algebraic!(AcceptableNumericalUniformTypes);
 
 ///
 template isInherentingIn(T, Ts...) {
@@ -106,15 +102,9 @@ unittest{
 
 import armos.graphics.gl.texture;
 /// Set texture as uniform.
-Shader uniform(Shader shader, in string name, Texture texture, uint textureLocation){
-    import std.string;
-    if(shader.isLoaded){
-        shader.begin;scope(exit)shader.end;
-        glActiveTexture(GL_TEXTURE0 + textureLocation);
-        texture.begin;
-        shader.uniform(name, textureLocation);
-    }
-    return shader;
+T uniform(T)(T t, in string name, Texture texture, uint textureLocation){
+    t.uniformImpl(name, texture, textureLocation);
+    return t;
 }
 unittest{
     assert(__traits(compiles, (){
@@ -124,17 +114,22 @@ unittest{
     }));
 }
 
+T uniform(T)(T t, in string name, Texture texture){
+    t.uniformImpl(name, texture);
+    return t;
+}
+
 ///
 template hasUniformImpl(T) {
     enum bool hasUniformImpl = __traits(compiles, (){
         T t;
-        Uniform u;
+        NumericalUniform u;
         t.uniformImpl("uniformName", u);
     });
 }//template hasUniformImpl
 
 /// Set raw uniform struct.
-T uniform(T)(T t, in string name, Uniform u)if(hasUniformImpl!T){
+T uniform(T)(T t, in string name, NumericalUniform u)if(hasUniformImpl!T){
     t.uniformImpl(name, u);
     return t;
 }
@@ -142,16 +137,16 @@ T uniform(T)(T t, in string name, Uniform u)if(hasUniformImpl!T){
 import std.meta:staticIndexOf;
 
 /// Set acceptable uniform types as uniform.
-T uniform(T, U)(T t, in string name, U v)if(hasUniformImpl!T && staticIndexOf!(U, AcceptableUniformTypes) != -1)
+T uniform(T, U)(T t, in string name, U v)if(hasUniformImpl!T && staticIndexOf!(U, AcceptableNumericalUniformTypes) != -1)
 {
-    t.uniformImpl(name, Uniform(v));
+    t.uniformImpl(name, NumericalUniform(v));
     return t;
 }
 
 unittest{
     assert(__traits(compiles, (){
         Shader shader;
-        Uniform u;
+        NumericalUniform u;
         u = 1f;
         shader.uniform("foo", u);
     }));
@@ -164,7 +159,7 @@ unittest{
 
     assert(!__traits(compiles, (){
         Shader shader;
-        Uniform u;
+        NumericalUniform u;
         u = "string";
         shader.uniform("foo", u);
     }));

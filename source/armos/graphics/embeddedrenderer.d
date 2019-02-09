@@ -56,7 +56,7 @@ class EmbedddedRenderer: Renderer{
         }
 
         ///
-        This texture(in string name, Texture texture){
+        This uniformImpl(in string name, Texture texture){
             _textures[name] = texture;
             return this;
         }
@@ -130,7 +130,7 @@ class EmbedddedRenderer: Renderer{
 
     public{
         ///
-        This uniformImpl(in string name, Uniform u){
+        This uniformImpl(in string name, NumericalUniform u){
             _uniforms.updateCachable(name, u);
             return this;
         }
@@ -149,7 +149,7 @@ class EmbedddedRenderer: Renderer{
     private{
         Fbo _target;
 
-        Cachable!Uniform[string]  _uniforms;
+        Cachable!NumericalUniform[string]  _uniforms;
         Cachable!Buffer[string]   _attributes;
         Cachable!bool[Capability] _capabilities;
         Cachable!Buffer           _indices;

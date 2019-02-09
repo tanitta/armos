@@ -20,13 +20,13 @@ interface Material{
         Material end();
         
         ///
-        Material uniformImpl(in string name, Uniform);
+        Material uniformImpl(in string name, NumericalUniform);
 
         ///
         // Uniform uniformImpl(in string);
         
-        // ///
-        // Material texture(in string name, Texture tex);
+        ///
+        Material uniformImpl(in string name, Texture tex);
         //
         // ///
         // Texture texture(in string name);
@@ -75,13 +75,13 @@ mixin template MaterialImpl(){
         }
         
         ///
-        T uniformImpl(in string name, Uniform u){
+        T uniformImpl(in string name, NumericalUniform u){
             _uniforms[name] = u;
             return this;
         }
 
         ///
-        T texture(in string name, Texture tex){
+        T uniformImpl(in string name, Texture tex){
             _textures[name] = tex;
             return this;
         }
@@ -105,7 +105,7 @@ mixin template MaterialImpl(){
             import armos.graphics.image;
             auto image = new Image();
             image.load(pathInDataDir);
-            texture(name, image.texture);
+            uniformImpl(name, image.texture);
             return this;
         }
     }//public
@@ -119,7 +119,7 @@ mixin template MaterialImpl(){
     }
 
     private{
-        Uniform[string] _uniforms;
+        NumericalUniform[string] _uniforms;
         Texture[string] _textures;
         Shader _shader;
 

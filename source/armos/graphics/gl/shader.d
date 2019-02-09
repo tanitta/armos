@@ -224,14 +224,14 @@ class Shader {
             return location;
         }
 
-        Shader uniformImpl(in string name, Uniform u){
+        Shader uniformImpl(in string name, NumericalUniform u){
             // hint fow dev: Use static foreach with AcceptableUniformTypes.
 
             return this;
         }
 
-        Shader uniformImpl(in string name, Uniform u, in size_t textureUnit){
-            return uniformImplForTexture(name, u.get!Texture, textureUnit);
+        Shader uniformImpl(in string name, Texture t, in size_t textureUnit){
+            return uniformImplForTexture(name, t, textureUnit);
         }
 
 

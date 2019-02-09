@@ -29,14 +29,14 @@ interface Renderer {
         Buffer attrBuffer(in string);
         This indexBuffer(Buffer);
         Buffer indexBuffer();
-        This texture(in string name, Texture);
+        This uniformImpl(in string name, Texture);
+        This uniformImpl(in string name, NumericalUniform u);
         This polyRenderMode(PolyRenderMode mode);
         This capability(Capability cap, bool b);
         This blendMode(BlendMode blendMode);
         This fillBackground();
         This target(Fbo);
         This shader(Shader);
-        This uniformImpl(in string name, Uniform u);
         This backgroundColorImpl(in float r, in float g, in float b, in float a);
         
         //output
@@ -65,14 +65,14 @@ version(unittest){
             Buffer attrBuffer(in string name){return new Buffer;}
             This indexBuffer(Buffer){return this;}
             Buffer indexBuffer(){return new Buffer;}
-            This texture(in string name, Texture){return this;}
+            This uniformImpl(in string name, Texture){return this;}
             This polyRenderMode(PolyRenderMode mode){return this;}
             This capability(Capability cap, bool b){return this;}
             This blendMode(BlendMode blendMode){return this;}
             This fillBackground(){return this;}
             This target(Fbo){return this;}
             This shader(Shader){return this;}
-            This uniformImpl(in string name, Uniform u){return this;}
+            This uniformImpl(in string name, NumericalUniform u){return this;}
             This backgroundColorImpl(in float r, in float g, in float b, in float a){return this;}
 
             //output

@@ -206,6 +206,7 @@ class AssimpModelLoader {
 
             Material mat;
             
+            import armos.graphics.gl.uniform;
             //texture
             aiString aiPath;
             if(
