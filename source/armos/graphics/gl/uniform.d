@@ -23,8 +23,9 @@ template isInherentingIn(T, Ts...) {
 }//template isInherentingIn
 
 unittest{
-    assert(isInherentingIn!(uint, GlArithmeticTypes));
-    assert(!isInherentingIn!(string, GlArithmeticTypes));
+    static assert(isInherentingIn!(uint, GlArithmeticTypes));
+    static assert(isInherentingIn!(float[4], GlVectorTypes));
+    static assert(!isInherentingIn!(string, GlArithmeticTypes));
 }
 
 

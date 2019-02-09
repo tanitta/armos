@@ -324,8 +324,9 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 
 void main(void) {
-    fragColor = texture(tex0, outtexCoord0)*diffuse;
+    fragColor = texture(tex0, outtexCoord0)*diffuse * f_color;
+    // fragColor = texture(tex0, outtexCoord0) * f_color;
     // fragColor = diffuse;
-    // fragColor = vec4(1, 1, 1, 1);
+    // fragColor = vec4(1, 0, 0, 1);
 }
 };

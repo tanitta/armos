@@ -10,6 +10,7 @@ import armos.graphics.gl.shadersource;
 import armos.graphics.gl.shaderutils;
 import armos.graphics.gl.texture;
 import armos.graphics.gl.context;
+import armos.graphics.gl.types;
 
 public import armos.graphics.gl.uniform;
 
@@ -226,6 +227,19 @@ class Shader {
 
         Shader uniformImpl(in string name, NumericalUniform u){
             // hint fow dev: Use static foreach with AcceptableUniformTypes.
+            static foreach (type; AcceptableNumericalUniformTypes) {
+                if(u.peek!(type)){
+                    static if(isInherentingIn!(type, GlArithmeticTypes)){
+                        uniformImplForArithmetic(name, u.get!type);
+                    }
+                    static if(isInherentingIn!(type, GlVectorTypes)){
+                        uniformImplForVector(name, u.get!type);
+                    }
+                    static if(isInherentingIn!(type, GlMatrixTypes)){
+                        uniformImplForMatrix(name, u.get!type);
+                    }
+                }
+            }
 
             return this;
         }
@@ -548,7 +562,27 @@ class Shader {
             shader.setUniform("v", a, b, c);
             ----
         +/
-        Shader uniformImplForArithmetic(A:T[N], T, size_t N)(in string name, A v)if(isInherentingIn!(T, GlArithmeticTypes)){
+        Shader uniformImplForArithmetic(T)(in string name, T v)if(isInherentingIn!(T, GlArithmeticTypes)){
+            if(isLoaded){
+                begin;
+                int location = uniformLocation(name);
+                if(location != -1){
+                    import std.conv:to;
+                    mixin(glFunctionString!(T, 1).name("glUniform") ~ "(location, v);" );
+                }
+                end;
+            }
+            return this;
+        }
+
+        unittest{
+            assert(__traits(compiles, (){
+                Shader shader;
+                shader.uniformImplForArithmetic("foo", 1f);
+            }));
+        }
+
+        Shader uniformImplForVector(A:T[N], T, size_t N)(in string name, A v)if(isInherentingIn!(A, GlVectorTypes)){
             if(isLoaded){
                 begin;
                 int location = uniformLocation(name);
@@ -564,15 +598,8 @@ class Shader {
         unittest{
             assert(__traits(compiles, (){
                 Shader shader;
-                shader.uniform("foo", 1f);
-            }));
-        }
-
-        unittest{
-            assert(__traits(compiles, (){
-                Shader shader;
                 float[4] arr = [1f, 2f, 3f, 4f];
-                shader.uniform("foo", arr);
+                shader.uniformImplForVector("foo", arr);
             }));
         }
 
@@ -603,7 +630,7 @@ class Shader {
             assert(__traits(compiles, (){
                 Shader shader;
                 float[3][3] arr;
-                shader.uniform("foo", arr);
+                shader.uniformImplForMatrix("foo", arr);
             }));
         }
 

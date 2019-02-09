@@ -280,6 +280,7 @@ private class ScreenDrawer {
             _renderer = new StandardRenderer();
 
             _position   = new Buffer();
+            _color = new Buffer();
             _texCoord = new Buffer();
             _index    = new Buffer(BufferType.ElementArray);
         }
@@ -313,6 +314,12 @@ private class ScreenDrawer {
                 Vector4f(1.0,  1.0,  0.0, 1.0f),
                 Vector4f(-1.0, 1.0,  0.0, 1.0f),
             ]);
+            _color.array([
+                Vector4f(1.0, 1.0, 1.0, 1.0f),
+                Vector4f(1.0, 1.0, 1.0, 1.0f),
+                Vector4f(1.0, 1.0, 1.0, 1.0f),
+                Vector4f(1.0, 1.0, 1.0, 1.0f),
+            ]);
             _index.array([
                 0, 1, 2,
                 2, 3, 0,
@@ -322,6 +329,7 @@ private class ScreenDrawer {
         void render(){
             _renderer.attrBuffer("position", _position)
                      .attrBuffer("texCoord0", _texCoord)
+                     .attrBuffer("color", _color)
                      .indexBuffer(_index)
                      .diffuse(1f, 1f, 1f, 1f)
                      .render();
@@ -332,6 +340,7 @@ private class ScreenDrawer {
         Renderer _renderer;
         Buffer _texCoord;
         Buffer _position;
+        Buffer _color;
         Buffer _index;
     }//private
 }//class ScreenDrawer
