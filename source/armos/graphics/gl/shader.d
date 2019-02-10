@@ -111,6 +111,7 @@ class Shader {
                 _attribNames.clear;
             }
 
+            import std.format;
             addLog("#### Vertex Shader Source ####".color(mode.bold));
             if(vertexShaderSource){
                 addLog("Expanding vertex shader...");
