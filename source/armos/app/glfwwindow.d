@@ -280,7 +280,6 @@ private class ScreenDrawer {
             _renderer = new StandardRenderer();
 
             _position   = new Buffer();
-            _color = new Buffer();
             _texCoord = new Buffer();
             _index    = new Buffer(BufferType.ElementArray);
         }
@@ -296,9 +295,12 @@ private class ScreenDrawer {
         }
 
         void setup(Fbo screen, in int width, in int height){
-            import std.stdio;
-            writeln(width, " ", height);
             _renderer.setup;
+            import armos.graphics.gl.shader;
+            _renderer.shader = (new Shader())
+                              .loadSources(screenVertexShaderSource,
+                                           "",
+                                           screenFragmentShaderSource);
             import armos.graphics.gl.uniform;
             _renderer.uniform("tex0", screen.colorTexture);
 
@@ -314,12 +316,6 @@ private class ScreenDrawer {
                 Vector4f(1.0,  1.0,  0.0, 1.0f),
                 Vector4f(-1.0, 1.0,  0.0, 1.0f),
             ]);
-            _color.array([
-                Vector4f(1.0, 1.0, 1.0, 1.0f),
-                Vector4f(1.0, 1.0, 1.0, 1.0f),
-                Vector4f(1.0, 1.0, 1.0, 1.0f),
-                Vector4f(1.0, 1.0, 1.0, 1.0f),
-            ]);
             _index.array([
                 0, 1, 2,
                 2, 3, 0,
@@ -329,9 +325,7 @@ private class ScreenDrawer {
         void render(){
             _renderer.attrBuffer("position", _position)
                      .attrBuffer("texCoord0", _texCoord)
-                     .attrBuffer("color", _color)
                      .indexBuffer(_index)
-                     .diffuse(1f, 1f, 1f, 1f)
                      .render();
         };
     }//public
@@ -340,8 +334,42 @@ private class ScreenDrawer {
         Renderer _renderer;
         Buffer _texCoord;
         Buffer _position;
-        Buffer _color;
         Buffer _index;
     }//private
 }//class ScreenDrawer
 
+private immutable string screenVertexShaderSource = q{
+#version 330
+
+
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewProjectionMatrix;
+uniform mat4 textureMatrix;
+
+in vec4 position;
+in vec4 texCoord0;
+
+out vec2 outtexCoord0;
+
+void main(void) {
+    gl_Position = modelViewProjectionMatrix * position;
+    outtexCoord0 = texCoord0.xy;
+}
+};
+
+private immutable string screenFragmentShaderSource = q{
+#version 330
+    
+in vec2 outtexCoord0;
+
+out vec4 fragColor;
+
+uniform sampler2D tex0;
+
+void main(void) {
+    fragColor = texture(tex0, outtexCoord0);
+}
+};
