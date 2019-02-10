@@ -332,6 +332,7 @@ class Image {
             uint channels = (bpp / bits) / 8;
             uint pitch = FreeImage_GetPitch(freeImageBitmap);
 
+            import armos.graphics.pixel:ColorFormat;
             ColorFormat armosColorFormat;
             switch (channels) {
                 case 1:
